@@ -1,17 +1,30 @@
 {% extends 'base.html' %}
 
-
+{% block title %} The Forum{% endblock %}
 {% block content %}
-<h1>Hello, Forum!</h1>
-{% for post in object_list %}
-<ul>
-  <li><h6><a href="{% url 'forum-topic-view' post.pk %}">{{ post.title }}</a></h6></li> <!-- "forum-topic" refers to the name given in urls.py / "post.pk" submits the primary key of the post to the url -->
-  <li>{{ post.author }}-{{ post.author.first_name }}</li>
-  <li>{{ post.body }} </li>
-  <a href="{% url 'forum-topic-edit' post.pk %}"> Edit </a>
-  <a href="{% url 'forum-topic-delete' post.pk %}"> Del </a>
-
-</ul>
-{% endfor %}
+<div class="container">
+  <br/>
+  <h1>Hello, Forum!</h1>
+  <br/>
+  <div class="accordion accordion-flush" id="TopicAccordian">
+    {% for post in object_list %}
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="topic_heading_{{ post.pk }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#topic_collapse_{{ post.pk }}" aria-expanded="false" aria-controls="topic_collapse_{{ post.pk }}">
+            {{ post.title }} | {{ post.author }} | {{ post.created_date}}
+          </button>
+        </h2>
+        <div id="topic_collapse_{{ post.pk }}" class="accordion-collapse collapse" aria-labelledby="topic_heading_{{ post.pk }}" data-bs-parent="#TopicAccordian">
+          <div class="accordion-body">
+            {{ post.body }}
+            <h6><a href="{% url 'forum-topic-view' post.pk %}">View full topic</a></h6>
+            <a href="{% url 'forum-topic-edit' post.pk %}">Edit</a>
+            <a href="{% url 'forum-topic-delete' post.pk %}">Del</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock %}
