@@ -16,4 +16,5 @@ class ForumTopicView(DetailView):
 
 class ForumTopicNew(CreateView):
     model = Post
-    template_name = "forum_topic_add.html"
+    template_name = "forum_topic_new.html"
+    fields = '__all__' # puts all the available fields in the model on the page

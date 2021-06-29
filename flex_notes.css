@@ -1,0 +1,33 @@
+#element_id1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#element_id2 {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+#element_id3 {
+  display: flex;
+  justify-content: space-around;
+  align-items: space-between;
+}
+
+
+#element_id4 {
+  display: flex;
+  flex-direction: column;
+  flex-direction: row;
+  flex-direction: row-row-reverse;
+}
+
+#element_id4 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* this is necessary to move a column to bottom left, as it has rotated you must use
+  justify content oposed to align items */
+}
