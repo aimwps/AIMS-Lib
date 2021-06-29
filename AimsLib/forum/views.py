@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from .models import Post
 # Create your views here.
 # def home(request):
@@ -12,4 +12,8 @@ class ForumView(ListView):
 
 class ForumTopicView(DetailView):
     model = Post
-    template_name = "forum_topic.html"
+    template_name = "forum_topic_view.html"
+
+class ForumTopicNew(CreateView):
+    model = Post
+    template_name = "forum_topic_add.html"

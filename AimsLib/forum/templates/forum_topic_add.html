@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %} Add Forum Post{% endblock %}
+
+{% block content %}
+<h1> Create a new topic</h1>
+
+
+<h2>{{ post.title }}</h2>
+<h3>{{ post.author }}-{{post.author.first_name}}</h3>
+
+<p>{{ post.body }}</p>
+
+{% endblock %}
