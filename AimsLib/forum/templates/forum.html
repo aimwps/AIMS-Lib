@@ -8,6 +8,8 @@
   <li><h6><a href="{% url 'forum-topic-view' post.pk %}">{{ post.title }}</a></h6></li> <!-- "forum-topic" refers to the name given in urls.py / "post.pk" submits the primary key of the post to the url -->
   <li>{{ post.author }}-{{ post.author.first_name }}</li>
   <li>{{ post.body }} </li>
+  <a href="{% url 'forum-topic-edit' post.pk %}"> Edit </a>
+  <a href="{% url 'forum-topic-delete' post.pk %}"> Del </a>
 
 </ul>
 {% endfor %}

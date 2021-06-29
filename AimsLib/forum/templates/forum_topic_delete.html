@@ -1,20 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %} Add Forum Post{% endblock %}
+{% block title %} Deleted Successully!{% endblock %}
 
 {% block content %}
-
-<h1> Add New Topic </h1>
-
 <div class="container">
+  <h1> You deleted a topic </h1>
 
 
   <div class="form-group">
     <form method="POST">
       {% csrf_token %}
-      {{ form.as_p }}
+      <p> Are you sure you want to delete? </p>
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button>Post</button>
+      <button>I am certain</button>
       </form>
   </div>
 </div>

@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %} Add Forum Post{% endblock %}
+{% block title %} Edit Forum Topic{% endblock %}
 
 {% block content %}
 
-<h1> Add New Topic </h1>
-
 <div class="container">
+  <h1> Edit Topic </h1>
 
 
   <div class="form-group">
@@ -14,8 +13,9 @@
       {% csrf_token %}
       {{ form.as_p }}
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button>Post</button>
+      <button>Update</button>
       </form>
+      <a href="{% url 'forum-topic-delete' post.pk %}"> Del </a>
   </div>
 </div>
 

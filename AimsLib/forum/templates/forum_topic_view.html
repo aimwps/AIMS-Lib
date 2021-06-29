@@ -11,4 +11,6 @@
 
 <p>{{ post.body }}</p>
 
+<a href="{% url 'forum-topic-edit' post.pk %}"> Edit </a>
+<a href="{% url 'forum-topic-delete' post.pk %}"> Del </a>
 {% endblock %}
