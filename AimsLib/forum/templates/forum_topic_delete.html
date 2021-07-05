@@ -4,21 +4,31 @@
 
 {% block content %}
 <div class="container">
-  <div class="row justify-content-md-center">
-    <div class="form-group">
-      <form method="POST">
-        {% csrf_token %}
-        <h1> Deleting a topic </h1>
-        <div class="col-12">
-          <p>Are you sure you want to delete? </p>
-        </div>
-        <div class="d-grid gap-2 col-6 mx-auto">
-          <button class="btn btn-danger">I am certain</button>
-          <a class="btn btn-info" href="{% url 'forum-topic-view' post.pk %}">I'm not sure, take me back</a>
-        </div>
-      </form>
+  {% if user.is_authenticated %}
+    {% if user.id == post.author.id %}
+    <div class="row justify-content-md-center">
+      <div class="form-group">
+        <form method="POST">
+          {% csrf_token %}
+          <h1> Deleting a topic </h1>
+          <div class="col-12">
+            <p>Are you sure you want to delete? </p>
+          </div>
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <button class="btn btn-danger">I am certain</button>
+            <a class="btn btn-info" href="{% url 'forum-topic-view' post.pk %}">I'm not sure, take me back</a>
+          </div>
+        </form>
+      </div>
     </div>
+    {% else %}
+    <p> you are not logged in as the correct user to edit this post </p>
+    {% endif %}
+  {% else %}
+    <p> You must be logged in as the publisher of this topic to delete it </p>
+
+    {% endif %}
   </div>
-</div>
+
 
 {% endblock %}

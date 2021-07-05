@@ -12,11 +12,17 @@
   <div class="form-group">
     <form method="POST">
       {% csrf_token %}
+      {{ form.media }}
       {{ form.as_p }}
+
       <!-- doing as_p decides the element that each will be created for each field -->
       <button>Post</button>
       </form>
   </div>
+  <script>
+    var name = "{{ user.id }}";
+    document.getElementById('user_input_ms').value = name;
+  </script>
 </div>
 
 {% endblock %}

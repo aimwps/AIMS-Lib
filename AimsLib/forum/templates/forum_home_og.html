@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} The Forum{% endblock %}
+
+
+{% block content %}
+<div class="container">
+<!-- ####################################################################### -->
+<!-- INSERT ALL DATA HERE                                                ### -->
+<h1> The Forum </h1>
+
+{% for skill_topic_set in skill_area_topics %}
+  <h1>{{ skill_topic_set.0 }}</h1>
+  {% for topic in skill_topic_set.1 %}
+    <hr>
+    <h5>{{topic.title}}</h5>
+    <p>{{ topic.author }} | {{ topic.publish_date }} | {{ topic.publish_time }}</p>
+    <p>{{ topic.body }}</p>
+    <hr>
+  {% endfor %}
+{% endfor %}
+
+
+
+<!-- DONT EDIT AFTER THIS POINT                                          ### -->
+<!-- ####################################################################### -->
+</div>
+{% endblock %}

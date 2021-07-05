@@ -2,32 +2,114 @@
 
 {% block title %} Topic | {{ post.title }}{% endblock %}
 
+{% block sectiontitle %} @Forum {% endblock %}
+
+{% block leftbar %}{% endblock %}
 {% block content %}
-<div class="container">
-  <br/>
-  <br/>
+
 
   <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ post.title }}</button>
-      <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Created by: {{ post.author }}</button>
+      <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">About the author {{ post.author }}</button>
       <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Similar Topics</button>
     </div>
   </nav>
+
+
+  <!-- FIRST TAB CONTENT
+  ################################################################################# -->
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <br>
       <h2>{{ post.title }}</h2>
-      <h6>{{ post.created_date}} | <a href="{% url 'forum-topic-edit' post.pk %}">Edit</a> | <a href="{% url 'forum-topic-delete' post.pk %}">Del</a></h6>
+      <h6>Created {{ post.publish_date}} @ {{ post.publish_time }} by {{ post.author }}
 
-      <p>{{ post.body }}</p>
+        {% if user.is_authenticated %}
+          {% if user.id == post.author.id %}
+          <a href="{% url 'forum-topic-edit' post.pk %}">Edit</a> |
+          <a href="{% url 'forum-topic-delete' post.pk %}">Del</a>
+          {% else %}
+          <a href="#">Reply</a>
+          {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}">login to reply </a>
+        {% endif %}
+      </h6 >
+      <hr>
+      {{ post.body|safe }}
+
     </div>
+
+
+    <!-- SECOND TAB CONTENT USER PROFILE
+    ################################################################################# -->
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-      <p>This is tab 2 where information about the user will be displayed
+
+    {% if post.author.memberprofile %}
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="..." class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">TITLE:{{ post.author.memberprofile.power_quote }}</h5>
+              <p> <a href="{% url 'member-profile' post.author.memberprofile.id %}"> Profile Page</a>
+              <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+              <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p>This users profile is not available to view right now</p>
+      {% endif %}
     </div>
+
+
+
+    <!-- LAST TAB CONTENT
+    ################################################################################# -->
     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-      <p> This is tab 3 where information about similar topics will be seen</div>
+      <p> This is tab 3 where information about similar topics will be seen</p>
+    </div>
+
+
+    <hr>
   </div>
-</div>
+
+
+  <!-- REPLIES
+  ################################################################################# -->
+  <div class="container">
+    <div class="row">
+      <div class="col-6">
+        <div class="d-grid gap-2 col-10 mx-auto">
+          <button class="btn btn-sm btn-outline-secondary" type="button">Comment</button>
+        </div>
+      </div>
+        <!--Pagination--------------------------------------------------------->
+      <div class="col-6">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination pagination-sm justify-content-end">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+    <!--end of Paginati--------------------------------------------------------->
+
 
 
 
