@@ -84,21 +84,29 @@
   <div class="container">
     <div class="row">
       <div class="col-6">
-        <div class="d-grid gap-2 col-12 mx-auto">
-          <button class="btn btn-sm btn-outline-secondary" type="button">Comment</button>
-        </div>
+        <h5 class="mt-1">Topic Comments</h5>
+
       </div>
 
       <div class="col-6">
         {% if not post.comments.all %}
           <p> There are no comments yet.. </p>
         {% else %}
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link nav-link-sm btn-sm" id="tab_c" data-bs-toggle="tab" data-bs-target="#tab_content_c" type="button" role="tab" aria-controls="tab_content_c" aria-selected="false">
+                Add yours..
+              </button>
+            </li>
             {% for comment_list in pagi_comments %}
             <li class="nav-item" role="presentation">
-              <button class="nav-link nav-link-sm" id="tab_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
+              <button class="nav-link nav-link-sm btn-sm" id="tab_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
             </li>
             {% endfor %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link nav-link-sm btn-sm" id="tab_x" data-bs-toggle="tab" data-bs-target="#tab_content_x" type="button" role="tab" aria-controls="tab_content_x" aria-selected="false">X</button>
+            </li>
+
           </ul>
         {% endif %}
       </div>
@@ -109,24 +117,35 @@
           </div>
         <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
           </div> -->
+
+
+          <div class="tab-pane" id="tab_content_c" role="tabpanel" aria-labelledby="tab_c">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                This is where  a comment form will go
+              </li>
+            </ul>
+          </div>
         {% for comment_list in pagi_comments %}
-        <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
-          <ul class="list-group list-group-flush">
-            {% for comment in comment_list %}
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-1">
-                  <a href="#">+</a> | <a href="#">-</a>
+          <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
+            <ul class="list-group list-group-flush">
+              {% for comment in comment_list %}
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-1">
+                    <a href="#">+</a> | <a href="#">-</a>
+                  </div>
+                  <div class="col-11">
+                  {{ comment.body }}
+                  </div>
                 </div>
-                <div class="col-11">
-                {{ comment.body }}
-                </div>
-              </div>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
         {% endfor %}
+        <div class="tab-pane" id="tab_content_x" role="tabpanel" aria-labelledby="tab_x">
+        </div>
       </div>
     </div>
   </div>
@@ -134,18 +153,13 @@
 
 <!-- TOPIC REPLIES
 ################################################################################# -->
-<div class="container">
-  <div class="row">
-    <h1> THIS IS WHERE REPLIES WILL GO </h1>
-  </div>
-</div>
-
 
 
 
 
 
 <script>
+
   var firstTabEl = document.querySelector('#myTab li:last-child a')
   var firstTab = new bootstrap.Tab(firstTabEl)
 
