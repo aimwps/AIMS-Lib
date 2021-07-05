@@ -79,7 +79,7 @@
   </div>
 
 
-  <!-- REPLIES
+  <!-- TOPIC COMMENTS
   ################################################################################# -->
   <div class="container">
     <div class="row">
@@ -96,7 +96,7 @@
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             {% for comment_list in pagi_comments %}
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tab_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
+              <button class="nav-link nav-link-sm" id="tab_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
             </li>
             {% endfor %}
           </ul>
@@ -104,6 +104,11 @@
       </div>
 
       <div class="tab-content">
+        <!-- can build commentsin here rather than have a separate button -->
+        <!-- <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
+          </div>
+        <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
+          </div> -->
         {% for comment_list in pagi_comments %}
         <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
           <ul class="list-group list-group-flush">
@@ -126,6 +131,18 @@
     </div>
   </div>
       <hr>
+
+<!-- TOPIC REPLIES
+################################################################################# -->
+<div class="container">
+  <div class="row">
+    <h1> THIS IS WHERE REPLIES WILL GO </h1>
+  </div>
+</div>
+
+
+
+
 
 
 <script>
