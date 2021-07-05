@@ -36,7 +36,7 @@ class Comment(models.Model):
     #modify_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return "<Comment by " + str(self.author)+">" #This changes the displayed object name into relevant text information
+        return "<Comment by " + str(self.author)+" to "+str(self.on_post.author) + " on " + str(self.on_post) + ">" #This changes the displayed object name into relevant text information
 
     def get_absolute_url(self):
         return reverse('forum-home')

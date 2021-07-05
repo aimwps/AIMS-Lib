@@ -7,7 +7,6 @@
 {% block leftbar %}{% endblock %}
 {% block content %}
 
-
   <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ post.title }}</button>
@@ -85,32 +84,55 @@
   <div class="container">
     <div class="row">
       <div class="col-6">
-        <div class="d-grid gap-2 col-10 mx-auto">
+        <div class="d-grid gap-2 col-12 mx-auto">
           <button class="btn btn-sm btn-outline-secondary" type="button">Comment</button>
         </div>
       </div>
-        <!--Pagination--------------------------------------------------------->
+
       <div class="col-6">
-        <nav aria-label="Page navigation example">
-          <ul class="pagination pagination-sm justify-content-end">
-            <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        {% if not post.comments.all %}
+          <p> There are no comments yet.. </p>
+        {% else %}
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            {% for comment_list in pagi_comments %}
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#">Next</a>
-            </li>
+            {% endfor %}
           </ul>
-        </nav>
+        {% endif %}
+      </div>
+
+      <div class="tab-content">
+        {% for comment_list in pagi_comments %}
+        <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}">
+          <ul class="list-group list-group-flush">
+            {% for comment in comment_list %}
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-1">
+                  <a href="#">+</a> | <a href="#">-</a>
+                </div>
+                <div class="col-11">
+                {{ comment.body }}
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
-
-    <!--end of Paginati--------------------------------------------------------->
-
+      <hr>
 
 
+<script>
+  var firstTabEl = document.querySelector('#myTab li:last-child a')
+  var firstTab = new bootstrap.Tab(firstTabEl)
+
+  firstTab.show()
+</script>
 
 {% endblock %}

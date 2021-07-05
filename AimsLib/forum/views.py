@@ -25,6 +25,7 @@ def ForumDevAreaTopics(request, dev_area_name):
 
 class ForumViewHome(TemplateView):
     template_name = "forum_home.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         skill_topic_set = []
@@ -42,6 +43,24 @@ class ForumViewHome(TemplateView):
 class ForumTopicView(DetailView):
     model = Post
     template_name = "forum_topic_view.html"
+    def get_context_data(self, **kwargs):
+        context = super(ForumTopicView, self).get_context_data(**kwargs)
+        page = self.request.GET.get('page')
+        topic_comments = self.object.comments.all() # put order by here for most gvoted in future
+        pagi_comments = []
+        pagi_builder = []
+        for comment in topic_comments:
+            if len(pagi_builder) >= 3:
+                pagi_comments.append(pagi_builder)
+                pagi_builder = []
+            pagi_builder.append( comment)
+        if len(pagi_builder) > 0:
+            pagi_comments.append(pagi_builder)
+
+        context['pagi_comments'] = pagi_comments
+
+        return context
+
 
 class ForumTopicNew(CreateView):
     model = Post
