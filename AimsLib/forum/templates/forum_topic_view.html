@@ -28,7 +28,7 @@
             <h6>Created {{ topic.publish_date}} @ {{ topic.publish_time }} by {{ topic.author }}
 
               {% if user.is_authenticated %}
-                {% if user.id == topic.author.id %}
+                {% if user.id == reply.author.id %}
                 <a href="{% url 'forum-topic-edit' topic.pk %}">Edit</a> |
                 <a href="{% url 'forum-topic-delete' topic.pk %}">Del</a>
                 {% else %}
@@ -179,12 +179,37 @@
 
 <!-- TOPIC REPLIES
 ################################################################################# -->
-
+<br/>
 {% for reply in topic_replies %}
+  <div class="container">
+    <div class="row">
+      <div class="col-9">
+        <h2>Reply</h2>
+        <h6>Created {{ reply.publish_date}} @ {{ reply.publish_time }} by {{ reply.author }}
 
- {{ reply.body|safe }}
-
- {% endfor %}
+          {% if user.is_authenticated %}
+            {% if user.id == reply.author.id %}
+            <!-- <a href="{% url 'forum-topic-edit' reply.pk %}">Edit</a> |
+            <a href="{% url 'forum-topic-delete' reply.pk %}">Del</a> -->
+            {% else %}
+            <a href="#">Reply</a>
+            {% endif %}
+          {% else %}
+          <a href="{% url 'login' %}">login to reply </a>
+          {% endif %}
+        </h6 >
+      </div>
+      <div class="col-3">
+        user controls here
+      </div>
+    </div>
+    <div>
+      <hr>
+      {{ reply.body|safe }}
+    </div>
+  </div>
+<hr>
+   {% endfor %}
 
 
 
