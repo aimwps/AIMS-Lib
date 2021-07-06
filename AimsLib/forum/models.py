@@ -30,10 +30,11 @@ class Post(models.Model):
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
-    body = models.TextField()
-    publish_date = models.DateField(auto_now_add=True)
-    publish_time = models.TimeField(auto_now_add=True)
-    #modify_date = models.DateField(auto_now_add=True)
+    body = models.TextField(max_length=500)
+    publish_date = models.DateField(auto_now=False,auto_now_add=True)
+    publish_time = models.TimeField(auto_now=False,auto_now_add=True)
+    modify_date = models.DateField(auto_now=True,auto_now_add=False)
+    modify_time = models.TimeField(auto_now=True,auto_now_add=False)
 
     def __str__(self):
         return "<Comment by " + str(self.author)+" to "+str(self.on_post.author) + " on " + str(self.on_post) + ">" #This changes the displayed object name into relevant text information
@@ -45,16 +46,17 @@ class Comment(models.Model):
 
 class Reply(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    on_post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    on_post = models.ForeignKey(Post, related_name="replies", on_delete=models.CASCADE)
     #body = models.TextField()
     body = RichTextField(blank=True, null=True)
     publish_date = models.DateField(auto_now_add=True)
     publish_time = models.TimeField(auto_now_add=True)
-    #modify_date = models.DateField(auto_now_add=True)
+    modify_date = models.DateField(auto_now=True,auto_now_add=False)
+    modify_time = models.TimeField(auto_now=True,auto_now_add=False)
 
 
     def __str__(self):
-        return "<Reply by " + str(self.author)+">"#This changes the displayed object name into relevant text information
+        return f"<Reply by: {self.author} to: {self.on_post.author} on: {self.publish_date} at: {self.publish_time}>"#This changes the displayed object name into relevant text information
 
     def get_absolute_url(self):
         return reverse('forum-home')

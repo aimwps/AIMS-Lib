@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Topic | {{ post.title }}{% endblock %}
+{% block title %} Topic | {{ topic.title }}{% endblock %}
 
 {% block sectiontitle %} @Forum {% endblock %}
 
@@ -9,8 +9,8 @@
 
   <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-      <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ post.title }}</button>
-      <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">About the author {{ post.author }}</button>
+      <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{ topic.title }}</button>
+      <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">About the author {{ topic.author }}</button>
       <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Similar Topics</button>
     </div>
   </nav>
@@ -21,31 +21,43 @@
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
       <br>
-      <h2>{{ post.title }}</h2>
-      <h6>Created {{ post.publish_date}} @ {{ post.publish_time }} by {{ post.author }}
+      <div class="container">
+        <div class="row">
+          <div class="col-9">
+            <h2>{{ topic.title }}</h2>
+            <h6>Created {{ topic.publish_date}} @ {{ topic.publish_time }} by {{ topic.author }}
 
-        {% if user.is_authenticated %}
-          {% if user.id == post.author.id %}
-          <a href="{% url 'forum-topic-edit' post.pk %}">Edit</a> |
-          <a href="{% url 'forum-topic-delete' post.pk %}">Del</a>
-          {% else %}
-          <a href="#">Reply</a>
-          {% endif %}
-        {% else %}
-        <a href="{% url 'login' %}">login to reply </a>
-        {% endif %}
-      </h6 >
-      <hr>
-      {{ post.body|safe }}
-
+              {% if user.is_authenticated %}
+                {% if user.id == topic.author.id %}
+                <a href="{% url 'forum-topic-edit' topic.pk %}">Edit</a> |
+                <a href="{% url 'forum-topic-delete' topic.pk %}">Del</a>
+                {% else %}
+                <a href="#">Reply</a>
+                {% endif %}
+              {% else %}
+              <a href="{% url 'login' %}">login to reply </a>
+              {% endif %}
+            </h6 >
+          </div>
+          <div class="col-3">
+            user controls here
+          </div>
+        </div>
+        <div>
+          <hr>
+          {{ topic.body|safe }}
+        </div>
+      </div>
     </div>
+
+
 
 
     <!-- SECOND TAB CONTENT USER PROFILE
     ################################################################################# -->
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
 
-    {% if post.author.memberprofile %}
+    {% if topic.author.memberprofile %}
       <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-4">
@@ -53,8 +65,8 @@
           </div>
           <div class="col-md-8">
             <div class="card-body">
-              <h5 class="card-title">TITLE:{{ post.author.memberprofile.power_quote }}</h5>
-              <p> <a href="{% url 'member-profile' post.author.memberprofile.id %}"> Profile Page</a>
+              <h5 class="card-title">TITLE:{{ topic.author.memberprofile.power_quote }}</h5>
+              <p> <a href="{% url 'member-profile' topic.author.memberprofile.id %}"> Profile Page</a>
               <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
             </div>
@@ -77,19 +89,20 @@
 
     <hr>
   </div>
+  <!-- this div is the end of the tabs -->
 
 
   <!-- TOPIC COMMENTS
   ################################################################################# -->
   <div class="container">
     <div class="row">
-      <div class="col-6">
+      <div class="col-4">
         <h5 class="mt-1">Topic Comments</h5>
 
       </div>
 
-      <div class="col-6">
-        {% if not post.comments.all %}
+      <div class="col-8">
+        {% if not pagi_comments %}
           <p> There are no comments yet.. </p>
         {% else %}
           <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
@@ -122,7 +135,20 @@
           <div class="tab-pane" id="tab_content_c" role="tabpanel" aria-labelledby="tab_c">
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
-                This is where  a comment form will go
+                <div class="container">
+
+
+                  <div class="form-group">
+                    <form method="POST" action=".">
+                      {% csrf_token %}
+                      {{ comment_form.as_p }}
+
+                      <input type="submit" value="Post comment", class="btn btn-secondary">
+                      <!-- doing as_p decides the element that each will be created for each field -->
+                      </form>
+                  </div>
+
+                </div>
               </li>
             </ul>
           </div>
@@ -149,12 +175,16 @@
       </div>
     </div>
   </div>
-      <hr>
+  <hr>
 
 <!-- TOPIC REPLIES
 ################################################################################# -->
 
+{% for reply in topic_replies %}
 
+ {{ reply.body|safe }}
+
+ {% endfor %}
 
 
 
