@@ -6,6 +6,7 @@ from .forms import ForumTopicNewForm, ForumTopicEditForm, ForumTopicCommentForm
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
 # Create your views here.
 # def home(request):
 #     return render(request, 'forum.html', {})
@@ -40,12 +41,13 @@ class ForumViewHome(TemplateView):
 
 def ForumTopicView(request, pk):
     topic = get_object_or_404(Post,id=pk)#
-    comment_form = ForumTopicCommentForm(request.POST or None)#
+    topic_comment_form = ForumTopicCommentForm(request.POST or None)#
+    reply_comment_form = ForumTopicCommentForm(request.POST or None)#
     template_name = "forum_topic_view.html"
 
     if request.method == "GET":
-        topic_comments = Comment.objects.filter(on_post=pk)
-        topic_replies = Reply.objects.filter(on_post=pk)
+    ### FOR TOPIC COMMENTS
+        topic_comments = Comment.objects.filter_by_instance(topic)
         # For splitting comments into groups of 3 allowing them to be
         # displayed in seperate tabs.
         pagi_comments = []
@@ -57,20 +59,62 @@ def ForumTopicView(request, pk):
             pagi_builder.append( comment)
         pagi_comments.append(pagi_builder)
 
-    if request.method =="POST":
-        if comment_form.is_valid():
-            print(comment_form.cleaned_data)
-            c_body = comment_form.cleaned_data.get('content_body')
-            new_comment = Comment(author = request.user, on_post=topic, body=c_body)
+    ### FOR TOPIC REPLIES
+        #### Check is there are replies
+        all_replies_and_comments =[]
+        topic_replies = Reply.objects.filter(on_post=pk)
+        if topic_replies:
+
+        ### Loop through the replies
+            for topic_reply in topic_replies:
+
+            #### Find any comments replated to an individual reply
+                reply_comments = Comment.objects.filter_by_instance(topic_reply)
+                if reply_comments:
+                    comment_replies_list = []
+                    comment_replies_list_builder = []
+                    for comment in reply_comments:
+                        if len(comment_replies_list_builder) >= 5:
+                            comment_replies_list.append(comment_replies_list_builder)
+                            comment_replies_list_builder = []
+                        comment_replies_list_builder.append( comment)
+                    comment_replies_list.append(comment_replies_list_builder)
+
+            ### Save a single reply and all its comments as a tuple to a list of every reply and comment
+                    all_replies_and_comments.append((topic_reply, comment_replies_list))
+                else:
+                    all_replies_and_comments.append((topic_reply,))
+
+
+
+
+
+    if request.method =="POST" and 'commentfortopic' in request.POST:
+        if topic_comment_form.is_valid():
+            print(topic_comment_form.cleaned_data)
+            c_body = topic_comment_form.cleaned_data.get('content_body')
+            new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Post),body=c_body, object_id=topic.id)
             new_comment.save()
             return HttpResponseRedirect(request.path)
+
+
+    if request.method =="POST" and 'commentforreply' in request.POST:
+        if reply_comment_form.is_valid():
+            print(reply_comment_form.cleaned_data)
+            c_body = reply_comment_form.cleaned_data.get('content_body')
+            new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Reply),body=c_body, object_id=request.POST['object_id'])
+            new_comment.save()
+            return HttpResponseRedirect(request.path)
+
+
+            print(reply_comment_form.cleaned_data)
     context = {
                 "topic": topic,
                 "pagi_comments": pagi_comments[:min(len(pagi_comments),6)],
-                "comment_form": comment_form,
-                "topic_replies": topic_replies}
-
-
+                "topic_comment_form": topic_comment_form,
+                "topic_replies": all_replies_and_comments,
+                "reply_comment_form": reply_comment_form,
+                }
     return render(request, template_name, context)
 
 

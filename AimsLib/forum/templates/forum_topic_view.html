@@ -15,9 +15,8 @@
     </div>
   </nav>
 
-
-  <!-- FIRST TAB CONTENT
-  ################################################################################# -->
+<!-- FIRST TAB CONTENT
+################################################################################# -->
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
       <br>
@@ -28,7 +27,7 @@
             <h6>Created {{ topic.publish_date}} @ {{ topic.publish_time }} by {{ topic.author }}
 
               {% if user.is_authenticated %}
-                {% if user.id == reply.author.id %}
+                {% if user.id == reply.0.author.id %}
                 <a href="{% url 'forum-topic-edit' topic.pk %}">Edit</a> |
                 <a href="{% url 'forum-topic-delete' topic.pk %}">Del</a>
                 {% else %}
@@ -40,7 +39,28 @@
             </h6 >
           </div>
           <div class="col-3">
-            user controls here
+
+
+
+            <form method="POST" action=".">
+              {% csrf_token %}
+              {{ reply_comment_form.as_p }}
+
+              <input type="hidden" value="{{ reply.0.id }}" name="object_id">
+                <input type="submit" value="Post comment" name="commentforreply" class="btn btn-secondary">
+              <!-- doing as_p decides the element that each will be created for each field -->
+              </form>
+
+
+            <form action={"% url "} method="POST"
+
+
+
+
+
+
+
+
           </div>
         </div>
         <div>
@@ -50,11 +70,9 @@
       </div>
     </div>
 
-
-
-
-    <!-- SECOND TAB CONTENT USER PROFILE
-    ################################################################################# -->
+    <hr>
+<!-- SECOND TAB CONTENT USER PROFILE
+################################################################################# -->
     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
 
     {% if topic.author.memberprofile %}
@@ -78,22 +96,17 @@
       {% endif %}
     </div>
 
-
-
-    <!-- LAST TAB CONTENT
-    ################################################################################# -->
+    <hr>
+<!-- LAST TAB CONTENT
+################################################################################# -->
     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
       <p> This is tab 3 where information about similar topics will be seen</p>
     </div>
 
-
     <hr>
-  </div>
-  <!-- this div is the end of the tabs -->
 
-
-  <!-- TOPIC COMMENTS
-  ################################################################################# -->
+<!-- TOPIC COMMENTS
+################################################################################# -->
   <div class="container">
     <div class="row">
       <div class="col-4">
@@ -141,9 +154,9 @@
                   <div class="form-group">
                     <form method="POST" action=".">
                       {% csrf_token %}
-                      {{ comment_form.as_p }}
+                      {{ topic_comment_form.as_p }}
 
-                      <input type="submit" value="Post comment", class="btn btn-secondary">
+                      <input type="submit" value="Post comment" name="commentfortopic" class="btn btn-secondary">
                       <!-- doing as_p decides the element that each will be created for each field -->
                       </form>
                   </div>
@@ -177,6 +190,7 @@
   </div>
   <hr>
 
+
 <!-- TOPIC REPLIES
 ################################################################################# -->
 <br/>
@@ -184,11 +198,11 @@
   <div class="container">
     <div class="row">
       <div class="col-9">
-        <h2>Reply</h2>
-        <h6>Created {{ reply.publish_date}} @ {{ reply.publish_time }} by {{ reply.author }}
+        <h2>{{ forloop.counter0}} Reply</h2>
+        <h6>Created {{ reply.0.publish_date}} @ {{ reply.0.publish_time }} by {{ reply.0.author }}
 
           {% if user.is_authenticated %}
-            {% if user.id == reply.author.id %}
+            {% if user.id == reply.0.author.id %}
             <!-- <a href="{% url 'forum-topic-edit' reply.pk %}">Edit</a> |
             <a href="{% url 'forum-topic-delete' reply.pk %}">Del</a> -->
             {% else %}
@@ -205,10 +219,80 @@
     </div>
     <div>
       <hr>
-      {{ reply.body|safe }}
+      {{ reply.0.body|safe }}
     </div>
   </div>
 <hr>
+<div class="container">
+    <div class="row">
+      <div class="col-4">
+        <h5 class="mt-1">Topic Comments</h5>
+
+      </div>
+      <div class="col-8">
+          <ul class="nav nav-tabs justify-content-end" id="replyTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link nav-link-sm btn-sm" id="tab_{{ forloop.counter0 }}_c" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}_c" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}_c" aria-selected="false">
+                Add yours..
+              </button>
+          {% if reply.1 %}
+            </li>
+            {% for comment_list in reply.1 %}
+              <li class="nav-item" role="presentation">
+                <button class="nav-link nav-link-sm btn-sm" id="tab_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
+              </li>
+            {% endfor %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link nav-link-sm btn-sm" id="tab_{{ forloop.counter0 }}_x" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.counter0 }}_x" type="button" role="tab" aria-controls="tab_content_{{ forloop.counter0 }}_x" aria-selected="false">X</button>
+            </li>
+
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}_c" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}_c">
+           <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div class="container">
+                  <div class="form-group">
+                    <form method="POST" action=".">
+                      {% csrf_token %}
+                      {{ reply_comment_form.as_p }}
+
+                      <input type="hidden" value="{{ reply.0.id }}" name="object_id">
+                        <input type="submit" value="Post comment" name="commentforreply" class="btn btn-secondary">
+                      <!-- doing as_p decides the element that each will be created for each field -->
+                      </form>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        {% for comment_list in reply.1 %}
+          <div class="tab-pane" id="tab_content_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}">
+            <ul class="list-group list-group-flush">
+              {% for comment in comment_list %}
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-1">
+                    <a href="#">+</a> | <a href="#">-</a>
+                  </div>
+                  <div class="col-11">
+                  {{ comment.body }}
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+        <div class="tab-pane" id="tab_content_{{ forloop.counter0 }}_x" role="tabpanel" aria-labelledby="tab_{{ forloop.counter0 }}_x">
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
    {% endfor %}
 
 
@@ -216,6 +300,9 @@
 <script>
 
   var firstTabEl = document.querySelector('#myTab li:last-child a')
+  var firstTab = new bootstrap.Tab(firstTabEl)
+
+  var firstTabEl = document.querySelector('#replyTab li:last-child a')
   var firstTab = new bootstrap.Tab(firstTabEl)
 
   firstTab.show()

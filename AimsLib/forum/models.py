@@ -1,11 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from datetime import datetime, date
 from Development.models import SkillArea
 from ckeditor.fields import RichTextField
 
 
+class VoteUpDown(models.Model):
+    votee = models.ForeignKey(User, on_delete=models.CASCADE)
+    #on_post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+    content_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    is_up_vote = models.BooleanField()
+
+    def __str__(self):
+        return f"<VoteUpDown by {self.votee} is_up_vote: {is_up_vote}>"
+
+
+    # def get_absolute_url(self):
+    #     return reverse('forum-home')
+    #     #return reverse('home')
+
+
+class CommentManager(models.Manager):
+    def filter_by_instance(self,instance):
+        obj_id = instance.id
+        content_type = ContentType.objects.get_for_model(instance)
+        qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
+        return qs
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
@@ -29,15 +54,23 @@ class Post(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    on_post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+    #on_post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+    content_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
     body = models.TextField(max_length=500)
     publish_date = models.DateField(auto_now=False,auto_now_add=True)
     publish_time = models.TimeField(auto_now=False,auto_now_add=True)
     modify_date = models.DateField(auto_now=True,auto_now_add=False)
     modify_time = models.TimeField(auto_now=True,auto_now_add=False)
+    objects = CommentManager()
+
+
+
 
     def __str__(self):
-        return "<Comment by " + str(self.author)+" to "+str(self.on_post.author) + " on " + str(self.on_post) + ">" #This changes the displayed object name into relevant text information
+        return "<Comment by " + str(self.author)+">" #This changes the displayed object name into relevant text information
 
     def get_absolute_url(self):
         return reverse('forum-home')
