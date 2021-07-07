@@ -49,6 +49,7 @@ def ForumTopicView(request, pk):
     if request.method == "GET":
     ### FOR TOPIC COMMENTS
         topic_comments = Comment.objects.filter_by_instance(topic)
+        topic_votes = VoteUpDown.objects.filter_by_instance_vote_counts(topic)
         # For splitting comments into groups of 3 allowing them to be
         # displayed in seperate tabs.
         pagi_comments = []
@@ -107,17 +108,29 @@ def ForumTopicView(request, pk):
             new_comment.save()
             return HttpResponseRedirect(request.path)
 
+
+
+
     if request.method =="POST" and 'topic_vote_up' in request.POST:
-        print("Whoop executed this")
+        past_vote = VoteUpDown.objects.filter_by_instance(topic)
+        user_votes = past_vote.filter(votee=request.user)
+        if user_votes:
+            print("Already voted")
+            return HttpResponseRedirect(request.path)
         new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=True)
         new_vote.save()
         return HttpResponseRedirect(request.path)
 
     if request.method =="POST" and 'topic_vote_down' in request.POST:
-        print("Whoop executed this")
-        new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=False)
-        new_vote.save()
-        return HttpResponseRedirect(request.path)
+        past_vote = VoteUpDown.objects.filter_by_instance(topic)
+        user_votes = past_vote.filter(votee=request.user)
+        if user_votes:
+            print("Already voted")
+            return HttpResponseRedirect(request.path)
+        else:
+            new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=False)
+            new_vote.save()
+            return HttpResponseRedirect(request.path)
 
     context = {
                 "topic": topic,
@@ -125,6 +138,7 @@ def ForumTopicView(request, pk):
                 "topic_comment_form": topic_comment_form,
                 "topic_replies": all_replies_and_comments,
                 "reply_comment_form": reply_comment_form,
+                "topic_votes": topic_votes,
                 }
     return render(request, template_name, context)
 

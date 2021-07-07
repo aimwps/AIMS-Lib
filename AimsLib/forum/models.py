@@ -11,8 +11,16 @@ class VoteManager(models.Manager):
     def filter_by_instance(self,instance):
         obj_id = instance.id
         content_type = ContentType.objects.get_for_model(instance)
-        qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
+        qs = super(VoteManager, self).filter(content_type=content_type, object_id=obj_id)
         return qs
+
+    def filter_by_instance_vote_counts(self,instance):
+        obj_id = instance.id
+        content_type = ContentType.objects.get_for_model(instance)
+        qs_up = super(VoteManager, self).filter(content_type=content_type, is_up_vote=True, object_id=obj_id)
+        qs_down = super(VoteManager, self).filter(content_type=content_type,is_up_vote=False, object_id=obj_id)
+        return (len(qs_up), len(qs_down))
+
 
 class VoteUpDown(models.Model):
     votee = models.ForeignKey(User, on_delete=models.CASCADE)
