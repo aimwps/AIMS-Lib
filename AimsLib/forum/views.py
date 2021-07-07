@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View,ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, FormView
-from .models import Post, Comment, Reply
+from .models import Post, Comment, Reply, VoteUpDown
 from Development.models import SkillArea
 from .forms import ForumTopicNewForm, ForumTopicEditForm, ForumTopicCommentForm
 from django.urls import reverse_lazy
@@ -44,7 +44,8 @@ def ForumTopicView(request, pk):
     topic_comment_form = ForumTopicCommentForm(request.POST or None)#
     reply_comment_form = ForumTopicCommentForm(request.POST or None)#
     template_name = "forum_topic_view.html"
-
+    pagi_comments = []
+    all_replies_and_comments =[]
     if request.method == "GET":
     ### FOR TOPIC COMMENTS
         topic_comments = Comment.objects.filter_by_instance(topic)
@@ -106,8 +107,18 @@ def ForumTopicView(request, pk):
             new_comment.save()
             return HttpResponseRedirect(request.path)
 
+    if request.method =="POST" and 'topic_vote_up' in request.POST:
+        print("Whoop executed this")
+        new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=True)
+        new_vote.save()
+        return HttpResponseRedirect(request.path)
 
-            print(reply_comment_form.cleaned_data)
+    if request.method =="POST" and 'topic_vote_down' in request.POST:
+        print("Whoop executed this")
+        new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=False)
+        new_vote.save()
+        return HttpResponseRedirect(request.path)
+
     context = {
                 "topic": topic,
                 "pagi_comments": pagi_comments[:min(len(pagi_comments),6)],

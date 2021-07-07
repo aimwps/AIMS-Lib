@@ -7,6 +7,12 @@ from datetime import datetime, date
 from Development.models import SkillArea
 from ckeditor.fields import RichTextField
 
+class VoteManager(models.Manager):
+    def filter_by_instance(self,instance):
+        obj_id = instance.id
+        content_type = ContentType.objects.get_for_model(instance)
+        qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
+        return qs
 
 class VoteUpDown(models.Model):
     votee = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -15,9 +21,11 @@ class VoteUpDown(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     is_up_vote = models.BooleanField()
+    objects = VoteManager()
 
     def __str__(self):
-        return f"<VoteUpDown by {self.votee} is_up_vote: {is_up_vote}>"
+        return f"<VoteUpDown by {self.votee} is_up_vote: {self.is_up_vote}>"
+
 
 
     # def get_absolute_url(self):

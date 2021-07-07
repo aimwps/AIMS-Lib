@@ -4,4 +4,4 @@ from .models import Post, Reply, Comment, VoteUpDown
 admin.site.register(Post) # Allows posts to be accesible via admin area
 admin.site.register(Reply)
 admin.site.register(Comment)
-#admin.site.register(VoteUpDown)
+admin.site.register(VoteUpDown)

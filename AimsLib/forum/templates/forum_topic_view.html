@@ -39,28 +39,19 @@
             </h6 >
           </div>
           <div class="col-3">
-
-
-
-            <form method="POST" action=".">
-              {% csrf_token %}
-              {{ reply_comment_form.as_p }}
-
-              <input type="hidden" value="{{ reply.0.id }}" name="object_id">
-                <input type="submit" value="Post comment" name="commentforreply" class="btn btn-secondary">
-              <!-- doing as_p decides the element that each will be created for each field -->
+            <div class="span">
+              <form method="POST" action=".">
+                  {% csrf_token %}
+                  <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
+                  <p><button type="submit" name="topic_vote_up" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button> 30000</p>
               </form>
-
-
-            <form action={"% url "} method="POST"
-
-
-
-
-
-
-
-
+              <form method="POST" action=".">
+                  {% csrf_token %}
+                  <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
+                  <p><button type="submit" name="topic_vote_down" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>1000</p>
+                  <!-- <p><input type="submit" value="Vote -" name="topic_vote_down" class="btn btn-secondary btn-sm btn-block"></p> -->
+              </form>
+            </div>
           </div>
         </div>
         <div>
