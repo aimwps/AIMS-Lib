@@ -8,4 +8,5 @@ urlpatterns = [
     path('forum_topic/new/', ForumTopicNew.as_view(), name="forum-topic-new"),
     path('forum_topic/edit/<int:pk>', ForumTopicEdit.as_view(), name="forum-topic-edit"),
     path('forum_topic/delete/<int:pk>', ForumTopicDelete.as_view(), name="forum-topic-delete"),
+
 ]

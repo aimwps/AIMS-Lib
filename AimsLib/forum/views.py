@@ -7,11 +7,16 @@ from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 # Create your views here.
 # def home(request):
 #     return render(request, 'forum.html', {})
 
 #ForumViewHome,ForumDevAreaTopics, ForumTopicView, ForumTopicNew, ForumTopicEdit, ForumTopicDelete
+
+
+
+
 
 def ForumDevAreaTopics(request, dev_area_name):
     #print(SkillArea.objects.filter(skill_area_name=dev_area_name)[0])
@@ -39,102 +44,156 @@ class ForumViewHome(TemplateView):
 ###############################################################################################
 ### For viewing a topic, replying and making comments
 
+def create_comment_lists_by_len(qs, l_len):
+    pagi_comments = []
+    pagi_builder = []
+    for comment in qs:
+        if len(pagi_builder) >= l_len:
+            pagi_comments.append(pagi_builder)
+            pagi_builder = []
+        pagi_builder.append(comment)
+    pagi_comments.append(pagi_builder)
+    return pagi_comments
+
+
 def ForumTopicView(request, pk):
     topic = get_object_or_404(Post,id=pk)#
     topic_comment_form = ForumTopicCommentForm(request.POST or None)#
     reply_comment_form = ForumTopicCommentForm(request.POST or None)#
     template_name = "forum_topic_view.html"
-    pagi_comments = []
-    all_replies_and_comments =[]
+    topic_comment_split_list = []
+    reply_comment_split_list = []
+    all_replies_and_comments = []
+    topic_votes = []
     if request.method == "GET":
     ### FOR TOPIC COMMENTS
         topic_comments = Comment.objects.filter_by_instance(topic)
         topic_votes = VoteUpDown.objects.filter_by_instance_vote_counts(topic)
-        # For splitting comments into groups of 3 allowing them to be
-        # displayed in seperate tabs.
-        pagi_comments = []
-        pagi_builder = []
-        for comment in topic_comments:
-            if len(pagi_builder) >= 5:
-                pagi_comments.append(pagi_builder)
-                pagi_builder = []
-            pagi_builder.append( comment)
-        pagi_comments.append(pagi_builder)
+        if topic_comments:
+            topic_comment_split_list = create_comment_lists_by_len(topic_comments, 5)
 
     ### FOR TOPIC REPLIES
         #### Check is there are replies
-        all_replies_and_comments =[]
         topic_replies = Reply.objects.filter(on_post=pk)
         if topic_replies:
-
         ### Loop through the replies
             for topic_reply in topic_replies:
 
             #### Find any comments replated to an individual reply
                 reply_comments = Comment.objects.filter_by_instance(topic_reply)
                 if reply_comments:
-                    comment_replies_list = []
-                    comment_replies_list_builder = []
-                    for comment in reply_comments:
-                        if len(comment_replies_list_builder) >= 5:
-                            comment_replies_list.append(comment_replies_list_builder)
-                            comment_replies_list_builder = []
-                        comment_replies_list_builder.append( comment)
-                    comment_replies_list.append(comment_replies_list_builder)
+                    reply_comment_split_list = create_comment_lists_by_len(reply_comments, 5)
 
             ### Save a single reply and all its comments as a tuple to a list of every reply and comment
-                    all_replies_and_comments.append((topic_reply, comment_replies_list))
+                    all_replies_and_comments.append((topic_reply, reply_comment_split_list))
                 else:
                     all_replies_and_comments.append((topic_reply,))
 
-
-
-
-
     if request.method =="POST" and 'commentfortopic' in request.POST:
-        if topic_comment_form.is_valid():
-            print(topic_comment_form.cleaned_data)
-            c_body = topic_comment_form.cleaned_data.get('content_body')
-            new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Post),body=c_body, object_id=topic.id)
-            new_comment.save()
+        if request.user:
+            if topic_comment_form.is_valid():
+                print(topic_comment_form.cleaned_data)
+                c_body = topic_comment_form.cleaned_data.get('content_body')
+                new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Post),body=c_body, object_id=topic.id)
+                new_comment.save()
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to commment')
             return HttpResponseRedirect(request.path)
-
 
     if request.method =="POST" and 'commentforreply' in request.POST:
-        if reply_comment_form.is_valid():
-            print(reply_comment_form.cleaned_data)
-            c_body = reply_comment_form.cleaned_data.get('content_body')
-            new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Reply),body=c_body, object_id=request.POST['object_id'])
-            new_comment.save()
+        if request.user:
+            if reply_comment_form.is_valid():
+                print("XXXXXXXXXXXXXXXXXXXXXXXX")
+                print(request.POST['object_id'])
+                print(reply_comment_form.cleaned_data)
+                c_body = reply_comment_form.cleaned_data.get('content_body')
+                new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Reply),body=c_body, object_id=request.POST['object_id'])
+                new_comment.save()
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to commment')
             return HttpResponseRedirect(request.path)
-
 
 
 
     if request.method =="POST" and 'topic_vote_up' in request.POST:
         past_vote = VoteUpDown.objects.filter_by_instance(topic)
-        user_votes = past_vote.filter(votee=request.user)
-        if user_votes:
-            print("Already voted")
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=True)
+            new_vote.save()
+            messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
             return HttpResponseRedirect(request.path)
-        new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=True)
-        new_vote.save()
-        return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+
 
     if request.method =="POST" and 'topic_vote_down' in request.POST:
         past_vote = VoteUpDown.objects.filter_by_instance(topic)
-        user_votes = past_vote.filter(votee=request.user)
-        if user_votes:
-            print("Already voted")
-            return HttpResponseRedirect(request.path)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=False)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
         else:
-            new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=False)
-            new_vote.save()
+            messages.info(request, 'You must be logged in to vote')
             return HttpResponseRedirect(request.path)
+
+
+
+#### Comment voting
+    if request.method =="POST" and 'comment_vote_up' in request.POST:
+        past_vote = VoteUpDown.objects.filter_by_instance(Comment)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=request.POST["reply_id_to_vote_up"], is_up_vote=True)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+
+
+    if request.method =="POST" and 'comment_vote_down' in request.POST:
+        past_vote = VoteUpDown.objects.filter_by_instance(Comment)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                x =request.POST["reply_id_to_vote"]
+                print(f"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX {x}")
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=request.POST["reply_id_to_vote_down"], is_up_vote=False)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+
+
+
+
 
     context = {
                 "topic": topic,
-                "pagi_comments": pagi_comments[:min(len(pagi_comments),6)],
+                "pagi_comments": topic_comment_split_list[:min(len(topic_comment_split_list), 6)],
                 "topic_comment_form": topic_comment_form,
                 "topic_replies": all_replies_and_comments,
                 "reply_comment_form": reply_comment_form,
