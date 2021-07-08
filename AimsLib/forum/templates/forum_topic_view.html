@@ -15,8 +15,8 @@
     </div>
   </nav>
 
-<!-- FIRST TAB CONTENT
-################################################################################# -->
+<!-- FIRST TAB CONTENT TROPIC TITLE ROW
+################################################################################################################################################# -->
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
       <br>
@@ -26,7 +26,8 @@
             <h2>{{ topic.title }}</h2>
             <h6>Created {{ topic.publish_date}} @ {{ topic.publish_time }} by {{ topic.author }} {% if topic.modify_date %} & last modified on {{ topic.modify_date}} @ {{ topic.modify_time }} {% endif %}</h6 >
           </div>
-
+  <!-- REPLY OR LOGIN FOR TOPIC TITLE ROW
+  ################################################################################################################################################### -->
           <div class="col-1">
             {% if user.is_authenticated %}
               <a href="#" class="btn btn-secondary btn-sm btn-block"><i class="fas fa-reply"></i></a>
@@ -38,6 +39,8 @@
 
 
           <div class="col-2">
+<!-- VOTING FOR TOPIC TITLE ROW
+################################################################################################################################################### -->
             <div class="span">
               <form method="POST" action=".">
                   {% csrf_token %}
@@ -76,7 +79,7 @@
 
     <hr>
 <!-- SECOND TAB CONTENT USER PROFILE
-################################################################################# -->
+############################################################################################################################################################# -->
   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
 
     {% if topic.author.memberprofile %}
@@ -102,19 +105,20 @@
 
     <hr>
 <!-- LAST TAB CONTENT
-################################################################################# -->
+##################################################################################################################################################################### -->
     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
       <p> This is tab 3 where information about similar topics will be seen</p>
     </div>
 
     <hr>
 </div>
+
 <!-- TOPIC COMMENTS
-################################################################################# -->
+#################################################################################################################################################################### -->
   <div class="container">
     <div class="row">
       <div class="col-4">
-        <h5 class="mt-1">Reply Comments</h5>
+        <h5 class="mt-1">Topic Comments</h5>
 
       </div>
 
@@ -139,6 +143,8 @@
           </ul>
       </div>
 
+<!-- FOR POSTING A COMMENT ON A TOPIC
+#################################################################################################################################################################### -->
       <div class="tab-content">
           <div class="tab-pane" id="tab_content_c" role="tabpanel" aria-labelledby="tab_c">
             <ul class="list-group list-group-flush">
@@ -172,6 +178,10 @@
                 <div class="row">
                   <div class="col-1">
                     <br/>
+
+
+<!-- VOTING FOR TOPIC COMMENTS
+#################################################################################################################################################################### -->
                     <form method="POST" action=".">
                         {% csrf_token %}
                         <input type="hidden" value="{{ comment.id }}" name="reply_id_to_vote_up">
@@ -222,26 +232,14 @@
   <div class="container">
     <div class="row">
       <div class="col-9">
-        <h2>{{ forloop.counter0}} Reply</h2>
-        <h6>Created {{ reply.0.publish_date}} @ {{ reply.0.publish_time }} by {{ reply.0.author }}
-
-          {% if user.is_authenticated %}
-            {% if user.id == reply.0.author.id %}
-            <!-- <a href="{% url 'forum-topic-edit' reply.pk %}">Edit</a> |
-            <a href="{% url 'forum-topic-delete' reply.pk %}">Del</a> -->
-            {% else %}
-            <a href="#">Reply</a>
-            {% endif %}
-          {% else %}
-          <a href="{% url 'login' %}">login to reply </a>
-          {% endif %}
-        </h6 >
+        <h1> Reply.. </h1>
+        <h6>Created {{ reply.0.publish_date}} @ {{ reply.0.publish_time }} by {{ reply.0.author }}</h6 >
       </div>
       <div class="col-1">
 
 
         </div>
-        <div class="col-2">
+        <div      class="col-2">
           <div class="span">
             <form method="POST" action=".">
                 {% csrf_token %}
@@ -285,7 +283,7 @@
 <div class="container">
     <div class="row">
       <div class="col-4">
-        <h5 class="mt-1">Topic Comments</h5>
+        <h5 class="mt-1">Reply Comments</h5>
 
       </div>
       <div class="col-8">
