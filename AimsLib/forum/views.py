@@ -84,10 +84,11 @@ def ForumTopicView(request, pk):
         if topic_replies:
         ### Loop through the replies
             for topic_reply in topic_replies:
-
 ####################################################################################################
 #### GETS REPLIES, THERE COMMENTS, AND THE COMMENTS VOTE COUNTS
             #### Find any comments replated to an individual reply
+                reply_votes = VoteUpDown.objects.filter_by_instance_vote_counts(topic_reply)
+
                 reply_comments = Comment.objects.filter_by_instance(topic_reply)
                 reply_comments_votes = []
                 if reply_comments:
@@ -103,10 +104,12 @@ def ForumTopicView(request, pk):
                         print("reply over ___")
 
             ### Save a single reply and all its comments as a tuple to a list of every reply and comment
-                    all_replies_and_comments.append((topic_reply, reply_comment_split_list))
+                    all_replies_and_comments.append(((topic_reply, reply_votes),reply_comment_split_list))
 
                 else:
-                    all_replies_and_comments.append((topic_reply,))
+                    all_replies_and_comments.append((
+                                                    (topic_reply,reply_votes),
+                                                    ))
 
 ####################################################################################################
 #### COMMENT POSTING
