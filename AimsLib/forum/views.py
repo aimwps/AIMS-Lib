@@ -19,7 +19,7 @@ from django.contrib import messages
 
 
 def ForumDevAreaTopics(request, dev_area_name):
-    #print(SkillArea.objects.filter(skill_area_name=dev_area_name)[0])
+
     skill_area_pk = SkillArea.objects.filter(skill_area_name=dev_area_name)[0]
     skill_area_topics = Post.objects.filter(assigned_skill_area = skill_area_pk)
     paginator = Paginator(skill_area_topics, 5)
@@ -45,6 +45,7 @@ class ForumViewHome(TemplateView):
 ### For viewing a topic, replying and making comments
 
 def create_comment_lists_by_len(qs, l_len):
+
     pagi_comments = []
     pagi_builder = []
     for comment in qs:
@@ -53,6 +54,7 @@ def create_comment_lists_by_len(qs, l_len):
             pagi_builder = []
         pagi_builder.append(comment)
     pagi_comments.append(pagi_builder)
+
     return pagi_comments
 
 
@@ -70,7 +72,11 @@ def ForumTopicView(request, pk):
         topic_comments = Comment.objects.filter_by_instance(topic)
         topic_votes = VoteUpDown.objects.filter_by_instance_vote_counts(topic)
         if topic_comments:
-            topic_comment_split_list = create_comment_lists_by_len(topic_comments, 5)
+            topic_comments_votes = []
+            for comment in topic_comments:
+                comment_votes = VoteUpDown.objects.filter_by_instance_vote_counts(comment)
+                topic_comments_votes.append((comment, comment_votes))
+            topic_comment_split_list = create_comment_lists_by_len(topic_comments_votes, 5)
 
     ### FOR TOPIC REPLIES
         #### Check is there are replies
@@ -79,20 +85,37 @@ def ForumTopicView(request, pk):
         ### Loop through the replies
             for topic_reply in topic_replies:
 
+####################################################################################################
+#### GETS REPLIES, THERE COMMENTS, AND THE COMMENTS VOTE COUNTS
             #### Find any comments replated to an individual reply
                 reply_comments = Comment.objects.filter_by_instance(topic_reply)
+                reply_comments_votes = []
                 if reply_comments:
-                    reply_comment_split_list = create_comment_lists_by_len(reply_comments, 5)
+                    for comment in reply_comments:
+
+                        comment_votes = VoteUpDown.objects.filter_by_instance_vote_counts(comment)
+                        reply_comments_votes.append((comment, comment_votes))
+
+                    reply_comment_split_list = create_comment_lists_by_len(reply_comments_votes, 5)
+                    print(reply_comment_split_list)
+                    for i in reply_comment_split_list:
+                        print(i)
+                        print("reply over ___")
 
             ### Save a single reply and all its comments as a tuple to a list of every reply and comment
                     all_replies_and_comments.append((topic_reply, reply_comment_split_list))
+
                 else:
                     all_replies_and_comments.append((topic_reply,))
 
+####################################################################################################
+#### COMMENT POSTING
+
+#### topic
     if request.method =="POST" and 'commentfortopic' in request.POST:
         if request.user:
             if topic_comment_form.is_valid():
-                print(topic_comment_form.cleaned_data)
+
                 c_body = topic_comment_form.cleaned_data.get('content_body')
                 new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Post),body=c_body, object_id=topic.id)
                 new_comment.save()
@@ -100,23 +123,23 @@ def ForumTopicView(request, pk):
         else:
             messages.info(request, 'You must be logged in to commment')
             return HttpResponseRedirect(request.path)
-
+#### reply
     if request.method =="POST" and 'commentforreply' in request.POST:
         if request.user:
             if reply_comment_form.is_valid():
-                print("XXXXXXXXXXXXXXXXXXXXXXXX")
-                print(request.POST['object_id'])
-                print(reply_comment_form.cleaned_data)
                 c_body = reply_comment_form.cleaned_data.get('content_body')
                 new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Reply),body=c_body, object_id=request.POST['object_id'])
                 new_comment.save()
+                print(new_comment)
                 return HttpResponseRedirect(request.path)
         else:
             messages.info(request, 'You must be logged in to commment')
             return HttpResponseRedirect(request.path)
 
+####################################################################################################
+#### TOPIC VOTING
 
-
+#### UP
     if request.method =="POST" and 'topic_vote_up' in request.POST:
         past_vote = VoteUpDown.objects.filter_by_instance(topic)
         if request.user:
@@ -132,7 +155,7 @@ def ForumTopicView(request, pk):
             messages.info(request, 'You must be logged in to vote')
             return HttpResponseRedirect(request.path)
 
-
+#### DOWN
     if request.method =="POST" and 'topic_vote_down' in request.POST:
         past_vote = VoteUpDown.objects.filter_by_instance(topic)
         if request.user:
@@ -150,17 +173,21 @@ def ForumTopicView(request, pk):
             return HttpResponseRedirect(request.path)
 
 
-
+####################################################################################################
 #### Comment voting
+
+#### UP
     if request.method =="POST" and 'comment_vote_up' in request.POST:
-        past_vote = VoteUpDown.objects.filter_by_instance(Comment)
+        obj_id = request.POST["topic_comment_id_to_vote_up"]
+        comment_instance = Comment.objects.get(id=obj_id)
+        past_vote = VoteUpDown.objects.filter_by_instance(comment_instance)
         if request.user:
             user_votes = past_vote.filter(votee=request.user)
             if user_votes:
                 messages.info(request, 'You have already voted')
                 return HttpResponseRedirect(request.path)
             else:
-                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=request.POST["reply_id_to_vote_up"], is_up_vote=True)
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=obj_id, is_up_vote=True)
                 new_vote.save()
                 messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
                 return HttpResponseRedirect(request.path)
@@ -168,9 +195,11 @@ def ForumTopicView(request, pk):
             messages.info(request, 'You must be logged in to vote')
             return HttpResponseRedirect(request.path)
 
-
+#### DOWN
     if request.method =="POST" and 'comment_vote_down' in request.POST:
-        past_vote = VoteUpDown.objects.filter_by_instance(Comment)
+        obj_id = request.POST["topic_comment_id_to_vote_down"]
+        comment_instance = Comment.objects.get(id=obj_id)
+        past_vote = VoteUpDown.objects.filter_by_instance(comment_instance)
         if request.user:
             user_votes = past_vote.filter(votee=request.user)
             if user_votes:
@@ -178,8 +207,7 @@ def ForumTopicView(request, pk):
                 return HttpResponseRedirect(request.path)
             else:
                 x =request.POST["reply_id_to_vote"]
-                print(f"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX {x}")
-                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=request.POST["reply_id_to_vote_down"], is_up_vote=False)
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=obj_id, is_up_vote=False)
                 new_vote.save()
                 messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
                 return HttpResponseRedirect(request.path)
@@ -189,6 +217,94 @@ def ForumTopicView(request, pk):
 
 
 
+
+####################################################################################################
+#### Reply voting
+
+#### UP
+    if request.method =="POST" and "reply_vote_up" in request.POST:
+        obj_id = request.POST["reply_id_to_vote_up"]
+        reply_instance = Reply.objects.get(id=obj_id)
+        past_vote = VoteUpDown.objects.filter_by_instance(reply_instance)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Reply), object_id=obj_id, is_up_vote=True)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+
+
+
+#### Down
+    if request.method =="POST" and 'reply_vote_down' in request.POST:
+        obj_id = request.POST["reply_id_to_vote_down"]
+        reply_instance = Reply.objects.get(id=obj_id)
+        past_vote = VoteUpDown.objects.filter_by_instance(reply_instance)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Reply), object_id=obj_id, is_up_vote=False)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+####################################################################################################
+
+####################################################################################################
+#### Reply comment voting
+
+#### UP
+    if request.method =="POST" and "reply_comment_vote_up" in request.POST:
+        obj_id = request.POST["reply_comment_id_to_vote_up"]
+        reply_comment_instance = Comment.objects.get(id=obj_id)
+        past_vote = VoteUpDown.objects.filter_by_instance(reply_comment_instance)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=obj_id, is_up_vote=True)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+
+
+
+#### Down
+    if request.method =="POST" and 'reply_comment_vote_down' in request.POST:
+        obj_id = request.POST["reply_comment_id_to_vote_down"]
+        reply_comment_instance = Comment.objects.get(id=obj_id)
+        past_vote = VoteUpDown.objects.filter_by_instance(reply_comment_instance)
+        if request.user:
+            user_votes = past_vote.filter(votee=request.user)
+            if user_votes:
+                messages.info(request, 'You have already voted')
+                return HttpResponseRedirect(request.path)
+            else:
+                new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Comment), object_id=obj_id, is_up_vote=False)
+                new_vote.save()
+                messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+                return HttpResponseRedirect(request.path)
+        else:
+            messages.info(request, 'You must be logged in to vote')
+            return HttpResponseRedirect(request.path)
+####################################################################################################
 
 
     context = {
@@ -199,6 +315,14 @@ def ForumTopicView(request, pk):
                 "reply_comment_form": reply_comment_form,
                 "topic_votes": topic_votes,
                 }
+
+
+        # for comment_list in reply[1]:
+        #     print("\n")
+        #     print(comment_list)
+        #     for comment in comment_list:
+        #         print("\n")
+        #         print(comment)
     return render(request, template_name, context)
 
 

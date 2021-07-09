@@ -184,32 +184,32 @@
 #################################################################################################################################################################### -->
                     <form method="POST" action=".">
                         {% csrf_token %}
-                        <input type="hidden" value="{{ comment.id }}" name="reply_id_to_vote_up">
+                        <input type="hidden" value="{{ comment.0.id }}" name="topic_comment_id_to_vote_up">
                         <p>
                           {% if user.is_authenticated %}
                             <button type="submit" name="comment_vote_up" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
                             {% else %}
                             <button type="disabled" class="btn btn-secondary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                             {% endif %}
-                          {{topic_votes.0}}
+                          {{comment.1.0}}
                         </p>
                     </form>
                     <form method="POST" action=".">
                         {% csrf_token %}
-                        <input type="hidden" value="{{ comment.id }}" name="reply_id_to_vote_down">
+                        <input type="hidden" value="{{ comment.0.id }}" name="topic_comment_id_to_vote_down">
                         <p>
                           {% if user.is_authenticated %}
                             <button type="submit" name="comment_vote_down" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                             {% else %}
                             <button type="disabled" class="btn btn-secondary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                             {% endif %}
-                           {{topic_votes.1}}
+                           {{comment.1.1}}
                           </p>
                         </form>
                   </div>
                   <div class="col-11">
-                    {{ comment.body }}
-                    <p><small>{{comment.author }} on {{ comment.publish_date}} @ {{ comment.publish_time}} </small></p>
+                    {{ comment.0.body }}
+                    <p><small>{{comment.0.author }} on {{ comment.0.publish_date}} @ {{ comment.0.publish_time}} </small></p>
                   </div>
                 </div>
               </li>
@@ -243,26 +243,26 @@
           <div class="span">
             <form method="POST" action=".">
                 {% csrf_token %}
-                <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
+                <input type="hidden" value="{{ reply.0.id }}" name="reply_id_to_vote_up">
                 <p>
                   {% if user.is_authenticated %}
-                    <button type="submit" name="topic_vote_up" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
+                    <button type="submit" name="reply_vote_up" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
                     {% else %}
                     <button type="disabled" class="btn btn-secondary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                     {% endif %}
-                  {{topic_votes.0}}
+
                 </p>
             </form>
             <form method="POST" action=".">
                 {% csrf_token %}
-                <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
+                <input type="hidden" value="{{ reply.0.id  }}" name="reply_id_to_vote_down">
                 <p>
                   {% if user.is_authenticated %}
-                    <button type="submit" name="topic_vote_down" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                    <button type="submit" name="reply_vote_down" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                     {% else %}
                     <button type="disabled" class="btn btn-secondary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                     {% endif %}
-                   {{topic_votes.1}}
+
                   </p>
                 <!-- <p><input type="submit" value="Vote -" name="topic_vote_down" class="btn btn-secondary btn-sm btn-block"></p> -->
             </form>
@@ -271,7 +271,6 @@
       </div>
       <div class="Row">
         <hr>
-
         {{ reply.0.body|safe }}
       </div>
     </div>
@@ -294,7 +293,9 @@
               </button>
           {% if reply.1 %}
             </li>
+
             {% for comment_list in reply.1 %}
+            <h1>{{ reply.0.id }}</h1>
               <li class="nav-item" role="presentation">
                 <button class="nav-link nav-link-sm btn-sm" id="tab_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" data-bs-toggle="tab" data-bs-target="#tab_content_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" type="button" role="tab" aria-controls="tab_content_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" aria-selected="false">{{ forloop.counter }}</button>
               </li>
@@ -333,38 +334,40 @@
           <div class="tab-pane" id="tab_content_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" role="tabpanel" aria-labelledby="tab_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}">
             <ul class="list-group list-group-flush">
               {% for comment in comment_list %}
+              {{ comment.0.id }}
               <li class="list-group-item">
                 <div class="row">
                   <div class="col-1">
                     <br/>
                     <form method="POST" action=".">
                         {% csrf_token %}
-                        <input type="hidden" value="{{ comment.id }}" name="reply_id_to_vote_up">
+                        <input type="hidden" value="{{ comment.0.id }}" name="reply_comment_id_to_vote_up">
                         <p>
                           {% if user.is_authenticated %}
-                            <button type="submit" name="comment_vote_up" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
+                            <button type="submit" name="reply_comment_vote_up" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
                             {% else %}
                             <button type="disabled" class="btn btn-secondary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                             {% endif %}
-                          {{topic_votes.0}}
+                            {{ comment.1.0 }}
+
                         </p>
                     </form>
                     <form method="POST" action=".">
                         {% csrf_token %}
-                        <input type="hidden" value="{{ comment.id }}" name="reply_id_to_vote_down">
+                        <input type="hidden" value="{{ comment.0.id }}" name="reply_comment_id_to_vote_down">
                         <p>
                           {% if user.is_authenticated %}
-                            <button type="submit" name="comment_vote_down" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                            <button type="submit" name="reply_comment_vote_down" class="btn btn-secondary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                             {% else %}
                             <button type="disabled" class="btn btn-secondary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                             {% endif %}
-                           {{topic_votes.1}}
+                            {{ comment.1.1 }}
                           </p>
                         </form>
                   </div>
                   <div class="col-11">
-                  {{ comment.body }}
-                  <p><small>{{comment.author }} on {{ comment.publish_date}} @ {{ comment.publish_time}} </small></p>
+                    {{ comment.0.body }}
+                  <p><small>{{comment.0.author }} on {{ comment.0.publish_date}} @ {{ comment.0.publish_time}} </small></p>
                   </div>
                 </div>
               </li>
