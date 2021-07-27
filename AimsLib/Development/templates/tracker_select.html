@@ -23,11 +23,15 @@
             <strong>
               Add this tracker... (fill in the blanks and submit)
               </strong>
+              </p>{{ min_aim_form.media }}
+              <form class="form-group" method="post">
+                  {% csrf_token %}
+                  {{ min_aim_form.as_p }}
+                  <input type="submit" name="min_aim_tracker_submit" value="Submit">
+
+              </form>
 
 
-              {% include 'tracker_min_aim.html' %}
-
-              </p>
 
         </div>
       </div>

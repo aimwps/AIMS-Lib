@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory
 from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, View
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 
 
 class TrackerMinAimNew(TemplateView):
@@ -12,7 +15,6 @@ class TrackerMinAimNew(TemplateView):
         form.instance.lever = Lever.objects.get(id=self.kwargs['lever_id'])
         # For getting and resetting the correct order
         return super().form_valid(form)
-
     def get_context_data(self, **kwargs):
         kwargs = super(TrackerSelect, self).get_context_data(**kwargs)
         # Your code here
@@ -24,24 +26,27 @@ class TrackerMinAimNew(TemplateView):
         return self.render_to_response(context)
 
 
-
 class TrackerSelect(TemplateView):
     template_name = "tracker_select.html"
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['min_aim_form'] = TrackerMinAimNewForm()
         return context
 
     def form_valid(self, form):
+        self.lever = get_object_or_404(Lever, id=self.kwargs['lever_id'])
+        form.instance.lever = self.lever
         print(form)
-        print("executed")
-        form.instance.lever = Lever.objects.get(id=self.kwargs['lever_id'])
-        # For getting and resetting the correct order
+        #messages.success(self.request, 'Your reply has been posted successfully')
         return super().form_valid(form)
+
+    def get(self, request):
+        return render(request, self.template_name, self.get_context_data())
+
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.method =="POST" and "min_aim_tracker_submit" in request.POST:
+            print(self.kwargs)
             if context['min_aim_form'].is_valid():
                 new_tracker = TrackerMinAim(lever = Lever.objects.get(id=self.kwargs['lever_id']),
                                             metric_type = context['min_aim_form'].cleaned_data.get('metric_type'),
@@ -55,11 +60,45 @@ class TrackerSelect(TemplateView):
                                             complete_value =context['min_aim_form'].cleaned_data.get('complete_value'))
                 new_tracker.save()
                 print(new_tracker)
+                return HttpResponseRedirect(request.path)
             else:
-                print("X")
+                print(request.POST)
+                print("\nERRORS")
                 print(context['min_aim_form'].errors)
+
+                print("\n non field error \n")
+
+                print(context['min_aim_form'].non_field_errors)
+
+
         return self.render_to_response(context)
 
+
+
+
+def SelectAssignTracker(request, lever_id):
+    min_aim_form = TrackerMinAimNewForm(request.POST or None)#
+    lever =  get_object_or_404(Lever,id=lever_id)
+    template_name = "tracker_select.html"
+    if request.method =="POST" and "min_aim_tracker_submit" in request.POST:
+        print(request.POST)
+        if min_aim_form.is_valid():
+            new_tracker = TrackerMinAim(lever = Lever.objects.get(id=lever_id),
+                                        metric_type = min_aim_form.cleaned_data.get('metric_type'),
+                                        metric_min = min_aim_form.cleaned_data.get('metric_min'),
+                                        metric_aim = min_aim_form.cleaned_data.get('metric_aim'),
+                                        metric_description = min_aim_form.cleaned_data.get('metric_description'),
+                                        frequency = min_aim_form.cleaned_data.get('frequency'),
+                                        start_date = min_aim_form.cleaned_data.get('start_date'),
+                                        end_date = min_aim_form.cleaned_data.get('end_date'),
+                                        complete_criteria = min_aim_form.cleaned_data.get('complete_criteria'),
+                                        complete_value = min_aim_form.cleaned_data.get('complete_value'))
+            new_tracker.save()
+            print(new_tracker)
+            return HttpResponseRedirect(request.path)
+
+    context = {"min_aim_form": min_aim_form}
+    return render(request, template_name, context)
 
 
 
