@@ -1,0 +1,83 @@
+
+{{ min_aim_form.media }}
+{{ lever.description }}
+<form  method="post">
+    {% csrf_token %}
+    <div class='container'>
+      <div class="form-row">
+        <div class="col-6 mt-4">
+          Tracker commences on:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.start_date }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          desription of tracker:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.metric_description }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          Minimum show up requirement:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.metric_min }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          What is being tracked:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.metric_type }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          How often is it tracked:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.frequency }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          What is your tracker aim:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.metric_aim }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          Completition criteria:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.complete_criteria }}</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-6 mt-2">
+          Completition value:
+        </div>
+        <div class="col-6">
+          <p>{{ min_aim_form.complete_value}}</p>
+        </div>
+      </div>
+
+    <br>
+    <input type="submit" name="min_aim_tracker_submit" value="Submit">
+  </div>
+</div>
+</form>

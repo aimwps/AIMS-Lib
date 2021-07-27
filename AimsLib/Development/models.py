@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import datetime, date
+from django.db.models import Q
 
 
 
@@ -10,12 +11,141 @@ class SkillArea(models.Model):
     created_date = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     forum_rules = models.TextField(default="The forum rules for this skill area are..")
-
-
-
     def __str__(self):
         return self.skill_area_name #This changes the displayed object name into relevant text information
 
+## Base include 'Health', 'Mind Set', 'Skills'
+class DevelopmentCategory(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    parent_category = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
+    def __str__(self):
+        return f"<DevCat: {self.title}>" #This changes the displayed object name into relevant text information
+
+
+## A user can create many aims
+class Aim(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(DevelopmentCategory, blank=True, null=True, on_delete=models.SET_NULL)
+    title = models.CharField(max_length=255)
+    why = models.TextField(blank=True, null=True)
+    def __str__(self):
+        return f"<AIM: by {self.user} '{self.title[:min(len(self.title),50)]}'>"#This changes the displayed object name into relevant text information
+
+
+
+class Lever(models.Model):
+    #tracker = models.ForeignKey(AimsTracker, blank=True, null=True, on_delete=models.SET_NULL)
+    description = models.TextField(default="A description of the lever you will pull")
+    in_order = models.PositiveIntegerField()
+    on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
+        ]
+
+    def get_trackers(self):
+        min_aim = TrackerMinAim.objects.filter(Q(lever=self))
+        return min_aim
+
+    def __str__(self):
+        return f"<Lever: by {self.on_aim.user} on {self.on_aim} ...'{self.description[:min(len(self.description),50)]}'>"#This changes the displayed object name into relevant text information
+    def get_absolute_url(self):
+        return reverse('aims-dash')
+
+
+
+class TrackerMinAim(models.Model):
+
+    METRIC_FREQ = (
+            ('Hourly', 'Hourly'),
+            ('Daily', 'Daily'),
+            ('6 of 7 Days', '6 of 7 Days'),
+            ('5 of 7 Days', '5 of 7 Days'),
+            ('4 of 7 Days', '4 of 7 Days'),
+            ('3 of 7 Days', '3 of 7 Days'),
+            ('2 of 7 Days', '2 of 7 Days'),
+            ('Weekly', 'Weekly'),
+            ('Monthly', 'Monthly'),
+            ('Yearly', 'Yearly'),
+    )
+    COMP_CRITERIA = (('Consecutive', 'Consecutive'),
+                    ('Total', 'Total'))
+    # This model is a tracker for completing a recurring lever. The user can set a frequency
+    # and will have to complete somewhere between the minimum and the aim.
+    lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_min_aim" )
+    metric_type = models.CharField(max_length=100) # A description of what the intgers mean. hours, #reps, #minutes #count
+    metric_min = models.PositiveIntegerField(default=1)# The minimum amount accepted
+    metric_aim = models.PositiveIntegerField(default=1) # The standard you are trying to hit each day: "8 hours"
+    metric_description = models.TextField(blank=True, null=True) # Represents the amount of minutes I spent jogging today
+    frequency = models.CharField(max_length=100,choices=METRIC_FREQ, default='Weekly') # Choi
+    start_date = models.DateField(blank=True, null=True) # Auto adds today or user can set the first day to start on.
+    end_date = models.DateField(blank=True, null=True) # If blank the Tracker runs forever.
+    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, default='Total')
+    complete_value = models.PositiveIntegerField(default=1)
+
+    def get_tclass(self):
+        class_name = "TrackerMinAim"
+        return class_name
+    def __str__(self):
+        return f"<MinAimTracker: on {self.lever} on '{self.metric_description[:min(len(self.metric_description),50)]}'>"#This changes the displayed object name into relevant text information
+    def get_absolute_url(self):
+        return reverse('aims-dash')
+
+class MinAimRecords(models.Model):
+
+    tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
+    lever_performed = models.BooleanField()
+    record_date = models.DateField(auto_now_add=True)
+    record_time = models.TimeField(auto_now_add=True)
+    metric_quantity  = models.IntegerField(blank=True, null=True)
+
+
+# class AimTrackers(models.Model):
+#     pass
+
+
+
+
+
+# class TrackerActionRating(models.Model):
+#     # This model is a tracker for completing a recurring lever. The user can set a frequency
+#     # and provide a description of what ratings mean. e.g. 0-nothing was good about my diet today, 1-i cheated 2/3 meals. 2-I was moderately pleased with my diet today. 3-It was almost perfect. 4- My body loves me after the perfect diet today.
+#     metric_type = ""  # A string description of what the intgers mean for each number from metric_min to metric_max
+#     metric_min = "" # The minimum rating number
+#     metric_max = "" # the maximum rating number
+#     description = ""  # This tracker rates my actions in regards to my aim of eating whole foods.
+#     frequency = ""
+#     start_date = ""
+#     end_date = ""
+#
+#
+# class TrackerBoolean(models.Model):
+#     description = "" # ""
+#     frequency = ""
+#     start_date = ""
+#     end_date = ""
+
+
+
+
+
+# Aims & Levers can all be tracked with a tracker.
+# class AimsTracker(models.Model):
+#     user = ''
+#     frequency = ''
+#     og_start_date = ''
+#     tracker_type = '' # Reduction, # Expansion, # Finite, # Infinite
+#
+#
+
+
+    # has categor
+    # Description
+    # Title
+    # Milestones
+    # Trackers
+    #
 
 # class trainingArticle(models.Model):
 #     article_title = models.CharField(max_length=255)

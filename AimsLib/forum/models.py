@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from datetime import datetime, date
-from Development.models import SkillArea
+from Development.models import SkillArea, DevelopmentCategory
 from ckeditor.fields import RichTextField
 
 class VoteManager(models.Manager):
@@ -50,7 +50,8 @@ class CommentManager(models.Manager):
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
-    assigned_skill_area = models.ForeignKey(SkillArea, on_delete=models.CASCADE)
+    #assigned_skill_area = models.ForeignKey(SkillArea, on_delete=models.CASCADE)
+    dev_area = models.ForeignKey(DevelopmentCategory, null=True,on_delete=models.SET_NULL)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     #body = models.TextField()
     body = RichTextField(blank=True, null=True)

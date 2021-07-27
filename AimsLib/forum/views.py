@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View,ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, FormView
 from .models import Post, Comment, Reply, VoteUpDown
-from Development.models import SkillArea
-from .forms import ForumTopicNewForm, ForumTopicEditForm, ForumTopicCommentForm
+from Development.models import SkillArea, DevelopmentCategory
+from .forms import ForumTopicNewForm, ForumTopicEditForm, ForumTopicCommentForm, ForumTopicReplyForm, ForumTopicNewCatForm
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
@@ -13,9 +13,6 @@ from django.contrib import messages
 #     return render(request, 'forum.html', {})
 
 #ForumViewHome,ForumDevAreaTopics, ForumTopicView, ForumTopicNew, ForumTopicEdit, ForumTopicDelete
-
-
-
 
 
 def ForumDevAreaTopics(request, dev_area_name):
@@ -34,8 +31,13 @@ class ForumViewHome(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         skill_topic_set = []
-        for skill in SkillArea.objects.all():
-            filtered_results = Post.objects.filter(assigned_skill_area=skill.id).order_by('-publish_date', '-publish_time')[:5]#.order_by('-publish_time')
+        # for skill in SkillArea.objects.all():
+        #     filtered_results = Post.objects.filter(assigned_skill_area=skill.id).order_by('-publish_date', '-publish_time')[:5]#.order_by('-publish_time')
+        #     if filtered_results:
+        #         skill_topic_set.append(filtered_results)
+        # context['skill_area_topics'] = skill_topic_set
+        for dev_cat in DevelopmentCategory.objects.all():
+            filtered_results = Post.objects.filter(dev_area=dev_cat.id).order_by('-publish_date', '-publish_time')[:5]#.order_by('-publish_time')
             if filtered_results:
                 skill_topic_set.append(filtered_results)
         context['skill_area_topics'] = skill_topic_set
@@ -330,96 +332,51 @@ def ForumTopicView(request, pk):
 
 
 
-
-
-
-
-
-
-# class ForumTopicView(View):
-#     template_name = "forum_topic_view.html"
-#     topic = Post.objects.filter(id=self.kwargs['pk'])
-#     topic_comments = Comment.objects.filter(on_post=self.kwargs['pk'])
-#
-#     ### Get Topic
-#     if len(topic) > 0:
-#         context['topic'] = topic
-#
-#     ### Get Comments
-#     if len(topic_comments) >0:
-#         pagi_comments = []
-#         pagi_builder = []
-#
-#         for comment in topic_comments:
-#             if len(pagi_builder) >= 3:
-#                 pagi_comments.append(pagi_builder)
-#                 pagi_builder = []
-#             pagi_builder.append( comment)
-#         if len(pagi_builder) > 0:
-#             pagi_comments.append(pagi_builder)
-#         if len(pagi_comments) > 0:
-#             context['pagi_comments'] = pagi_comments
-#
-#     ### Get Replies & their comments
-#
-#     def get(self, request, *args, **kwargs):
-#         return render(request, template, context)
-#
-#     # def get_context_data(self, **kwargs):
-#     #     context = super().get_context_data(**kwargs)
-#     #     topic = Post.objects.filter(id=self.kwargs['pk'])
-#     #     topic_comments = Comment.objects.filter(on_post=self.kwargs['pk'])# put order by here for most gvoted in future
-#     #     pagi_comments = []
-#     #     pagi_builder = []
-#     #     for comment in topic_comments:
-#     #         if len(pagi_builder) >= 3:
-#     #             pagi_comments.append(pagi_builder)
-#     #             pagi_builder = []
-#     #         pagi_builder.append( comment)
-#     #     if len(pagi_builder) > 0:
-#     #         pagi_comments.append(pagi_builder)
-#     #     if len(pagi_comments) > 0:
-#     #         context['pagi_comments'] = pagi_comments
-#     #     context['form'] = ForumTopicNewComment
-#     #     context['post'] = topic
-#     #     return context
-#
-#     def post(self, request):
-#         pass
-
-# class ForumDevAreaTopics(ListView):
-#     model = Post
-#     template_name = "forum_view_dev_area.html"
-
-# class ForumTopicView(DetailView):
-#     model = Post
-#     template_name = "forum_topic_view.html"
-#     def get_context_data(self, **kwargs):
-#         context = super(ForumTopicView, self).get_context_data(**kwargs)
-#         page = self.request.GET.get('page')
-#         topic_comments = self.object.comments.all() # put order by here for most gvoted in future
-#         pagi_comments = []
-#         pagi_builder = []
-#         for comment in topic_comments:
-#             if len(pagi_builder) >= 3:
-#                 pagi_comments.append(pagi_builder)
-#                 pagi_builder = []
-#             pagi_builder.append( comment)
-#         if len(pagi_builder) > 0:
-#             pagi_comments.append(pagi_builder)
-#         context['pagi_comments'] = pagi_comments
-#
-#         return context
-
-
 ###############################################################################################
 ### For viewing a topic, replying and making comments
 class ForumTopicNew(CreateView):
     model = Post
     form_class = ForumTopicNewForm
     template_name = "forum_topic_new.html"
-    #fields = '__all__' # puts all the available fields in the model on the page
-    #fields = ("list", "field", "names", "you", "want", "in", "form")
+
+class ForumTopicReply(CreateView):
+    model = Reply
+    form_class = ForumTopicReplyForm
+    template_name = "forum_topic_reply.html"
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('forum-topic-view', args=(self.kwargs['pk'],))
+
+    def get_context_data(self, **kwargs):
+        self.reply_to = get_object_or_404(Post, id=self.kwargs['pk'])
+        kwargs['topic'] = self.reply_to
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        self.reply_to = get_object_or_404(Post, id=self.kwargs['pk'])
+        form.instance.on_post = self.reply_to
+        messages.success(self.request, 'Your reply has been posted successfully')
+        return super().form_valid(form)
+
+class ForumTopicNewCat(CreateView):
+    model = Post
+    form_class = ForumTopicNewCatForm
+    template_name = "forum_topic_new_cat.html"
+
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('forum-home')#, args=(self.kwargs['pk'],))
+
+    def get_context_data(self, **kwargs):
+        #print(DevelopmentCategory.objects.filter(dev_area=self.kwargs['cat_id']))
+        #skill_area_pk = DevelopmentCategory.objects.filter(dev_area=self.kwargs['cat_id'])[0]
+        #kwargs['skill_area_pk'] = skill_area_pk
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
+        form.instance.dev_area = DevelopmentCategory.objects.get(id=self.kwargs['cat_id'])
+        messages.success(self.request, 'Your Topic has been posted successfully')
+        return super().form_valid(form)
 
 class ForumTopicEdit(UpdateView):
     model= Post

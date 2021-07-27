@@ -1,0 +1,84 @@
+{% if user.is_authenticated %}
+  <div class="container">
+    {% for cat in aims_by_cat %}
+      {% if cat.1 %}
+        <h1>{{ cat.0 }}</h1>
+          <div class="accordion" id="AimsAccordion_{{ cat.0 }}">
+            {% for aim, levers in cat.1.items %}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
+                    {{ aim.title }}
+                  </button>
+                </h2>
+                <div id="collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" data-bs-parent="#accordion_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
+                  <div class="accordion-body">
+
+                    <div class="row">
+                      <div class="col-8">
+                          <h4> {{ aim.title }} </h4>
+                        </div>
+                        <div class="col-4">
+                          <ul class="nav justify-content-end">
+                                <li class="nav-item">
+                                  <a class="nav-link active" href="{% url 'lever-new' aim.id %}">+<i class="fas fa-level-up-alt"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#"><i class="far fa-edit"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#"><i class="far fa-trash-alt"></i></a>
+                                </li>
+                              </ul>
+                            </div>
+                    </div>
+                    <p class="lead"> <strong>Why?</strong> {{ aim.why }}</p>
+                    <hr>
+                    {% for lever, trackers in levers.items %}
+                      <div class="row">
+                        <div class="col-8">
+                            <h5> {{ lever.description }} </h5>
+                          </div>
+                          <div class="col-4">
+                            <ul class="nav justify-content-end">
+                              <li class="nav-item">
+                                <a class="nav-link active" href="{% url 'tracker-select' lever.id %}">+<i class="fas fa-running"></i></a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="far fa-edit"></i></a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="far fa-trash-alt"></i></a>
+                              </li>
+                            </ul>
+                          </div>
+                      </div>
+
+                      {% for tracker_key, tracker_list in trackers.items %}
+                        {% if tracker_key == 'TrackerMinAim' %}
+                          {% for tracker in tracker_list %}
+                            <ul class="list-group list-group-flush">
+                              <li class="list-group-item"><strong>[{{ tracker_key }}]</strong> Starting on {{ tracker.start_date }} I will {{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }}. To
+                                make significant progress I will aim for {{ tracker.metric_aim}} {{ tracker.metric_type}} a {{ tracker.frequency }} until {% if tracker.end_date %}{{ tracker.end_date }} {% else %} the end of time{% endif %}.
+                                </li>
+
+
+                              <!-- <li class="list-group-item"><strong>[ "{{ tracker.metric_type }}" ]</strong> {{ tracker.metric_description }}. It is measured in: {{ tracker.metric_type }}.</li>
+                              <li class="list-group-item"><strong>[ "Show Up" {{ tracker.metric_min }} ]</strong> The minimum measurement to satisfy showing up.</li>
+                              <li class="list-group-item"><strong>[ "Big Gains" {{ tracker.metric_aim }} ]</strong>The measurement that you know has a big impact on your aim.</li>
+                              <li class="list-group-item"><strong>[ "{{ tracker.frequency }}" ]</strong>How often you will record a completiton of this action</li> -->
+                            </ul>
+                            <br/>
+                          {% endfor %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
