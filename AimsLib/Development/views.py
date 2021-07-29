@@ -1,104 +1,67 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory
-from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm
+from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, MinAimRecords
+from Members.models import MemberProfile
+from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, MinAimRecordsForm
 from django.views.generic import TemplateView, CreateView, View
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+from datetime import datetime, timedelta
 
-
-class TrackerMinAimNew(TemplateView):
-    template_name = "tracker_min_aim.html"
-
+class LogTracker(CreateView):
+    model = MinAimRecords
+    form_class = MinAimRecordsForm
+    template_name = "min_aim_new_log.html"
     def form_valid(self, form):
-        print("executed")
-        form.instance.lever = Lever.objects.get(id=self.kwargs['lever_id'])
-        # For getting and resetting the correct order
+        form.instance.tracker =TrackerMinAim.objects.get(id=self.kwargs['tracker_id'])
+        form.instance.lever_performed = True
+        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         return super().form_valid(form)
-    def get_context_data(self, **kwargs):
-        kwargs = super(TrackerSelect, self).get_context_data(**kwargs)
-        # Your code here
-        kwargs['foo'] = "bar"
-        return kwargs
-    def post(self, request, *args, **kwargs):
-        print("Post was requeste")
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
 
 
-class TrackerSelect(TemplateView):
+class AssignTrackerView(View):
     template_name = "tracker_select.html"
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['min_aim_form'] = TrackerMinAimNewForm()
-        return context
+
+    def get(self, request, lever_id):
+        context = {"min_aim_form": TrackerMinAimNewForm(),
+                    "on_lever": Lever.objects.get(id=lever_id)}
+        print(context)
+        return render(request, self.template_name, context)
 
     def form_valid(self, form):
-        self.lever = get_object_or_404(Lever, id=self.kwargs['lever_id'])
-        form.instance.lever = self.lever
-        print(form)
-        #messages.success(self.request, 'Your reply has been posted successfully')
+        form.instance.on_lever = Lever.objects.get(id=self.kwargs['lever_id'])
         return super().form_valid(form)
 
-    def get(self, request):
-        return render(request, self.template_name, self.get_context_data())
 
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        if request.method =="POST" and "min_aim_tracker_submit" in request.POST:
-            print(self.kwargs)
-            if context['min_aim_form'].is_valid():
-                new_tracker = TrackerMinAim(lever = Lever.objects.get(id=self.kwargs['lever_id']),
-                                            metric_type = context['min_aim_form'].cleaned_data.get('metric_type'),
-                                            metric_min = context['min_aim_form'].cleaned_data.get('metric_min'),
-                                            metric_aim = context['min_aim_form'].cleaned_data.get('metric_aim'),
-                                            metric_description = context['min_aim_form'].cleaned_data.get('metric_description'),
-                                            frequency = context['min_aim_form'].cleaned_data.get('frequency'),
-                                            start_date = context['min_aim_form'].cleaned_data.get('start_date'),
-                                            end_date = context['min_aim_form'].cleaned_data.get('end_date'),
-                                            complete_criteria = context['min_aim_form'].cleaned_data.get('complete_criteria'),
-                                            complete_value =context['min_aim_form'].cleaned_data.get('complete_value'))
+    def post(self, request, lever_id):
+
+        if "min_aim_tracker_submit" in request.POST:
+            min_aim_form = TrackerMinAimNewForm(request.POST)
+            if min_aim_form.is_valid():
+
+                new_tracker = TrackerMinAim(
+                            lever = Lever.objects.get(id=lever_id),
+                            metric_type = min_aim_form.cleaned_data['metric_type'],
+                            metric_min = min_aim_form.cleaned_data['metric_min'],
+                            metric_aim = min_aim_form.cleaned_data['metric_aim'],
+                            metric_description = min_aim_form.cleaned_data['metric_description'],
+                            frequency = min_aim_form.cleaned_data['frequency'],
+                            start_date = min_aim_form.cleaned_data['start_date'],
+                            end_date = min_aim_form.cleaned_data['end_date'],
+                            complete_criteria = min_aim_form.cleaned_data['complete_criteria'],
+                            complete_value = min_aim_form.cleaned_data['complete_value'])
+
+
                 new_tracker.save()
-                print(new_tracker)
-                return HttpResponseRedirect(request.path)
+
+                return HttpResponseRedirect('/aims_dash/')
             else:
-                print(request.POST)
-                print("\nERRORS")
-                print(context['min_aim_form'].errors)
-
-                print("\n non field error \n")
-
-                print(context['min_aim_form'].non_field_errors)
+                context = {"min_aim_form": TrackerMinAimNewForm(request.POST),
+                            "on_lever": Lever.objects.get(id=lever_id)}
+                print("Form not valid")
+                return render(request, self.template_name, context)
 
 
-        return self.render_to_response(context)
-
-
-
-
-def SelectAssignTracker(request, lever_id):
-    min_aim_form = TrackerMinAimNewForm(request.POST or None)#
-    lever =  get_object_or_404(Lever,id=lever_id)
-    template_name = "tracker_select.html"
-    if request.method =="POST" and "min_aim_tracker_submit" in request.POST:
-        print(request.POST)
-        if min_aim_form.is_valid():
-            new_tracker = TrackerMinAim(lever = Lever.objects.get(id=lever_id),
-                                        metric_type = min_aim_form.cleaned_data.get('metric_type'),
-                                        metric_min = min_aim_form.cleaned_data.get('metric_min'),
-                                        metric_aim = min_aim_form.cleaned_data.get('metric_aim'),
-                                        metric_description = min_aim_form.cleaned_data.get('metric_description'),
-                                        frequency = min_aim_form.cleaned_data.get('frequency'),
-                                        start_date = min_aim_form.cleaned_data.get('start_date'),
-                                        end_date = min_aim_form.cleaned_data.get('end_date'),
-                                        complete_criteria = min_aim_form.cleaned_data.get('complete_criteria'),
-                                        complete_value = min_aim_form.cleaned_data.get('complete_value'))
-            new_tracker.save()
-            print(new_tracker)
-            return HttpResponseRedirect(request.path)
-
-    context = {"min_aim_form": min_aim_form}
-    return render(request, template_name, context)
 
 
 
@@ -140,7 +103,7 @@ class AimNew(CreateView):
 
 
 class AimView(TemplateView):
-    template_name = "an_aim.html"
+    template_name = "aims.html"
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -157,6 +120,9 @@ class AimsDash(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # of style [(cat_path, cat_aims)]
+        trackers = Aim.check_aim_trackers(self.request.user.id)
+        print("TRACKERS HERE ")
+        print(trackers)
         aims_by_cat = []
         for cat in DevelopmentCategory.objects.all():
             all_cat_aim_data = {}
@@ -170,6 +136,7 @@ class AimsDash(TemplateView):
                     lever_trackers = {}
                     trackers = lever.get_trackers()
                     for tracker in trackers:
+                        self.check_tracker_status(tracker)
                         if isinstance(tracker, TrackerMinAim):
                             if "TrackerMinAim" in lever_trackers.keys():
                                 lever_trackers["TrackerMinAim"].append(tracker)
@@ -182,6 +149,52 @@ class AimsDash(TemplateView):
 
         return context
 
+    def check_tracker_status(self, tracker):
+
+        if isinstance(tracker, TrackerMinAim):
+            tracker_logs = MinAimRecords.objects.filter(tracker=tracker.id).order_by('record_date', 'record_time')
+            #most_recent = tracker_logs[0]
+            if tracker.day_reset_on == "midnight":
+                reset_time = datetime(1800, 12, 25, 0,0,0,0).time()
+            else:
+                reset_time = MemberProfile.objects.get(user_profile=self.request.user.id).day_reset_time
+
+            if tracker.frequency == 'hourly':
+                pass
+            elif tracker.frequency =='daily':
+                current_period_start, current_period_end = self.create_range_time(datetime.today(), datetime.today(), reset_time)
+                print(current_period_start, current_period_end)
+
+
+            elif 'week' in tracker.frequency:
+                if tracker.week_reset_on == "start date day":
+                    week_reset_day = tracker.start_date.weekday()#strftime('%A')
+                    if week_reset_day == datetime.today.weekday():
+                        if tracker.day_reset == 'midnight':
+                            pass
+                    current_period_start = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+                    current_period_end = datetime.today().replace(hour=23, minute=59, second=59, microsecond=0)
+                else:
+                    pass
+
+            else:
+                current_period = datetime.today()
+                print(current_period)
+
+    def create_range_time(self, start_date, end_date, time):
+        today_with_member_time = start_date.replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
+        if today_with_member_time > datetime.today():
+            current_period_start = today_with_member_time - timedelta(days=1)
+            current_period_end = today_with_member_time - timedelta(seconds=1)
+            return (current_period_start, current_period_end)
+        else:
+            current_period_start = today_with_member_time
+            current_period_end = today_with_member_time + timedelta(days=1) -timedelta(seconds=1)
+            #current_period_end = current_period_end -timedelta(seconds=1)
+            return (current_period_start, current_period_end)
+
+
+### for a tracker
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:

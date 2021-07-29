@@ -31,6 +31,12 @@ class Aim(models.Model):
     why = models.TextField(blank=True, null=True)
     def __str__(self):
         return f"<AIM: by {self.user} '{self.title[:min(len(self.title),50)]}'>"#This changes the displayed object name into relevant text information
+    def get_absolute_url(self):
+        return reverse('aims-dash')
+
+    def check_aim_trackers(for_user_id):
+        user_min_aim_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id)
+        return ('user_min_aim_trackers', user_min_aim_trackers)
 
 
 
@@ -56,33 +62,60 @@ class Lever(models.Model):
 
 
 class TrackerMinAim(models.Model):
-
     METRIC_FREQ = (
-            ('Hourly', 'Hourly'),
-            ('Daily', 'Daily'),
-            ('6 of 7 Days', '6 of 7 Days'),
-            ('5 of 7 Days', '5 of 7 Days'),
-            ('4 of 7 Days', '4 of 7 Days'),
-            ('3 of 7 Days', '3 of 7 Days'),
-            ('2 of 7 Days', '2 of 7 Days'),
-            ('Weekly', 'Weekly'),
-            ('Monthly', 'Monthly'),
-            ('Yearly', 'Yearly'),
+            ('hourly', 'hourly'),
+            ('daily', 'daily'),
+            ('6 days a week', '6 days a week'),
+            ('5 days a week', '5 days a week'),
+            ('4 days a week', '4 days a week'),
+            ('3 days a week', '3 days a week'),
+            ('2 days a week', '2 days a week'),
+            ('weekly', 'weekly'),
+            ('monthly', 'monthly'),
+            ('yearly', 'yearly'),
     )
-    COMP_CRITERIA = (('Consecutive', 'Consecutive'),
-                    ('Total', 'Total'))
+    COMP_CRITERIA = (('consecutive', 'consecutive'),
+                    ('total', 'total'))
+
+    TIMEOUT_FREQUENCY = (
+                    ("double frequency","double frequency"),
+                    ("weekly mondays","weekly mondays"),
+                    ("weekly tuesdays","weekly tuesdays"),
+                    ("weekly wednesdays","weekly wednesdays"),
+                    ("weekly thursdays","weekly thursdays"),
+                    ("weekly fridays","weekly fridays"),
+                    ("weekly saturdays","weekly saturdays"),
+                    ("weekly sundays","weekly sundays")
+                        )
+    WEEK_RESET_CHOICES = (
+                    ("start date day", "The day of the week you start your tracker"),
+                    ("members profile", "The day set on your user profile")
+                    )
+    DAY_RESET_CHOICES = (
+                    ("midnight", "midnight"),
+                    ("sleep setting", "your sleep setting")
+                    )
     # This model is a tracker for completing a recurring lever. The user can set a frequency
     # and will have to complete somewhere between the minimum and the aim.
     lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_min_aim" )
     metric_type = models.CharField(max_length=100) # A description of what the intgers mean. hours, #reps, #minutes #count
-    metric_min = models.PositiveIntegerField(default=1)# The minimum amount accepted
-    metric_aim = models.PositiveIntegerField(default=1) # The standard you are trying to hit each day: "8 hours"
+    metric_min = models.PositiveIntegerField()# The minimum amount accepted
+    metric_aim = models.PositiveIntegerField() # The standard you are trying to hit each day: "8 hours"
     metric_description = models.TextField(blank=True, null=True) # Represents the amount of minutes I spent jogging today
-    frequency = models.CharField(max_length=100,choices=METRIC_FREQ, default='Weekly') # Choi
-    start_date = models.DateField(blank=True, null=True) # Auto adds today or user can set the first day to start on.
+    frequency = models.CharField(max_length=100,choices=METRIC_FREQ) # Choi
+    start_date = models.DateField() # Auto adds today or user can set the first day to start on.
     end_date = models.DateField(blank=True, null=True) # If blank the Tracker runs forever.
-    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, default='Total')
-    complete_value = models.PositiveIntegerField(default=1)
+    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
+    complete_value = models.PositiveIntegerField()
+    has_prompt = models.BooleanField(default=True)
+    has_timeout = models.BooleanField(default=True)
+    has_public_logs = models.BooleanField(default=False)
+    allows_multi_period_logs = models.BooleanField(default=True)
+    week_reset_on = models.CharField(max_length=100, choices=WEEK_RESET_CHOICES, default="start date day")
+    day_reset_on = models.CharField(max_length=100, choices=DAY_RESET_CHOICES, default="midnight")
+    # use user week settings
+    # use user sleep settings
+
 
     def get_tclass(self):
         class_name = "TrackerMinAim"
@@ -93,13 +126,14 @@ class TrackerMinAim(models.Model):
         return reverse('aims-dash')
 
 class MinAimRecords(models.Model):
-
     tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
     lever_performed = models.BooleanField()
     record_date = models.DateField(auto_now_add=True)
     record_time = models.TimeField(auto_now_add=True)
     metric_quantity  = models.IntegerField(blank=True, null=True)
 
+    def get_absolute_url(self):
+        return reverse('aims-dash')
 
 # class AimTrackers(models.Model):
 #     pass

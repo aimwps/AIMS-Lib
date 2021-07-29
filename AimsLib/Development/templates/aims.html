@@ -2,21 +2,24 @@
   <div class="container">
     {% for cat in aims_by_cat %}
       {% if cat.1 %}
+        <br/>
         <h1>{{ cat.0 }}</h1>
+        <br/>
           <div class="accordion" id="AimsAccordion_{{ cat.0 }}">
             {% for aim, levers in cat.1.items %}
               <div class="accordion-item">
                 <h2 class="accordion-header" id="heading_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
-                    {{ aim.title }}
+                    <h5>{{ aim.title }}</h5>
+
                   </button>
                 </h2>
                 <div id="collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" data-bs-parent="#accordion_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
                   <div class="accordion-body">
 
                     <div class="row">
-                      <div class="col-8">
-                          <h4> {{ aim.title }} </h4>
+                      <div class="col-8 mt-2">
+                        <h5> Why I am aiming for this.. </h5>
                         </div>
                         <div class="col-4">
                           <ul class="nav justify-content-end">
@@ -32,12 +35,12 @@
                               </ul>
                             </div>
                     </div>
-                    <p class="lead"> <strong>Why?</strong> {{ aim.why }}</p>
+                     <p>{{ aim.why }}</p>
                     <hr>
                     {% for lever, trackers in levers.items %}
                       <div class="row">
-                        <div class="col-8">
-                            <h5> {{ lever.description }} </h5>
+                        <div class="col-8 mt-2">
+                            <h5> <i class="fas fa-level-up-alt"></i> {{ lever.description }} </h5>
                           </div>
                           <div class="col-4">
                             <ul class="nav justify-content-end">
@@ -58,19 +61,17 @@
                         {% if tracker_key == 'TrackerMinAim' %}
                           {% for tracker in tracker_list %}
                             <ul class="list-group list-group-flush">
-                              <li class="list-group-item"><strong>[{{ tracker_key }}]</strong> Starting on {{ tracker.start_date }} I will {{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }}. To
-                                make significant progress I will aim for {{ tracker.metric_aim}} {{ tracker.metric_type}} a {{ tracker.frequency }} until {% if tracker.end_date %}{{ tracker.end_date }} {% else %} the end of time{% endif %}.
+                              <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-tracker' tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a> Commencing {{ tracker.start_date }} I will show up and {{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type}} {{ tracker.frequency }}.
+                                When I {{ tracker.metric_description }} {{ tracker.metric_aim }} {{ tracker.metric_type }} for {{ tracker.complete_value}} {{ tracker.complete_criteria}} {{ tracker.frequency }} periods I
+                                have moved mountains to achieve my aims.{% if tracker.end_date %} This tracker has a be active until {{ tracker.end_date }}.{% endif %}
                                 </li>
 
-
-                              <!-- <li class="list-group-item"><strong>[ "{{ tracker.metric_type }}" ]</strong> {{ tracker.metric_description }}. It is measured in: {{ tracker.metric_type }}.</li>
-                              <li class="list-group-item"><strong>[ "Show Up" {{ tracker.metric_min }} ]</strong> The minimum measurement to satisfy showing up.</li>
-                              <li class="list-group-item"><strong>[ "Big Gains" {{ tracker.metric_aim }} ]</strong>The measurement that you know has a big impact on your aim.</li>
-                              <li class="list-group-item"><strong>[ "{{ tracker.frequency }}" ]</strong>How often you will record a completiton of this action</li> -->
                             </ul>
                             <br/>
                           {% endfor %}
+
                         {% endif %}
+                        <hr>
                       {% endfor %}
                     {% endfor %}
                   </div>

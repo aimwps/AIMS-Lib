@@ -1,5 +1,15 @@
 {% extends 'base.html' %}
 {% block title %} Your Aims {% endblock %}
+
+
+
+
+{% block leftbar %}
+{% include "tracker_log_dash.html" %}
+{% endblock %}
+
+
+
 {% block content %}
 <ul class="nav justify-content-center">
   <li class="nav-item">
@@ -16,5 +26,5 @@
   </li>
 </ul>
 
-{% include "an_aim.html" %}
+{% include "aims.html" %}
 {% endblock %}
