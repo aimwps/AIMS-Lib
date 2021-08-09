@@ -178,11 +178,7 @@ class AimsDash(TemplateView):
         context['uncomplete_weekly'] = uncomplete_weekly
         context['uncomplete_monthly'] = uncomplete_monthly
         context['uncomplete_yearly'] = uncomplete_yearly
-        # 
-        # print(uncomplete_daily)
-        # print(uncomplete_weekly)
-        # print(uncomplete_monthly)
-        # print(uncomplete_yearly)
+        print(context)
         return context
 
 
