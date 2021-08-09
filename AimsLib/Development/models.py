@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import datetime, date
 from django.db.models import Q
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 
@@ -34,9 +35,11 @@ class Aim(models.Model):
     def get_absolute_url(self):
         return reverse('aims-dash')
 
-    def check_aim_trackers(for_user_id):
+    def get_aim_trackers(for_user_id):
         user_min_aim_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id)
         return ('user_min_aim_trackers', user_min_aim_trackers)
+    def get_daily_trackers(for_user_id):
+        user_daily_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id, frequency="daily" )
 
 
 
@@ -63,13 +66,7 @@ class Lever(models.Model):
 
 class TrackerMinAim(models.Model):
     METRIC_FREQ = (
-            ('hourly', 'hourly'),
             ('daily', 'daily'),
-            ('6 days a week', '6 days a week'),
-            ('5 days a week', '5 days a week'),
-            ('4 days a week', '4 days a week'),
-            ('3 days a week', '3 days a week'),
-            ('2 days a week', '2 days a week'),
             ('weekly', 'weekly'),
             ('monthly', 'monthly'),
             ('yearly', 'yearly'),
@@ -103,6 +100,7 @@ class TrackerMinAim(models.Model):
     metric_aim = models.PositiveIntegerField() # The standard you are trying to hit each day: "8 hours"
     metric_description = models.TextField(blank=True, null=True) # Represents the amount of minutes I spent jogging today
     frequency = models.CharField(max_length=100,choices=METRIC_FREQ) # Choi
+    frequency_quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
     start_date = models.DateField() # Auto adds today or user can set the first day to start on.
     end_date = models.DateField(blank=True, null=True) # If blank the Tracker runs forever.
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
@@ -121,7 +119,7 @@ class TrackerMinAim(models.Model):
         class_name = "TrackerMinAim"
         return class_name
     def __str__(self):
-        return f"<MinAimTracker: on {self.lever} on '{self.metric_description[:min(len(self.metric_description),50)]}'>"#This changes the displayed object name into relevant text information
+        return f"<MinAimTracker: {self.frequency}>"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
         return reverse('aims-dash')
 
