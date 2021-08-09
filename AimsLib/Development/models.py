@@ -123,7 +123,18 @@ class TrackerMinAim(models.Model):
     def get_absolute_url(self):
         return reverse('aims-dash')
 
-class MinAimRecords(models.Model):
+    def get_tsentence(self):
+
+        sentence_start = f"Commencing {self.start_date} I will show up and {self.metric_description} {self.metric_min} { self.metric_type} { self.frequency}."
+        sentence_middle = f"When I {self.metric_description} {self.metric_aim} {self.metric_type} for {self.complete_value} { self.complete_criteria} {self.frequency} periods I have moved mountains to achieve my aims."
+        if self.end_date:
+            sentence_end = f"This tracker is actively trackd until { self.end_date }."
+        else:
+            sentence_end = ""
+
+        return " ".join([sentence_start, sentence_middle, sentence_end])
+
+class TrackerMinAimRecords(models.Model):
     tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
     lever_performed = models.BooleanField()
     record_date = models.DateField(auto_now_add=True)

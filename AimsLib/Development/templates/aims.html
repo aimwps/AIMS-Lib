@@ -61,9 +61,8 @@
                         {% if tracker_key == 'TrackerMinAim' %}
                           {% for tracker in tracker_list %}
                             <ul class="list-group list-group-flush">
-                              <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-tracker' tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a> Commencing {{ tracker.start_date }} I will show up and {{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type}} {{ tracker.frequency }}.
-                                When I {{ tracker.metric_description }} {{ tracker.metric_aim }} {{ tracker.metric_type }} for {{ tracker.complete_value}} {{ tracker.complete_criteria}} {{ tracker.frequency }} periods I
-                                have moved mountains to achieve my aims.{% if tracker.end_date %} This tracker has a be active until {{ tracker.end_date }}.{% endif %}
+                              <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
+                                {{ tracker.get_tsentence}}
                                 </li>
 
                             </ul>

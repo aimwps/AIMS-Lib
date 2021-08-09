@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} Logging a tracker!{% endblock %}
+
+{% block content %}
+
+<h3><strong>Tracker Declaration:</strong> {{ tracker.get_tsentence }}</h3>
+
+<h4> How many {{ tracker.metric_type }} will you log for this {{ tracker.metric_frequency }} period? </h4>
+<br/>
+<div class="container">
+  <div class="form-group">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.metric_quantity }}
+      <!-- doing as_p decides the element that each will be created for each field -->
+      <br/>
+      <button class="btn btn-light">Save Results</button>
+      </form>
+  </div>
+</div>
+
+{% endblock %}

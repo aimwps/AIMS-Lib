@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, MinAimRecords
+from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, TrackerMinAimRecords
 from Members.models import MemberProfile
-from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, MinAimRecordsForm
+from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm
 from django.views.generic import TemplateView, CreateView, View
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -11,14 +11,44 @@ import calendar
 from dateutil.relativedelta import relativedelta
 
 class LogTracker(CreateView):
-    model = MinAimRecords
-    form_class = MinAimRecordsForm
+
+    model = TrackerMinAimRecords
+    form_class = TrackerMinAimRecordsForm
     template_name = "min_aim_new_log.html"
     def form_valid(self, form):
         form.instance.tracker =TrackerMinAim.objects.get(id=self.kwargs['tracker_id'])
         form.instance.lever_performed = True
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         return super().form_valid(form)
+
+class LogAnyTracker(View):
+    template_name = "new_tracker_log.html"
+    def get(self, request, tracker_type, tracker_id):
+        context = {
+                "tracker": eval(f"{tracker_type}").objects.get(id=self.kwargs['tracker_id']),
+                "form": eval(f"{tracker_type}RecordsForm()")}
+        return render(request, self.template_name, context)
+
+    def form_valid(self, form):
+        form.instance.tracker = eval(f"{tracker_type}Records").objects.get(id=self.kwargs['tracker_id'])
+        return super().form_valid(form)
+
+    def post(self, request, tracker_type, tracker_id):
+        submit_form = eval(f"{tracker_type}RecordsForm(request.POST)")
+        if submit_form.is_valid():
+            if tracker_type == "TrackerMinAim":
+                new_log = TrackerMinAimRecords(
+                            tracker = TrackerMinAim.objects.get(id=tracker_id),
+                            lever_performed = True,
+                            metric_quantity = submit_form.cleaned_data['metric_quantity']
+                            )
+                new_log.save()
+
+            return HttpResponseRedirect('/aims_dash/')
+        else:
+            print("It's not valid")
+
+
 
 
 class AssignTrackerView(View):
@@ -130,9 +160,9 @@ class AimsDash(TemplateView):
         uncomplete_yearly = []
         #TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="daily")
          #outstanding_daily = self.get_daily_outstanding(trackers_by_daily)
-        trackers_by_weekly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="weekly")
-        trackers_by_monthly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="monthly")
-        trackers_by_yearly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="yearly")
+        # trackers_by_weekly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="weekly")
+        # trackers_by_monthly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="monthly")
+        # trackers_by_yearly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="yearly")
 
     # For building cascading dictionaries for displaying aims
         # Loop through every category
@@ -252,37 +282,20 @@ class AimsDash(TemplateView):
 
 
         ## Check the type of tracker and filter the appropriate logs the logs for the tracker.
-        if isinstance(tracker, TrackerMinAim):
-            current_period_logs = MinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
-        elif isinstance(tracker, MemberProfile):
-            current_period_logs = MinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
-        else:
-            print("error")
+        #if isinstance(tracker, TrackerMinAim):
+        current_period_logs = eval(f"{tracker.get_tclass()}Records").objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
+        # elif isinstance(tracker, MemberProfile):
+        # current_period_logs = TrackerMinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
+        # else:
+        #     print("error")
         if current_period_logs:
-            if len(current_period_logs) == tracker.frequency_quantity:
+            if len(current_period_logs) >= tracker.frequency_quantity:
                 return (True, tracker.frequency)
             else:
                 return (False, tracker.frequency)
         else:
             return (False, tracker.frequency)
 
-
-
-
-    # def create_range_time(self, start_date, end_date, time):
-    #     today_with_member_time = start_date.replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
-    #     if today_with_member_time > datetime.today():
-    #         current_period_start = today_with_member_time - timedelta(days=1)
-    #         current_period_end = today_with_member_time - timedelta(seconds=1)
-    #         return (current_period_start, current_period_end)
-    #     else:
-    #         current_period_start = today_with_member_time
-    #         current_period_end = today_with_member_time + timedelta(days=1) -timedelta(seconds=1)
-    #         #current_period_end = current_period_end -timedelta(seconds=1)
-    #         return (current_period_start, current_period_end)
-
-
-### for a tracker
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:

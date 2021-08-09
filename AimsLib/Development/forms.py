@@ -1,5 +1,5 @@
 from django import forms
-from .models import Aim, Lever, TrackerMinAim, MinAimRecords
+from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords
 from bootstrap_datepicker_plus import DatePickerInput
 
 class TrackerMinAimNewForm(forms.ModelForm):
@@ -49,9 +49,9 @@ class TrackerMinAimNewForm(forms.ModelForm):
     # start_date = forms.DateField(widget = DatePicker())
     #
 
-class MinAimRecordsForm(forms.ModelForm):
+class TrackerMinAimRecordsForm(forms.ModelForm):
     class Meta:
-        model = MinAimRecords
+        model = TrackerMinAimRecords
         fields = ("metric_quantity",)
         widgets = {
             'metric_quantity': forms.TextInput(attrs = {'class': 'form-control'}),

@@ -1,26 +1,26 @@
 {% if user.is_authenticated %}
   {% if uncomplete_daily %}
     {% for tracker in uncomplete_daily %}
-      <a href='{% url 'log-tracker' tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due today! </p></a>
+      <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due today! </p></a>
     {% endfor %}
   {% endif %}
 
   {% if uncomplete_weekly %}
     {% for tracker in uncomplete_weekly %}
-      <a href='{% url 'log-tracker' tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due this week! </p></a>
+      <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due this week! </p></a>
     {% endfor %}
   {% endif %}
 
 
   {% if uncomplete_monthly %}
     {% for tracker in uncomplete_monthly %}
-      <a href='{% url 'log-tracker' tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due this month! </p></a>
+      <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due this month! </p></a>
     {% endfor %}
   {% endif %}
 
   {% if uncomplete_yearly %}
     {% for tracker in uncomplete_yearly %}
-      <a href='{% url 'log-tracker' tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due this year! </p></a>
+      <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><p>{{ tracker.metric_description }} {{ tracker.metric_min }} {{ tracker.metric_type }} due this year! </p></a>
     {% endfor %}
   {% endif %}
 {% endif %}
