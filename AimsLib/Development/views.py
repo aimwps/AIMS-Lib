@@ -7,6 +7,8 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from datetime import datetime, timedelta
+import calendar
+from dateutil.relativedelta import relativedelta
 
 class LogTracker(CreateView):
     model = MinAimRecords
@@ -176,11 +178,11 @@ class AimsDash(TemplateView):
         context['uncomplete_weekly'] = uncomplete_weekly
         context['uncomplete_monthly'] = uncomplete_monthly
         context['uncomplete_yearly'] = uncomplete_yearly
-
-        print(uncomplete_daily)
-        print(uncomplete_weekly)
-        print(uncomplete_monthly)
-        print(uncomplete_yearly)
+        # 
+        # print(uncomplete_daily)
+        # print(uncomplete_weekly)
+        # print(uncomplete_monthly)
+        # print(uncomplete_yearly)
         return context
 
 
@@ -188,79 +190,100 @@ class AimsDash(TemplateView):
 
 
     def check_tracker_status(self, tracker):
-        print(tracker)
-        print(tracker.frequency)
         member_profile = MemberProfile.objects.get(user_profile=self.request.user.id)
         tracker_info  = {'tracker':tracker,}
+        now = datetime.today()
 
-        ## Check the type of tracker
-        if isinstance(tracker, TrackerMinAim):
+        reset_user_time = datetime.combine(now, member_profile.day_reset_time)
 
-            # Get the logs for that type
-            tracker_logs = MinAimRecords.objects.filter(tracker=tracker.id).order_by('record_date', 'record_time')
-            now = datetime.today()
-            reset_user_time = datetime.combine(now, member_profile.day_reset_time)
-            # See the frequency a
-            if tracker.frequency == "daily":
-                # now = datetime.today()
-                # reset_user_time = datetime.combine(now, member_profile.day_reset_time)
+        #reset_this_month = min(calendar.monthrange(now.year, now.month)[1], member_profile.month_reset_day)
+        reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
+
+        reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
+
+        ### Set the start and end date range for tracker filter based on the frequency of the tracker
+        if tracker.frequency == "daily":
+            if now > reset_user_time:
+                start_date = reset_user_time
+                end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+            else:
+                start_date = reset_user_time - time_delta(hours=24)
+                end_date =  reset_user_time - time_delta(seconds=1)
+        if tracker.frequency == "weekly":
+            if reset_user_time.strftime('%A') == member_profile.week_reset_day:
                 if now > reset_user_time:
                     start_date = reset_user_time
-                    end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+                    end_date =  reset_user_time + timedelta(days=6, hours = 23, minutes=59, seconds=59)
                 else:
-                    start_date = reset_user_time - time_delta(hours=24)
-                    end_date =  reset_user_time - time_delta(seconds=1)
-
-                # current_daily_period_logs = MinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
-                # if current_daily_period_logs:
-                #     if len(current_daily_period_logs) == tracker.frequency_quantity:
-                #         return (True,'daily')
-                # else:
-                #     return ( False, 'daily')
-            if tracker.frequency == "weekly":
-                # now = datetime.today()
-                # reset_user_time = datetime.combine(now, member_profile.day_reset_time)
-                if reset_user_time.strftime('%A') == member_profile.week_reset_day:
-                    if now > reset_user_time:
-                        start_date = reset_user_time
-                        end_date =  reset_user_time + timedelta(days=6, hours = 23, minutes=59, seconds=59)
-                    else:
-                        start_date = reset_user_time - time_delta(days=7)
-                        end_date =  reset_user_time - time_delta(seconds=1)
-                else:
-                    while reset_user_time.strftime('%A') != member_profile.week_reset_day:
-                        reset_user_time += timedelta(days=1)
-                    end_date = reset_user_time - timedelta(seconds=1)
                     start_date = reset_user_time - timedelta(days=7)
-            if tracker.frequency == "monthly":
-                return (True, 'monthly')
-            if tracker.frequency == "yearly":
-                return (True, 'yearly')
-
-
-            current_daily_period_logs = MinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
-            if current_daily_period_logs:
-                if len(current_daily_period_logs) == tracker.frequency_quantity:
-                    return (True, tracker.frequency)
+                    end_date =  reset_user_time - timedelta(seconds=1)
+            else:
+                while reset_user_time.strftime('%A') != member_profile.week_reset_day:
+                    reset_user_time += timedelta(days=1)
+                end_date = reset_user_time - timedelta(seconds=1)
+                start_date = reset_user_time - timedelta(days=7)
+        if tracker.frequency == "monthly":
+            if reset_user_date_time.strftime('%d') == str(member_profile.month_reset_day).zfill(2):
+                if now > reset_user_date_time:
+                    start_date = reset_user_date_time
+                    end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
                 else:
-                    return (False, tracker.frequency)
+                    start_date = reset_user_date_time - relativedelta(months=1)
+                    end_date =  reset_user_date_time - timedelta(seconds=1)
+            elif reset_user_date_time.strftime('%d') > str(member_profile.month_reset_day).zfill(2):
+                start_date = reset_user_date_time - relativedelta(months=1)
+                end_date =  reset_user_date_time - timedelta(seconds=1)
+            else:
+                start_date = reset_user_date_time
+                end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
+
+        if tracker.frequency == "yearly":
+            if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
+                if now > reset_user_year_date_time:
+                    start_date = reset_user_year_date_time
+                    end_date  = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
+                else:
+                    start_date = reset_user_date_time - relativedelta(years=1)
+                    end_date =  reset_user_date_time - timedelta(seconds=1)
+            elif reset_user_year_date_time.strftime('%m') > str(member_profile.year_reset_month).zfill(2):
+                start_date = reset_user_date_time - relativedelta(years=1)
+                end_date =  reset_user_date_time - timedelta(seconds=1)
+            else:
+                start_date = reset_user_date_time
+                end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
+
+        print(f"tracker: {tracker}. Range: {start_date} ->  {end_date}")
+
+
+        ## Check the type of tracker and filter the appropriate logs the logs for the tracker.
+        if isinstance(tracker, TrackerMinAim):
+            current_period_logs = MinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
+        elif isinstance(tracker, MemberProfile):
+            current_period_logs = MinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
+        else:
+            print("error")
+        if current_period_logs:
+            if len(current_period_logs) == tracker.frequency_quantity:
+                return (True, tracker.frequency)
             else:
                 return (False, tracker.frequency)
-
-
-
-
-    def create_range_time(self, start_date, end_date, time):
-        today_with_member_time = start_date.replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
-        if today_with_member_time > datetime.today():
-            current_period_start = today_with_member_time - timedelta(days=1)
-            current_period_end = today_with_member_time - timedelta(seconds=1)
-            return (current_period_start, current_period_end)
         else:
-            current_period_start = today_with_member_time
-            current_period_end = today_with_member_time + timedelta(days=1) -timedelta(seconds=1)
-            #current_period_end = current_period_end -timedelta(seconds=1)
-            return (current_period_start, current_period_end)
+            return (False, tracker.frequency)
+
+
+
+
+    # def create_range_time(self, start_date, end_date, time):
+    #     today_with_member_time = start_date.replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
+    #     if today_with_member_time > datetime.today():
+    #         current_period_start = today_with_member_time - timedelta(days=1)
+    #         current_period_end = today_with_member_time - timedelta(seconds=1)
+    #         return (current_period_start, current_period_end)
+    #     else:
+    #         current_period_start = today_with_member_time
+    #         current_period_end = today_with_member_time + timedelta(days=1) -timedelta(seconds=1)
+    #         #current_period_end = current_period_end -timedelta(seconds=1)
+    #         return (current_period_start, current_period_end)
 
 
 ### for a tracker
