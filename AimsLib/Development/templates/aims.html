@@ -64,9 +64,19 @@
                               <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
                                 {{ tracker.get_tsentence}}
                                 </li>
-
                             </ul>
-                            <br/>
+
+                          {% endfor %}
+
+                        {% endif %}
+                        {% if tracker_key == 'TrackerBoolean' %}
+                          {% for tracker in tracker_list %}
+                            <ul class="list-group list-group-flush">
+                              <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
+                                {{ tracker.get_tsentence}}
+                                </li>
+                            </ul>
+
                           {% endfor %}
 
                         {% endif %}

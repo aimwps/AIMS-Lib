@@ -1,11 +1,57 @@
 from django import forms
-from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords
+from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
 from bootstrap_datepicker_plus import DatePickerInput
+
+class TrackerBooleanNewForm(forms.ModelForm):
+    class Meta:
+        model = TrackerMinAim
+        fields = ('metric_description', 'frequency', 'frequency_quantity','start_date', 'end_date', 'complete_value', 'complete_criteria')
+        widgets = {
+
+                'metric_description': forms.TextInput(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'Action e.g. "exercise", "smoke", "run", "study" '}),
+
+                'frequency':  forms.Select(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'Frequency: How often to track'}),
+
+                'frequency_quantity':  forms.Select(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'Frequency: How often per period'}),
+
+                'complete_criteria':  forms.Select(attrs = {
+                                            'class': 'form-control'}),
+
+                'complete_value': forms.TextInput(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': '30'}),
+
+                'start_date': DatePickerInput(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'Tracking will commence on..'}),
+
+                'end_date':DatePickerInput( attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'Until the end of time. (or select a date)'}),
+
+                }
+
+class TrackerBooleanRecordsForm(forms.ModelForm):
+    class Meta:
+        model = TrackerBooleanRecords
+        fields = ("metric_quantity",)
+        widgets = {
+            'metric_quantity': forms.Select(attrs = {
+                                        'class': 'form-control',}),
+            }
+
+
 
 class TrackerMinAimNewForm(forms.ModelForm):
     class Meta:
         model = TrackerMinAim
-        fields = ('metric_type', 'metric_min', 'metric_aim','metric_description', 'frequency', 'start_date', 'end_date', 'complete_value', 'complete_criteria')
+        fields = ('metric_type', 'metric_min', 'metric_aim','metric_description', 'frequency', 'frequency_quantity','start_date', 'end_date', 'complete_value', 'complete_criteria')
         widgets = {
                 'metric_type': forms.TextInput(attrs = {
                                             'class': 'form-control',
@@ -29,6 +75,10 @@ class TrackerMinAimNewForm(forms.ModelForm):
                                             'class': 'form-control',
                                             'placeholder': 'Frequency: How often to track'}),
 
+                'frequency_quantity':  forms.Select(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'Frequency: How often per period'}),
+
                 'complete_criteria':  forms.Select(attrs = {
                                             'class': 'form-control'}),
 
@@ -46,8 +96,6 @@ class TrackerMinAimNewForm(forms.ModelForm):
 
                 }
 
-    # start_date = forms.DateField(widget = DatePicker())
-    #
 
 class TrackerMinAimRecordsForm(forms.ModelForm):
     class Meta:
@@ -71,13 +119,4 @@ class AimNewForm(forms.ModelForm):
         widgets = {
             'category': forms.Select(attrs = {'class': 'form-control'}),
             'title': forms.TextInput(attrs = {'class': 'form-control'}),
-            #'author': forms.Select(attrs = {'class': 'form-control'}),
             'why': forms.Textarea(attrs = {'class': 'form-control'}),}
-        # this is applying the css classes 'form-control' is predetermined
-        # as we are using bootstrap, can reference any css assigned
-class LeverNewForm(forms.ModelForm):
-    class Meta:
-        model = Lever
-        fields = ('description',)
-        widgets = {
-            'description': forms.TextInput(attrs = {'class': 'form-control'}),}

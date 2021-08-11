@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, TrackerMinAimRecords
+from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
 from Members.models import MemberProfile
-from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm
+from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm, TrackerBooleanNewForm, TrackerBooleanRecordsForm
 from django.views.generic import TemplateView, CreateView, View
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -10,16 +10,7 @@ from datetime import datetime, timedelta
 import calendar
 from dateutil.relativedelta import relativedelta
 
-class LogTracker(CreateView):
 
-    model = TrackerMinAimRecords
-    form_class = TrackerMinAimRecordsForm
-    template_name = "min_aim_new_log.html"
-    def form_valid(self, form):
-        form.instance.tracker =TrackerMinAim.objects.get(id=self.kwargs['tracker_id'])
-        form.instance.lever_performed = True
-        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
-        return super().form_valid(form)
 
 class LogAnyTracker(View):
     template_name = "new_tracker_log.html"
@@ -30,6 +21,7 @@ class LogAnyTracker(View):
         return render(request, self.template_name, context)
 
     def form_valid(self, form):
+        print(f"checking form {form}")
         form.instance.tracker = eval(f"{tracker_type}Records").objects.get(id=self.kwargs['tracker_id'])
         return super().form_valid(form)
 
@@ -43,10 +35,18 @@ class LogAnyTracker(View):
                             metric_quantity = submit_form.cleaned_data['metric_quantity']
                             )
                 new_log.save()
-
+            if tracker_type == "TrackerBoolean":
+                new_log = TrackerBooleanRecords(
+                            tracker = TrackerBoolean.objects.get(id=tracker_id),
+                            lever_performed = True,
+                            metric_quantity = submit_form.cleaned_data['metric_quantity']
+                            )
+                print(f"metric quantity {submit_form.cleaned_data['metric_quantity']}")
+                new_log.save()
             return HttpResponseRedirect('/aims_dash/')
         else:
-            print("It's not valid")
+            print("ERRRRRRRRRRRRRRRRRRRROOOOOOOOOOOOOOOOOORRR")
+            return HttpResponseRedirect('/aims_dash/')
 
 
 
@@ -56,6 +56,7 @@ class AssignTrackerView(View):
 
     def get(self, request, lever_id):
         context = {"min_aim_form": TrackerMinAimNewForm(),
+                    "boolean_form": TrackerBooleanNewForm(),
                     "on_lever": Lever.objects.get(id=lever_id)}
 
         return render(request, self.template_name, context)
@@ -158,11 +159,6 @@ class AimsDash(TemplateView):
         uncomplete_weekly = []
         uncomplete_monthly = []
         uncomplete_yearly = []
-        #TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="daily")
-         #outstanding_daily = self.get_daily_outstanding(trackers_by_daily)
-        # trackers_by_weekly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="weekly")
-        # trackers_by_monthly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="monthly")
-        # trackers_by_yearly = TrackerMinAim.objects.filter(lever__on_aim__user__id=self.request.user.id, frequency="yearly")
 
     # For building cascading dictionaries for displaying aims
         # Loop through every category
@@ -191,6 +187,7 @@ class AimsDash(TemplateView):
             # If they do not, add the tracker to the relevant time slot list. ('daily, weekly etc')
                     for tracker in trackers:
                         tracker_complete, freq_bracket = self.check_tracker_status(tracker)
+                        print()
                         if not tracker_complete:
                             eval(f"uncomplete_{freq_bracket}").append(tracker)
                         if isinstance(tracker, TrackerMinAim):
@@ -198,6 +195,11 @@ class AimsDash(TemplateView):
                                 lever_trackers["TrackerMinAim"].append(tracker)
                             else:
                                 lever_trackers["TrackerMinAim"] = [tracker]
+                        if isinstance(tracker, TrackerBoolean):
+                            if "TrackerBoolean" in lever_trackers.keys():
+                                lever_trackers["TrackerBoolean"].append(tracker)
+                            else:
+                                lever_trackers["TrackerBoolean"] = [tracker]
 
             # Build the context dictionary
                     aim_levers[lever] = lever_trackers
@@ -208,7 +210,7 @@ class AimsDash(TemplateView):
         context['uncomplete_weekly'] = uncomplete_weekly
         context['uncomplete_monthly'] = uncomplete_monthly
         context['uncomplete_yearly'] = uncomplete_yearly
-        print(context)
+
         return context
 
 

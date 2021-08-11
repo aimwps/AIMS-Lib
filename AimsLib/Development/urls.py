@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AimView, AimsDash, AimNew, LeverNew, AssignTrackerView, LogTracker, LogAnyTracker
+from .views import AimView, AimsDash, AimNew, LeverNew, AssignTrackerView, LogAnyTracker
 # from .views import
 
 urlpatterns = [
@@ -8,7 +8,7 @@ urlpatterns = [
     path('aims_new/', AimNew.as_view(), name="aims-new"),
     path('lever_new/<int:aim_id>/', LeverNew.as_view(), name="lever-new"),
     path('tracker_select/<int:lever_id>', AssignTrackerView.as_view(), name="tracker-select"),
-    path('log_tracker/<int:tracker_id>', LogTracker.as_view(), name="log-tracker"),
+    #path('log_tracker/<int:tracker_id>', LogTracker.as_view(), name="log-tracker"),
     path('log_any_tracker/<str:tracker_type>/<int:tracker_id>', LogAnyTracker.as_view(), name="log-any-tracker"),
     #path('logsdash/', LogDash.as_view(), name="logs-dash")
     #path('', views.home, name="home"),

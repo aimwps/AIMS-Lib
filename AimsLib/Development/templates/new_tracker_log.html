@@ -5,11 +5,19 @@
 {% block content %}
 
 <h3><strong>Tracker Declaration:</strong> {{ tracker.get_tsentence }}</h3>
-
+{% if tracker.get_tclass == 'TrackerMinAim'%}
 <h4> How many {{ tracker.metric_type }} will you log for this {{ tracker.metric_frequency }} period? </h4>
+{% elif tracker.get_tclass == 'TrackerBoolean'%}
+<h4> Did you do this? </h4>
+{% else %}
+<h4> Oops something went wrong!</h4>
+{{ tracker.get_tquestion }}
+{% endif %}
+
 <br/>
 <div class="container">
   <div class="form-group">
+
     <form method="post">
       {% csrf_token %}
       {{ form.metric_quantity }}

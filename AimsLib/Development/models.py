@@ -54,8 +54,13 @@ class Lever(models.Model):
         ]
 
     def get_trackers(self):
-        min_aim = TrackerMinAim.objects.filter(Q(lever=self))
-        return min_aim
+        min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)))
+        boolean = list(TrackerBoolean.objects.filter(Q(lever=self)))
+        payload = min_aim+boolean
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print(payload)
+
+        return payload
 
     def __str__(self):
         return f"<Lever: by {self.on_aim.user} on {self.on_aim} ...'{self.description[:min(len(self.description),50)]}'>"#This changes the displayed object name into relevant text information
@@ -73,25 +78,6 @@ class TrackerMinAim(models.Model):
     )
     COMP_CRITERIA = (('consecutive', 'consecutive'),
                     ('total', 'total'))
-
-    TIMEOUT_FREQUENCY = (
-                    ("double frequency","double frequency"),
-                    ("weekly mondays","weekly mondays"),
-                    ("weekly tuesdays","weekly tuesdays"),
-                    ("weekly wednesdays","weekly wednesdays"),
-                    ("weekly thursdays","weekly thursdays"),
-                    ("weekly fridays","weekly fridays"),
-                    ("weekly saturdays","weekly saturdays"),
-                    ("weekly sundays","weekly sundays")
-                        )
-    WEEK_RESET_CHOICES = (
-                    ("start date day", "The day of the week you start your tracker"),
-                    ("members profile", "The day set on your user profile")
-                    )
-    DAY_RESET_CHOICES = (
-                    ("midnight", "midnight"),
-                    ("sleep setting", "your sleep setting")
-                    )
     # This model is a tracker for completing a recurring lever. The user can set a frequency
     # and will have to complete somewhere between the minimum and the aim.
     lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_min_aim" )
@@ -109,8 +95,6 @@ class TrackerMinAim(models.Model):
     has_timeout = models.BooleanField(default=True)
     has_public_logs = models.BooleanField(default=False)
     allows_multi_period_logs = models.BooleanField(default=True)
-    week_reset_on = models.CharField(max_length=100, choices=WEEK_RESET_CHOICES, default="start date day")
-    day_reset_on = models.CharField(max_length=100, choices=DAY_RESET_CHOICES, default="midnight")
     # use user week settings
     # use user sleep settings
 
@@ -144,52 +128,55 @@ class TrackerMinAimRecords(models.Model):
     def get_absolute_url(self):
         return reverse('aims-dash')
 
-# class AimTrackers(models.Model):
-#     pass
 
 
+##################################################################################################################################
+class TrackerBoolean(models.Model):
+    METRIC_FREQ = (
+            ('daily', 'daily'),
+            ('weekly', 'weekly'),
+            ('monthly', 'monthly'),
+            ('yearly', 'yearly'),
+    )
+    COMP_CRITERIA = (('consecutive', 'consecutive'),
+                    ('total', 'total'))
 
+    # This model is a tracker for completing a recurring lever. The user can set a frequency
+    # and will have to complete somewhere between the minimum and the aim.
+    lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_boolean" )
+    metric_description = models.TextField(max_length=500) # Represents the amount of minutes I spent jogging today
+    frequency = models.CharField(max_length=100,choices=METRIC_FREQ) # Choi
+    frequency_quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
+    start_date = models.DateField() # Auto adds today or user can set the first day to start on.
+    end_date = models.DateField(blank=True, null=True) # If blank the Tracker runs forever.
+    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
+    complete_value = models.PositiveIntegerField()
+    has_prompt = models.BooleanField(default=True)
+    has_timeout = models.BooleanField(default=True)
+    has_public_logs = models.BooleanField(default=False)
+    allows_multi_period_logs = models.BooleanField(default=True)
 
+    def get_tclass(self):
+        class_name = "TrackerBoolean"
+        return class_name
+    def __str__(self):
+        return f"<TrackerBoolean: {self.frequency}>"#This changes the displayed object name into relevant text information
 
-# class TrackerActionRating(models.Model):
-#     # This model is a tracker for completing a recurring lever. The user can set a frequency
-#     # and provide a description of what ratings mean. e.g. 0-nothing was good about my diet today, 1-i cheated 2/3 meals. 2-I was moderately pleased with my diet today. 3-It was almost perfect. 4- My body loves me after the perfect diet today.
-#     metric_type = ""  # A string description of what the intgers mean for each number from metric_min to metric_max
-#     metric_min = "" # The minimum rating number
-#     metric_max = "" # the maximum rating number
-#     description = ""  # This tracker rates my actions in regards to my aim of eating whole foods.
-#     frequency = ""
-#     start_date = ""
-#     end_date = ""
-#
-#
-# class TrackerBoolean(models.Model):
-#     description = "" # ""
-#     frequency = ""
-#     start_date = ""
-#     end_date = ""
+    def get_absolute_url(self):
+        return reverse('aims-dash')
 
+    def get_tsentence(self):
+        return self.metric_description
 
+    def get_tquestion(self):
+        return "Did you complete this?"
 
+class TrackerBooleanRecords(models.Model):
+    tracker = models.ForeignKey(TrackerBoolean,on_delete=models.CASCADE)
+    lever_performed = models.BooleanField()
+    record_date = models.DateField(auto_now_add=True)
+    record_time = models.TimeField(auto_now_add=True)
+    metric_quantity  = models.BooleanField(choices=((True,"Yes"), (False, "No")), default="Yes")
 
-
-# Aims & Levers can all be tracked with a tracker.
-# class AimsTracker(models.Model):
-#     user = ''
-#     frequency = ''
-#     og_start_date = ''
-#     tracker_type = '' # Reduction, # Expansion, # Finite, # Infinite
-#
-#
-
-
-    # has categor
-    # Description
-    # Title
-    # Milestones
-    # Trackers
-    #
-
-# class trainingArticle(models.Model):
-#     article_title = models.CharField(max_length=255)
-#
+    def get_absolute_url(self):
+        return reverse('aims-dash')
