@@ -6537,6 +6537,7 @@ fieldset:disabled .btn {
 }
 
 .carousel-item {
+  height: 400px;
   position: relative;
   display: none;
   float: left;
