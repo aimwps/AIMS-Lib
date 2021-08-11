@@ -8,13 +8,13 @@
           <div class="accordion" id="AimsAccordion_{{ cat.0 }}">
             {% for aim, levers in cat.1.items %}
               <div class="accordion-item">
-                <h2 class="accordion-header" id="heading_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
+                <h2 class="accordion-header" id="heading_{{aim.}}{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
                     <h5>{{ aim.title }}</h5>
 
                   </button>
                 </h2>
-                <div id="collapse_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}" data-bs-parent="#accordion_{{ forloop.counter0 }}{{ forloop.parentloop.counter0 }}">
+                <div id="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" data-bs-parent="#accordion_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
                   <div class="accordion-body">
 
                     <div class="row">
@@ -56,31 +56,24 @@
                             </ul>
                           </div>
                       </div>
-
+                      <ul class="list-group list-group-flush">
                       {% for tracker_key, tracker_list in trackers.items %}
                         {% if tracker_key == 'TrackerMinAim' %}
                           {% for tracker in tracker_list %}
-                            <ul class="list-group list-group-flush">
                               <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
                                 {{ tracker.get_tsentence}}
                                 </li>
-                            </ul>
-
                           {% endfor %}
-
                         {% endif %}
                         {% if tracker_key == 'TrackerBoolean' %}
                           {% for tracker in tracker_list %}
-                            <ul class="list-group list-group-flush">
                               <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
                                 {{ tracker.get_tsentence}}
                                 </li>
-                            </ul>
 
                           {% endfor %}
-
+                        </ul>
                         {% endif %}
-                        <hr>
                       {% endfor %}
                     {% endfor %}
                   </div>
