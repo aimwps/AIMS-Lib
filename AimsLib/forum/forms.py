@@ -5,25 +5,27 @@ from .models import Post, Comment, Reply
 class ForumTopicNewForm(forms.ModelForm):
     class Meta:
         model= Post
-        fields = ('title','dev_area', 'author', 'body')
+        fields = ('title','dev_area', 'author', 'body', 'topic_snippet')
         widgets ={
             'title': forms.TextInput(attrs = {'class': 'form-control'}),
             'dev_area': forms.Select(attrs = {'class': 'form-control'}),
             'author': forms.TextInput(attrs = {'class': 'form-control', 'value': '', 'id':'user_input_ms', 'type': 'hidden'}),
             #'author': forms.Select(attrs = {'class': 'form-control'}),
-            'body': forms.Textarea(attrs = {'class': 'form-control'}),}
+            'body': forms.Textarea(attrs = {'class': 'form-control'}),
+            'topic_snippet': forms.Textarea(attrs = {'class': 'form-control'}),}
         # this is applying the css classes 'form-control' is predetermined
         # as we are using bootstrap, can reference any css assigned
 
 class ForumTopicNewCatForm(forms.ModelForm):
     class Meta:
         model= Post
-        fields = ('title','author', 'body')
+        fields = ('title','author', 'body', 'topic_snippet')
         widgets ={
             'title': forms.TextInput(attrs = {'class': 'form-control'}),
             'author': forms.TextInput(attrs = {'class': 'form-control', 'value': '', 'id':'user_input_ms', 'type': 'hidden'}),
             #'author': forms.Select(attrs = {'class': 'form-control'}),
-            'body': forms.Textarea(attrs = {'class': 'form-control'}),}
+            'body': forms.Textarea(attrs = {'class': 'form-control'}),
+            'topic_snippet': forms.Textarea(attrs = {'class': 'form-control'}),}
 
 
 class ForumTopicEditForm(forms.ModelForm):
