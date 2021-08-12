@@ -3,7 +3,7 @@ from .views import ForumViewHome,ForumDevAreaTopics, ForumTopicView, ForumTopicN
 
 urlpatterns = [
     path('forum/', ForumViewHome.as_view(), name="forum-home"),
-    path('forum/DevArea/<str:dev_area_name>', ForumDevAreaTopics, name="forum-dev-area"),
+    path('forum/<int:devCatPk>', ForumDevAreaTopics, name="forum-dev-area"),
     path('forum_topic/<int:pk>/', ForumTopicView, name="forum-topic-view"), #<int:pk> references the specifc blog
     path('forum_topic/new/', ForumTopicNew.as_view(), name="forum-topic-new"),
     path('forum_topic/new/<str:cat_id>', ForumTopicNewCat.as_view(), name="forum-topic-new-cat"),

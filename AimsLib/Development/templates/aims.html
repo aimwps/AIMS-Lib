@@ -8,13 +8,12 @@
           <div class="accordion" id="AimsAccordion_{{ cat.0 }}">
             {% for aim, levers in cat.1.items %}
               <div class="accordion-item">
-                <h2 class="accordion-header" id="heading_{{aim.}}{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
-                    <h5>{{ aim.title }}</h5>
-
+                <h2 class="accordion-header" id="heading_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
+                    {{ aim.title }}
                   </button>
                 </h2>
-                <div id="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" data-bs-parent="#accordion_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
+                <div id="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
                   <div class="accordion-body">
 
                     <div class="row">
@@ -36,8 +35,8 @@
                             </div>
                     </div>
                      <p>{{ aim.why }}</p>
-                    <hr>
                     {% for lever, trackers in levers.items %}
+                      <hr>
                       <div class="row">
                         <div class="col-8 mt-2">
                             <h5> <i class="fas fa-level-up-alt"></i> {{ lever.description }} </h5>

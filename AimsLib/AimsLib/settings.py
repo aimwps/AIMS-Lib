@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'bootstrap_datepicker_plus',
 
+
 ]
 
 MIDDLEWARE = [

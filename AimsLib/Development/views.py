@@ -10,6 +10,18 @@ from datetime import datetime, timedelta
 import calendar
 from dateutil.relativedelta import relativedelta
 
+def get_category_path(cat, current_path=""):
+    if cat.parent_category:
+        new_path = " > "
+        new_path += str(cat.title)
+        new_path += current_path
+        return get_category_path(cat.parent_category, current_path=new_path)
+
+    else:
+        new_path = str(cat.title)
+        new_path += current_path
+        return new_path
+
 
 
 class LogAnyTracker(View):
@@ -213,10 +225,6 @@ class AimsDash(TemplateView):
 
         return context
 
-
-
-
-
     def check_tracker_status(self, tracker):
         member_profile = MemberProfile.objects.get(user_profile=self.request.user.id)
         tracker_info  = {'tracker':tracker,}
@@ -297,16 +305,3 @@ class AimsDash(TemplateView):
                 return (False, tracker.frequency)
         else:
             return (False, tracker.frequency)
-
-
-def get_category_path(cat, current_path=""):
-    if cat.parent_category:
-        new_path = " > "
-        new_path += str(cat.title)
-        new_path += current_path
-        return get_category_path(cat.parent_category, current_path=new_path)
-
-    else:
-        new_path = str(cat.title)
-        new_path += current_path
-        return new_path

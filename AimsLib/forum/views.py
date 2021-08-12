@@ -8,21 +8,29 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-# Create your views here.
-# def home(request):
-#     return render(request, 'forum.html', {})
-
-#ForumViewHome,ForumDevAreaTopics, ForumTopicView, ForumTopicNew, ForumTopicEdit, ForumTopicDelete
 
 
-def ForumDevAreaTopics(request, dev_area_name):
 
-    skill_area_pk = SkillArea.objects.filter(skill_area_name=dev_area_name)[0]
-    skill_area_topics = Post.objects.filter(assigned_skill_area = skill_area_pk)
+def get_category_path(cat, current_path=""):
+    if cat.parent_category:
+        new_path = " > "
+        new_path += str(cat.title)
+        new_path += current_path
+        return get_category_path(cat.parent_category, current_path=new_path)
+
+    else:
+        new_path = str(cat.title)
+        new_path += current_path
+        return new_path
+
+
+def ForumDevAreaTopics(request, devCatPk):
+    dev_area = DevelopmentCategory.objects.get(id=devCatPk)
+    skill_area_topics = Post.objects.filter(dev_area=devCatPk)
     paginator = Paginator(skill_area_topics, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'forum_view_dev_area.html', {"dev_area": dev_area_name,
+    return render(request, 'forum_view_dev_area.html', {"dev_area": dev_area,
                                                         "skill_area_topics": page_obj})
 
 class ForumViewHome(TemplateView):
@@ -30,17 +38,11 @@ class ForumViewHome(TemplateView):
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        skill_topic_set = []
-        # for skill in SkillArea.objects.all():
-        #     filtered_results = Post.objects.filter(assigned_skill_area=skill.id).order_by('-publish_date', '-publish_time')[:5]#.order_by('-publish_time')
-        #     if filtered_results:
-        #         skill_topic_set.append(filtered_results)
-        # context['skill_area_topics'] = skill_topic_set
-        for dev_cat in DevelopmentCategory.objects.all():
-            filtered_results = Post.objects.filter(dev_area=dev_cat.id).order_by('-publish_date', '-publish_time')[:5]#.order_by('-publish_time')
-            if filtered_results:
-                skill_topic_set.append(filtered_results)
-        context['skill_area_topics'] = skill_topic_set
+        skill_topic_set = {}
+        for dev_cat in DevelopmentCategory.objects.filter(global_standard=True):
+            filtered_results = (get_category_path(dev_cat), list(Post.objects.filter(dev_area=dev_cat.id).order_by('-publish_date', '-publish_time')[:5]))
+            skill_topic_set[dev_cat] = filtered_results
+        context["dev_area_topics"] = skill_topic_set
         return context
 
 ###############################################################################################
@@ -321,13 +323,6 @@ def ForumTopicView(request, pk):
                 "topic_votes": topic_votes,
                 }
 
-
-        # for comment_list in reply[1]:
-        #     print("\n")
-        #     print(comment_list)
-        #     for comment in comment_list:
-        #         print("\n")
-        #         print(comment)
     return render(request, template_name, context)
 
 

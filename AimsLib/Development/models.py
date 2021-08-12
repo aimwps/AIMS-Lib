@@ -20,8 +20,10 @@ class DevelopmentCategory(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     parent_category = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
+    global_standard = models.BooleanField(default=False)
     def __str__(self):
         return f"<DevCat: {self.title}>" #This changes the displayed object name into relevant text information
+
 
 
 ## A user can create many aims
