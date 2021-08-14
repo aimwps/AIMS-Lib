@@ -1,5 +1,5 @@
 from django import forms
-from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
+from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords, DevelopmentCategory
 from bootstrap_datepicker_plus import DatePickerInput
 
 class TrackerBooleanNewForm(forms.ModelForm):
@@ -16,7 +16,7 @@ class TrackerBooleanNewForm(forms.ModelForm):
                                             'class': 'form-control',
                                             'placeholder': 'Frequency: How often to track'}),
 
-                'frequency_quantity':  forms.Select(attrs = {
+                'frequency_quantity':  forms.TextInput(attrs = {
                                             'class': 'form-control',
                                             'placeholder': 'Frequency: How often per period'}),
 
@@ -75,7 +75,7 @@ class TrackerMinAimNewForm(forms.ModelForm):
                                             'class': 'form-control',
                                             'placeholder': 'Frequency: How often to track'}),
 
-                'frequency_quantity':  forms.Select(attrs = {
+                'frequency_quantity':  forms.TextInput(attrs = {
                                             'class': 'form-control',
                                             'placeholder': 'Frequency: How often per period'}),
 
@@ -115,8 +115,18 @@ class LeverNewForm(forms.ModelForm):
 class AimNewForm(forms.ModelForm):
     class Meta:
         model = Aim
-        fields = ('category', 'title', 'why')
+        fields = ('category','title', 'why')
         widgets = {
             'category': forms.Select(attrs = {'class': 'form-control'}),
-            'title': forms.TextInput(attrs = {'class': 'form-control'}),
-            'why': forms.Textarea(attrs = {'class': 'form-control'}),}
+            'title': forms.Textarea(attrs = {'class': 'form-control',
+            'placeholder': 'A description of your aim',
+            'rows':3,}),
+            'why': forms.Textarea(attrs = {'class': 'form-control',
+            'placeholder': "Why are you aiming for this? You should go into great detail here. You can also add to it later."}),}
+    def __init__(self, *args, **kwargs):
+        super(AimNewForm, self).__init__(*args, **kwargs)
+        # this is pseudo code but you should get all variants
+        # then get the product related to each variant
+        dev_cats = DevelopmentCategory.objects.all()
+        categories = sorted([(cat.id, str(cat)) for cat in dev_cats], key=lambda x: x[1])
+        self.fields['category'].choices = categories

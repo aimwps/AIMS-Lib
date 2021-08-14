@@ -19,13 +19,19 @@ class ForumTopicNewForm(forms.ModelForm):
 class ForumTopicNewCatForm(forms.ModelForm):
     class Meta:
         model= Post
-        fields = ('title','author', 'body', 'topic_snippet')
+        fields = ('title', 'body', 'topic_snippet')
         widgets ={
-            'title': forms.TextInput(attrs = {'class': 'form-control'}),
-            'author': forms.TextInput(attrs = {'class': 'form-control', 'value': '', 'id':'user_input_ms', 'type': 'hidden'}),
+            'title': forms.TextInput(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'The title of your topic *'}),
             #'author': forms.Select(attrs = {'class': 'form-control'}),
-            'body': forms.Textarea(attrs = {'class': 'form-control'}),
-            'topic_snippet': forms.Textarea(attrs = {'class': 'form-control'}),}
+            'body': forms.Textarea(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'The main body of your topic *'}),
+            'topic_snippet': forms.Textarea(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'A brief description or preview of your topic',
+                                            "rows": 6}),}
 
 
 class ForumTopicEditForm(forms.ModelForm):

@@ -1,0 +1,35 @@
+{% for period, tracker_data in uncomplete_trackers.items %}
+<h3>{{period}}</h3>
+<h6>Due before {{ tracker.data.1 }}</h6>
+{% for tracker in tracker_data.2 %}
+  <p>{{ tracker }}</p>
+
+  {% if tracker.get_tclass == 'TrackerBoolean'%}
+    <div class="container">
+      <div class="form-group">
+
+        <form method="POST" action=".">
+            {% csrf_token %}
+            <input type="hidden" value="{{tracker.id}}" name="tracker_id">
+            <p>{{ boolean_form.metric_quantity }}
+            <button type="submit" name="{{tracker.get_tclass}}" class="btn btn-primary btn-sm btn-block">Pull</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+  {% if tracker.get_tclass == "TrackerMinAim" %}
+  <div class="container">
+    <div class="form-group">
+
+      <form method="POST" action=".">
+          {% csrf_token %}
+          <input type="hidden" value="{{tracker.id}}" name="tracker_id">
+          <p>{{ min_aim_form.metric_quantity }}
+          <button type="submit" name="{{tracker.get_tclass}}" class="btn btn-primary btn-sm btn-block">Pull</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+{% endfor %}
+
+{% endfor %}

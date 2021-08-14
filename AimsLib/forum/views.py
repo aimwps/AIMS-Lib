@@ -362,7 +362,9 @@ class ForumTopicNewCat(CreateView):
         return reverse_lazy('forum-home')#, args=(self.kwargs['pk'],))
 
     def get_context_data(self, **kwargs):
-        #print(DevelopmentCategory.objects.filter(dev_area=self.kwargs['cat_id']))
+        on_cat = DevelopmentCategory.objects.get(id=self.kwargs['cat_id'])
+        print(f"here is the cat {on_cat}")
+        kwargs['dev_area'] = on_cat
         #skill_area_pk = DevelopmentCategory.objects.filter(dev_area=self.kwargs['cat_id'])[0]
         #kwargs['skill_area_pk'] = skill_area_pk
         return super().get_context_data(**kwargs)
@@ -370,6 +372,9 @@ class ForumTopicNewCat(CreateView):
     def form_valid(self, form):
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.dev_area = DevelopmentCategory.objects.get(id=self.kwargs['cat_id'])
+        form.instance.author = self.request.user
+        print(form.instance.author)
+        print("WTF")
         messages.success(self.request, 'Your Topic has been posted successfully')
         return super().form_valid(form)
 

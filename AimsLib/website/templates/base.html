@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/static/css/bootstrap.css"/>
     <link rel="stylesheet" href='/static/css/bootstrap.min.css'/>
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"></script>
     <title>{% block title %}AIMS-LIB{% endblock %}</title>
   </head>
   <body class="bg-light">
@@ -146,22 +146,15 @@
               <li class="list-group-item"><a href="#">Starting your map</a></li>
               <li class="list-group-item"><a href="#" class="card-link">Go to your map</a></li>
             </ul>
-
           </div>
           <br/>
-
-          <div class="card border border-white my-2">
-            <img class="card-img-top" src="{% static 'media/web/wp.gif' %}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Pairing personal & industry development</h5>
-              <p class="card-text">Design a course and share it with your employees through aims-lib</p>
+          <div class="desktop">
+            <div class="card border border-white  my-2">
+              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <p class="card-text">How much control do you really have?</p>
+              </div>
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><a href="#">Our vision</a></li>
-              <li class="list-group-item"><a href="#">Syllabus examples</a></li>
-              <li class="list-group-item"><a href="#">Creating a syllabus</a></li>
-              <li class="list-group-item"><a href="#">Tools for hospitality</a></li>
-            </ul>
           </div>
           {% endblock %}
         </div>
@@ -241,20 +234,24 @@
               <p class="card-text">See why you should get a copy today</p>
             </div>
           </div>
-          <div class="card border border-white  my-2">
-            <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">How much control do you really have?</p>
+          <div class="desktop">
+            <div class="card border border-white  my-2">
+              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <p class="card-text">How much control do you really have?</p>
+              </div>
             </div>
           </div>
-          <div class="card border border-white my-2">
-            <img src="{% static 'media/web/chm.jpg' %}" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">The truth about getting tough</p>
+          <div class="desktop">
+            <div class="card border border-white my-2">
+              <img src="{% static 'media/web/chm.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <p class="card-text">The truth about getting tough</p>
+              </div>
             </div>
           </div>
           {% endblock %}
-        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -311,20 +308,20 @@
 ################################################################################# -->
         <div class="col-md-2 col-xs-12 bg-white ">
           {% block bottomleftbar %}
-          <div class="card border border-white my-2">
-            <img class="card-img-top" src="{% static 'media/web/1.png' %}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">New to AIMS-Lib</h5>
-              <p class="card-text">Out latest updates for reaching your AIMS</p>
+          <div class="desktop">
+            <div class="card border border-white  my-2">
+              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <p class="card-text">How much control do you really have?</p>
+              </div>
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Vestibulum at eros</li>
-            </ul>
-            <div class="card-body">
-              <a href="#" class="card-link">Card link</a>
-              <a href="#" class="card-link">Another link</a>
+          </div>
+          <div class="desktop">
+            <div class="card border border-white  my-2">
+              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <p class="card-text">How much control do you really have?</p>
+              </div>
             </div>
           </div>
 
@@ -348,17 +345,26 @@
 
           {% block bottomrightbar %}
           <div class="card border border-white my-2">
-            <img src="{% static 'media/web/dg.jpg' %}" class="card-img-top" alt="...">
+            <img class="card-img-top" src="{% static 'media/web/wp.gif' %}" alt="Card image cap">
             <div class="card-body">
-              <p class="card-text">Dude... I was daring greatly</p>
+              <h5 class="card-title">Pairing personal & industry development</h5>
+              <p class="card-text">Design a course and share it with your employees through aims-lib</p>
             </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><a href="#">Our vision</a></li>
+              <li class="list-group-item"><a href="#">Syllabus examples</a></li>
+              <li class="list-group-item"><a href="#">Creating a syllabus</a></li>
+              <li class="list-group-item"><a href="#">Tools for hospitality</a></li>
+            </ul>
           </div>
+          <div class="desktop">
           <div class="card border border-white my-2">
             <img src="{% static 'media/web/chm.jpg' %}" class="card-img-top" alt="...">
             <div class="card-body">
               <p class="card-text">The truth about getting tough</p>
             </div>
           </div>
+        </div>
           {% endblock %}
         </div>
       </div>
@@ -383,9 +389,8 @@
       </div>
     </nav>
   </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous" integrity="sha384-xBuQ/xzmlsLoJpyjoggmTEz8OWUFM0/RC5BsqQBDX2v5cMvDHcMakNTNrHIW2I5f"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"></script>
-    <script src="/static/js/bootstrap.bootstrap.min.js"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
   </body>
 

@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from datetime import datetime, timedelta
 import calendar
 from dateutil.relativedelta import relativedelta
+from collections import OrderedDict
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
@@ -95,16 +96,27 @@ class AssignTrackerView(View):
                             end_date = min_aim_form.cleaned_data['end_date'],
                             complete_criteria = min_aim_form.cleaned_data['complete_criteria'],
                             complete_value = min_aim_form.cleaned_data['complete_value'])
-
-
                 new_tracker.save()
+                return HttpResponseRedirect('/aims_dash/')
 
+        elif "boolean_submit" in request.POST:
+            boolean_form = TrackerBooleanNewForm(request.POST)
+            if boolean_form.is_valid():
+                new_tracker = TrackerBoolean(
+                            lever = Lever.objects.get(id=lever_id),
+                            metric_description = boolean_form.cleaned_data['metric_description'],
+                            frequency = boolean_form.cleaned_data['frequency'],
+                            start_date = boolean_form.cleaned_data['start_date'],
+                            end_date = boolean_form.cleaned_data['end_date'],
+                            complete_criteria = boolean_form.cleaned_data['complete_criteria'],
+                            complete_value = boolean_form.cleaned_data['complete_value'])
+                new_tracker.save()
                 return HttpResponseRedirect('/aims_dash/')
             else:
-                context = {"min_aim_form": TrackerMinAimNewForm(request.POST),
-                            "on_lever": Lever.objects.get(id=lever_id)}
+                print("form error")
+        else:
+            return HttpResponseRedirect('/aims_dash/')
 
-                return render(request, self.template_name, context)
 
 
 
@@ -167,6 +179,8 @@ class AimsDash(TemplateView):
         aims_by_cat = []
 
     # For gethering info on trackers
+        all_uncomplete_tracker_periods = ['uncomplete_daily','uncomplete_weekly', 'uncomplete_monthly', 'uncomplete_yearly']
+        uncomplete_trackers = OrderedDict()
         uncomplete_daily = []
         uncomplete_weekly = []
         uncomplete_monthly = []
@@ -198,9 +212,13 @@ class AimsDash(TemplateView):
             # they have the correct amount of logs for the current period.
             # If they do not, add the tracker to the relevant time slot list. ('daily, weekly etc')
                     for tracker in trackers:
-                        tracker_complete, freq_bracket = self.check_tracker_status(tracker)
-                        print()
+                        tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
                         if not tracker_complete:
+                            if freq_bracket in uncomplete_trackers.keys():
+                                uncomplete_trackers[freq_bracket][2].append(tracker)
+                            else:
+                                uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
+
                             eval(f"uncomplete_{freq_bracket}").append(tracker)
                         if isinstance(tracker, TrackerMinAim):
                             if "TrackerMinAim" in lever_trackers.keys():
@@ -217,13 +235,42 @@ class AimsDash(TemplateView):
                     aim_levers[lever] = lever_trackers
                 all_cat_aim_data[aim] = aim_levers
             aims_by_cat.append((full_cat_path, all_cat_aim_data))
+        context['uncomplete_trackers'] = uncomplete_trackers
         context['aims_by_cat'] = sorted(aims_by_cat)
-        context['uncomplete_daily'] = uncomplete_daily
-        context['uncomplete_weekly'] = uncomplete_weekly
-        context['uncomplete_monthly'] = uncomplete_monthly
-        context['uncomplete_yearly'] = uncomplete_yearly
-
+        context['ordered_tracker_periods'] = []
+        for period in all_uncomplete_tracker_periods:
+            period_trackers = eval(period)
+            if len(period_trackers) > 0:
+                has_trackers = True
+            context[period] = period_trackers
+            context['ordered_tracker_periods'].append(period_trackers)
+        context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
+        context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
         return context
+    def form_valid(self, form):
+        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
+        form.instance.tracker = self.request.POST.get("tracker_id")
+        form.instance.lever_peformed = True
+        return super().form_valid(form)
+
+    def post(self, form):
+        print(self.request.POST)
+        if "TrackerMinAim" in self.request.POST:
+            get_tracker = get_object_or_404(TrackerMinAim, id=self.request.POST.get('tracker_id'))
+            new_log = TrackerMinAimRecords(
+                    tracker = get_tracker,
+                    lever_performed = True,
+                    metric_quantity = self.request.POST.get("metric_quantity")
+            )
+            new_log.save()
+            return HttpResponseRedirect('/aims_dash/')
+        elif "TrackerBoolean" in self.request.POST:
+            print("Okay")
+            return HttpResponseRedirect('/aims_dash/')
+        else:
+            print("doesnt work")
+            return HttpResponseRedirect('/aims_dash/')
+
 
     def check_tracker_status(self, tracker):
         member_profile = MemberProfile.objects.get(user_profile=self.request.user.id)
@@ -300,8 +347,8 @@ class AimsDash(TemplateView):
         #     print("error")
         if current_period_logs:
             if len(current_period_logs) >= tracker.frequency_quantity:
-                return (True, tracker.frequency)
+                return (True, tracker.frequency, start_date, end_date)
             else:
-                return (False, tracker.frequency)
+                return (False, tracker.frequency, start_date, end_date)
         else:
-            return (False, tracker.frequency)
+            return (False, tracker.frequency, start_date, end_date)

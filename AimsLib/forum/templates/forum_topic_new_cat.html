@@ -4,24 +4,54 @@
 
 {% block content %}
 
-<h1> Add New Topic </h1>
-
 <div class="container">
-
-
-  <div class="form-group">
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      {{ form.media }}
-      <!-- doing as_p decides the element that each will be created for each field -->
-      <button>Post</button>
-      </form>
+  <div class="row">
+    <h1 class="text-start">Creating a new topic</h1>
+    <br/>
+    <div class="col-3">
+    </div>
+    <div class="col-9">
+      <div class="bs-component">
+        <figure>
+          <blockquote class="blockquote">
+            <p>"Hey {{ user.get_username }}, you're creating a new topic,  it will be posted in {{ dev_area }} community discussions. If this isn't the right category you can go back to change it.”</p>
+          </blockquote>
+          <figcaption class="blockquote-footer">
+          AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
   </div>
-  <script>
-    var name = "{{ user.id }}";
-    document.getElementById('user_input_ms').value = name;
-  </script>
 </div>
+  <div class="container">
+    <div class="row">
+      <div class="form-group mx-auto">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.media }}
+          <p>{{form.title}}</p>
 
+          <p>{{form.body}}</p>
+
+          <p>{{form.topic_snippet}}</p>
+          <!-- doing as_p decides the element that each will be created for each field -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary me-auto">Publish new topic</button>
+            </div>
+          </form>
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block bottomcarousel %}
+{% endblock %}
+
+{% block bottomleftbar %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
 {% endblock %}

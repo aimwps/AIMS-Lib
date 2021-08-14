@@ -6537,7 +6537,7 @@ fieldset:disabled .btn {
 }
 
 .carousel-item {
-  height: 400px;
+  height:600px;
   position: relative;
   display: none;
   float: left;
@@ -6555,7 +6555,7 @@ fieldset:disabled .btn {
     transition: none;
   }
 }
-
+@media ()
 .carousel-item.active,
 .carousel-item-next,
 .carousel-item-prev {
@@ -6747,6 +6747,15 @@ fieldset:disabled .btn {
 .carousel-dark .carousel-caption {
   color: #000;
 }
+
+
+@media (max-width:600px) {
+  .carousel-item{
+    height:40%;
+  }
+}
+
+
 
 @-webkit-keyframes spinner-border {
   to {
@@ -11391,4 +11400,19 @@ fieldset:disabled .btn {
 
 .badge.bg-light {
   color: #333;
+}
+
+
+.mobile {
+    display: none;
+}
+.mobile > h3 {color: blue;}
+
+@media (max-width: 600px) {
+    .mobile {
+        display: inline;
+    }
+    .desktop {
+        display: none;
+    }
 }

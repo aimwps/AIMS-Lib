@@ -51,8 +51,12 @@
                 {{ post.title }} by {{ post.author }} on {{ post.publish_date }} at {{ post.publish_time}}</button>
             </h2>
             <div id="topic_collapse_{{ post.pk }}" class="accordion-collapse collapse" aria-labelledby="topic_heading_{{ post.pk }}" data-bs-parent="#TopicAccordian">
-              <div class="accordion-body">
-                {{ post.topic_snippet }}
+              <div class="accordion-body text-break">
+                {% if post.topic_snippet %}
+                <p>{{ post.topic_snippet }}</p>
+                {% else %}
+                <p>{{ post.body|slice:500|safe}}
+                {% endif %}
                 <h6><a href="{% url 'forum-topic-view' post.pk %}">View full topic</a></h6>
               </div>
             </div>

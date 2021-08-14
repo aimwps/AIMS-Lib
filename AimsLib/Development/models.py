@@ -21,16 +21,19 @@ class DevelopmentCategory(models.Model):
     description = models.TextField()
     parent_category = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
     global_standard = models.BooleanField(default=False)
+
     def __str__(self):
-        return f"<DevCat: {self.title}>" #This changes the displayed object name into relevant text information
-
-
-
+        full_path = [self.title]
+        k = self.parent_category
+        while k is not None:
+            full_path.append(k.title)
+            k = k.parent_category
+        return ' > '.join(full_path[::-1])
 ## A user can create many aims
 class Aim(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(DevelopmentCategory, blank=True, null=True, on_delete=models.SET_NULL)
-    title = models.CharField(max_length=255)
+    title = models.TextField()
     why = models.TextField(blank=True, null=True)
     def __str__(self):
         return f"<AIM: by {self.user} '{self.title[:min(len(self.title),50)]}'>"#This changes the displayed object name into relevant text information
@@ -59,9 +62,6 @@ class Lever(models.Model):
         min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)))
         boolean = list(TrackerBoolean.objects.filter(Q(lever=self)))
         payload = min_aim+boolean
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        print(payload)
-
         return payload
 
     def __str__(self):
@@ -119,10 +119,17 @@ class TrackerMinAim(models.Model):
             sentence_end = ""
 
         return " ".join([sentence_start, sentence_middle, sentence_end])
+    def get_tquestion(self):
+        question = f"Did you {self.metric_description} {self.metric_min} {self.metric_type} "
+        if self.frequency_quantity > 1:
+            question += f"{self.frequency_quantity} times "
+        question += f"{self.frequency}?"
+        return question
+
 
 class TrackerMinAimRecords(models.Model):
     tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
-    lever_performed = models.BooleanField()
+    lever_performed = models.BooleanField(default=False)
     record_date = models.DateField(auto_now_add=True)
     record_time = models.TimeField(auto_now_add=True)
     metric_quantity  = models.IntegerField(blank=True, null=True)

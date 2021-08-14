@@ -54,10 +54,10 @@ class Post(models.Model):
     dev_area = models.ForeignKey(DevelopmentCategory, null=True,on_delete=models.SET_NULL)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     #body = models.TextField()
-    body = RichTextField(blank=True, null=True)
+    body = RichTextField(config_name="article_editor", )
     publish_date = models.DateField(auto_now_add=True)
     publish_time = models.TimeField(auto_now_add=True)
-    topic_snippet = models.TextField(max_length=500, default="A short snippet on your topic")
+    topic_snippet = models.TextField(max_length=500, blank=True, null=True)
     #modify_date = models.DateField(auto_now_add=True)
 
 
@@ -98,7 +98,7 @@ class Reply(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_post = models.ForeignKey(Post, related_name="replies", on_delete=models.CASCADE)
     #body = models.TextField()
-    body = RichTextField(blank=True, null=True)
+    body = RichTextField(config_name="article_editor", blank=True, null=True)
     publish_date = models.DateField(auto_now_add=True)
     publish_time = models.TimeField(auto_now_add=True)
     modify_date = models.DateField(auto_now=True,auto_now_add=False)

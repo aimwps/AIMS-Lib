@@ -146,3 +146,20 @@ MESSAGE_TAGS = {
  }
 
 #django_heroku.settings(locals())
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': "100%",
+        'width': "100%",
+    },
+    'article_editor': {
+        'height': "100%",
+        'width': "100%",
+        'toolbar': 'Custom',
+        'toolbar_Custom':[
+                ['RemoveFormat', 'Source','Cut', 'Copy', 'Paste', 'PasteText','Bold', 'Italic', 'Underline', 'Link', 'Unlink','Table', 'HorizontalRule', 'Smiley', 'SpecialChar',],
+                ['Styles', 'Format', 'Font','NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',],
+                ],
+
+    },
+}
