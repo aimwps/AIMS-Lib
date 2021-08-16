@@ -64,6 +64,7 @@ def create_comment_lists_by_len(qs, l_len):
 
 def ForumTopicView(request, pk):
     topic = get_object_or_404(Post,id=pk)#
+    print(f"this topic {topic}")
     topic_comment_form = ForumTopicCommentForm(request.POST or None)#
     reply_comment_form = ForumTopicCommentForm(request.POST or None)#
     template_name = "forum_topic_view.html"
@@ -72,6 +73,7 @@ def ForumTopicView(request, pk):
     all_replies_and_comments = []
     topic_votes = []
     if request.method == "GET":
+        print(request.path)
     ### FOR TOPIC COMMENTS
         topic_comments = Comment.objects.filter_by_instance(topic)
         topic_votes = VoteUpDown.objects.filter_by_instance_vote_counts(topic)
@@ -102,11 +104,6 @@ def ForumTopicView(request, pk):
                         reply_comments_votes.append((comment, comment_votes))
 
                     reply_comment_split_list = create_comment_lists_by_len(reply_comments_votes, 5)
-                    print(reply_comment_split_list)
-                    for i in reply_comment_split_list:
-                        print(i)
-                        print("reply over ___")
-
             ### Save a single reply and all its comments as a tuple to a list of every reply and comment
                     all_replies_and_comments.append(((topic_reply, reply_votes),reply_comment_split_list))
 
@@ -117,18 +114,22 @@ def ForumTopicView(request, pk):
 
 ####################################################################################################
 #### COMMENT POSTING
-
+    print(f"THE FUCKING REQUEST: {request.path}")
+    print(request.method)
 #### topic
     if request.method =="POST" and 'commentfortopic' in request.POST:
+        print("this heappened")
         if request.user:
             if topic_comment_form.is_valid():
-
                 c_body = topic_comment_form.cleaned_data.get('content_body')
                 new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Post),body=c_body, object_id=topic.id)
                 new_comment.save()
+                print("Trying new comment")
                 return HttpResponseRedirect(request.path)
         else:
+            print("129")
             messages.info(request, 'You must be logged in to commment')
+            print("129")
             return HttpResponseRedirect(request.path)
 #### reply
     if request.method =="POST" and 'commentforreply' in request.POST:
@@ -137,7 +138,6 @@ def ForumTopicView(request, pk):
                 c_body = reply_comment_form.cleaned_data.get('content_body')
                 new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Reply),body=c_body, object_id=request.POST['object_id'])
                 new_comment.save()
-                print(new_comment)
                 return HttpResponseRedirect(request.path)
         else:
             messages.info(request, 'You must be logged in to commment')
@@ -157,6 +157,7 @@ def ForumTopicView(request, pk):
             new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=True)
             new_vote.save()
             messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
+            print("FUCKUNG SHOW THIS")
             return HttpResponseRedirect(request.path)
         else:
             messages.info(request, 'You must be logged in to vote')
@@ -347,8 +348,10 @@ class ForumTopicReply(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        self.reply_to = get_object_or_404(Post, id=self.kwargs['pk'])
-        form.instance.on_post = self.reply_to
+        reply_to = get_object_or_404(Post, id=self.kwargs['pk'])
+        obj = form.save(commit=False)
+        form.instance.author = self.request.user
+        form.instance.on_post = reply_to
         messages.success(self.request, 'Your reply has been posted successfully')
         return super().form_valid(form)
 

@@ -14,287 +14,82 @@
     <title>{% block title %}AIMS-LIB{% endblock %}</title>
   </head>
   <body>
-    <!-- NAVIGATION
+    <!-- NAVIGATION & Messages (FIXED TO TOP)
     ################################################################################# -->
-      <div class='container fixed-top'>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-primary rounded">
-
-        <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'home' %}">AIMSLib</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-auto">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'forum-home' %}">Forum</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Library</a>
-              </li>
-              {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  {{ user.get_username }}
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="{% url 'member-profile' user.pk %}">My Profile</a></li>
-                  <li><a class="dropdown-item" href="{% url 'aims-dash' %}">Development</a></li>
-                  <li><a class="dropdown-item" href="{% url 'member-edit' %}">Account settings</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-
-                </ul>
-              </li>
-
-              {% else %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Register/Login
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="{% url 'member-register' %}">Register</a></li>
-                  <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
-                </ul>
-              </li>
-              {% endif %}
-            </ul>
-          </div>
+        <div class="fixed-top">
+            <div class="container">
+              {% include 'navigation.html' %}
+            </div>
+            {% if messages %}
+            <div class="container">
+              {% for message in messages %}
+              <div class="container-fluid p-0">
+                <div class="alert {{message.tags}}" role="alert" >
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
         </div>
-      </nav>
-    </div>
-  </div>
-  <!-- FULL SPREAD carousel
+  <!-- MAIN CAROUSELF (FULL SCREEN WIDTH)
   ################################################################################# -->
   {% block maincarousel %}
-      <div id="fullpagetopcarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#fullpagetopcarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#fullpagetopcarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#fullpagetopcarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="{% static 'media/web/stormy.jpg'%}" class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <h1>Reach your AIMS</h1>
-            <h4>Only you stand in the way..</h4>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="{% static 'media/web/hiker.jpeg'%}" class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <strong><h1>Reach your AIMS</h1></strong>
-            <h4>Only you stand in the way..</h4>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="{% static 'media/web/nice.jpg'%}" class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <strong><h1>Reach your AIMS</h1></strong>
-            <h4>Only you stand in the way..</h4>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#fullpagetopcarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#fullpagetopcarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
+    {% include  "base_main_carousel.html" %}
   {% endblock %}
-    {% if messages %}
-    <div class="container">
-      {% for message in messages %}
-      <div class="container-fluid p-0">
-        <div class="alert {{message.tags}}" role="alert" >
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
-  </div>
 
 
-  <!-- TOP HALF PAGE
-  ################################################################################# -->
-
+<!-- TOP HALF PAGE
+################################################################################# -->
     <div class="container">
       <div class="container">
        <div class="row">
-
-<!-- LEFT BAR
-################################################################################# -->
+    <!-- LEFT BAR
+    ################################################################################# -->
         <div class="col-md-2 col-xs-12 bg-white ">
           {% block leftbar %}
-          <div class="card border border-white my-2">
-            <img class="card-img-top" src="{% static 'media/web/l3.png' %}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Quick start guide</h5>
-              <p class="card-text">Learn how to create a roadmap to your aims. You can start here.. </p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><a href="#"><i>"Craft just how they remember me"</i></a></li>
-              <li class="list-group-item"><a href="#">The pillars of life</a></li>
-              <li class="list-group-item"><a href="#">Finding purpose</a></li>
-              <li class="list-group-item"><a href="#">Starting your map</a></li>
-              <li class="list-group-item"><a href="#" class="card-link">Go to your map</a></li>
-            </ul>
-          </div>
-          <br/>
-          <div class="desktop">
-            <div class="card border border-white  my-2">
-              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
-              <div class="card-body">
-                <p class="card-text">How much control do you really have?</p>
-              </div>
-            </div>
-          </div>
+            {% include "top_left.html"%}
           {% endblock %}
         </div>
-
-<!-- MAIN CONTENT
-################################################################################# -->
+    <!-- MAIN CONTENT
+    ################################################################################# -->
         <div class="col-md-8 col-xs-12 rounded bg-white ">
           <br/>
           <br/>
           {% block content %}
           {% endblock %}
 
-
-<!-- MAIN CONTENT CAROUSEL
-################################################################################# -->
-
+      <!-- MAIN CONTENT CAROUSEL
+      ################################################################################# -->
           {% block contentCarousel %}
-          <div class="container my-4">
-            <div id="contentcarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#contentcarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#contentcarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#contentcarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="{% static 'media/web/stormy.jpg'%}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <h1>Reach your AIMS</h1>
-                  <h4>Only you stand in the way..</h4>
-                </div>
-              </div>
-              <div class="carousel-item">
-                <img src="{% static 'media/web/hiker.jpeg'%}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <strong><h1>Reach your AIMS</h1></strong>
-                  <h4>Only you stand in the way..</h4>
-                </div>
-              </div>
-              <div class="carousel-item">
-                <img src="{% static 'media/web/nice.jpg'%}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <strong><h1>Reach your AIMS</h1></strong>
-                  <h4>Only you stand in the way..</h4>
-                </div>
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#contentcarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#contentcarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
+            {% include "content_carousel.html" %}
           {% endblock %}
-
-
-  <!-- MAIN CONTENT AFTER CONTENT CAROUSEL
-  ################################################################################# -->
-      {% block secondtopcontent %}
-      {% endblock %}
-
-
-
+      <!-- MAIN CONTENT AFTER CONTENT CAROUSEL
+      ################################################################################# -->
+          {% block secondtopcontent %}
+            {% include "secondtopcontent.html" %}
+          {% endblock %}
         </div>
 
-<!-- TOP RIGHT SIDE
-################################################################################# -->
+    <!-- TOP RIGHT SIDE
+    ################################################################################# -->
         <div class="col-md-2 col-xs-12 bg-white">
           {% block rightbar %}
-          <div class="card border border-white my-2" >
-            <img src="{% static 'media/web/ms.jpg' %}" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">See why you should get a copy today</p>
-            </div>
-          </div>
-          <div class="desktop">
-            <div class="card border border-white  my-2">
-              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
-              <div class="card-body">
-                <p class="card-text">How much control do you really have?</p>
-              </div>
-            </div>
-          </div>
-          <div class="desktop">
-            <div class="card border border-white my-2">
-              <img src="{% static 'media/web/chm.jpg' %}" class="card-img-top" alt="...">
-              <div class="card-body">
-                <p class="card-text">The truth about getting tough</p>
-              </div>
-            </div>
-          </div>
+            {% include "top_right.html" %}
           {% endblock %}
-      </div>
+        </div>
+<!-- END OF TOP HALF CONTAINERS
+################################################################################# -->
       </div>
     </div>
   </div>
-<!-- BOTTOM CAROUSEL
+
+
+<!-- BOTTOM CAROUSEL (FULL SCREEN WIDTH)
 ################################################################################# -->
 {% block bottomcarousel %}
-    <div id="footcarousel" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#footcarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-      <button type="button" data-bs-target="#footcarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#footcarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="{% static 'media/web/stormy.jpg'%}" class="d-block w-100" alt="...">
-        <div class="carousel-caption d-none d-md-block">
-          <h1>Reach your AIMS</h1>
-          <h4>Only you stand in the way..</h4>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'media/web/hiker.jpeg'%}" class="d-block w-100" alt="...">
-        <div class="carousel-caption d-none d-md-block">
-          <strong><h1>Reach your AIMS</h1></strong>
-          <h4>Only you stand in the way..</h4>
-        </div>
-      </div>
-      <div class="carousel-item">
-        <img src="{% static 'media/web/nice.jpg'%}" class="d-block w-100" alt="...">
-        <div class="carousel-caption d-none d-md-block">
-          <strong><h1>Reach your AIMS</h1></strong>
-          <h4>Only you stand in the way..</h4>
-        </div>
-      </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#footcarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#footcarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-    </div>
+  {% include "bottom_carousel.html" %}
 {% endblock %}
 
 <!-- BOTTOM HALF PAGE
@@ -303,33 +98,16 @@
       <div class="container">
        <div class="row">
 
-<!-- BOTTOM LEFT BAR
-################################################################################# -->
+    <!-- BOTTOM LEFT BAR
+    ################################################################################# -->
         <div class="col-md-2 col-xs-12 bg-white ">
           {% block bottomleftbar %}
-          <div class="desktop">
-            <div class="card border border-white  my-2">
-              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
-              <div class="card-body">
-                <p class="card-text">How much control do you really have?</p>
-              </div>
-            </div>
-          </div>
-          <div class="desktop">
-            <div class="card border border-white  my-2">
-              <img src="{% static 'media/web/pb.jpg' %}" class="card-img-top" alt="...">
-              <div class="card-body">
-                <p class="card-text">How much control do you really have?</p>
-              </div>
-            </div>
-          </div>
-
-
+            {% include "bottom_left.html"%}
           {% endblock %}
         </div>
 
-<!-- BOTTOM CENTER CONTENT
-################################################################################# -->
+    <!-- BOTTOM CENTER CONTENT
+    ################################################################################# -->
         <div class="col-md-8 col-xs-12 rounded bg-white ">
           {% block bottomcontent %}
           <br/>
@@ -338,55 +116,22 @@
         </div>
 
 
-<!-- bottom right bar
-################################################################################# -->
+    <!-- bottom right bar
+    ################################################################################# -->
         <div class="col-md-2 col-xs-12 bg-white">
 
           {% block bottomrightbar %}
-          <div class="card border border-white my-2">
-            <img class="card-img-top" src="{% static 'media/web/wp.gif' %}" alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Pairing personal & industry development</h5>
-              <p class="card-text">Design a course and share it with your employees through aims-lib</p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><a href="#">Our vision</a></li>
-              <li class="list-group-item"><a href="#">Syllabus examples</a></li>
-              <li class="list-group-item"><a href="#">Creating a syllabus</a></li>
-              <li class="list-group-item"><a href="#">Tools for hospitality</a></li>
-            </ul>
-          </div>
-          <div class="desktop">
-          <div class="card border border-white my-2">
-            <img src="{% static 'media/web/chm.jpg' %}" class="card-img-top" alt="...">
-            <div class="card-body">
-              <p class="card-text">The truth about getting tough</p>
-            </div>
-          </div>
-        </div>
+            {% include "bottom_right.html" %}
           {% endblock %}
         </div>
       </div>
     </div>
   </div>
 
-
-
-
-    <!-- BOTTOM NAV
-    ################################################################################# -->
-
-    <div class='container'>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary ">
-
-      <div class="container-fluid ms-auto">
-        <a class="navbar-brand ms-auto" href="{% url 'home' %}">AIMSLib</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-      </div>
-    </nav>
+<!-- BOTTOM NAV
+################################################################################# -->
+  <div class='container'>
+    {% include 'bottom_nav.html' %}
   </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"></script>

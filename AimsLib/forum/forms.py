@@ -57,8 +57,7 @@ class ForumTopicReplyForm(forms.ModelForm):
         self.fields['body'].label = "" #the trick :)
     class Meta:
         model = Reply
-        fields = ('author','body')
-        widgets ={'author': forms.TextInput(attrs = { 'class': 'form-control', 'value': '', 'id':'user_input_ms', 'type': 'hidden'}),
-                   'body': forms.Textarea(attrs = {'class': 'form-control',})}
+        fields = ('body',)
+        widgets ={'body': forms.Textarea(attrs = {'class': 'form-control',})}
         # this is applying the css classes 'form-control' is predetermined
         # as we are using bootstrap, can reference any css assigned
