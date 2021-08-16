@@ -34,7 +34,7 @@ class LogAnyTracker(View):
         return render(request, self.template_name, context)
 
     def form_valid(self, form):
-        print(f"checking form {form}")
+        #print(f"checking form {form}")
         form.instance.tracker = eval(f"{tracker_type}Records").objects.get(id=self.kwargs['tracker_id'])
         return super().form_valid(form)
 
@@ -240,9 +240,6 @@ class AimsDash(TemplateView):
                 all_cat_aim_data[aim] = aim_levers
             aims_by_cat.append((full_cat_path, all_cat_aim_data))
         context['uncomplete_trackers'] = uncomplete_trackers
-        print(type(uncomplete_trackers))
-        for k,v in uncomplete_trackers.items():
-            print(k,v)
         context['aims_by_cat'] = sorted(aims_by_cat)
         #context['ordered_tracker_periods'] = []
         # for period in all_uncomplete_tracker_periods:
@@ -253,7 +250,6 @@ class AimsDash(TemplateView):
             #context['ordered_tracker_periods'].append(period_trackers)
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
-        #print(context['ordered_tracker_periods'])
         return context
     def form_valid(self, form):
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
@@ -271,13 +267,20 @@ class AimsDash(TemplateView):
                     metric_quantity = self.request.POST.get("metric_quantity")
             )
             new_log.save()
-            return HttpResponseRedirect('/aims_dash/')
+            print("yoyoyo")
+            return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
         elif "TrackerBoolean" in self.request.POST:
-            print("Okay")
-            return HttpResponseRedirect('/aims_dash/')
+            get_tracker = get_object_or_404(TrackerBoolean, id=self.request.POST.get('tracker_id'))
+            new_log = TrackerBooleanRecords(
+                    tracker = get_tracker,
+                    lever_performed = True,
+                    metric_quantity = self.request.POST.get("metric_quantity")
+            )
+            new_log.save()
+            return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
         else:
             print("doesnt work")
-            return HttpResponseRedirect('/aims_dash/')
+            return HttpResponseRedirect('/aims_dash/', anchor=f"QAloc_{self.request.POST.get('for_period')}")
 
 
     def check_tracker_status(self, tracker):
@@ -343,16 +346,9 @@ class AimsDash(TemplateView):
                 start_date = reset_user_date_time
                 end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
 
-        print(f"tracker: {tracker}. Range: {start_date} ->  {end_date}")
-
-
         ## Check the type of tracker and filter the appropriate logs the logs for the tracker.
         #if isinstance(tracker, TrackerMinAim):
         current_period_logs = eval(f"{tracker.get_tclass()}Records").objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
-        # elif isinstance(tracker, MemberProfile):
-        # current_period_logs = TrackerMinAimRecords.objects.filter(tracker=tracker.id,record_date__range=[start_date, end_date])
-        # else:
-        #     print("error")
         if current_period_logs:
             if len(current_period_logs) >= tracker.frequency_quantity:
                 return (True, tracker.frequency, start_date, end_date)

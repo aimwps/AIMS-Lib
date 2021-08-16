@@ -9,7 +9,7 @@
               <div class="accordion-item">
                 <h2 class="accordion-header" id="heading_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" aria-expanded="false" aria-controls="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
-                    <strong>{{cat.0}}_ </strong> {{ aim.title }}
+                    <p><strong>{{cat.0}}</strong> {{ aim.title }}</p>
                   </button>
                 </h2>
                 <div id="collapse_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" class="accordion-collapse collapse" aria-labelledby="heading_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
@@ -58,14 +58,16 @@
                       {% for tracker_key, tracker_list in trackers.items %}
                         {% if tracker_key == 'TrackerMinAim' %}
                           {% for tracker in tracker_list %}
+                          <a class="menuitem navpad" id="{{ tracker }}">
                               <li class="list-group-item" id='{{ tracker }}'><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
                                 {{ tracker.get_tsentence}}
                                 </li>
+                              </a>
                           {% endfor %}
                         {% endif %}
                         {% if tracker_key == 'TrackerBoolean' %}
                           {% for tracker in tracker_list %}
-                          <a class="menuitem" id="{{ tracker }}">
+                          <a class="menuitem navpad" id="{{ tracker }}">
 
                               <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
                                 {{ tracker.get_tsentence}}

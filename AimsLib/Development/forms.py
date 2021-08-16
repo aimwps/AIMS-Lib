@@ -43,7 +43,8 @@ class TrackerBooleanRecordsForm(forms.ModelForm):
         fields = ("metric_quantity",)
         widgets = {
             'metric_quantity': forms.Select(attrs = {
-                                        'class': 'form-control',}),
+                                        'class': 'form-control',
+                                        }),
             }
 
 

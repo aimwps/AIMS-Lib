@@ -124,11 +124,11 @@ class TrackerMinAim(models.Model):
                     'weekly': 'this week',
                     'monthly':'this month',
                     'yearly': 'this year'}
-        question = f"Did you {self.metric_description} {self.metric_min} {self.metric_type} "
+        question = f"You aimed to {self.metric_description} {self.metric_min} to {self.metric_aim} {self.metric_type} "
         if self.frequency_quantity > 1:
             question += f"{self.frequency_quantity} times "
         verbose_frequency = verbose[self.frequency]
-        question += f"{verbose_frequency}?"
+        question += f"{verbose_frequency}. How did you get on?"
         return question
 
 
