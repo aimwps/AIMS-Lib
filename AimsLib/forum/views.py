@@ -42,7 +42,9 @@ class ForumViewHome(TemplateView):
         for dev_cat in DevelopmentCategory.objects.filter(global_standard=True):
             filtered_results = (get_category_path(dev_cat), list(Post.objects.filter(dev_area=dev_cat.id).order_by('-publish_date', '-publish_time')[:5]))
             skill_topic_set[dev_cat] = filtered_results
-        context["dev_area_topics"] = skill_topic_set
+        x = sorted(skill_topic_set.items(), key=lambda x: x[1][0])
+        print(x)
+        context["dev_area_topics"] = {k:v for k,v in x}
         return context
 
 ###############################################################################################
@@ -63,6 +65,9 @@ def create_comment_lists_by_len(qs, l_len):
 
 
 def ForumTopicView(request, pk):
+    print(request)
+    if request.method == "POST":
+        print("okay 1")
     topic = get_object_or_404(Post,id=pk)#
     print(f"this topic {topic}")
     topic_comment_form = ForumTopicCommentForm(request.POST or None)#
@@ -73,7 +78,6 @@ def ForumTopicView(request, pk):
     all_replies_and_comments = []
     topic_votes = []
     if request.method == "GET":
-        print(request.path)
     ### FOR TOPIC COMMENTS
         topic_comments = Comment.objects.filter_by_instance(topic)
         topic_votes = VoteUpDown.objects.filter_by_instance_vote_counts(topic)
@@ -117,6 +121,9 @@ def ForumTopicView(request, pk):
     print(f"THE FUCKING REQUEST: {request.path}")
     print(request.method)
 #### topic
+
+    if request.method =="POST":
+        print("we made it to post")
     if request.method =="POST" and 'commentfortopic' in request.POST:
         print("this heappened")
         if request.user:
@@ -126,6 +133,8 @@ def ForumTopicView(request, pk):
                 new_comment.save()
                 print("Trying new comment")
                 return HttpResponseRedirect(request.path)
+            else:
+                print("form isnt valid")
         else:
             print("129")
             messages.info(request, 'You must be logged in to commment')
@@ -139,6 +148,8 @@ def ForumTopicView(request, pk):
                 new_comment = Comment(author=request.user, content_type=ContentType.objects.get_for_model(Reply),body=c_body, object_id=request.POST['object_id'])
                 new_comment.save()
                 return HttpResponseRedirect(request.path)
+            else:
+                print("form isnt valid")
         else:
             messages.info(request, 'You must be logged in to commment')
             return HttpResponseRedirect(request.path)
@@ -147,13 +158,15 @@ def ForumTopicView(request, pk):
 #### TOPIC VOTING
 
 #### UP
+    print("HERE")
+    print(request.POST)
     if request.method =="POST" and 'topic_vote_up' in request.POST:
         past_vote = VoteUpDown.objects.filter_by_instance(topic)
         if request.user:
             user_votes = past_vote.filter(votee=request.user)
             if user_votes:
                 messages.info(request, 'You have already voted')
-                return HttpResponseRedirect(request.path)
+                return HttpResponseRedirect(f"{request.path}/1")
             new_vote = VoteUpDown(votee=request.user, content_type=ContentType.objects.get_for_model(Post), object_id=topic.id, is_up_vote=True)
             new_vote.save()
             messages.success(request, 'Thankyou for your opinion - it might help others find what they need!')
@@ -179,6 +192,8 @@ def ForumTopicView(request, pk):
         else:
             messages.info(request, 'You must be logged in to vote')
             return HttpResponseRedirect(request.path)
+    else:
+        print("OH SHIT")
 
 
 ####################################################################################################

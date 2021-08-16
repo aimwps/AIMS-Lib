@@ -47,7 +47,7 @@
 <!-- VOTING FOR TOPIC TITLE ROW
 ################################################################################################################################################### -->
             <div class="span">
-              <form method="POST" action=".">
+              <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                   {% csrf_token %}
                   <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
                   <p>
@@ -59,7 +59,7 @@
                     {{topic_votes.0}}
                   </p>
               </form>
-              <form method="POST" action=".">
+              <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                   {% csrf_token %}
                   <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
                   <p>
@@ -119,7 +119,7 @@
 
                       {% if user.is_authenticated %}
                         <div class="form-group">
-                          <form method="POST" action=".">
+                          <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                             {% csrf_token %}
                             {{ topic_comment_form.as_p }}
 
@@ -148,7 +148,7 @@
 
 <!-- VOTING FOR TOPIC COMMENTS
 #################################################################################################################################################################### -->
-                        <form method="POST" action=".">
+                        <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                             {% csrf_token %}
                             <input type="hidden" value="{{ comment.0.id }}" name="topic_comment_id_to_vote_up">
                             <p>
@@ -160,7 +160,7 @@
 
                             </p>
                         </form>
-                        <form method="POST" action=".">
+                        <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                             {% csrf_token %}
                             <input type="hidden" value="{{ comment.0.id }}" name="topic_comment_id_to_vote_down">
                             <p>
@@ -209,7 +209,7 @@
           </div>
 
             <div class="col-1 text-end">
-                <form method="POST" action=".">
+                <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                     {% csrf_token %}
                     <input type="hidden" value="{{ reply.0.0.id }}" name="reply_id_to_vote_up">
                     <p>
@@ -223,7 +223,7 @@
               </div>
               <div class="col-1 text-end">
 
-                <form method="POST" action=".">
+                <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                     {% csrf_token %}
                     <input type="hidden" value="{{ reply.0.0.id  }}" name="reply_id_to_vote_down">
                     <p>
@@ -276,7 +276,7 @@
                     <div class="container">
                       {% if user.is_authenticated %}
                       <div class="form-group">
-                        <form method="POST" action=".">
+                        <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                           {% csrf_token %}
                           {{ reply_comment_form.as_p }}
 
@@ -301,7 +301,7 @@
                     <div class="row">
                       <div class="col-1">
 
-                        <form method="POST" action=".">
+                        <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                             {% csrf_token %}
                             <input type="hidden" value="{{ comment.0.id }}" name="reply_comment_id_to_vote_up">
                             <p>
@@ -312,7 +312,7 @@
                                 {% endif %}
                             </p>
                         </form>
-                        <form method="POST" action=".">
+                        <form method="POST" action="{% url 'forum-topic-view' topic.id %}">
                             {% csrf_token %}
                             <input type="hidden" value="{{ comment.0.id }}" name="reply_comment_id_to_vote_down">
                             <p>
