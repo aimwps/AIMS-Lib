@@ -120,10 +120,15 @@ class TrackerMinAim(models.Model):
 
         return " ".join([sentence_start, sentence_middle, sentence_end])
     def get_tquestion(self):
+        verbose =  {'daily':'today',
+                    'weekly': 'this week',
+                    'monthly':'this month',
+                    'yearly': 'this year'}
         question = f"Did you {self.metric_description} {self.metric_min} {self.metric_type} "
         if self.frequency_quantity > 1:
             question += f"{self.frequency_quantity} times "
-        question += f"{self.frequency}?"
+        verbose_frequency = verbose[self.frequency]
+        question += f"{verbose_frequency}?"
         return question
 
 

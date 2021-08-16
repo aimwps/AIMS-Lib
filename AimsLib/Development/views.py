@@ -180,7 +180,11 @@ class AimsDash(TemplateView):
 
     # For gethering info on trackers
         all_uncomplete_tracker_periods = ['uncomplete_daily','uncomplete_weekly', 'uncomplete_monthly', 'uncomplete_yearly']
-        uncomplete_trackers = OrderedDict()
+        uncomplete_trackers = OrderedDict({
+                                    'daily': None,
+                                    'weekly': None,
+                                    'monthly':  None,
+                                    'yearly': None,})
         uncomplete_daily = []
         uncomplete_weekly = []
         uncomplete_monthly = []
@@ -214,7 +218,7 @@ class AimsDash(TemplateView):
                     for tracker in trackers:
                         tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
                         if not tracker_complete:
-                            if freq_bracket in uncomplete_trackers.keys():
+                            if uncomplete_trackers[freq_bracket] != None:
                                 uncomplete_trackers[freq_bracket][2].append(tracker)
                             else:
                                 uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
@@ -236,16 +240,20 @@ class AimsDash(TemplateView):
                 all_cat_aim_data[aim] = aim_levers
             aims_by_cat.append((full_cat_path, all_cat_aim_data))
         context['uncomplete_trackers'] = uncomplete_trackers
+        print(type(uncomplete_trackers))
+        for k,v in uncomplete_trackers.items():
+            print(k,v)
         context['aims_by_cat'] = sorted(aims_by_cat)
-        context['ordered_tracker_periods'] = []
-        for period in all_uncomplete_tracker_periods:
-            period_trackers = eval(period)
-            if len(period_trackers) > 0:
-                has_trackers = True
-            context[period] = period_trackers
-            context['ordered_tracker_periods'].append(period_trackers)
+        #context['ordered_tracker_periods'] = []
+        # for period in all_uncomplete_tracker_periods:
+        #     period_trackers = eval(period)
+        #     if len(period_trackers) > 0:
+        #         has_trackers = True
+        #     context[period] = period_trackers
+            #context['ordered_tracker_periods'].append(period_trackers)
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
+        #print(context['ordered_tracker_periods'])
         return context
     def form_valid(self, form):
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
