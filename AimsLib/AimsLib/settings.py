@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'forum',
     'Development',
     'Members',
+    'Paths',
     'ckeditor',
     'bootstrap_datepicker_plus',
 
@@ -71,6 +72,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'AimsLib.wsgi.application'
 
