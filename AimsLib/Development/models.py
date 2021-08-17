@@ -180,10 +180,17 @@ class TrackerBoolean(models.Model):
         return reverse('aims-dash')
 
     def get_tsentence(self):
-        return self.metric_description
+        sentence = f"On a "
+        if self.frequency_quantity > 1:
+            sentence += f"{self.frequncy_quantity} times "
+        sentence += f"{self.frequency} basis; {self.metric_description}"
+        return sentence
+
+
 
     def get_tquestion(self):
-        return "Did you complete this?"
+        x = f'You said; "{self.metric_description}". Are you taking a step forwards?'
+        return x
 
 class TrackerBooleanRecords(models.Model):
     tracker = models.ForeignKey(TrackerBoolean,on_delete=models.CASCADE)

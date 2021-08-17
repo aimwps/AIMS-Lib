@@ -2,7 +2,8 @@
 
 <div class="container">
 {% for period, tracker_data in uncomplete_trackers.items %}
-  <div class="row" id="QAloc_{{ period }}">
+  <a class="anchor" id="QAloc_{{ period }}"></a>
+  <div class="row">
     <div class="col-5">
       <h5>{{ period|title }} actions</h5>
     </div>

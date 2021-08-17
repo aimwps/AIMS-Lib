@@ -277,10 +277,11 @@ class AimsDash(TemplateView):
                     metric_quantity = self.request.POST.get("metric_quantity")
             )
             new_log.save()
+            print(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
         else:
             print("doesnt work")
-            return HttpResponseRedirect('/aims_dash/', anchor=f"QAloc_{self.request.POST.get('for_period')}")
+            return HttpResponseRedirect('/aims_dash/')
 
 
     def check_tracker_status(self, tracker):
