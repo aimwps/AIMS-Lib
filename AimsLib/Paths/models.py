@@ -70,6 +70,7 @@ class VideoLecture(models.Model): #### (PERSON)
     publish_time = models.TimeField(auto_now_add=True)
     video_link = EmbedVideoField()
     transcript = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     def __str__(self):
         return f"<VideoLecture : {self.title}>"
     # def get_absolute_url(self):
@@ -115,6 +116,20 @@ class PathwayCompletitionRecords(models.Model):
     pathway_content = models.ForeignKey(PathwayContentSetting, on_delete=models.CASCADE)
 
 class VideoLectureCompletionRecord(models.Model):
+    RECORD_STATUS = (('first_completion', 'first_completion'),
+                    ('did_not_complete', 'did_not_complete'),
+                    ('recap_completion', 'recap_completion'))
+    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+
+class WrittenLectureCompletionRecord(models.Model):
+    RECORD_STATUS = (('first_completion', 'first_completion'),
+                    ('did_not_complete', 'did_not_complete'),
+                    ('recap_completion', 'recap_completion'))
+    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+
+class QuizLectureCompletionRecord(models.Model):
     RECORD_STATUS = (('first_completion', 'first_completion'),
                     ('did_not_complete', 'did_not_complete'),
                     ('recap_completion', 'recap_completion'))

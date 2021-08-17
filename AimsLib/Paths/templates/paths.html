@@ -13,8 +13,23 @@
 
 
 {% block content %}
+<ul class="nav justify-content-center">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Create a video lecture</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Create a written lecture</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Create a quiz</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Create a pathway</a>
+  </li>
+</ul>
 <div class="container">
-
+<h3> The paths you are on </h3>
+<hr>
 
 {% for path, path_items in user_pathways.items %}
   <h4> {{ path.title }}</h4>
