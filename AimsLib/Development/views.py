@@ -241,16 +241,10 @@ class AimsDash(TemplateView):
             aims_by_cat.append((full_cat_path, all_cat_aim_data))
         context['uncomplete_trackers'] = uncomplete_trackers
         context['aims_by_cat'] = sorted(aims_by_cat)
-        #context['ordered_tracker_periods'] = []
-        # for period in all_uncomplete_tracker_periods:
-        #     period_trackers = eval(period)
-        #     if len(period_trackers) > 0:
-        #         has_trackers = True
-        #     context[period] = period_trackers
-            #context['ordered_tracker_periods'].append(period_trackers)
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
         return context
+
     def form_valid(self, form):
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.tracker = self.request.POST.get("tracker_id")
