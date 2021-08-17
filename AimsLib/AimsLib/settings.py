@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Paths',
     'ckeditor',
     'bootstrap_datepicker_plus',
+    'embed_video'
 
 
 ]
