@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from ckeditor.fields import RichTextField
+from django.contrib import messages
 
 
 class PathwayObjNew(View):
@@ -27,8 +28,6 @@ class PathwayObjNew(View):
         return super().form_valid(form)
 
     def post(self, request, pathway_id):
-        print(f"HERE MF's {PathwayContentSetting.objects.latest()}")
-
         relevant_pathway = PathwayContentSetting.objects.filter(pathway=pathway_id)
         if relevant_pathway:
             new_order_by =  relevant_pathway.latest().order_by + 1
@@ -140,6 +139,14 @@ class PathsHomeView(View):
         context['developer_pathways'] = developer_pathway_data
 
         return render(request, self.template_name, context)
+
+    def post(self, request):
+        print(request.POST)
+        if "delete_pathway" in request.POST:
+            Pathway.objects.filter(id=request.POST.get("delete_pathway")).delete()
+            messages.success(request, 'the pathway was deleted successfully. BYE!')
+
+        return HttpResponseRedirect(request.path)
 
 class VideoLectureView(View):
     template_name = "video_lecture.html"
