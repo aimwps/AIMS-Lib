@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %} Video Lecture Creation{% endblock %}
+
+{% block content %}
+
+<h1> Creating a new video lecture </h1>
+
+<div class="container">
+
+
+  <div class="form-group">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.media }}
+      {{ form.as_p }}
+
+      <!-- doing as_p decides the element that each will be created for each field -->
+      <button>Create</button>
+      </form>
+  </div>
+</div>
+
+{% endblock %}

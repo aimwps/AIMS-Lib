@@ -21,16 +21,34 @@
 </div>
   {% video vid_lec.video_link '100% x 50%' %}
 
-<div class="container">
-
-
-</div>
 {% endblock %}
 
 {% block contentCarousel %}
 {% endblock %}
 
 {% block secondtopcontent %}
+{% if vid_lec.author.id == user.id %}
+
+<div class="row">
+  <h1 class="text-start">Develop</h1>
+  <br/>
+  <div class="col-3">
+  </div>
+  <div class="col-9">
+    <div class="bs-component">
+      <figure>
+        <blockquote class="blockquote">
+          <p>"Hey {{ user.get_username }} you are the author of this video study, you can use it to generate benchmark content for pathways.Do you need help with benchmark generation? check my <a href='#'>full guide</a></a>"
+             </p>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+        AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 

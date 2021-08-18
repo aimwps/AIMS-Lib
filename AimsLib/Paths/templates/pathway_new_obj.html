@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %} Pathway Creation {% endblock %}
+
+{% block content %}
+
+<h3>What item do you want to add to the "{{ on_pathway.title }}" pathway?</h3>
+
+<br/>
+<div class="container">
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <button class="nav-link active" id="lit-lec-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Literature</button>
+      <button class="nav-link" id="vid-lec-tab" data-bs-toggle="tab" data-bs-target="#vid-lec" type="button" role="tab" aria-controls="vid-lec" aria-selected="false">Video</button>
+      <button class="nav-link" id="benchmark-tab" data-bs-toggle="tab" data-bs-target="#benchmark" type="button" role="tab" aria-controls="benchmark" aria-selected="false">Benchmark</button>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="form-group">
+          <form method="post">
+            {% csrf_token %}
+          <br/>
+            {{ form.written_lecture }}
+            <br/>
+            <div class="container">
+              <div class="row">
+                <div class="col-8">
+                  <p>Infinite revision?</p>
+                  <p>Requires previous item to be completed?</p>
+                </div>
+                <div class="col-4">
+                  <p>{{ form.must_revise_continous }}</p>
+                  <p>{{ form.must_complete_previous }}</p>
+                </div>
+              </div>
+            </div>
+            <br/>
+            <button class="btn btn-primary" name="lit-submit">Add written study to path</button>
+          </form>
+        </div>
+      </div>
+    <div class="tab-pane fade" id="vid-lec" role="tabpanel" aria-labelledby="vid-lec-tab">
+      <div class="form-group">
+        <form method="post">
+          {% csrf_token %}
+          <br/>
+          {{ form.video_lecture }}
+          <br/>
+          <div class="container">
+            <div class="row">
+              <div class="col-8">
+                <p>Infinite revision?</p>
+                <p>Requires previous item to be completed?</p>
+              </div>
+              <div class="col-4">
+                <p>{{ form.must_revise_continous }}</p>
+                <p>{{ form.must_complete_previous }}</p>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <button class="btn btn-primary"  name="vid-submit">Add video study to path</button>
+        </form>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="benchmark" role="tabpanel" aria-labelledby="benchmark-tab">
+      <div class="form-group">
+        <form method="post">
+          {% csrf_token %}
+          <br/>
+          {{ form.quiz}}
+          <br/>
+          <div class="container">
+            <div class="row">
+              <div class="col-8">
+                <p>Infinite revision?</p>
+                <p>Requires previous item to be completed?</p>
+              </div>
+              <div class="col-4">
+                <p>{{ form.must_revise_continous }}</p>
+                <p>{{ form.must_complete_previous }}</p>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <button class="btn btn-primary" name="quiz-submit">Add benchmark to path</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
