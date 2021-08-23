@@ -59,7 +59,7 @@
                     {% for lever, trackers in levers.items %}
 
                       <div class="row">
-                          <h5 data-bs-toggle="tooltip" name="Behaviour Settings">
+                          <h5 data-bs-toggle="tooltip" title="Behaviour Settings">
                             <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#behaviour_setting_modal_{{ forloop.counter0 }}">
                             <i class="fas fa-brain"></i>
                           </a> {{ lever.description }}
@@ -81,7 +81,6 @@
 
                               <form action="." method="POST">
                                 {% csrf_token %}
-                                <input type="hidden" value="{{ lever_id }}" name="delete_lever_id">
                                 <button name="delete_behaviour" value="{{lever.id}}" class="btn btn-secondary">
                                   <i class="far fa-trash-alt"></i></button>
                               </form>

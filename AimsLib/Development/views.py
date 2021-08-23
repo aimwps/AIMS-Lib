@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from datetime import datetime, timedelta
+from django.db.models import Q
 import calendar
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
@@ -222,12 +223,12 @@ class AimsDash(TemplateView):
             full_cat_path = get_category_path(cat)
 
             # for eveter category we collect the page users cateogory aims
-            cat_aims = Aim.objects.filter(user=self.request.user.id, category=cat.id)
+            cat_aims = Aim.objects.filter(user=self.request.user.id, category=cat.id).filter(~Q(user_status="deleted"))
 
             # Loop thorugh all the aims in that category
             for aim in cat_aims:
                 aim_levers = {}
-                all_aim_levers = Lever.objects.filter(on_aim = aim.id).order_by("in_order")
+                all_aim_levers = Lever.objects.filter(on_aim = aim.id).filter(~Q(user_status="deleted")).order_by("in_order")
 
             # For each aim in a category, find the corresponding Levers
                 # get all the trackers for that lever.
@@ -285,13 +286,15 @@ class AimsDash(TemplateView):
             new_log.save()
             print(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
-        elif "delete_lever" in self.request.POST:
-            get_lever = get_object_or_404(Lever, id=self.request.POST.get('delete_lever'))
-            get_lever.delete()
+        elif "delete_behaviour" in self.request.POST:
+            get_lever = get_object_or_404(Lever, id=self.request.POST.get('delete_behaviour'))
+            get_lever.user_status = "deleted"
+            get_lever.save()
             return HttpResponseRedirect('/aims_dash/#myaims')
         elif "delete_aim" in self.request.POST:
             get_aim = get_object_or_404(Aim, id=self.request.POST.get("delete_aim"))
-            get_aim.delete()
+            get_aim.user_status = "deleted"
+            get_aim.save()
             return HttpResponseRedirect('/aims_dash/#myaims')
         elif "delete_tracker" in self.request.POST:
             tclass = self.request.POST.get("delete_tclass")

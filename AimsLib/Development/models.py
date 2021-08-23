@@ -45,17 +45,18 @@ class Aim(models.Model):
     category = models.ForeignKey(DevelopmentCategory, blank=True, null=True, on_delete=models.SET_NULL)
     title = models.TextField()
     why = models.TextField(blank=True, null=True)
+    user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     def __str__(self):
         return f"<AIM: by {self.user} '{self.title[:min(len(self.title),50)]}'>"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
         return reverse('aims-dash')
 
-    def get_aim_trackers(for_user_id):
-        user_min_aim_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id)
-        return ('user_min_aim_trackers', user_min_aim_trackers)
-    def get_daily_trackers(for_user_id):
-        user_daily_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id, frequency="daily" )
-
+    # def get_aim_trackers(for_user_id):
+    #     user_min_aim_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id)
+    #     return ('user_min_aim_trackers', user_min_aim_trackers)
+    # def get_daily_trackers(for_user_id):
+    #     user_daily_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id, frequency="daily" )
+    #
 
 
 class Lever(models.Model):
@@ -63,7 +64,7 @@ class Lever(models.Model):
     description = models.TextField(default="A description of the lever you will pull")
     in_order = models.PositiveIntegerField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
-    user_status = model.CharField(max_length=100, choices=USER_STATUS, default="active")
+    user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
