@@ -119,7 +119,7 @@ class TrackerMinAim(models.Model):
 
     def get_tsentence(self):
 
-        sentence_start = f"Commencing {self.start_date} I will show up and {self.metric_description} {self.metric_min} { self.metric_type} "
+        sentence_start = f"I will show up and {self.metric_description} {self.metric_min} { self.metric_type} "
         if self.frequency_quantity > 1:
             sentence_start += f"{ self.frequency_quantity} times "
         sentence_start +=  f"{self.frequency}. "
@@ -127,7 +127,7 @@ class TrackerMinAim(models.Model):
         sentence_start+= f"After {self.complete_value} { self.complete_criteria} {self.frequency}  periods of "
         if self.frequency_quantity > 1:
             sentence_start += f"{self.frequency_quantity} * "
-        sentence_start +=f"{self.metric_aim} {self.metric_type} I have moved mountains to achieve my aims."
+        sentence_start +=f"{self.metric_aim} {self.metric_type} I have moved mountains to achieve my aims"
         if self.end_date:
             sentence_start+=f"This tracker is actively trackd until { self.end_date }."
         return sentence_start
@@ -144,7 +144,9 @@ class TrackerMinAim(models.Model):
         question += f"{verbose_frequency}. How did you get on?"
         return question
 
-
+    def get_pretty_tclass(self):
+        class_name = "Minimum show to goal"
+        return class_name
 class TrackerMinAimRecords(models.Model):
     tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
     lever_performed = models.BooleanField(default=False)
@@ -192,6 +194,9 @@ class TrackerBoolean(models.Model):
         sentence += f"{self.frequency} basis; {self.metric_description}"
         return sentence
 
+    def get_pretty_tclass(self):
+        class_name = "Yes or no statement"
+        return class_name
 
 
     def get_tquestion(self):

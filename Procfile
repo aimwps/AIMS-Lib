@@ -1,1 +1,1 @@
-web: gunicorn AimsLib.wsgi
+web: gunicorn AimsLib.AimsLib.wsgi --log-file -

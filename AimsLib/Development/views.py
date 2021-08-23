@@ -286,11 +286,13 @@ class AimsDash(TemplateView):
             new_log.save()
             print(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
+
         elif "delete_behaviour" in self.request.POST:
             get_lever = get_object_or_404(Lever, id=self.request.POST.get('delete_behaviour'))
             get_lever.user_status = "deleted"
             get_lever.save()
             return HttpResponseRedirect('/aims_dash/#myaims')
+
         elif "delete_aim" in self.request.POST:
             get_aim = get_object_or_404(Aim, id=self.request.POST.get("delete_aim"))
             get_aim.user_status = "deleted"

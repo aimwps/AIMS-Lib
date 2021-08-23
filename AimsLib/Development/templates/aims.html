@@ -1,6 +1,5 @@
 {% if user.is_authenticated %}
 
-  <div class="container">
     {% for cat in aims_by_cat %}
       {% if cat.1 %}
 
@@ -16,45 +15,43 @@
                   <div class="accordion-body">
 
                     <div class="row">
-                      <div class="col-8 mt-2">
-                        <h5> Why I am aiming for this.. </h5>
-                        </div>
-                        <div class="col-4">
-                          <ul class="nav justify-content-end">
-                                <li class="nav-item">
-                                  <a class="nav-link active" href="{% url 'lever-new' aim.id %}" data-bs-toggle="tooltip" title="Add a behaviour to this aim"><i class="fas fa-brain"></i></a>
-                                </li>
-                                <li class="nav-item">
-                                  <a class="nav-link" href="{% url 'edit-aim' aim.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
-                                </li>
-                                <li class="nav-item">
-                                  <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#aim_delete_modal_{{ forloop.counter0 }}">
-                                    <i class="far fa-trash-alt" data-bs-toggle="tooltip" title="Delete this aim"></i>
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
+                      <h5> My reasons why <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#aim_setting_modal_{{ forloop.counter0 }}">
+                      <i class="fas fa-map-pin"></i></a>
+                      </h5>
                     </div>
-                    <div class="modal fade" id="aim_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="aim_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="aim_setting_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="aim_setting_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="aim_delete_modal_{{ forloop.counter0 }}Label">Delete a pathway</h5>
+                            <h4 class="modal-title" id="aim_setting_modal_{{ forloop.counter0 }}Label">Aim Settings</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            You are trying to delete a pathway, there is no coming back from this. Are you sure?
+                            {{ aim.title }}
+
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href='{% url "lever-new" aim.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                            <a href='{% url "edit-aim" aim.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+
                             <form action="." method="POST">
                               {% csrf_token %}
-                            <button name="delete_aim" value="{{aim.id}}" class="btn btn-primary">Delete</button>
-                          </form>
+                              <button name="delete_aim" value="{{aim.id}}" class="btn btn-secondary">
+                                <i class="far fa-trash-alt"></i></button>
+                            </form>
+
+
+
+
+
                           </div>
                         </div>
                       </div>
                     </div>
+
                      <p>{{ aim.why }}</p>
                     {% for lever, trackers in levers.items %}
 
@@ -88,15 +85,13 @@
                           </div>
                         </div>
                       </div>
-
                       {% for tracker in trackers %}
-                      <div class="container">
+                      <div class="row justify-content-end">
                         <!-- Button trigger modal -->
-                        <p><a class="h5" type="button" data-bs-toggle="modal" data-bs-target="#tracker_setting_modal_{{ forloop.counter0 }}">
-                          <i class="fas fa-shoe-prints text-primary"></i>
-                        </a> {{ tracker.get_tsentence }}</p>
+                        <p><small>Starting from {{ tracker.start_date}} a '{{ tracker.get_pretty_tclass }}' goal is being tracked</small><br>{{ tracker.get_tsentence }} <a class="" type="button" data-bs-toggle="modal" data-bs-target="#tracker_setting_modal_{{ forloop.counter0 }}">
+                          <i class="fas fa-shoe-prints text-primary"></i></a></p>
+                        </div>
 
-                      </div>
                         <!-- Modal -->
                         <div class="modal fade" id="tracker_setting_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="tracker_setting_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
                           <div class="modal-dialog">
@@ -145,5 +140,5 @@
           </div>
         {% endif %}
     {% endfor %}
-  </div>
+
 {% endif %}
