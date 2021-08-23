@@ -118,6 +118,8 @@ class AssignTrackerView(View):
                             complete_value = min_aim_form.cleaned_data['complete_value'])
                 new_tracker.save()
                 return HttpResponseRedirect('/aims_dash/')
+            else:
+                print("OH FUCK")
 
         elif "boolean_submit" in request.POST:
             boolean_form = TrackerBooleanNewForm(request.POST)
@@ -295,6 +297,7 @@ class AimsDash(TemplateView):
             tclass = self.request.POST.get("delete_tclass")
             tracker = get_object_or_404(eval(tclass), id=self.request.POST.get("delete_tracker"))
             tracker.user_status = "deleted"
+            tracker.save()
             return HttpResponseRedirect('/aims_dash/#myaims')
         else:
             print("doesnt work")

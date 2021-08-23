@@ -59,8 +59,8 @@ class Lever(models.Model):
         ]
 
     def get_trackers(self):
-        min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)))
-        boolean = list(TrackerBoolean.objects.filter(Q(lever=self)))
+        min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)).filter(~Q(user_status="deleted")))
+        boolean = list(TrackerBoolean.objects.filter(Q(lever=self)).filter(~Q(user_status="deleted")))
         payload = min_aim+boolean
         sorted_payload = sorted(payload, key=lambda instance: instance.start_date)
 
