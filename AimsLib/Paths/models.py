@@ -7,11 +7,17 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from ckeditor.fields import RichTextField
 from embed_video.fields import EmbedVideoField
 
+
+
+
 class Pathway(models.Model): #### (GROUP)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
     title = models.CharField(max_length=255)
     participants = models.ManyToManyField(User, blank=True, related_name="pathway_users")
     description = models.TextField(blank=True)
+    # organisations = models.ManyToManyField(User, blank=True, related_name="pathway_users")
+    # public_records = models.BooleanField()
+    # is_cloneable = models.BooleanField()
     def get_absolute_url(self):
         return reverse('skill-paths')
 

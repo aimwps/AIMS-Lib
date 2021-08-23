@@ -3,7 +3,9 @@
 {% block title %} Topic | {{ topic.title }}{% endblock %}
 
 {% block sectiontitle %} @Forum {% endblock %}
-
+{% block leftbar %}
+{% include "forum_left_bar.html" %}
+{% endblock %}
 {% block content %}
 
   <nav>

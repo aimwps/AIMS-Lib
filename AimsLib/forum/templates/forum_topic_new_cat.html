@@ -1,29 +1,12 @@
 {% extends 'base.html' %}
 
 {% block title %} Add Forum Post{% endblock %}
+{% block leftbar %}
+{% include "forum_left_bar.html" %}
+{% endblock %}
 
 {% block content %}
 
-<div class="container">
-  <div class="row">
-    <h1 class="text-start">Creating a new topic</h1>
-    <br/>
-    <div class="col-3">
-    </div>
-    <div class="col-9">
-      <div class="bs-component">
-        <figure>
-          <blockquote class="blockquote">
-            <p>"Hey {{ user.get_username }}, you're creating a new topic,  it will be posted in {{ dev_area }} community discussions. If this isn't the right category you can go back to change it.”</p>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-          AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
-</div>
   <div class="container">
     <div class="row">
       <div class="form-group mx-auto">

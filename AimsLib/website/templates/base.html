@@ -35,6 +35,7 @@
         </div>
   <!-- MAIN CAROUSELF (FULL SCREEN WIDTH)
   ################################################################################# -->
+
   {% block maincarousel %}
     {% include  "base_main_carousel.html" %}
   {% endblock %}
@@ -47,28 +48,18 @@
        <div class="row">
     <!-- LEFT BAR
     ################################################################################# -->
-        <div class="col-md-2 col-xs-12 bg-white ">
-          <br/>
-          <br/>
+        <div class="col-md-3 col-xs-12 bg-white my-2">
           {% block leftbar %}
             {% include "top_left.html"%}
           {% endblock %}
         </div>
     <!-- MAIN CONTENT
     ################################################################################# -->
-        <div class="col-md-8 col-xs-12 rounded bg-white ">
-          <br/>
-          <br/>
+        <div class="col-md-7 col-xs-12 rounded bg-white my-2">
+
           {% block content %}
           {% endblock %}
 
-      <!-- MAIN CONTENT CAROUSEL
-      ################################################################################# -->
-          {% block contentCarousel %}
-            {% include "content_carousel.html" %}
-          {% endblock %}
-      <!-- MAIN CONTENT AFTER CONTENT CAROUSEL
-      ################################################################################# -->
           {% block secondtopcontent %}
             {% include "secondtopcontent.html" %}
           {% endblock %}
@@ -76,9 +67,7 @@
 
     <!-- TOP RIGHT SIDE
     ################################################################################# -->
-        <div class="col-md-2 col-xs-12 bg-white">
-          <br/>
-          <br/>
+        <div class="col-md-2 col-xs-12 bg-white my-2">
           {% block rightbar %}
             {% include "top_right.html" %}
           {% endblock %}
@@ -87,14 +76,19 @@
 ################################################################################# -->
       </div>
     </div>
+    <!-- MAIN CONTENT CAROUSEL
+    ################################################################################# -->
 
+        {% block contentCarousel %}
+          {% include "content_carousel.html" %}
+        {% endblock %}
+
+    <!-- MAIN CONTENT AFTER CONTENT CAROUSEL
+    ################################################################################# -->
 
 
 <!-- BOTTOM CAROUSEL (FULL SCREEN WIDTH)
 ################################################################################# -->
-{% block bottomcarousel %}
-  {% include "bottom_carousel.html" %}
-{% endblock %}
 
 <!-- BOTTOM HALF PAGE
 ################################################################################# -->
@@ -103,7 +97,7 @@
 
     <!-- BOTTOM LEFT BAR
     ################################################################################# -->
-        <div class="col-md-2 col-xs-12 bg-white ">
+        <div class="col-md-3 col-xs-12 bg-white my-2">
           {% block bottomleftbar %}
             {% include "bottom_left.html"%}
           {% endblock %}
@@ -111,17 +105,16 @@
 
     <!-- BOTTOM CENTER CONTENT
     ################################################################################# -->
-        <div class="col-md-8 col-xs-12 rounded bg-white ">
+        <div class="col-md-7 col-xs-12 rounded bg-white my-2">
           {% block bottomcontent %}
-          <br/>
-          <br/>
+
           {% endblock %}
         </div>
 
 
     <!-- bottom right bar
     ################################################################################# -->
-        <div class="col-md-2 col-xs-12 bg-white">
+        <div class="col-md-2 col-xs-12 bg-white my-2">
 
           {% block bottomrightbar %}
             {% include "bottom_right.html" %}
@@ -131,9 +124,14 @@
     </div>
 
 
+    {% block bottomcarousel %}
+      {% include "bottom_carousel.html" %}
+    {% endblock %}
+
+
 <!-- BOTTOM NAV
 ################################################################################# -->
-  <div class='container'>
+  <div class='container fixed-bottom'>
     {% include 'bottom_nav.html' %}
   </div>
 

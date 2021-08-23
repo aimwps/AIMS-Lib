@@ -8,10 +8,66 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from ckeditor.fields import RichTextField
 from django.contrib import messages
+import s2s
+
+class GenerateBenchmark(View):
+    template_name  = "generate_benchmark.html"
+    def get(self, request, content_type, obj_id):
+        input_text = ""
+        if content_type == 'literature':
+            literature = get_object_or_404(WrittenLecture, id=obj_id)
+            input_text = literature.body
+        elif content_type == 'video':
+            video = get_object_or_404(VideoLecture, id=obj_id)
+            input_text = video.transcript
+        else:
+            print("Unknown content type")
+
+        context = {}
+        context['text_for_generation'] = input_text
+        x = self.run_model_to_generate(input_text)
+        print(x)
+        return render(request, self.template_name, context)
+
+    def run_model_to_generate(self, text):
+        return "ha"
+
+
+
+
+
+
+class PathwayView(View):
+    template_name = "pathway_view.html"
+
+    def get(self, request, pathway_id):
+        context = {}
+        pathway = Pathway.objects.get(id=pathway_id)
+        pathway_objs = PathwayContentSetting.objects.filter(pathway=pathway).order_by("order_by")
+        if request.user in pathway.participants.all():
+            context['participation_status'] = True
+        else:
+            context['participation_status'] = False
+        context['pathway'] = {pathway:pathway_objs}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pathway_id):
+        print(request.POST)
+        if "join_pathway" in request.POST:
+            pathway = Pathway.objects.get(id=request.POST.get("join_pathway"))
+            pathway.participants.add(request.user)
+            pathway.save()
+
+        if "leave_pathway" in request.POST:
+            pathway = Pathway.objects.get(id=request.POST.get("leave_pathway"))
+            pathway.participants.remove(request.user)
+            pathway.save()
+        next = request.POST.get('next','/')
+        return HttpResponseRedirect(next)
 
 
 class PathwayObjNew(View):
-    model = PathwayContentSetting
+    #model = PathwayContentSetting
     form_class = PathwayObjNewForm
     template_name = "pathway_new_obj.html"
     def get(self, request, pathway_id):
@@ -141,26 +197,33 @@ class PathsHomeView(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        print(request.POST)
         if "delete_pathway" in request.POST:
             Pathway.objects.filter(id=request.POST.get("delete_pathway")).delete()
             messages.success(request, 'the pathway was deleted successfully. BYE!')
-
+        if "delete_pathwayOBJ" in request.POST:
+            PathwayContentSetting.objects.filter(id=request.POST.get("delete_pathwayOBJ")).delete()
+            messages.success(request, 'the item was deleted successfully. BYE!')
         return HttpResponseRedirect(request.path)
 
 class VideoLectureView(View):
     template_name = "video_lecture.html"
     def get(self, request, vid_lec_id):
         video = get_object_or_404(VideoLecture, id=vid_lec_id)
-        print(video)
         context = {'vid_lec':video}
         return render(request, self.template_name, context)
 
 class WrittenLectureView(View):
     template_name = "written_lecture.html"
     def get(self, request, lit_lec_id):
-        context = {}
+        literature = get_object_or_404(WrittenLecture, id=lit_lec_id)
+        context = {"lit_lec": literature}
         return render(request, self.template_name, context)
+
+
+
+
+
+
 
 class QuizView(TemplateView):
     template_name = "quiz.html"

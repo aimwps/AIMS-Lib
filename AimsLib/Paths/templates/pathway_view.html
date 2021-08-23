@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Pathway{% endblock %}
+
+{% block leftbar %}
+{% include "paths_left_bar.html" %}
+{% endblock %}
+
+
+
+{% block content %}
+{% include 'pathway_nav.html' %}
+
+<div class="container">
+  {% for path, pathway_objs in pathway.items %}
+  <h4> {{ path.title }}</h4>
+  {% for pathway_obj in pathway_objs %}
+    <div class="row">
+      <div class="col-1">
+        {{ pathway_obj.order_by }}
+      </div>
+      <div class="col-3">
+        {{ pathway_obj.content_type|title }}
+      </div>
+      <div class="col-8">
+        {% if pathway_obj.written_lecture %}<a href="{% url 'written-lecture' pathway_obj.written_lecture.id %}">{{ pathway_obj.written_lecture.title }}</a>{% endif %}
+        {% if pathway_obj.video_lecture %}<a href="{% url 'video-lecture' pathway_obj.video_lecture.id %}">{{ pathway_obj.video_lecture.title }}</a>{% endif %}
+        {% if pathway_obj.quiz %}<a href="{% url 'quiz-app' pathway_obj.quiz.id %}">{{ pathway_obj.quiz.title }}</a>{% endif %}
+      </div>
+    </div>
+  {% endfor %}
+
+  {% if participation_status %}
+    You are already tracking this pathway
+        <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Stop tracking</a>
+  {% else %}
+    <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Start tracking</a>
+    {% endif %}
+
+    <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pathway_leaveLabel">Leave pathway confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You are trying to leave a pathway, leaving may effect your previous progress, Are you sure?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="{% url 'view-pathway' path.id %}" method="POST">
+              {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button name="leave_pathway" value="{{path.id}}" class="btn btn-primary">Leave</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="pathway_join" tabindex="-1" aria-labelledby="pathway_joinLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pathway_joinLabel">Join pathway confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You are joining this pathway, your progress can be tracked by the author, are you sure?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="{% url 'view-pathway' path.id %}" method="POST">
+              {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button name="join_pathway" value="{{path.id}}" class="btn btn-primary">Join</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+<hr>
+{% endfor %}
+</div>
+
+{% endblock %}

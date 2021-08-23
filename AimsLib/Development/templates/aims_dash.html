@@ -4,52 +4,34 @@
 {% block sectiontitle %}
 <p>Here you can check, adjust & set all your AIMS</p>
 {% endblock %}
+
 {% block leftbar %}
-{% include "tracker_log_dash.html" %}
+{% include "aims_left_bar.html" %}
 {% endblock %}
 
 
 
 {% block content %}
 <div class="container">
-  <div class="row">
-    <h1 class="text-start">Aims Map</h1>
-    <br/>
-    <div class="col-3">
-    </div>
-    <div class="col-9">
-      <div class="bs-component">
-        <figure>
-          <blockquote class="blockquote">
-            <p>"Hey {{ user.get_username }} welcome to your map. Craft your aims and track your progress on this page! Need help? Try <a href='#'>starting your map</a>."
-               </p>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-          AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
+  <a class="anchor" id="myaims"></a>
   <br/>
-  <div class="row">
-    <ul class="nav justify-content-center">
-      <li class="nav-item">
-        <a class="nav-link active" href="{% url 'aims-new' %}">Create a new Aim</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="#quickaims">Go to quick aims</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="{% url 'aims-new' %}">See our full guide</a>
-      </li>
-    </ul>
-  </div>
+    <div class="row">
+      <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'aims-new' %}">Create a new Aim</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#quickaims">Go to quick aims</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'aims-new' %}">See our full guide</a>
+        </li>
+      </ul>
+    </div>
 </div>
 {% include "aims.html" %}
 {% endblock %}
 
-
-{% block secondtopcontent %}
+{% block bottomcontent %}
 {% include "quick_fire_aims.html" %}
 {% endblock %}

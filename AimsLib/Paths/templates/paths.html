@@ -1,33 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}Skill Paths{% endblock %}
 
-{% block sectiontitle %}
-<p>Here you can learn anything..</p>
-{% endblock %}
+
 
 
 {% block leftbar %}
-{% include "left_bar.html" %}
-
+{% include "paths_left_bar.html" %}
 {% endblock %}
 
 
 {% block content %}
-<ul class="nav justify-content-center">
-  <li class="nav-item">
-    <a class="nav-link active" href="{% url 'new-video-lecture' %}">Create a video lecture</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="{% url 'new-written-lecture' %}">Create a written lecture</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="#">Create a benchmark</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="{% url 'new-pathway' %}">Create a pathway</a>
-  </li>
-</ul>
+<div class="container">
+  <a class="anchor" id="mypathways"></a>
 
+{% include "pathway_nav.html" %}
+</div>
 
 
 <div class="container">
@@ -36,7 +23,7 @@
   <hr>
   <div class="container">
   {% for path, path_items in user_pathways.items %}
-    <h4> {{ path.title }}</h4>
+    <a href='{% url "view-pathway" path.id %}' data-bs-toggle="tooltip" title="View this pathway"><h4> {{ path.title }}</h4></a>
     {% for path_content in path_items %}
       <div class="row">
         <div class="col-1">
@@ -70,7 +57,7 @@
 {% for path, path_items in developer_pathways.items %}
 <div class="row">
     <div class="col-8">
-      <h4> {{ path.title }}</h4>
+      <a href='{% url "view-pathway" path.id %}'data-bs-toggle="tooltip" title="Go to this pathway"><h4> {{ path.title }}</h4></a>
     </div>
     <div class="col-4">
       <ul class="nav justify-content-end">
@@ -81,17 +68,17 @@
           <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
         </li>
         <li class="nav-item">
-            <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_delete_modal">
               <i class="far fa-trash-alt"></i>
             </a>
         </li>
       </ul>
  </div>
- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal fade" id="pathway_delete_modal" tabindex="-1" aria-labelledby="pathway_delete_modalLabel" aria-hidden="true">
    <div class="modal-dialog">
      <div class="modal-content">
        <div class="modal-header">
-         <h5 class="modal-title" id="exampleModalLabel">Delete a pathway</h5>
+         <h5 class="modal-title" id="pathway_delete_modalLabel">Delete a pathway</h5>
          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
        </div>
        <div class="modal-body">
@@ -134,9 +121,41 @@
           <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="fas fa-chevron-down"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="remove {{ path_content.content_type|title}} from pathway?"><i class="far fa-trash-alt"></i></a>
+          <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathwayOBJ_delete_modal_{{ forloop.counter0 }}">
+            <i class="far fa-trash-alt"></i>
+          </a>
         </li>
       </ul>
+
+
+<!--- Modal ------------------------------------------------------------------------------------------------------------------------------------>
+      <div class="modal fade" id="pathwayOBJ_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="pathwayOBJ_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="pathwayOBJ_delete_modal_{{ forloop.counter0 }}Label">Delete a {{ path.content_type }} from pathway</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Do you want to delete
+              {% if path_content.written_lecture %}{{ path_content.written_lecture.title }}{% endif %}
+              {% if path_content.video_lecture %}{{ path_content.video_lecture.title }}{% endif %}
+              {% if path_content.quiz %}{{ path_content.quiz.title }}{% endif %}
+               from this pathway?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <form action="." method="POST">
+                {% csrf_token %}
+              <button name="delete_pathwayOBJ" value="{{ path_content.id }}" class="btn btn-primary">Delete</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--- Modal ------------------------------------------------------------------------------------------------------------------------------------>
+
+
     </div>
   </div>
 {% endfor %}

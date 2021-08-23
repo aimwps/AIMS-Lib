@@ -1,32 +1,96 @@
 {% extends 'base.html' %}
-{% block title %}Skill Paths{% endblock %}
+{% block title %}Literatre{% endblock %}
 
-{% block sectiontitle %}
-<p></p>
+
+{% block leftbar %}
+  {% include "paths_left_bar.html" %}
 {% endblock %}
-
-
 
 
 
 {% block content %}
-{% endblock %}
+<div class="container">
+  <div class="row">
+    <div class="col-9">
+      <h2>{{ lit_lec.title }}</h2>
+      <h5>Literature @ {{ lit_lec.title }}</h5>
+      <h6>Created {{ lit_lec.publish_date}} @ {{ lit_lec.publish_time }} by {{ lit_lec.author }}</h6>
+    </div>
+<!-- REPLY OR LOGIN FOR TOPIC TITLE ROW
+################################################################################################################################################### -->
+    <div class="col-1">
+      {% if user.is_authenticated %}
+        {% if user.id == lit_lec.author.id %}
+        <span>
+        <p><a href="#" class="btn btn-primary btn-sm btn-block"><i class="far fa-edit"></i></a></p>
+        <p><a href="#" class="btn btn-primary btn-sm btn-block"><i class="far fa-trash-alt"></i></a></p>
+        </span>
+        {% else %}
+        <a href="#" class="btn btn-primary btn-sm btn-block"><i class="fas fa-reply"></i></a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'login' %}"  class="btn btn-primary btn-sm btn-block" role="button"><i class="far fa-user"></i></a>
 
-{% block contentCarousel %}
-{% endblock %}
-
-{% block secondtopcontent %}
-{% endblock %}
-
-
-{% block bottomcarousel %}
-{% endblock %}
-
-{% block bottomleftbar %}
+        {% endif %}
+      </div>
+    <div class="col-2">
+<!-- VOTING FOR TOPIC TITLE ROW
+################################################################################################################################################### -->
+      <div class="span">
+        <form method="POST" action="#">
+            {% csrf_token %}
+            <input type="hidden" value="#" name="topic_id_to_vote">
+            <p>
+              {% if user.is_authenticated %}
+                <button type="submit" name="topic_vote_up" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
+                {% else %}
+                <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
+                {% endif %}
+            </p>
+        </form>
+        <form method="POST" action="#">
+            {% csrf_token %}
+            <input type="hidden" value="#" name="topic_id_to_vote">
+            <p>
+              {% if user.is_authenticated %}
+                <button type="submit" name="topic_vote_down" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                {% else %}
+                <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
+                {% endif %}
+              </p>
+            <!-- <p><input type="submit" value="Vote -" name="topic_vote_down" class="btn btn-primary btn-sm btn-block"></p> -->
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class='text-break'>
+    <hr>
+    <p class="text-break">{{ lit_lec.body|safe }}</p>
+  </div>
+</div>
 {% endblock %}
 
 {% block bottomcontent %}
-{% endblock %}
+<div class="row">
+  <h1 class="text-start">Develop</h1>
+  <br/>
+  <div class="col-3">
+  </div>
+  <div class="col-9">
+    <div class="bs-component">
+      <figure>
+        <blockquote class="blockquote">
+          <p>"Hey {{ user.get_username }} you are the author of this literature, you can use it to generate benchmark content for pathways.Do you need help with benchmark generation? check my <a href='#'>full guide</a></a>"
+             </p>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+        AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</div>
 
-{% block bottomrightbar  %}
+<div class="row">
+  <a href='{% url "generate-benchmark" "literature" lit_lec.id %}'>Generate draft questions</a> </div>
 {% endblock %}

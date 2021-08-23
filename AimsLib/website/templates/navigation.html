@@ -8,16 +8,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'aims-dash' %}">My AIMS</a>
+          <a class="nav-link" href="{% url 'aims-dash' %}#myaims">My AIMS</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Library</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'skill-paths' %}">Paths</a>
+          <a class="nav-link" href="{% url 'skill-paths' %}#mypathways">Pathways</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'forum-home' %}">Community</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'forum-home' %}#aimscategory">Community</a>
         </li>
         {% if user.is_authenticated %}
         <li class="nav-item dropdown">
