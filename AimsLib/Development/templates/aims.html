@@ -22,55 +22,97 @@
                         <div class="col-4">
                           <ul class="nav justify-content-end">
                                 <li class="nav-item">
-                                  <a class="nav-link active" href="{% url 'lever-new' aim.id %}">+<i class="fas fa-level-up-alt"></i></a>
+                                  <a class="nav-link active" href="{% url 'lever-new' aim.id %}" data-bs-toggle="tooltip" title="Add a behaviour to this aim"><i class="fas fa-brain"></i></a>
                                 </li>
                                 <li class="nav-item">
-                                  <a class="nav-link" href="#"><i class="far fa-edit"></i></a>
+                                  <a class="nav-link" href="{% url 'edit-aim' aim.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
                                 </li>
                                 <li class="nav-item">
-                                  <a class="nav-link" href="#"><i class="far fa-trash-alt"></i></a>
+                                  <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#aim_delete_modal_{{ forloop.counter0 }}">
+                                    <i class="far fa-trash-alt" data-bs-toggle="tooltip" title="Delete this aim"></i>
+                                  </a>
                                 </li>
                               </ul>
                             </div>
                     </div>
+                    <div class="modal fade" id="aim_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="aim_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="aim_delete_modal_{{ forloop.counter0 }}Label">Delete a pathway</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            You are trying to delete a pathway, there is no coming back from this. Are you sure?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="." method="POST">
+                              {% csrf_token %}
+                            <button name="delete_aim" value="{{aim.id}}" class="btn btn-primary">Delete</button>
+                          </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                      <p>{{ aim.why }}</p>
                     {% for lever, trackers in levers.items %}
-                      <hr>
+
                       <div class="row">
                         <div class="col-8 mt-2">
-                            <h5> <i class="fas fa-level-up-alt"></i> {{ lever.description }} </h5>
+                            <h5 data-bs-toggle="tooltip" name="Add a behaviour to this aim"><i class="fas fa-brain"></i> {{ lever.description }} </h5>
                           </div>
                           <div class="col-4">
                             <ul class="nav justify-content-end">
                               <li class="nav-item">
-                                <a class="nav-link active" href="{% url 'tracker-select' lever.id %}">+<i class="fas fa-running"></i></a>
+                                <a class="nav-link active" href="{% url 'tracker-select' lever.id %}"><i class="fas fa-shoe-prints"></i></a>
                               </li>
                               <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="far fa-edit"></i></a>
+                                <a class="nav-link" href="{% url 'edit-lever' lever.id %}"><i class="far fa-edit"></i></a>
                               </li>
                               <li class="nav-item">
-                                <a class="nav-link" href="#"><i class="far fa-trash-alt"></i></a>
+                                <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#lever_delete_modal_{{ forloop.counter0 }}">
+                                <i class="far fa-trash-alt"></i>
+                                </a>
                               </li>
                             </ul>
                           </div>
                       </div>
-                      <ul class="list-group list-group-flush">
+                      <div class="modal fade" id="lever_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="lever_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="lever_delete_modal_{{ forloop.counter0 }}Label">Delete behaviour</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              You are deleting this behaviour from your aim, there is no going back
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <form action="." method="POST">
+                                {% csrf_token %}
+                              <button name="delete_lever" value="{{lever.id}}" class="btn btn-primary">Delete</button>
+                            </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                       {% for tracker_key, tracker_list in trackers.items %}
                         {% if tracker_key == 'TrackerMinAim' %}
                           {% for tracker in tracker_list %}
-                          <a class="anchor" id="anchor_{{ tracker }}_{{tracker.start_date}}"></a>
-                              <li class="list-group-item" id='{{ tracker.get_tclass }}'><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
-                                {{ tracker.get_tsentence}}
-                                </li>
+
                           {% endfor %}
                         {% endif %}
                         {% if tracker_key == 'TrackerBoolean' %}
                           {% for tracker in tracker_list %}
-                          <a class="anchor" id="anchor_{{ tracker }}_{{tracker.start_date}}"></a>
-                              <li class="list-group-item"><i class="fas fa-running"></i> <a href="#"><i class="far fa-edit"></i></a> <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a> <a href="#"><i class="far fa-trash-alt"></i></a>
+                              <li class="list-group-item"><i class="fas fa-shoe-prints"></i>
+                                <a href="{% url 'edit-bool-tracker' tracker.id %}"><i class="far fa-edit"></i></a>
+                                <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a>
                                 {{ tracker.get_tsentence}}
                                 </li>
-                              </a>
+
                           {% endfor %}
                         </ul>
                         {% endif %}

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AimView, AimsDash, AimNew, LeverNew, AssignTrackerView, LogAnyTracker
+from .views import AimView, AimsDash, AimNew, LeverNew, AssignTrackerView, LogAnyTracker, TrackerMinAimEdit, TrackerBooleanEdit, LeverEdit, AimEdit
 # from .views import
 
 urlpatterns = [
@@ -8,8 +8,10 @@ urlpatterns = [
     path('aims_new/', AimNew.as_view(), name="aims-new"),
     path('lever_new/<int:aim_id>/', LeverNew.as_view(), name="lever-new"),
     path('tracker_select/<int:lever_id>', AssignTrackerView.as_view(), name="tracker-select"),
-    #path('log_tracker/<int:tracker_id>', LogTracker.as_view(), name="log-tracker"),
-    path('log_any_tracker/<str:tracker_type>/<int:tracker_id>', LogAnyTracker.as_view(), name="log-any-tracker"),
-    #path('logsdash/', LogDash.as_view(), name="logs-dash")
-    #path('', views.home, name="home"),
+    path('log_tracker/<str:tracker_type>/<int:tracker_id>', LogAnyTracker.as_view(), name="log-any-tracker"),
+    path('edit_tracker/minaim/<int:pk>', TrackerMinAimEdit.as_view(), name="edit-min-tracker"),
+    path('edit_tracker/yesno/<int:pk>', TrackerBooleanEdit.as_view(), name="edit-bool-tracker"),
+    path('edit_behaviour/<int:pk>', LeverEdit.as_view(), name="edit-lever"),
+    path('edit_aim/<int:pk>', AimEdit.as_view(), name="edit-aim")
+
 ]

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+<div class="container">
+  <div class="form-group">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <!-- doing as_p decides the element that each will be created for each field -->
+      <button name="edit-form">Update</button>
+      </form>
+  </div>
+</div>
+
+<div class="container">
+  <h4> Deleting this tracker </h4>
+    <p> If you delete this tracker all associated records will also be deleted. If you have completed this tracker or no longer
+      wish to follow it we reccomend changing it's status to inactive so you keep your previous records </p>
+
+  <h5> Shut up and let me delete my tracker </h5>
+
+
+{% endblock %}

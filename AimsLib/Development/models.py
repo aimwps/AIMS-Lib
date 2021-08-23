@@ -111,14 +111,19 @@ class TrackerMinAim(models.Model):
 
     def get_tsentence(self):
 
-        sentence_start = f"Commencing {self.start_date} I will show up and {self.metric_description} {self.metric_min} { self.metric_type} { self.frequency}."
-        sentence_middle = f"When I {self.metric_description} {self.metric_aim} {self.metric_type} for {self.complete_value} { self.complete_criteria} {self.frequency} periods I have moved mountains to achieve my aims."
-        if self.end_date:
-            sentence_end = f"This tracker is actively trackd until { self.end_date }."
-        else:
-            sentence_end = ""
+        sentence_start = f"Commencing {self.start_date} I will show up and {self.metric_description} {self.metric_min} { self.metric_type} "
+        if self.frequency_quantity > 1:
+            sentence_start += f"{ self.frequency_quantity} times "
+        sentence_start +=  f"{self.frequency}. "
 
-        return " ".join([sentence_start, sentence_middle, sentence_end])
+        sentence_start+= f"After {self.complete_value} { self.complete_criteria} {self.frequency}  periods of "
+        if self.frequency_quantity > 1:
+            sentence_start += f"{self.frequency_quantity} * "
+        sentence_start +=f"{self.metric_aim} {self.metric_type} I have moved mountains to achieve my aims."
+        if self.end_date:
+            sentence_start+=f"This tracker is actively trackd until { self.end_date }."
+        return sentence_start
+
     def get_tquestion(self):
         verbose =  {'daily':'today',
                     'weekly': 'this week',

@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
 from Members.models import MemberProfile
-from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm, TrackerBooleanNewForm, TrackerBooleanRecordsForm
-from django.views.generic import TemplateView, CreateView, View
+from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm, TrackerBooleanNewForm, TrackerBooleanRecordsForm#, TrackerMinAimEditForm, TrackerBooleanEditForm
+from django.views.generic import TemplateView, CreateView, View, UpdateView
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
@@ -23,7 +23,26 @@ def get_category_path(cat, current_path=""):
         new_path += current_path
         return new_path
 
+class AimEdit(UpdateView):
+    model= Aim
+    form_class = AimNewForm
+    template_name = 'aim_edit.html'
 
+class LeverEdit(UpdateView):
+    model= Lever
+    form_class = LeverNewForm
+    template_name = 'lever_edit.html'
+
+
+class TrackerMinAimEdit(UpdateView):
+    model= TrackerMinAim
+    form_class = TrackerMinAimNewForm
+    template_name = 'tracker_minaim_edit.html'
+
+class TrackerBooleanEdit(UpdateView):
+    model= TrackerBoolean
+    form_class = TrackerBooleanNewForm
+    template_name = 'tracker_boolean_edit.html'
 
 class LogAnyTracker(View):
     template_name = "new_tracker_log.html"
@@ -45,14 +64,14 @@ class LogAnyTracker(View):
                 new_log = TrackerMinAimRecords(
                             tracker = TrackerMinAim.objects.get(id=tracker_id),
                             lever_performed = True,
-                            metric_quantity = submit_form.cleaned_data['metric_quantity']
+                            metric_quantity = submit_form.cleaned_data['metric_quantity'],
                             )
                 new_log.save()
             if tracker_type == "TrackerBoolean":
                 new_log = TrackerBooleanRecords(
                             tracker = TrackerBoolean.objects.get(id=tracker_id),
                             lever_performed = True,
-                            metric_quantity = submit_form.cleaned_data['metric_quantity']
+                            metric_quantity = submit_form.cleaned_data['metric_quantity'],
                             )
                 print(f"metric quantity {submit_form.cleaned_data['metric_quantity']}")
                 new_log.save()
@@ -92,6 +111,7 @@ class AssignTrackerView(View):
                             metric_aim = min_aim_form.cleaned_data['metric_aim'],
                             metric_description = min_aim_form.cleaned_data['metric_description'],
                             frequency = min_aim_form.cleaned_data['frequency'],
+                            frequency_quantity = min_aim_form.cleaned_data['frequency_quantity'],
                             start_date = min_aim_form.cleaned_data['start_date'],
                             end_date = min_aim_form.cleaned_data['end_date'],
                             complete_criteria = min_aim_form.cleaned_data['complete_criteria'],
@@ -106,6 +126,7 @@ class AssignTrackerView(View):
                             lever = Lever.objects.get(id=lever_id),
                             metric_description = boolean_form.cleaned_data['metric_description'],
                             frequency = boolean_form.cleaned_data['frequency'],
+                            frequency_quantity = boolean_form.cleaned_data['frequency_quantity'],
                             start_date = boolean_form.cleaned_data['start_date'],
                             end_date = boolean_form.cleaned_data['end_date'],
                             complete_criteria = boolean_form.cleaned_data['complete_criteria'],
@@ -273,9 +294,17 @@ class AimsDash(TemplateView):
             new_log.save()
             print(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
+        elif "delete_lever" in self.request.POST:
+            get_lever = get_object_or_404(Lever, id=self.request.POST.get('delete_lever'))
+            get_lever.delete()
+            return HttpResponseRedirect('/aims_dash/#myaims')
+        elif "delete_aim" in self.request.POST:
+            get_aim = get_object_or_404(Aim, id=self.request.POST.get("delete_aim"))
+            get_aim.delete()
+            return HttpResponseRedirect('/aims_dash/#myaims')
         else:
             print("doesnt work")
-            return HttpResponseRedirect('/aims_dash/')
+            return HttpResponseRedirect('/aims_dash/#myaims')
 
 
     def check_tracker_status(self, tracker):
