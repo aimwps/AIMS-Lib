@@ -59,49 +59,41 @@
                     {% for lever, trackers in levers.items %}
 
                       <div class="row">
-                        <div class="col-8 mt-2">
-                            <h5 data-bs-toggle="tooltip" name="Add a behaviour to this aim"><i class="fas fa-brain"></i> {{ lever.description }} </h5>
-                          </div>
-                          <div class="col-4">
-                            <ul class="nav justify-content-end">
-                              <li class="nav-item">
-                                <a class="nav-link active" href="{% url 'tracker-select' lever.id %}"><i class="fas fa-shoe-prints"></i></a>
-                              </li>
-                              <li class="nav-item">
-                                <a class="nav-link" href="{% url 'edit-lever' lever.id %}"><i class="far fa-edit"></i></a>
-                              </li>
-                              <li class="nav-item">
-                                <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#lever_delete_modal_{{ forloop.counter0 }}">
-                                <i class="far fa-trash-alt"></i>
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
+                          <h5 data-bs-toggle="tooltip" name="Behaviour Settings">
+                            <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#behaviour_setting_modal_{{ forloop.counter0 }}">
+                            <i class="fas fa-brain"></i>
+                          </a> {{ lever.description }}
                       </div>
-                      <div class="modal fade" id="lever_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="lever_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+                      <!-- Modal -->
+                      <div class="modal fade" id="behaviour_setting_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="behaviour_setting_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="lever_delete_modal_{{ forloop.counter0 }}Label">Delete behaviour</h5>
+                              <h5 class="modal-title" id="behaviour_setting_modal_{{ forloop.counter0 }}Label">Behaviour settings</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                              You are deleting this behaviour from your aim, there is no going back
+                              {{ lever.description }}
                             </div>
                             <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <a href='{% url "tracker-select" lever.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                              <a href='{% url "edit-lever" lever.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+
                               <form action="." method="POST">
                                 {% csrf_token %}
-                              <button name="delete_lever" value="{{lever.id}}" class="btn btn-primary">Delete</button>
-                            </form>
+                                <input type="hidden" value="{{ lever_id }}" name="delete_lever_id">
+                                <button name="delete_behaviour" value="{{lever.id}}" class="btn btn-secondary">
+                                  <i class="far fa-trash-alt"></i></button>
+                              </form>
                             </div>
                           </div>
                         </div>
                       </div>
+
                       {% for tracker in trackers %}
-                      <div  class="row">
+                      <div class="container">
                         <!-- Button trigger modal -->
-                        <p><a type="button" data-bs-toggle="modal" data-bs-target="#tracker_setting_modal_{{ forloop.counter0 }}">
+                        <p><a class="h5" type="button" data-bs-toggle="modal" data-bs-target="#tracker_setting_modal_{{ forloop.counter0 }}">
                           <i class="fas fa-shoe-prints text-primary"></i>
                         </a> {{ tracker.get_tsentence }}</p>
 

@@ -4,8 +4,18 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-
+USER_STATUS = (('deleted', 'deleted'),
+                ('active', 'active'),
+                ('inactive', 'inactive'),
+                ('completed', 'completed'),)
+METRIC_FREQ = (
+        ('daily', 'daily'),
+        ('weekly', 'weekly'),
+        ('monthly', 'monthly'),
+        ('yearly', 'yearly'),
+)
+COMP_CRITERIA = (('consecutive', 'consecutive'),
+                ('total', 'total'))
 
 class SkillArea(models.Model):
     skill_area_name = models.CharField(max_length=255)
@@ -53,6 +63,7 @@ class Lever(models.Model):
     description = models.TextField(default="A description of the lever you will pull")
     in_order = models.PositiveIntegerField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
+    user_status = model.CharField(max_length=100, choices=USER_STATUS, default="active")
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
@@ -75,18 +86,6 @@ class Lever(models.Model):
 
 
 class TrackerMinAim(models.Model):
-    METRIC_FREQ = (
-            ('daily', 'daily'),
-            ('weekly', 'weekly'),
-            ('monthly', 'monthly'),
-            ('yearly', 'yearly'),
-    )
-    COMP_CRITERIA = (('consecutive', 'consecutive'),
-                    ('total', 'total'))
-    USER_STATUS = (('deleted', 'deleted'),
-                    ('active', 'active'),
-                    ('inactive', 'inactive'),
-                    ('completed', 'completed'),)
     # This model is a tracker for completing a recurring lever. The user can set a frequency
     # and will have to complete somewhere between the minimum and the aim.
     lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_min_aim" )
@@ -159,18 +158,7 @@ class TrackerMinAimRecords(models.Model):
 
 ##################################################################################################################################
 class TrackerBoolean(models.Model):
-    METRIC_FREQ = (
-            ('daily', 'daily'),
-            ('weekly', 'weekly'),
-            ('monthly', 'monthly'),
-            ('yearly', 'yearly'),
-    )
-    COMP_CRITERIA = (('consecutive', 'consecutive'),
-                    ('total', 'total'))
-    USER_STATUS = (('deleted', 'deleted'),
-                    ('active', 'active'),
-                    ('inactive', 'inactive'),
-                    ('completed', 'completed'),)
+
     # This model is a tracker for completing a recurring lever. The user can set a frequency
     # and will have to complete somewhere between the minimum and the aim.
     lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_boolean" )
