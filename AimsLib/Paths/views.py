@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from ckeditor.fields import RichTextField
 from django.contrib import messages
-import s2s
+
 
 class GenerateBenchmark(View):
     template_name  = "generate_benchmark.html"

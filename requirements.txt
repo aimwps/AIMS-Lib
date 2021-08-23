@@ -1,37 +1,57 @@
-asgiref @ file:///tmp/build/80754af9/asgiref_1625643473416/work
-beautifulsoup4==4.9.3
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: linux-64
+_libgcc_mutex==0.1
+_openmp_mutex==4.5
+asgiref==3.4.1
+ca-certificates==2021.5.30
 certifi==2021.5.30
-cffi @ file:///tmp/build/80754af9/cffi_1625814692085/work
 charset-normalizer==2.0.4
 dj-database-url==0.5.0
-Django @ file:///home/conda/feedstock_root/build_artifacts/django_1625148501818/work
+django==3.2.6==
 django-bootstrap-datepicker-plus==3.0.5
-django-bootstrap4==3.0.1
 django-ckeditor==6.1.0
 django-embed-video==1.4.0
-django-heroku==0.3.1
 django-js-asset==1.2.2
-django-tempus-dominus==5.1.2.14
-gunicorn @ file:///home/conda/feedstock_root/build_artifacts/gunicorn_1617042948086/work
+freetype==2.10.4
 idna==3.2
-mkl-fft==1.3.0
-mkl-random==1.0.2
-mkl-service==2.3.0
-numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1607448141537/work
-olefile==0.46
-Pillow @ file:///home/conda/feedstock_root/build_artifacts/pillow_1625143763637/work
-psycopg2 @ file:///tmp/build/80754af9/psycopg2_1612298595717/work
-pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
-python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1626286286081/work
+jbig==2.1
+jpeg==9d
+lcms2==2.12
+ld_impl_linux-64==2.36.1
+lerc==2.2.1
+libdeflate==1.7
+libffi==3.3
+libgcc-ng==11.1.0
+libgomp==11.1.0
+libpng==1.6.37
+libstdcxx-ng==11.1.0
+libtiff==4.3.0
+libwebp-base==1.2.1
+lz4-c==1.9.3
+ncurses==6.2
+olefile==0.4
+openjpeg==2.4.0
+openssl==1.1.1k
+pillow==8.3.1
+pip==21.2.4
+python==3.9.6
+python-dateutil==2.8.2
 python-decouple==3.4
-pytz @ file:///tmp/build/80754af9/pytz_1612215392582/work
+python_abi==3.9
+pytz==2021.1
+readline==8.1
 requests==2.26.0
-s2s==0.0.0
-six @ file:///tmp/build/80754af9/six_1623709665295/work
-soupsieve==2.2.1
-sqlparse @ file:///tmp/build/80754af9/sqlparse_1602184451250/work
-torch @ file:///tmp/build/80754af9/pytorch_1622203140603/work
-torchvision @ file:///tmp/build/80754af9/torchvision_1622226071729/work
-typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1624965014186/work
+setuptools==57.4.0
+six==1.16.0
+sqlite==3.36.0
+sqlparse==0.4.1
+tk==8.6.11==h21135ba_0
+typing_extensions==3.10.0.0
+tzdata==2021a
 urllib3==1.26.6
-whitenoise @ file:///home/conda/feedstock_root/build_artifacts/whitenoise_1626463713199/work
+wheel==0.37.0
+whitenoise==5.3.0
+xz==5.2.5
+zlib==1.2.11
+zstd==1.5.0
