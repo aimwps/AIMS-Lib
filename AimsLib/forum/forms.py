@@ -33,7 +33,7 @@ class ForumTopicNewCatForm(forms.ModelForm):
                                             'placeholder': 'A brief description or preview of your topic',
                                             "rows": 6}),}
 
-
+# a needless change
 class ForumTopicEditForm(forms.ModelForm):
     class Meta:
         model = Post
