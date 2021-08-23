@@ -245,19 +245,8 @@ class AimsDash(TemplateView):
                                 uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
 
                             eval(f"uncomplete_{freq_bracket}").append(tracker)
-                        if isinstance(tracker, TrackerMinAim):
-                            if "TrackerMinAim" in lever_trackers.keys():
-                                lever_trackers["TrackerMinAim"].append(tracker)
-                            else:
-                                lever_trackers["TrackerMinAim"] = [tracker]
-                        if isinstance(tracker, TrackerBoolean):
-                            if "TrackerBoolean" in lever_trackers.keys():
-                                lever_trackers["TrackerBoolean"].append(tracker)
-                            else:
-                                lever_trackers["TrackerBoolean"] = [tracker]
 
-            # Build the context dictionary
-                    aim_levers[lever] = lever_trackers
+                    aim_levers[lever] = trackers
                 all_cat_aim_data[aim] = aim_levers
             aims_by_cat.append((full_cat_path, all_cat_aim_data))
         context['uncomplete_trackers'] = uncomplete_trackers
@@ -301,6 +290,11 @@ class AimsDash(TemplateView):
         elif "delete_aim" in self.request.POST:
             get_aim = get_object_or_404(Aim, id=self.request.POST.get("delete_aim"))
             get_aim.delete()
+            return HttpResponseRedirect('/aims_dash/#myaims')
+        elif "delete_tracker" in self.request.POST:
+            tclass = self.request.POST.get("delete_tclass")
+            tracker = get_object_or_404(eval(tclass), id=self.request.POST.get("delete_tracker"))
+            tracker.user_status = "deleted"
             return HttpResponseRedirect('/aims_dash/#myaims')
         else:
             print("doesnt work")

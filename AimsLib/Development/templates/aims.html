@@ -98,24 +98,53 @@
                           </div>
                         </div>
                       </div>
+                      {% for tracker in trackers %}
+                      <div  class="row">
+                        <!-- Button trigger modal -->
+                        <p><a type="button" data-bs-toggle="modal" data-bs-target="#tracker_setting_modal_{{ forloop.counter0 }}">
+                          <i class="fas fa-shoe-prints text-primary"></i>
+                        </a> {{ tracker.get_tsentence }}</p>
 
-                      {% for tracker_key, tracker_list in trackers.items %}
-                        {% if tracker_key == 'TrackerMinAim' %}
-                          {% for tracker in tracker_list %}
+                      </div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="tracker_setting_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="tracker_setting_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="tracker_setting_modal_{{ forloop.counter0 }}Label">Tracker settings</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <ul>
+                                  <li> {{ tracker.get_tclass }} </li>
+                                  <li> {{ tracker.get_tsentence }} </li>
+                                  <li> {{ tracker.get_tquestion }} </li>
+                                </ul>
 
-                          {% endfor %}
-                        {% endif %}
-                        {% if tracker_key == 'TrackerBoolean' %}
-                          {% for tracker in tracker_list %}
-                              <li class="list-group-item"><i class="fas fa-shoe-prints"></i>
-                                <a href="{% url 'edit-bool-tracker' tracker.id %}"><i class="far fa-edit"></i></a>
-                                <a href='{% url 'log-any-tracker' tracker.get_tclass tracker.id %}'><i class="fas fa-plus"></i></a>
-                                {{ tracker.get_tsentence}}
-                                </li>
+                              </div>
+                              <div class="modal-footer">
+                                <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
 
-                          {% endfor %}
-                        </ul>
-                        {% endif %}
+                                {% if tracker.get_tclass == "TrackerMinAim" %}
+                                  <a href='{% url "edit-min-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                                {% endif %}
+
+                                {% if tracker.get_tclass == "TrackerBoolean" %}
+                                  <a href='{% url "edit-bool-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                                {% endif %}
+
+                                <form action="." method="POST">
+                                  {% csrf_token %}
+                                  <input type="hidden" value="{{ tracker.get_tclass }}" name="delete_tclass">
+                                  <input type="hidden" value="{{ tracker.id }}" name="delete_tid">
+                                  <button name="delete_tracker" value="{{tracker.id}}" class="btn btn-secondary">
+                                    <i class="far fa-trash-alt"></i></button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                       {% endfor %}
                     {% endfor %}
                   </div>

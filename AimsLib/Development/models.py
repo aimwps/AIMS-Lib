@@ -62,7 +62,10 @@ class Lever(models.Model):
         min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)))
         boolean = list(TrackerBoolean.objects.filter(Q(lever=self)))
         payload = min_aim+boolean
-        return payload
+        sorted_payload = sorted(payload, key=lambda instance: instance.start_date)
+
+        print(sorted_payload)
+        return sorted_payload
 
     def __str__(self):
         return f"<Lever: by {self.on_aim.user} on {self.on_aim} ...'{self.description[:min(len(self.description),50)]}'>"#This changes the displayed object name into relevant text information
@@ -80,6 +83,10 @@ class TrackerMinAim(models.Model):
     )
     COMP_CRITERIA = (('consecutive', 'consecutive'),
                     ('total', 'total'))
+    USER_STATUS = (('deleted', 'deleted'),
+                    ('active', 'active'),
+                    ('inactive', 'inactive'),
+                    ('completed', 'completed'),)
     # This model is a tracker for completing a recurring lever. The user can set a frequency
     # and will have to complete somewhere between the minimum and the aim.
     lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_min_aim" )
@@ -97,6 +104,7 @@ class TrackerMinAim(models.Model):
     has_timeout = models.BooleanField(default=True)
     has_public_logs = models.BooleanField(default=False)
     allows_multi_period_logs = models.BooleanField(default=True)
+    user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     # use user week settings
     # use user sleep settings
 
@@ -159,7 +167,10 @@ class TrackerBoolean(models.Model):
     )
     COMP_CRITERIA = (('consecutive', 'consecutive'),
                     ('total', 'total'))
-
+    USER_STATUS = (('deleted', 'deleted'),
+                    ('active', 'active'),
+                    ('inactive', 'inactive'),
+                    ('completed', 'completed'),)
     # This model is a tracker for completing a recurring lever. The user can set a frequency
     # and will have to complete somewhere between the minimum and the aim.
     lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_boolean" )
@@ -174,6 +185,7 @@ class TrackerBoolean(models.Model):
     has_timeout = models.BooleanField(default=True)
     has_public_logs = models.BooleanField(default=False)
     allows_multi_period_logs = models.BooleanField(default=True)
+    user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
 
     def get_tclass(self):
         class_name = "TrackerBoolean"
