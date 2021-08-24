@@ -179,20 +179,22 @@ class PathsHomeView(View):
     template_name = "paths.html"
     def get(self, request):
         context = {}
-
         user_pathway_data = {}
-        user_pathways = Pathway.objects.filter(participants=self.request.user)
-        for pathway in user_pathways:
-            content_settings = list(PathwayContentSetting.objects.filter(pathway=pathway).order_by('order_by'))
-            user_pathway_data[pathway] = content_settings
-        context['user_pathways'] = user_pathway_data
+        if self.request.user.is_authenticated:
+            user_pathways = Pathway.objects.filter(participants=self.request.user)
+            for pathway in user_pathways:
+                content_settings = list(PathwayContentSetting.objects.filter(pathway=pathway).order_by('order_by'))
+                user_pathway_data[pathway] = content_settings
+            context['user_pathways'] = user_pathway_data
 
-        developer_pathway_data = {}
-        developer_pathways = Pathway.objects.filter(author=self.request.user)
-        for dev_pathway in developer_pathways:
-            pathway_objs = list(PathwayContentSetting.objects.filter(pathway=dev_pathway).order_by('order_by'))
-            developer_pathway_data[dev_pathway] = pathway_objs
-        context['developer_pathways'] = developer_pathway_data
+            developer_pathway_data = {}
+            developer_pathways = Pathway.objects.filter(author=self.request.user)
+            for dev_pathway in developer_pathways:
+                pathway_objs = list(PathwayContentSetting.objects.filter(pathway=dev_pathway).order_by('order_by'))
+                developer_pathway_data[dev_pathway] = pathway_objs
+            context['developer_pathways'] = developer_pathway_data
+        
+
 
         return render(request, self.template_name, context)
 

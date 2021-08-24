@@ -7,12 +7,11 @@ from ckeditor.fields import RichTextField
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-
 # Create your models here.
 class MemberProfile(models.Model):
     DAY_CHOICES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
     DAY_CHOICES = ((d,d) for d in DAY_CHOICES)
-    user_profile = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    user_profile = models.OneToOneField(User, null=True, on_delete=models.CASCADE, related_name="profile")
     power_quote = models.TextField(max_length=255, null=True, blank=True)
     profile_picture =  models.ImageField(null=True, blank=True, upload_to="path to images") ### STILL NEED TO SET IMAGE PATHS
     biography = RichTextField(blank=True, null=True)

@@ -5,13 +5,15 @@
 <p>Here you can check, adjust & set all your AIMS</p>
 {% endblock %}
 
+
 {% block leftbar %}
 {% include "aims_left_bar.html" %}
 {% endblock %}
 
 
-
 {% block content %}
+{% if user.is_authenticated %}
+{% if user.profile %}
 <div class="container">
   <a class="anchor" id="myaims"></a>
   <br/>
@@ -29,7 +31,16 @@
       </ul>
     </div>
 </div>
+{% else %}
+<p> fuck</p>
+
+{% endif %}
+
+
 {% include "aims.html" %}
+{% else %}
+<p> You must login or register to starting using this AIMSLib feature </p>
+
 {% endblock %}
 
 {% block bottomcontent %}

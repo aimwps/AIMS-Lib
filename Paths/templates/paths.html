@@ -15,7 +15,7 @@
 
 {% include "pathway_nav.html" %}
 </div>
-
+{% if user.is_authenticated %}
 
 <div class="container">
   <br/>
@@ -163,6 +163,9 @@
 {% endfor %}
 </div>
 </div>
+{% else %}
+<p> boom! </p>
+{% endif %}
 {% endblock %}
 
 
