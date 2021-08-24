@@ -57,16 +57,16 @@
 
                       <div class="row">
                           <h5 data-bs-toggle="tooltip" title="Behaviour Settings">
-                            <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#behaviour_setting_modal_{{ forloop.counter0 }}">
+                            <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#behaviour_setting_modal_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}">
                             <i class="fas fa-brain"></i>
                           </a> {{ lever.description }}
                       </div>
                       <!-- Modal -->
-                      <div class="modal fade" id="behaviour_setting_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="behaviour_setting_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+                      <div class="modal fade" id="behaviour_setting_modal_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" tabindex="-1" aria-labelledby="behaviour_setting_modal_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}Label" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="behaviour_setting_modal_{{ forloop.counter0 }}Label">Behaviour settings</h5>
+                              <h5 class="modal-title" id="behaviour_setting_modal_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}Label">Behaviour settings</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
