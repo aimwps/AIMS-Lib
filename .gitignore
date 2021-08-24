@@ -1,0 +1,6 @@
+venv
+*.pyc
+static
+.env
+*.sqlite3
+.git.bfg-report
