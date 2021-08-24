@@ -35,8 +35,6 @@ class GenerateBenchmark(View):
 
 
 
-
-
 class PathwayView(View):
     template_name = "pathway_view.html"
 
@@ -181,18 +179,16 @@ class PathsHomeView(View):
         context = {}
         user_pathway_data = {}
         if self.request.user.is_authenticated:
-            user_pathways = Pathway.objects.filter(participants=self.request.user)
-            user_profile = MemberProfile.objects.get(id=self.request.user.id)
-            if user_profile:
+            if hasattr(self.request.user, 'profile'):
+                context['user_profile'] = MemberProfile.objects.get(user_profile=self.request.user.id)
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False
-                
+            user_pathways = Pathway.objects.filter(participants=self.request.user)
             for pathway in user_pathways:
                 content_settings = list(PathwayContentSetting.objects.filter(pathway=pathway).order_by('order_by'))
                 user_pathway_data[pathway] = content_settings
             context['user_pathways'] = user_pathway_data
-
             developer_pathway_data = {}
             developer_pathways = Pathway.objects.filter(author=self.request.user)
             for dev_pathway in developer_pathways:
