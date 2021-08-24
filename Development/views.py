@@ -200,6 +200,14 @@ class AimsDash(TemplateView):
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print("11111111")
+        print(self.request.user.__dict__)
+        if self.request.user.is_authenticated:
+            if hasattr(self.request.user, 'profile'):
+                context['user_profile']= MemberProfile.objects.get(user_profile=self.request.user.id)
+                context['has_user_profile'] = True
+            else:
+                context['has_user_profile'] = False
         aims_by_cat = []
 
     # For gethering info on trackers

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %} Member Profile{% endblock %}
+
+{% block content %}
+
+<h1> Members profile </h1>
+
+<div class="container">
+
+
+  <div class="form-group">
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <!-- doing as_p decides the element that each will be created for each field -->
+      <button>Confirm profile</button>
+      </form>
+  </div>
+</div>
+
+{% endblock %}

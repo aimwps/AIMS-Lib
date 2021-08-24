@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from .forms import MemberProfileForm
 from django.urls import reverse_lazy
 from .forms import MemberRegisterForm, MemberEditForm, MemberEditPasswordForm
 from django.contrib.auth.views import PasswordChangeView
@@ -34,7 +35,34 @@ class MemberProfileView(generic.DetailView):
     def get_context_data(self,*args, **kwargs):
         #users = MemberProfile.objects.all()
         context = super(MemberProfileView, self).get_context_data(*args, **kwargs)
-        page_user = get_object_or_404(MemberProfile, id=self.kwargs['pk'])
-        context['page_user'] = page_user
+        user_profile = get_object_or_404(MemberProfile, id=self.kwargs['pk'])
+        context['user_profile'] = user_profile
 
         return context
+
+
+class MemberProfileCreate(generic.CreateView):
+    model = MemberProfile
+    form_class = MemberProfileForm
+    template_name ="registration/create_profile.html"
+    success_url = reverse_lazy('aims-dash')
+
+    def form_valid(self,form):
+        form.instance.user_profile = self.request.user
+        return super().form_valid(form)
+
+class MemberProfileEdit(generic.UpdateView):
+    model = MemberProfile
+    form_class = MemberProfileForm
+    template_name ="registration/edit_profile.html"
+    success_url = reverse_lazy('aims-dash')
+
+    def get_context_data(self,*args, **kwargs):
+        #users = MemberProfile.objects.all()
+        context = super(MemberProfileEdit, self).get_context_data(*args, **kwargs)
+        user_profile = get_object_or_404(MemberProfile, user_profile=self.kwargs['pk'])
+        context['user_profile'] = user_profile
+        return context
+    def form_valid(self,form):
+        form.instance.user_profile = self.request.user
+        return super().form_valid(form)

@@ -12,37 +12,74 @@
 
 
 {% block content %}
-{% if user.is_authenticated %}
-{% if user.profile %}
-<div class="container">
-  <a class="anchor" id="myaims"></a>
-  <br/>
+  {% if user.is_authenticated %}
+    {% if has_user_profile %}
+      <div class="container">
+        <a class="anchor" id="myaims"></a>
+        <br/>
+        <div class="row">
+          <ul class="nav justify-content-center">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'aims-new' %}">Create a new Aim</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#quickaims">Go to quick aims</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'aims-new' %}">See our full guide</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      {% include "aims.html" %}
+      {% else %}
+      <div class="row">
+        <h1 class="text-start">MEMBER PROFILE REQUIRED</h1>
+        <br/>
+        <div class="col-3">
+        </div>
+        <div class="col-9">
+          <div class="bs-component">
+            <figure>
+              <blockquote class="blockquote">
+                <p>"You have to activate your profile before using this feature. Follow the link below</p>
+              </blockquote>
+              <figcaption class="blockquote-footer">
+              AI@MSlib <cite title="Source Title">Using Aims-Lib</cite>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+      <br/>
+      <p class="text-center"><a  href="{% url 'member-profile-create' %}"> Activate member profile </a></p>
+    {% endif %}
+    {% else %}
     <div class="row">
-      <ul class="nav justify-content-center">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'aims-new' %}">Create a new Aim</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="#quickaims">Go to quick aims</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'aims-new' %}">See our full guide</a>
-        </li>
-      </ul>
+      <h1 class="text-start">USER REGISTRATION REQUIRED</h1>
+      <br/>
+      <div class="col-3">
+      </div>
+      <div class="col-9">
+        <div class="bs-component">
+          <figure>
+            <blockquote class="blockquote">
+              <p>"We can't take you any further until you have registered as a user, please follow the link below"</p>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+            Aimsducator <cite title="Source Title">Using Aims-Lib</cite>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
     </div>
-</div>
-{% else %}
-<p> fuck</p>
+    {% endif %}
+    {% endblock %}
 
-{% endif %}
-
-
-{% include "aims.html" %}
-{% else %}
-<p> You must login or register to starting using this AIMSLib feature </p>
-
-{% endblock %}
-
-{% block bottomcontent %}
-{% include "quick_fire_aims.html" %}
-{% endblock %}
+    {% block bottomcontent %}
+    {% if user.is_authenticated %}
+      {% if has_user_profile %}
+    {% include "quick_fire_aims.html" %}
+    {% endif %}
+    {% endif %}
+    {% endblock %}

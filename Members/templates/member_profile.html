@@ -6,12 +6,18 @@
 <div class="container">
 
 
-{{ page_user }}
+{{ user_profile }}
 <br/>
-
-{{ page_user.power_quote }}
+<h4>{{ user.get_username }}</h4>
+{{ user_profile.power_quote }}
+{{ user_profile.biography }}
+{{ user_profile.personal_website }}
+{{ user_profile.day_reset_time }}
+{{ user_profile.week_reset_day }}
+{{ user_profile.month_reset_day }}
+{{ user_profile.year_reset_month }}
 </div>
 
-
+<a class="dropdown-item" href="{% url 'member-profile-edit' user_profile.pk %}">Edit Profile</a><
 
 {% endblock %}

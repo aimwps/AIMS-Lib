@@ -182,6 +182,12 @@ class PathsHomeView(View):
         user_pathway_data = {}
         if self.request.user.is_authenticated:
             user_pathways = Pathway.objects.filter(participants=self.request.user)
+            user_profile = MemberProfile.objects.get(id=self.request.user.id)
+            if user_profile:
+                context['has_user_profile'] = True
+            else:
+                context['has_user_profile'] = False
+                
             for pathway in user_pathways:
                 content_settings = list(PathwayContentSetting.objects.filter(pathway=pathway).order_by('order_by'))
                 user_pathway_data[pathway] = content_settings
@@ -193,9 +199,6 @@ class PathsHomeView(View):
                 pathway_objs = list(PathwayContentSetting.objects.filter(pathway=dev_pathway).order_by('order_by'))
                 developer_pathway_data[dev_pathway] = pathway_objs
             context['developer_pathways'] = developer_pathway_data
-        
-
-
         return render(request, self.template_name, context)
 
     def post(self, request):

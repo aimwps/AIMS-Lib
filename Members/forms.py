@@ -1,7 +1,37 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.models import User
+from .models import MemberProfile
 from django import forms
 
+class MemberProfileForm(forms.ModelForm):
+    class Meta:
+        model= MemberProfile
+        fields = ('power_quote', 'biography', 'personal_website', 'week_reset_day', 'month_reset_day', 'year_reset_month')
+        widgets ={
+            'power_quote': forms.Textarea(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': "Something that inspires you",
+                                            "rows": 3}),
+            #'author': forms.Select(attrs = {'class': 'form-control'}),
+            'biography': forms.Textarea(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'As much or as little about your self as you wish',
+                                            "rows": 8}),
+            'personal_website': forms.Textarea(attrs = {
+                                            'class': 'form-control',
+                                            'placeholder': 'a link to your own website',
+                                            }),
+            'week_reset_day': forms.Select(attrs = {
+                                            'class': 'form-control',
+                                            }),
+            'month_reset_day': forms.TextInput(attrs = {
+                                            'class': 'form-control',
+                                            }),
+            'year_reset_month': forms.TextInput(attrs = {
+                                            'class': 'form-control',
+                                            }),
+
+                                            }
 
 class MemberRegisterForm(UserCreationForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control'}))
