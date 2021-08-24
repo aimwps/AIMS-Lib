@@ -2,7 +2,6 @@
 from django.contrib.messages import constants as messages
 from pathlib import Path
 import os
-#import django_heroku
 from decouple import config
 import django_heroku
 import dj_database_url
@@ -167,3 +166,4 @@ CKEDITOR_CONFIGS = {
     },
 }
 django_heroku.settings(locals())
+DATABASES['default'] =  dj_database_url.config()
