@@ -47,7 +47,7 @@ class Aim(models.Model):
     why = models.TextField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     def __str__(self):
-        return f"<AIM: by {self.user} '{self.title[:min(len(self.title),50)]}'>"#This changes the displayed object name into relevant text information
+        return f"Aim{self.id}"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
         return reverse('aims-dash')
 
@@ -80,7 +80,7 @@ class Lever(models.Model):
         return sorted_payload
 
     def __str__(self):
-        return f"<Lever: by {self.on_aim.user} on {self.on_aim} ...'{self.description[:min(len(self.description),50)]}'>"#This changes the displayed object name into relevant text information
+        return f"Behaviour{self.id}"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
         return reverse('aims-dash')
 
@@ -113,7 +113,7 @@ class TrackerMinAim(models.Model):
         class_name = "TrackerMinAim"
         return class_name
     def __str__(self):
-        return f"<MinAimTracker: {self.frequency}>"#This changes the displayed object name into relevant text information
+        return f"MinAimTracker{self.id}"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
         return reverse('aims-dash')
 
@@ -147,6 +147,8 @@ class TrackerMinAim(models.Model):
     def get_pretty_tclass(self):
         class_name = "Minimum show to goal"
         return class_name
+
+        
 class TrackerMinAimRecords(models.Model):
     tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
     lever_performed = models.BooleanField(default=False)
@@ -182,7 +184,7 @@ class TrackerBoolean(models.Model):
         class_name = "TrackerBoolean"
         return class_name
     def __str__(self):
-        return f"<TrackerBoolean: {self.frequency}>"#This changes the displayed object name into relevant text information
+        return f"TrackerBoolean{self.id}"#This changes the displayed object name into relevant text information
 
     def get_absolute_url(self):
         return reverse('aims-dash')

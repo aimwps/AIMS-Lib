@@ -335,8 +335,8 @@ class AimsDash(TemplateView):
                 start_date = reset_user_time
                 end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
             else:
-                start_date = reset_user_time - time_delta(hours=24)
-                end_date =  reset_user_time - time_delta(seconds=1)
+                start_date = reset_user_time - timedelta(hours=24)
+                end_date =  reset_user_time - timedelta(seconds=1)
         if tracker.frequency == "weekly":
             if reset_user_time.strftime('%A') == member_profile.week_reset_day:
                 if now > reset_user_time:
