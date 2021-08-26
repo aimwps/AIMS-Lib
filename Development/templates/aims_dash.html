@@ -1,36 +1,16 @@
 {% extends 'base.html' %}
 {% block title %} Your Aims {% endblock %}
-
-{% block sectiontitle %}
-<p>Here you can check, adjust & set all your AIMS</p>
-{% endblock %}
-
-
-{% block leftbar %}
-{% include "aims_left_bar.html" %}
+{% block modulenav %}
+{% include "aims_nav.html" %}
 {% endblock %}
 
 
 {% block content %}
+<div class="container">
+  <a class="anchor" id="myaims"></a>
+</div>
   {% if user.is_authenticated %}
     {% if has_user_profile %}
-      <div class="container">
-        <a class="anchor" id="myaims"></a>
-        <br/>
-        <div class="row">
-          <ul class="nav justify-content-center">
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'aims-new' %}">Create a new Aim</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="#quickaims">Go to quick aims</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'aims-new' %}">See our full guide</a>
-            </li>
-          </ul>
-        </div>
-      </div>
       {% include "aims.html" %}
       {% else %}
       <div class="row">

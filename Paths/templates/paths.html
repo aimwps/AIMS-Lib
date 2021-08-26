@@ -1,27 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}Skill Paths{% endblock %}
 
-
-
-
-{% block leftbar %}
-{% include "paths_left_bar.html" %}
+{% block modulenav %}
+{% include "pathway_nav.html" %}
 {% endblock %}
 
 
 {% block content %}
 <div class="container">
   <a class="anchor" id="mypathways"></a>
-
-{% include "pathway_nav.html" %}
 </div>
 {% if user.is_authenticated %}
 
-<div class="container">
-  <br/>
-  <h3> The paths you are working on</h3>
+<div class="row">
+  <h4>Progression</h4>
   <hr>
-  <div class="container">
+  <div class="row">
   {% for path, path_items in user_pathways.items %}
     <a href='{% url "view-pathway" path.id %}' data-bs-toggle="tooltip" title="View this pathway"><h4> {{ path.title }}</h4></a>
     {% for path_content in path_items %}
@@ -45,15 +39,13 @@
 </div>
 <br/>
 
-<div class="container">
   <div class="row">
-      <h3> The paths you are developing</h3>
+      <h4>Development</h4>
  </div>
  <hr>
 
 <!-- ***********************************************************************************-->
 
-<div class="container">
 {% for path, path_items in developer_pathways.items %}
 <div class="row">
     <div class="col-8">
@@ -126,6 +118,7 @@
           </a>
         </li>
       </ul>
+    </div>
 
 
 <!--- Modal ------------------------------------------------------------------------------------------------------------------------------------>
@@ -153,16 +146,13 @@
           </div>
         </div>
       </div>
-<!--- Modal ------------------------------------------------------------------------------------------------------------------------------------>
-
+<!--- Modal ---------------------------------------------------------------------------------------------------------------------------------->
 
     </div>
-  </div>
+    <hr>
 {% endfor %}
-<hr>
+
 {% endfor %}
-</div>
-</div>
 {% else %}
 <p> boom! </p>
 {% endif %}

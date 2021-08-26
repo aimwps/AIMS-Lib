@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}AIMS-LIB{% endblock %}
+{% load static %}
 
+{% block modulenav %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
   <div class="row">
     <h1 class="text-start">CRAFT YOUR FUTURE</h1>
     <br/>
-    <div class="col-3">
+    <div class="col-4">
+      <img class="card-img-top" src="{% static 'media/web/l3.png' %}" alt="Card image cap">
     </div>
-    <div class="col-9">
+    <div class="col-8">
       <div class="bs-component">
         <figure>
           <blockquote class="blockquote">

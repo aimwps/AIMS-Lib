@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block title %} Pulling Levers!{% endblock %}
-
+{% block modulenav %}
+{% include "aims_nav.html" %}
+{% endblock %}
 {% block content %}
 
 <h1> Adding a lever to {{ aim_for_lever.title }} </h1>

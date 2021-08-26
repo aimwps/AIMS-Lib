@@ -14,6 +14,8 @@
     <title>{% block title %}AIMS-LIB{% endblock %}</title>
   </head>
   <body>
+
+
     <!-- NAVIGATION & Messages (FIXED TO TOP)
     ################################################################################# -->
         <div class="fixed-top">
@@ -35,10 +37,9 @@
         </div>
   <!-- MAIN CAROUSELF (FULL SCREEN WIDTH)
   ################################################################################# -->
-
-  {% block maincarousel %}
-    {% include  "base_main_carousel.html" %}
-  {% endblock %}
+{% block topcarousel %}
+{% include "base_main_carousel.html" %}
+{% endblock %}
 
 
 <!-- TOP HALF PAGE
@@ -56,7 +57,9 @@
     <!-- MAIN CONTENT
     ################################################################################# -->
         <div class="col-md-7 col-xs-12 rounded bg-white my-2">
-
+          {% block modulenav %}
+          {% include "base_nav.html" %}
+          {% endblock %}
           {% block content %}
           {% endblock %}
 
@@ -128,12 +131,9 @@
       {% include "bottom_carousel.html" %}
     {% endblock %}
 
-
 <!-- BOTTOM NAV
 ################################################################################# -->
-  <div class='container fixed-bottom'>
-    {% include 'bottom_nav.html' %}
-  </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
