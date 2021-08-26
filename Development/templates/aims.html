@@ -1,8 +1,7 @@
+<br/>
 {% if user.is_authenticated %}
-
     {% for cat in aims_by_cat %}
       {% if cat.1 %}
-
           <div class="accordion" id="AimsAccordion_{{ cat.0 }}">
             {% for aim, levers in cat.1.items %}
               <div class="accordion-item">

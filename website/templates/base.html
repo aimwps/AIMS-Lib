@@ -44,7 +44,6 @@
 
 <!-- TOP HALF PAGE
 ################################################################################# -->
-
       <div class="container">
        <div class="row">
     <!-- LEFT BAR
@@ -60,11 +59,8 @@
           {% block modulenav %}
           {% include "base_nav.html" %}
           {% endblock %}
-          {% block content %}
-          {% endblock %}
 
-          {% block secondtopcontent %}
-            {% include "secondtopcontent.html" %}
+          {% block content %}
           {% endblock %}
         </div>
 
@@ -79,19 +75,15 @@
 ################################################################################# -->
       </div>
     </div>
-    <!-- MAIN CONTENT CAROUSEL
-    ################################################################################# -->
 
-        {% block contentCarousel %}
-          {% include "content_carousel.html" %}
-        {% endblock %}
-
-    <!-- MAIN CONTENT AFTER CONTENT CAROUSEL
-    ################################################################################# -->
-
-
-<!-- BOTTOM CAROUSEL (FULL SCREEN WIDTH)
+<!--MID PAGECAROUSEL
 ################################################################################# -->
+    {% block contentCarousel %}
+      {% include "content_carousel.html" %}
+    {% endblock %}
+<!--END MID CAROUSEL
+################################################################################# -->
+
 
 <!-- BOTTOM HALF PAGE
 ################################################################################# -->
@@ -108,9 +100,10 @@
 
     <!-- BOTTOM CENTER CONTENT
     ################################################################################# -->
-        <div class="col-md-7 col-xs-12 rounded bg-white my-2">
+        <div class="col-md-7 col-xs-12 bg-white my-2">
+          {% block modulenav_bottom %}
+          {% endblock %}
           {% block bottomcontent %}
-
           {% endblock %}
         </div>
 
@@ -118,7 +111,6 @@
     <!-- bottom right bar
     ################################################################################# -->
         <div class="col-md-2 col-xs-12 bg-white my-2">
-
           {% block bottomrightbar %}
             {% include "bottom_right.html" %}
           {% endblock %}
@@ -128,7 +120,6 @@
 
 
     {% block bottomcarousel %}
-      {% include "bottom_carousel.html" %}
     {% endblock %}
 
 <!-- BOTTOM NAV
