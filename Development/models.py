@@ -46,21 +46,20 @@ class Aim(models.Model):
     title = models.TextField()
     why = models.TextField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
+    in_order = models.PositiveIntegerField()
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')
+        ]
     def __str__(self):
         return f"Aim{self.id}"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
         return reverse('aims-dash')
 
-    # def get_aim_trackers(for_user_id):
-    #     user_min_aim_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id)
-    #     return ('user_min_aim_trackers', user_min_aim_trackers)
-    # def get_daily_trackers(for_user_id):
-    #     user_daily_trackers = TrackerMinAim.objects.filter(lever__on_aim__user__id=for_user_id, frequency="daily" )
-    #
+
 
 
 class Lever(models.Model):
-    #tracker = models.ForeignKey(AimsTracker, blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(default="A description of the lever you will pull")
     in_order = models.PositiveIntegerField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
@@ -148,7 +147,7 @@ class TrackerMinAim(models.Model):
         class_name = "Minimum show to goal"
         return class_name
 
-        
+
 class TrackerMinAimRecords(models.Model):
     tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
     lever_performed = models.BooleanField(default=False)

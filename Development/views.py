@@ -180,6 +180,11 @@ class AimNew(CreateView):
     def form_valid(self, form):
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.user = self.request.user
+        all_user_aims = Aim.objects.filter(user=self.request.user).order_by("in_order")
+        for i, aim in enumerate(all_user_aims):
+            aim.in_order = i
+            aim.save()
+        form.instance.in_order = (len(all_user_aims))
         return super().form_valid(form)
 
 
@@ -200,16 +205,28 @@ class AimsDash(TemplateView):
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print("11111111")
-        print(self.request.user.__dict__)
+
+        #### Check if user has profile and load if so.
         if self.request.user.is_authenticated:
             if hasattr(self.request.user, 'profile'):
-                context['user_profile']= MemberProfile.objects.get(user_profile=self.request.user.id)
+                context['user_profile'] = MemberProfile.objects.get(user_profile=self.request.user.id)
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False
-        aims_by_cat = []
 
+            #### Get aLL the users aims
+            user_aims = Aim.objects.filter(user=self.request.user)
+            user_aims_behaviours = {aim: list(Lever.objects.filter(on_aim=aim)) for aim in user_aims}
+            user_all_aims = {}
+            for aim, behaviours in user_aims_behaviours.items():
+                trackers_behaviours = {}
+                for behaviour in behaviours:
+                    trackers_behaviours[behaviour] = behaviour.get_trackers()
+                user_all_aims[aim] = trackers_behaviours
+            aims_cat = [(str(aim.category), aim.in_order, aim.title, aim.why, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
+            sorted_aims = sorted(aims_cat, key=lambda x:x[1])
+            context['sorted_aims'] = sorted_aims
+        aims_by_cat = []
     # For gethering info on trackers
         all_uncomplete_tracker_periods = ['uncomplete_daily','uncomplete_weekly', 'uncomplete_monthly', 'uncomplete_yearly']
         uncomplete_trackers = OrderedDict({
