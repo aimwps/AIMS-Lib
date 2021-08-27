@@ -2,8 +2,8 @@
 <div class="card text-center  border-0 navpad">
 
   <div class="card-body">
-    <h5 class="card-title">AIMS</h5>
-    <p class="card-text">Map a way to your future. Set aims for who you want to be, decide on the behaviours that person has and start to track your progreess towards them</p>
+    <h5 class="card-title">{% if nav_data %}{{nav_data.nav_title}}{% else %}AIMS{% endif %}</h5>
+    <p class="card-text">{% if nav_data %}{{nav_data.nav_info}}{% else %}Map a way to your future. Set aims for who you want to be, decide on the behaviours that person has and start to track your progreess towards them{% endif %}</p>
   </div>
 </div>
 <div class="sticky-top navpad">
@@ -16,16 +16,16 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'aims-new' %}">Create Aim</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'aims-new' %}#begin">Create Aim</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#myaims">My Aims</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'aims-dash' %}#myaims">My Aims</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#quickaims">Quick fire aims</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'aims-dash' %}#quickaims">Quick fire aims</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#userguide">Aims userguide</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'aims-dash' %}#userguide">Userguide</a>
         </li>
       </ul>
 

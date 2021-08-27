@@ -4,8 +4,12 @@
 {% include "aims_nav.html" %}
 {% endblock %}
 {% block content %}
-
-
+<div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
+<br/>
+<h4>Edit Tracker Record </h4>
+<br/>
 
 <div class="container">
   <div class="form-group">
@@ -14,11 +18,22 @@
       {{ form.as_p }}
 
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button name="edit-form">Update</button>
+      <button class="btn btn-primary" name="edit-form">Update</button>
       </form>
   </div>
 </div>
 
 
 
+{% endblock %}
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
 {% endblock %}

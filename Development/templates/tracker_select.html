@@ -6,8 +6,13 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
+<br/>
+<h4>Add a tracker</h4>
+<br/>
 
-  <h1> Select a Tracker for.. </h1>
+<div class="container">
   <!-- Button trigger modal -->
   <p class="lead"> "{{ on_lever.description }}"</p>
   <div class="accordion" id="AvailableTrackerAccordion">
@@ -94,4 +99,16 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
 {% endblock %}

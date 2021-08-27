@@ -32,8 +32,8 @@
 
                 </div>
                 <div class="modal-footer">
-                  <a href='{% url "lever-new" aim.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                  <a href='{% url "edit-aim" aim.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                  <a href='{% url "lever-new" aim.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                  <a href='{% url "edit-aim" aim.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
 
                   <form action="." method="POST">
                     {% csrf_token %}
@@ -77,8 +77,8 @@
                         <p>You can add a tracker to monitor measurable progress and also edit or delete this behaviour below</p>
                       </div>
                       <div class="modal-footer">
-                        <a href='{% url "tracker-select" behaviour.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                        <a href='{% url "edit-lever" behaviour.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                        <a href='{% url "tracker-select" behaviour.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                        <a href='{% url "edit-lever" behaviour.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
 
                         <form action="." method="POST">
                           {% csrf_token %}
@@ -118,14 +118,14 @@
 
                             </div>
                             <div class="modal-footer">
-                              <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                              <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
 
                               {% if tracker.get_tclass == "TrackerMinAim" %}
-                                <a href='{% url "edit-min-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                                <a href='{% url "edit-min-tracker" tracker.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
                               {% endif %}
 
                               {% if tracker.get_tclass == "TrackerBoolean" %}
-                                <a href='{% url "edit-bool-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                                <a href='{% url "edit-bool-tracker" tracker.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
                               {% endif %}
 
                               <form action="." method="POST">

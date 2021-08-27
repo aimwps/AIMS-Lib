@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
 from Members.models import MemberProfile
+from website.models import ModuleNavData
 from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm, TrackerBooleanNewForm, TrackerBooleanRecordsForm#, TrackerMinAimEditForm, TrackerBooleanEditForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView
 from django.http import HttpResponse
@@ -54,7 +55,6 @@ class LogAnyTracker(View):
         return render(request, self.template_name, context)
 
     def form_valid(self, form):
-        #print(f"checking form {form}")
         form.instance.tracker = eval(f"{tracker_type}Records").objects.get(id=self.kwargs['tracker_id'])
         return super().form_valid(form)
 
@@ -74,11 +74,9 @@ class LogAnyTracker(View):
                             lever_performed = True,
                             metric_quantity = submit_form.cleaned_data['metric_quantity'],
                             )
-                print(f"metric quantity {submit_form.cleaned_data['metric_quantity']}")
                 new_log.save()
             return HttpResponseRedirect('/aims_dash/')
         else:
-            print("ERRRRRRRRRRRRRRRRRRRROOOOOOOOOOOOOOOOOORRR")
             return HttpResponseRedirect('/aims_dash/')
 
 
@@ -187,6 +185,16 @@ class AimNew(CreateView):
         form.instance.in_order = (len(all_user_aims))
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            nav_data = ModuleNavData.objects.filter(module_sub_page=self.template_name)
+        except:
+            nav_data = None
+
+        if nav_data:
+            context['nav_data'] = nav_data[0]
+        return context
 
 class AimView(TemplateView):
     template_name = "aims.html"
@@ -205,6 +213,13 @@ class AimsDash(TemplateView):
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        try:
+            nav_data = ModuleNavData.objects.filter(module_sub_page=self.template_name)
+        except:
+            nav_data = None
+
+        if nav_data:
+            context['nav_data'] = nav_data[0]
 
         #### Check if user has profile and load if so.
         if self.request.user.is_authenticated:
@@ -260,16 +275,15 @@ class AimsDash(TemplateView):
         context['uncomplete_trackers'] = uncomplete_trackers
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
+        print(context)
         return context
 
     def form_valid(self, form):
-        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.tracker = self.request.POST.get("tracker_id")
         form.instance.lever_peformed = True
         return super().form_valid(form)
 
     def post(self, form):
-        print(self.request.POST)
         if "TrackerMinAim" in self.request.POST:
             get_tracker = get_object_or_404(TrackerMinAim, id=self.request.POST.get('tracker_id'))
             if self.request.POST.get("TrackerMinAim") == "dnc":
@@ -282,7 +296,6 @@ class AimsDash(TemplateView):
                     metric_quantity = self.request.POST.get("metric_quantity")
             )
             new_log.save()
-            print("yoyoyo")
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
         elif "TrackerBoolean" in self.request.POST:
             get_tracker = get_object_or_404(TrackerBoolean, id=self.request.POST.get('tracker_id'))
@@ -296,7 +309,6 @@ class AimsDash(TemplateView):
                     metric_quantity = self.request.POST.get("metric_quantity")
             )
             new_log.save()
-            print(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
 
         elif "delete_behaviour" in self.request.POST:
@@ -317,7 +329,6 @@ class AimsDash(TemplateView):
             tracker.save()
             return HttpResponseRedirect('/aims_dash/#myaims')
         else:
-            print("doesnt work")
             return HttpResponseRedirect('/aims_dash/#myaims')
 
 
