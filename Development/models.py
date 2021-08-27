@@ -64,10 +64,10 @@ class Lever(models.Model):
     in_order = models.PositiveIntegerField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
+    #     ]
 
     def get_trackers(self):
         min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)).filter(~Q(user_status="deleted")))
