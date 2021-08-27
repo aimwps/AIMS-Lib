@@ -66,7 +66,7 @@ class Lever(models.Model):
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
+            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique_order_of_levers')
         ]
 
     def get_trackers(self):
