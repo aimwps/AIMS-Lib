@@ -6,12 +6,13 @@
 {% endblock %}
 {% block content %}
 
-<h3><strong>Tracker Declaration:</strong> {{ tracker.get_tsentence }}</h3>
-<h4> {{tracker.get_tquestion }}</h4>
-{{ tracker.get_tquestion }}
-
-
+<div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
 <br/>
+<h4> New tracker record </h4>
+<br/>
+
 <div class="container">
   <div class="form-group">
 
@@ -25,4 +26,15 @@
   </div>
 </div>
 
+{% endblock %}
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
 {% endblock %}

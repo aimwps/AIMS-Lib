@@ -21,7 +21,7 @@ class SkillArea(models.Model):
     skill_area_name = models.CharField(max_length=255)
     created_date = models.DateField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    forum_rules = models.TextField(default="The forum rules for this skill area are..")
+    forum_rules = models.TextField()
     def __str__(self):
         return self.skill_area_name #This changes the displayed object name into relevant text information
 
@@ -46,7 +46,7 @@ class Aim(models.Model):
     title = models.TextField()
     why = models.TextField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    in_order = models.PositiveIntegerField()
+    in_order = models.PositiveIntegerField(default=9999)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')
@@ -60,13 +60,13 @@ class Aim(models.Model):
 
 
 class Lever(models.Model):
-    description = models.TextField(default="A description of the lever you will pull")
+    description = models.TextField()
     in_order = models.PositiveIntegerField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique order of levers')
+            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique_order_of_levers')
         ]
 
     def get_trackers(self):

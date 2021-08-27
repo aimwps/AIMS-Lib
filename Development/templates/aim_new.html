@@ -2,35 +2,19 @@
 
 {% block title %} Create a new Aim{% endblock %}
 
-
 {% block modulenav %}
 {% include "aims_nav.html" %}
-{% endblock %}
-{% block content %}
 
+{% endblock %}
+
+
+{% block content %}
 <div class="container">
-  <div class="row">
-    <h1 class="text-start">Creating a new aim</h1>
-    <br/>
-    <div class="col-3">
-    </div>
-    <div class="col-9">
-      <div class="bs-component">
-        <figure>
-          <blockquote class="blockquote">
-            <p>"Hey {{ user.get_username }}! Wonderful, you're creating a new aim. To begin, select a category from our global commmunities, or create a custom one.
-              Add a description and most importantly why in great detail. It's important you understand what we mean by aims. Try <a href='#'>Starting your map</a>  or
-              scroll down for an example.
-               </p>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-          AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
+  <a class="anchor" id="begin"></a>
 </div>
+<br/>
+
+<br/>
 <div class="container">
 
 
@@ -47,17 +31,16 @@
       </form>
   </div>
 </div>
-
 {% endblock %}
-{% block bottomcarousel %}
+
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
 {% endblock %}
 
 {% block bottomcontent %}
-<h1> Enter example here..............</h1>
-<h1> Enter example here..............</h1>
-<h1> Enter example here..............</h1>
-<h1> Enter example here..............</h1>
-<h1> Enter example here..............</h1>
-<h1> Enter example here..............</h1>
-<h1> Enter example here..............</h1>
+{% endblock %}
+
+{% block bottomrightbar  %}
 {% endblock %}
