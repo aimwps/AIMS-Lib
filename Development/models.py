@@ -46,11 +46,11 @@ class Aim(models.Model):
     title = models.TextField()
     why = models.TextField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    in_order = models.PositiveIntegerField()
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')
-        ]
+    in_order = models.PositiveIntegerField(default=1)
+    # class Meta:
+    #     constraints = [
+    #         models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')
+    #     ]
     def __str__(self):
         return f"Aim{self.id}"#This changes the displayed object name into relevant text information
     def get_absolute_url(self):
