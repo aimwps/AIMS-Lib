@@ -46,7 +46,7 @@ class Aim(models.Model):
     title = models.TextField()
     why = models.TextField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    in_order = models.PositiveIntegerField(default=1)
+    in_order = models.PositiveIntegerField(default=9999)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')
