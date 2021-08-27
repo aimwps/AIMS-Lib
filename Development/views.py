@@ -180,6 +180,11 @@ class AimNew(CreateView):
     def form_valid(self, form):
         #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.user = self.request.user
+        all_user_aims = Aim.objects.filter(user=self.request.user).order_by("in_order")
+        for i, aim in enumerate(all_user_aims):
+            aim.in_order = i
+            aim.save()
+        form.instance.in_order = (len(all_user_aims))
         return super().form_valid(form)
 
 
@@ -200,16 +205,32 @@ class AimsDash(TemplateView):
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print("11111111")
-        print(self.request.user.__dict__)
+
+        #### Check if user has profile and load if so.
         if self.request.user.is_authenticated:
             if hasattr(self.request.user, 'profile'):
-                context['user_profile']= MemberProfile.objects.get(user_profile=self.request.user.id)
+                context['user_profile'] = MemberProfile.objects.get(user_profile=self.request.user.id)
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False
-        aims_by_cat = []
 
+            #### Get aLL the users aims
+            user_aims = Aim.objects.filter(user=self.request.user)
+            user_aims_behaviours = {aim: list(Lever.objects.filter(on_aim=aim)) for aim in user_aims}
+            user_all_aims = {}
+            for aim, behaviours in user_aims_behaviours.items():
+                trackers_behaviours = {}
+                for behaviour in behaviours:
+                    trackers_behaviours[behaviour] = behaviour.get_trackers()
+                user_all_aims[aim] = trackers_behaviours
+            aims_cat = [(str(aim.category), aim.in_order, aim.title, aim.why, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
+            sorted_aims = sorted(aims_cat, key=lambda x:x[1])
+            context['sorted_aims'] = sorted_aims
+
+
+
+
+        aims_by_cat = []
     # For gethering info on trackers
         all_uncomplete_tracker_periods = ['uncomplete_daily','uncomplete_weekly', 'uncomplete_monthly', 'uncomplete_yearly']
         uncomplete_trackers = OrderedDict({
@@ -222,46 +243,21 @@ class AimsDash(TemplateView):
         uncomplete_monthly = []
         uncomplete_yearly = []
 
-    # For building cascading dictionaries for displaying aims
-        # Loop through every category
-        for cat in DevelopmentCategory.objects.all():
-            all_cat_aim_data = {}
 
-            ## Get the category trail e.g. mindset -> meditation
-            full_cat_path = get_category_path(cat)
+    # Get all trackers
+        all_behaviours  = Lever.objects.filter(on_aim__user=self.request.user)
+        for behaviour in all_behaviours:
+            trackers = behaviour.get_trackers()
+            for tracker in trackers:
+                tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
+                if not tracker_complete:
+                    if uncomplete_trackers[freq_bracket] != None:
+                        uncomplete_trackers[freq_bracket][2].append(tracker)
+                    else:
+                        uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
 
-            # for eveter category we collect the page users cateogory aims
-            cat_aims = Aim.objects.filter(user=self.request.user.id, category=cat.id).filter(~Q(user_status="deleted"))
-
-            # Loop thorugh all the aims in that category
-            for aim in cat_aims:
-                aim_levers = {}
-                all_aim_levers = Lever.objects.filter(on_aim = aim.id).filter(~Q(user_status="deleted")).order_by("in_order")
-
-            # For each aim in a category, find the corresponding Levers
-                # get all the trackers for that lever.
-                for lever in all_aim_levers:
-                    lever_trackers = {}
-                    trackers = lever.get_trackers()
-
-            # Check all trackers for a lever. While looping through trackers check if
-            # they have the correct amount of logs for the current period.
-            # If they do not, add the tracker to the relevant time slot list. ('daily, weekly etc')
-                    for tracker in trackers:
-                        tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
-                        if not tracker_complete:
-                            if uncomplete_trackers[freq_bracket] != None:
-                                uncomplete_trackers[freq_bracket][2].append(tracker)
-                            else:
-                                uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
-
-                            eval(f"uncomplete_{freq_bracket}").append(tracker)
-
-                    aim_levers[lever] = trackers
-                all_cat_aim_data[aim] = aim_levers
-            aims_by_cat.append((full_cat_path, all_cat_aim_data))
+                    eval(f"uncomplete_{freq_bracket}").append(tracker)
         context['uncomplete_trackers'] = uncomplete_trackers
-        context['aims_by_cat'] = sorted(aims_by_cat)
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
         return context
@@ -276,9 +272,13 @@ class AimsDash(TemplateView):
         print(self.request.POST)
         if "TrackerMinAim" in self.request.POST:
             get_tracker = get_object_or_404(TrackerMinAim, id=self.request.POST.get('tracker_id'))
+            if self.request.POST.get("TrackerMinAim") == "dnc":
+                tcompleted = False
+            else:
+                tcompleted=True
             new_log = TrackerMinAimRecords(
                     tracker = get_tracker,
-                    lever_performed = True,
+                    lever_performed = tcompleted,
                     metric_quantity = self.request.POST.get("metric_quantity")
             )
             new_log.save()
@@ -286,9 +286,13 @@ class AimsDash(TemplateView):
             return HttpResponseRedirect(f"/aims_dash/#QAloc_{self.request.POST.get('for_period')}")
         elif "TrackerBoolean" in self.request.POST:
             get_tracker = get_object_or_404(TrackerBoolean, id=self.request.POST.get('tracker_id'))
+            if self.request.POST.get("TrackerBoolean") == "dnc":
+                tcompleted = False
+            else:
+                tcompleted=True
             new_log = TrackerBooleanRecords(
                     tracker = get_tracker,
-                    lever_performed = True,
+                    lever_performed = tcompleted,
                     metric_quantity = self.request.POST.get("metric_quantity")
             )
             new_log.save()

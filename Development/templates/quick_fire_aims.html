@@ -1,37 +1,35 @@
-
-
-<div class="container">
+<br/>
+<div class="row">
   <a class="anchor" id="quickaims"></a>
 {% for period, tracker_data in uncomplete_trackers.items %}
   <a class="anchor" id="QAloc_{{ period }}"></a>
   <div class="row">
-    <div class="col-5">
+    <div class="col-6">
       <h5>{{ period|title }} Steps</h5>
     </div>
-    <div class="col-7">
+    <div class="col-6">
       {% if tracker_data.0 %}
       <p>{{ tracker_data.0}} to {{ tracker_data.1 }}</p>
       {% else %}
       <p> You're up to date for this period</p>
       {% endif %}
-
     </div>
   </div>
 
 {% for tracker in tracker_data.2 %}
   <div class="row">
-    <div class="col-6 mt-2">
+    <div class="col-md-6 col-xs-12 mt-2">
       {{ tracker.get_tquestion }}
     </div>
-    <div class="col-6">
+    <div class="col-md-6 col-xs-12">
       <div class="form-group">
         <form method="POST" action=".">
           {% csrf_token %}
             <input type="hidden" value="{{tracker.id}}" name="tracker_id">
             <input type="hidden" value="{{ period }}" name="for_period">
-            <div class="container">
-              <div class="row">
-                <div class="col-6">
+
+              <div class="row mt-2 ms-auto me-auto">
+                <div class="col-6 ms-auto me-auto">
                   {% if tracker.get_tclass == 'TrackerBoolean'%}
                     <p>{{ boolean_form.metric_quantity }}</p>
                     {% endif %}
@@ -39,11 +37,14 @@
                     <p>{{ min_aim_form.metric_quantity }}</p>
                     {% endif %}
                 </div>
-              <div class="col-6 mt-1">
-                <button type="submit" name="{{tracker.get_tclass}}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-plus"></i></button>
+              <div class="col-3 ms-auto me-auto">
+                <button type="submit" name="{{tracker.get_tclass}}" class="btn btn-primary"><i class="far fa-check-square"></i></button>
+              </div>
+              <div class="col-3 ms-auto me-auto">
+                
+                <button type="submit" name="{{tracker.get_tclass}}" value="dnc" class="btn btn-secondary"><i class="fas fa-times"></i></button>
               </div>
             </div>
-          </div>
         </form>
       </div>
     </div>

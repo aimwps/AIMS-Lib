@@ -1,44 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}Community{% endblock %}
-{% block leftbar %}
-{% include "forum_left_bar.html" %}
 
+{% block modulenav %}
+{% include "forum_nav.html" %}
 {% endblock %}
+
 
 {% block content %}
 <div class="container">
   <a class="anchor" id="aimscategory"></a>
-<!-- ####################################################################### -->
-<!-- INSERT ALL DATA HERE                                                ### -->
-<div class="container">
-    <div class="row">
-      <ul class="nav justify-content-center">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Create a new topic</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Search the library</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Community discussion guidelines</a>
-        </li>
-      </ul>
-    </div>
 </div>
-</br>
-<div class="container">
-  <div class="row">
-    <h4 class="text-start">AIM Discussions by category</h4>
-    <br/>
-    <div class="col-3">
-    </div>
-    <div class="col-9">
 
-    </div>
-  </div>
-</div>
-<br/>
 {% for dev_area, dev_topic_set in dev_area_topics.items %}
   <div class="row">
     <div class="col-8">
@@ -73,11 +46,12 @@
           </div>
         {% endfor %}
       </div>
+
 {% endfor %}
 
 
 
 <!-- DONT EDIT AFTER THIS POINT                                          ### -->
 <!-- ####################################################################### -->
-</div>
+
 {% endblock %}

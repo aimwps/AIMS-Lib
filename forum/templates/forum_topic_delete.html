@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %} Do you wish to continue?{% endblock %}
-{% block leftbar %}
-{% include "forum_left_bar.html" %}
+
+{% block modulenav %}
+{% include "forum_nav.html" %}
 {% endblock %}
+
 {% block content %}
 <div class="container">
   {% if user.is_authenticated %}

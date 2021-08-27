@@ -1,20 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @ Add new topic
 - Display the category (add new custom category)
 - Display author information
@@ -24,9 +7,6 @@
 @ Aims Dash
 - split into user aims 'AIMSLib > Health', proffesional organisations 'East Anglia Pub -> Hospitality', community organisation 'Local Litter Pickers-> Purpose
 - - so they are displayed sepearetely
-- fix delete and edit buttons
-- fix notification system
-- go to quick fire
 - change the tracker tools
 
 @ Create new aim
