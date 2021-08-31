@@ -75,7 +75,6 @@ class Lever(models.Model):
         payload = min_aim+boolean
         sorted_payload = sorted(payload, key=lambda instance: instance.start_date)
 
-        print(sorted_payload)
         return sorted_payload
 
     def __str__(self):
