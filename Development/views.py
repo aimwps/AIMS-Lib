@@ -275,7 +275,7 @@ class AimsDash(TemplateView):
         context['uncomplete_trackers'] = uncomplete_trackers
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)
-        print(context)
+
         return context
 
     def form_valid(self, form):
