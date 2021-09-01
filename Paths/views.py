@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+
 from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz, GeneratedQuestionBank
 from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm
 from Members.models import MemberProfile
@@ -6,44 +6,29 @@ from django.views.generic import TemplateView, CreateView, View
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from ckeditor.fields import RichTextField
 from django.contrib import messages
 from NLP.question_generation.pipelines import pipeline
 from .utils import textpreperation_qag
-from django.urls import reverse_lazy
 
-TEXT = "Hello my name is mark and I am learning natural language processing, I do wish it goes well and I fulfil my lifes purpose which is to seek meaningful relationships, explore curiousities and provide a service to the greater good. I aim to keep in shape and make wealth online."
+
 QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
-
-class GenerateBenchmark(View):
-    template_name  = "generate_benchmark.html"
-    def get(self, request, content_type, obj_id):
-        input_text = ""
-        if content_type == 'literature':
-            literature = get_object_or_404(WrittenLecture, id=obj_id)
-            input_text = literature.body
-        elif content_type == 'video':
-            video = get_object_or_404(VideoLecture, id=obj_id)
-            input_text = video.transcript
-        else:
-            print("Unknown content type")
-
-        context = {}
-        context['text_for_generation'] = input_text
-        x = self.run_model_to_generate(input_text)
-        print(x)
-        return render(request, self.template_name, context)
-
-    def run_model_to_generate(self, text):
-        return "ha"
 
 
 class BenchmarkCreatorView(View):
     template_name = "create_benchmark.html"
     def get(self, request):
         context = {}
-        return render(request, self.template_name, context)
+        user_gqb = GeneratedQuestionBank.objects.filter(generated_by=self.request.user)
+        user_gqb_perfect = user_gqb.filter(Q(user_proof="perfect"))
+        user_gqb_iffy = user_gqb.filter(Q(user_proof="editable"))
 
+        context['user_gqb'] = user_gqb
+        context['user_gqb_perfect'] = user_gqb_perfect
+        context['user_gqb_iffy'] = user_gqb_iffy
+        return render(request, self.template_name, context)
 
 class PathwayView(View):
     template_name = "pathway_view.html"
@@ -72,7 +57,6 @@ class PathwayView(View):
             pathway.save()
         next = request.POST.get('next','/')
         return HttpResponseRedirect(next)
-
 
 class PathwayObjNew(View):
     #model = PathwayContentSetting
@@ -140,8 +124,6 @@ class PathwayObjNew(View):
 
         return HttpResponseRedirect('/pathway/')
 
-
-
 class PathwayNew(CreateView):
     model = Pathway
     form_class = PathwayNewForm
@@ -153,7 +135,6 @@ class PathwayNew(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-
 
 class VideoLectureNew(CreateView):
     model = VideoLecture
@@ -231,7 +212,6 @@ class WrittenLectureView(View):
 
         return render(request, self.template_name, context)
 
-
 class QuestionGeneratorView(View):
     template_name="question_generator.html"
     def get(self, request, source_type, source_id):
@@ -256,15 +236,25 @@ class QuestionGeneratorView(View):
                     user_proof = request.POST.get(f'proof_{i}')
                 else:
                     user_proof = "unknown"
-                gen_question = GeneratedQuestionBank(
-                        generated_by = self.request.user,
-                        source_type = source_type,
-                        source_id = source_id,
-                        question = request.POST.get(f"q_{i}"),
-                        answer = request.POST.get(f"a_{i}"),
-                        user_proof = user_proof
-                        )
-                gen_question.save()
+                new_question = request.POST.get(f"q_{i}")
+                new_answer = request.POST.get(f"a_{i}")
+                existing_gqb = list(GeneratedQuestionBank.objects.filter(question=new_question, answer=new_answer))
+                if len(existing_gqb) > 0:
+                    already_exists = True
+                else:
+                    already_exists = False
+                if not already_exists:
+                    gen_question = GeneratedQuestionBank(
+                            generated_by = self.request.user,
+                            source_type = source_type,
+                            source_id = source_id,
+                            question = new_question,
+                            answer = new_answer,
+                            user_proof = user_proof
+                            )
+                    gen_question.save()
+                else:
+                    print("duplicate found! not saving")
 
         return HttpResponseRedirect('/create_benchmark/#begin')
 

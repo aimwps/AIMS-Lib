@@ -22,6 +22,8 @@ class Pathway(models.Model): #### (GROUP)
         return reverse('skill-paths')
 
 
+
+
 class Quiz(models.Model): # A collection of questions
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -11,6 +11,22 @@
 <div class="container">
   <a class="anchor" id="begin"></a>
 </div>
+
+<h4>All</h4>
+{% for q in user_gqb %}
+<p>{{ q }}</p>
+{% endfor %}
+
+<h4>Perfect</h4>
+{% for q in user_gqb_perfect %}
+<p>{{ q }}</p>
+{% endfor %}
+<h4>Iffy</h4>
+{% for q in user_gqb_iffy %}
+<p>{{ q }}</p>
+{% endfor %}
+
+
 {% endblock %}
 
 {% block bottomcontent %}
