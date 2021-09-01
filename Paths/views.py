@@ -9,9 +9,11 @@ from django.urls import reverse_lazy
 from ckeditor.fields import RichTextField
 from django.contrib import messages
 from NLP.question_generation.pipelines import pipeline
+from .utils import textpreperation_qag
+from django.urls import reverse_lazy
 
 TEXT = "Hello my name is mark and I am learning natural language processing, I do wish it goes well and I fulfil my lifes purpose which is to seek meaningful relationships, explore curiousities and provide a service to the greater good. I aim to keep in shape and make wealth online."
-QAG_NLP  = pipeline("multitask-qa-qg")
+QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
 class GenerateBenchmark(View):
     template_name  = "generate_benchmark.html"
@@ -36,6 +38,11 @@ class GenerateBenchmark(View):
         return "ha"
 
 
+class BenchmarkCreatorView(View):
+    template_name = "create_benchmark.html"
+    def get(self, request):
+        context = {}
+        return render(request, self.template_name, context)
 
 
 class PathwayView(View):
@@ -131,7 +138,7 @@ class PathwayObjNew(View):
             else:
                 print("FORM TYPE NOT RECOGNISED")
 
-        return HttpResponseRedirect('/skill_paths/')
+        return HttpResponseRedirect('/pathway/')
 
 
 
@@ -227,34 +234,39 @@ class WrittenLectureView(View):
 
 class QuestionGeneratorView(View):
     template_name="question_generator.html"
-    def get(self, request):
-        qas = QAG_NLP(TEXT)
+    def get(self, request, source_type, source_id):
+        if source_type == 'literature':
+            source_doc = get_object_or_404(WrittenLecture, id=source_id).body
+        elif source_type == 'transcript':
+            source_doc = get_object_or_404(VideoLecture, id=source_id).transcript
+        else:
+            print("big errors")
+            source_doc = ""
+        clean_text = textpreperation_qag(source_doc, source_type)
+        qas = QAG_NLP(clean_text)
         context = {}
         context['questions'] = qas
         context['number_of_questions'] = len(qas)
         return render(request, self.template_name, context)
 
-    def post(self, request):
-        print(request.POST)
+    def post(self, request,source_type, source_id):
         if "proofed_questions" in request.POST:
-            for i in range(request.POST.get('proofed_questions')):
+            for i in range(int(request.POST.get('proofed_questions'))):
+                if f'proof_{i}' in request.POST:
+                    user_proof = request.POST.get(f'proof_{i}')
+                else:
+                    user_proof = "unknown"
                 gen_question = GeneratedQuestionBank(
                         generated_by = self.request.user,
-                        source_type = "placeholder",
-                        source_id = 9999999,
+                        source_type = source_type,
+                        source_id = source_id,
                         question = request.POST.get(f"q_{i}"),
                         answer = request.POST.get(f"a_{i}"),
-                        user_proof = request.POST.get(f"proof_{i}")
+                        user_proof = user_proof
                         )
                 gen_question.save()
 
-        return HttpResponseRedirect(request.path)
-
-
-
-
-
-
+        return HttpResponseRedirect('/create_benchmark/#begin')
 
 class QuizView(TemplateView):
     template_name = "quiz.html"

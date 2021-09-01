@@ -12,12 +12,13 @@
 </div>
 {% if user.is_authenticated %}
 
-<div class="row">
+<div class="row my-4">
+
   <h4>Progression</h4>
   <hr>
   <div class="row">
   {% for path, path_items in user_pathways.items %}
-    <a href='{% url "view-pathway" path.id %}' data-bs-toggle="tooltip" title="View this pathway"><h4> {{ path.title }}</h4></a>
+    <a href='{% url "view-pathway" path.id %}#begin' data-bs-toggle="tooltip" title="View this pathway"><h4> {{ path.title }}</h4></a>
     {% for path_content in path_items %}
       <div class="row">
         <div class="col-1">
@@ -27,9 +28,9 @@
           {{ path_content.content_type|title }}
         </div>
         <div class="col-8">
-          {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}">{{ path_content.written_lecture.title }}</a>{% endif %}
-          {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}">{{ path_content.video_lecture.title }}</a>{% endif %}
-          {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}">{{ path_content.quiz.title }}</a>{% endif %}
+          {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}#begin">{{ path_content.written_lecture.title }}</a>{% endif %}
+          {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}#begin">{{ path_content.video_lecture.title }}</a>{% endif %}
+          {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
         </div>
       </div>
     {% endfor %}
@@ -54,7 +55,7 @@
     <div class="col-4">
       <ul class="nav justify-content-end">
         <li class="nav-item">
-          <a class="nav-link active" href="{% url 'new-pathway-obj' path.id %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
+          <a class="nav-link active" href="{% url 'new-pathway-obj' path.id %}#begin" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
@@ -100,9 +101,9 @@
       {{ path_content.content_type|title }}
     </div>
     <div class="col-5 mt-2">
-      {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}">{{ path_content.written_lecture.title }}</a>{% endif %}
-      {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}">{{ path_content.video_lecture.title }}</a>{% endif %}
-      {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}">{{ path_content.quiz.title }}</a>{% endif %}
+      {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}#begin">{{ path_content.written_lecture.title }}</a>{% endif %}
+      {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}#begin">{{ path_content.video_lecture.title }}</a>{% endif %}
+      {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
     </div>
     <div class="col-3">
       <ul class="nav justify-content-end">
