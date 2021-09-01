@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Pathway{% endblock %}
+
+{% block modulenav %}
+{% include "pathway_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
+<form method="POST">
+  {% csrf_token %}
+      {% for question, answer in questions.items %}
+      <br/>
+      <h5>{{question}}</h5>
+      <p>{{ answer }}</p>
+      <input type="hidden" name="q_{{ forloop.counter0 }}" value="{{question}}">
+      <input type="hidden" name="a_{{ forloop.counter0 }}" value="{{answer}}">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="proof_{{forloop.counter0}}" id="radiobtn_perfect_{{ forloop.counter0 }}" value="perfect">
+          <label class="form-check-label" for="radiobtn_perfect_{{ forloop.counter0 }}">Perfect</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="proof_{{forloop.counter0}}" id="radiobtn_editable_{{ forloop.counter0 }}" value="editable">
+          <label class="form-check-label" for="radiobtn_editable_{{ forloop.counter0 }}">Needs work</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="proof_{{forloop.counter0}}" id="radiobtn_incorrect_{{ forloop.counter0 }}" value="incorrect">
+          <label class="form-check-label" for="radiobtn_incorrect_{{ forloop.counter0 }}">Incorrect</label>
+        </div>
+        <br/>
+      {% endfor %}
+<br/>
+<button type="submit" name="proofed_questions" value="{{ number_of_questions }}" class="btn btn-primary btn-sm btn-block">Add to question bank</button>
+</form>
+
+{% endblock %}

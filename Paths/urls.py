@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PathsHomeView, VideoLectureView, WrittenLectureView, QuizView, WrittenLectureNew, VideoLectureNew, PathwayNew, PathwayObjNew, PathwayView, GenerateBenchmark
+from .views import PathsHomeView, VideoLectureView, WrittenLectureView, QuizView, WrittenLectureNew, VideoLectureNew, PathwayNew, PathwayObjNew, PathwayView, GenerateBenchmark, QuestionGeneratorView
 # from .views import
 
 urlpatterns = [
@@ -12,5 +12,6 @@ urlpatterns = [
     path('create_pathway/', PathwayNew.as_view(), name="new-pathway"),
     path('create_pathway_obj/<int:pathway_id>', PathwayObjNew.as_view(), name="new-pathway-obj"),
     path('pathway/<int:pathway_id>', PathwayView.as_view(), name="view-pathway"),
-    path('pathway/develop/generate_benchmark/<str:content_type>/<int:obj_id>', GenerateBenchmark.as_view(), name="generate-benchmark")
+    path('pathway/develop/generate_benchmark/<str:content_type>/<int:obj_id>', GenerateBenchmark.as_view(), name="generate-benchmark"),
+    path('pathway/develop/generate_qas/', QuestionGeneratorView.as_view(), name="generate-qas"),
 ]

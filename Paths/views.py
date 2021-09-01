@@ -8,7 +8,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from ckeditor.fields import RichTextField
 from django.contrib import messages
+from NLP.question_generation.pipelines import pipeline
 
+TEXT = "Hello my name is mark and I am learning natural language processing, I do wish it goes well and I fulfil my lifes purpose which is to seek meaningful relationships, explore curiousities and provide a service to the greater good. I aim to keep in shape and make wealth online."
+QAG_NLP  = pipeline("multitask-qa-qg")
 
 class GenerateBenchmark(View):
     template_name  = "generate_benchmark.html"
@@ -218,7 +221,27 @@ class WrittenLectureView(View):
     def get(self, request, lit_lec_id):
         literature = get_object_or_404(WrittenLecture, id=lit_lec_id)
         context = {"lit_lec": literature}
+
         return render(request, self.template_name, context)
+
+
+class QuestionGeneratorView(View):
+    template_name="question_generator.html"
+    def get(self, request):
+        qas = QAG_NLP(TEXT)
+        print("xxxxx")
+        print(qas)
+        print(f"length of qas  {len(qas)}")
+        context = {}
+        context['questions'] = qas
+        context['number_of_questions'] = len(qas)
+        return render(request, self.template_name, context)
+    def post(self, request):
+        print(request.POST)
+        if "proofed_questions" in request.POST:
+            print("submit test")
+            print(request.POST)
+        return HttpResponseRedirect(request.path)
 
 
 

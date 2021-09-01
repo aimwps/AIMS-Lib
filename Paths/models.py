@@ -29,9 +29,18 @@ class Quiz(models.Model): # A collection of questions
     publish_time = models.TimeField(auto_now_add=True)
     def __str__(self):
         return f"<Quiz : {self.title}>"
-    # def get_absolute_url(self):
-    #     return reverse('skill-paths')
-        #return reverse('home')
+
+
+class GeneratedQuestionBank(models.Model):
+    SOURCE_TYPE = (("video-transcript","video-transcript"),
+                            ("written-lecture","written-lecture"),
+                            ("uploaded-document", "uploaded-document"))
+    generated_date = models.DateField(auto_now_add=True)
+    generated_time = models.TimeField(auto_now_add=True)
+    generated_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    source_type = models.CharField(max_length=255, choices=SOURCE_TYPE)
+    source_id = models.PositiveIntegerField()
+
 
 
 
@@ -54,9 +63,7 @@ class QuizQuestion(models.Model):
         ]
     def __str__(self):
         return f"<QuizQuestion : {self.answer_type}>"
-    # def get_absolute_url(self):
-    #     return reverse('skill-paths')
-        #return reverse('home')
+
 
 class QuizAnswer(models.Model):
     to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
