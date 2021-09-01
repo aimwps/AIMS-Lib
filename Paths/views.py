@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz
+from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz, GeneratedQuestionBank
 from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm
 from Members.models import MemberProfile
 from django.views.generic import TemplateView, CreateView, View
@@ -229,18 +229,25 @@ class QuestionGeneratorView(View):
     template_name="question_generator.html"
     def get(self, request):
         qas = QAG_NLP(TEXT)
-        print("xxxxx")
-        print(qas)
-        print(f"length of qas  {len(qas)}")
         context = {}
         context['questions'] = qas
         context['number_of_questions'] = len(qas)
         return render(request, self.template_name, context)
+
     def post(self, request):
         print(request.POST)
         if "proofed_questions" in request.POST:
-            print("submit test")
-            print(request.POST)
+            for i in range(request.POST.get('proofed_questions')):
+                gen_question = GeneratedQuestionBank(
+                        generated_by = self.request.user,
+                        source_type = "placeholder",
+                        source_id = 9999999,
+                        question = request.POST.get(f"q_{i}"),
+                        answer = request.POST.get(f"a_{i}"),
+                        user_proof = request.POST.get(f"proof_{i}")
+                        )
+                gen_question.save()
+
         return HttpResponseRedirect(request.path)
 
 
