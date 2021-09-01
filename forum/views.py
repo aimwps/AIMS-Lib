@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
+from ..NLP.question_generation import pipelines
 
 
 
