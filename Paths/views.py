@@ -14,19 +14,39 @@ from NLP.question_generation.pipelines import pipeline
 from .utils import textpreperation_qag
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 
 QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+
+def search_questions(request):
+    if request.method=="POST":
+        search_str = json.loads(request.body).get('searchText')
+        written_lecture = WrittenLecture.objects.filter(title__icontains=search_str, author=request.user.id)
+        video_lecture = VideoLecture.objects.filter(title__icontains=search_str, author=request.user.id)
+        gqb = GeneratedQuestionBank.objects.filter(
+                source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
+                source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
+                question__icontains=search_str, generated_by = request.user.id)| GeneratedQuestionBank.objects.filter(
+                answer__icontains=search_str, generated_by = request.user.id)
+        data = gqb.values()
+
+        return JsonResponse(list(data), safe=False)
+
+
+
+
 
 class UserBenchmarkEditView(View):
     template_name = "user_benchmark_edit.html"
     def get(self, request, benchmark_id):
+        abc = search_questions(request)
         context = {}
         benchmark = get_object_or_404(Quiz, id=benchmark_id)
         gqb_json = json.dumps(list(GeneratedQuestionBank.objects.filter(generated_by=request.user.id).values()),
                             sort_keys=True,
                             indent=1,
                             cls=DjangoJSONEncoder)
-        print(gqb_json)
+        #print(gqb_json)
         context['benchmark'] = benchmark
         context["gqb_json"] = gqb_json
         return render(request, self.template_name, context)
@@ -34,6 +54,7 @@ class UserBenchmarkEditView(View):
 class UserBenchmarksView(View):
     template_name = "user_benchmarks.html"
     def get(self, request):
+
         context = {}
         user_benchmarks = Quiz.objects.filter(author=request.user.id).order_by('-publish_date', '-publish_time')
         print(user_benchmarks)

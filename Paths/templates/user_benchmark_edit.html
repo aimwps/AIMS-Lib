@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %} Edit Benchmark{% endblock %}
 {% block modulenav %}
@@ -12,7 +13,30 @@
 </div>
 {% if user.is_authenticated %}
   {% if user.id == benchmark.author.id %}
+  <div class="row">
+    <div class="col-md-8">
+      <h4 class="my-4"> Search your generated questions: </h4>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <input type="text" class="form-control my-4" id="searchField" placeholder="Search questions you've generated">
+      </div>
+    </div>
+  </div>
     <h4 class="my-4">Editing {{ benchmark.title }}</h4>
+    <div class="benchmarkViewArea">
+      <h1> THIS IS THE BENCHMARK VIEW AREA </h1>
+
+    </div>
+
+
+    <div class="gqbOutputView">
+      <h1> THIS IS THE GQB VIEW AREA </h1>
+      <ul class="list-group list-group-flush gqbList">
+
+      </ul>
+
+    </div>
 
 
 
@@ -23,8 +47,5 @@
 
 {% endblock %}
 {% block scripts %}
-<script>
-    const data ='{{gqb_json}}'
-    console.log(data)
-</script>
+<script src="{% static 'js/development/searchGQB.js' %}"></script>
 {% endblock scripts%}

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 from .views import (PathsHomeView,
                     VideoLectureView,
                     WrittenLectureView,
@@ -13,7 +14,8 @@ from .views import (PathsHomeView,
                     EditPathwayView,
                     EditWrittenLectureView,
                     UserBenchmarksView,
-                    UserBenchmarkEditView)
+                    UserBenchmarkEditView,
+                    search_questions)
 
 urlpatterns = [
     path('pathway/', PathsHomeView.as_view(), name="skill-paths"),
@@ -30,6 +32,7 @@ urlpatterns = [
     path('edit_literature/<int:pk>/', EditWrittenLectureView.as_view(), name="edit-literature"),
     path('user_benchmarks/', UserBenchmarksView.as_view(), name="user-benchmarks"),
     path('user_benchmarks/edit/<int:benchmark_id>', UserBenchmarkEditView.as_view(), name="edit-benchmark"),
+    path("search-generated-questions/", csrf_exempt(search_questions), name="search-gqb"),
     path('pathway/develop/generate_questions/<str:source_type>/<int:source_id>', QuestionGeneratorView.as_view(), name="generate-qas"),
 
 ]
