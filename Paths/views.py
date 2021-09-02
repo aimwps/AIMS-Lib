@@ -1,8 +1,8 @@
 
 from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz, GeneratedQuestionBank
-from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm
+from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm, PathwayEditForm, WrittenLectureEditForm, BenchmarkNewForm
 from Members.models import MemberProfile
-from django.views.generic import TemplateView, CreateView, View
+from django.views.generic import TemplateView, CreateView, View, UpdateView
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
@@ -12,23 +12,47 @@ from ckeditor.fields import RichTextField
 from django.contrib import messages
 from NLP.question_generation.pipelines import pipeline
 from .utils import textpreperation_qag
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
+class UserBenchmarkEditView(View):
+    template_name = "user_benchmark_edit.html"
+    def get(self, request, benchmark_id):
+        context = {}
+        benchmark = get_object_or_404(Quiz, id=benchmark_id)
+        gqb_json = json.dumps(list(GeneratedQuestionBank.objects.filter(generated_by=request.user.id).values()),
+                            sort_keys=True,
+                            indent=1,
+                            cls=DjangoJSONEncoder)
+        print(gqb_json)
+        context['benchmark'] = benchmark
+        context["gqb_json"] = gqb_json
+        return render(request, self.template_name, context)
 
-class BenchmarkCreatorView(View):
-    template_name = "create_benchmark.html"
+class UserBenchmarksView(View):
+    template_name = "user_benchmarks.html"
     def get(self, request):
         context = {}
-        user_gqb = GeneratedQuestionBank.objects.filter(generated_by=self.request.user)
-        user_gqb_perfect = user_gqb.filter(Q(user_proof="perfect"))
-        user_gqb_iffy = user_gqb.filter(Q(user_proof="editable"))
-
-        context['user_gqb'] = user_gqb
-        context['user_gqb_perfect'] = user_gqb_perfect
-        context['user_gqb_iffy'] = user_gqb_iffy
+        user_benchmarks = Quiz.objects.filter(author=request.user.id).order_by('-publish_date', '-publish_time')
+        print(user_benchmarks)
+        context['user_benchmarks'] = user_benchmarks
         return render(request, self.template_name, context)
+
+
+
+class BenchmarkCreatorView(CreateView):
+    model = Quiz
+    form_class = BenchmarkNewForm
+    template_name = "create_benchmark.html"
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 class PathwayView(View):
     template_name = "pathway_view.html"
@@ -55,6 +79,8 @@ class PathwayView(View):
             pathway = Pathway.objects.get(id=request.POST.get("leave_pathway"))
             pathway.participants.remove(request.user)
             pathway.save()
+        if "delete_pathway" in request.POST:
+            pathway = Pathway.objects.get(id=request.POST.get("delete_pathway"))
         next = request.POST.get('next','/')
         return HttpResponseRedirect(next)
 
@@ -123,6 +149,19 @@ class PathwayObjNew(View):
                 print("FORM TYPE NOT RECOGNISED")
 
         return HttpResponseRedirect('/pathway/')
+class EditWrittenLectureView(UpdateView):
+    model= WrittenLecture
+    form_class = WrittenLectureEditForm
+    template_name = 'written_lecture_edit.html'
+    #fields = ('title', 'skill_area', 'body')
+
+
+class EditPathwayView(UpdateView):
+    model= Pathway
+    form_class = PathwayEditForm
+    template_name = 'pathway_edit.html'
+    #fields = ('title', 'skill_area', 'body')
+
 
 class PathwayNew(CreateView):
     model = Pathway

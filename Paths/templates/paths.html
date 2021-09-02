@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="container">
-  <a class="anchor" id="mypathways"></a>
+  <a class="anchor" id="begin"></a>
 </div>
 {% if user.is_authenticated %}
 
@@ -50,15 +50,15 @@
 {% for path, path_items in developer_pathways.items %}
 <div class="row">
     <div class="col-8">
-      <a href='{% url "view-pathway" path.id %}'data-bs-toggle="tooltip" title="Go to this pathway"><h4> {{ path.title }}</h4></a>
+      <a href='{% url "view-pathway" path.id %}#begin'data-bs-toggle="tooltip" title="Go to this pathway"><h4> {{ path.title }}</h4></a>
     </div>
     <div class="col-4">
       <ul class="nav justify-content-end">
         <li class="nav-item">
-          <a class="nav-link active" href="{% url 'new-pathway-obj' path.id %}#begin" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
+          <a class="nav-link active" href="{% url 'new-pathway-obj' path.pk %}#begin" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
+          <a class="nav-link" href="{% url 'edit-pathway' path.id %}#begin" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
         </li>
         <li class="nav-item">
             <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_delete_modal">

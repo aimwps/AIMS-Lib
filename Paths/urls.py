@@ -1,6 +1,19 @@
 from django.urls import path
-from .views import PathsHomeView, VideoLectureView, WrittenLectureView, QuizView, WrittenLectureNew, VideoLectureNew, PathwayNew, PathwayObjNew, PathwayView, QuestionGeneratorView, BenchmarkCreatorView
-# from .views import
+from .views import (PathsHomeView,
+                    VideoLectureView,
+                    WrittenLectureView,
+                    QuizView,
+                    WrittenLectureNew,
+                    VideoLectureNew,
+                    PathwayNew,
+                    PathwayObjNew,
+                    PathwayView,
+                    QuestionGeneratorView,
+                    BenchmarkCreatorView,
+                    EditPathwayView,
+                    EditWrittenLectureView,
+                    UserBenchmarksView,
+                    UserBenchmarkEditView)
 
 urlpatterns = [
     path('pathway/', PathsHomeView.as_view(), name="skill-paths"),
@@ -13,7 +26,10 @@ urlpatterns = [
     path('create_pathway_obj/<int:pathway_id>/', PathwayObjNew.as_view(), name="new-pathway-obj"),
     path('create_benchmark/', BenchmarkCreatorView.as_view(), name="create-benchmark"),
     path('pathway/<int:pathway_id>', PathwayView.as_view(), name="view-pathway"),
-    #path('pathway/develop/generate_benchmark/<str:content_type>/<int:obj_id>', GenerateBenchmark.as_view(), name="generate-benchmark"),
+    path('edit_pathway/<int:pk>/', EditPathwayView.as_view(), name="edit-pathway"),
+    path('edit_literature/<int:pk>/', EditWrittenLectureView.as_view(), name="edit-literature"),
+    path('user_benchmarks/', UserBenchmarksView.as_view(), name="user-benchmarks"),
+    path('user_benchmarks/edit/<int:benchmark_id>', UserBenchmarkEditView.as_view(), name="edit-benchmark"),
     path('pathway/develop/generate_questions/<str:source_type>/<int:source_id>', QuestionGeneratorView.as_view(), name="generate-qas"),
 
 ]

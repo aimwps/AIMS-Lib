@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit Literature{% endblock %}
+{% block modulenav %}
+{% include "pathway_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
+<h4 class="my-4">Edit Literature</h4>
+
+{% if user.is_authenticated %}
+  <div class="form-group">
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.media }}
+      <p>{{ form.title }}</p>
+      <p>{{ form.body}}</p>
+
+      <!-- doing as_p decides the element that each will be created for each field -->
+      <button class="btn btn-primary">Update</button>
+      </form>
+  </div>
+{% else %}
+
+<p> You must bethe creator of this pathway to edit it.  </p>
+
+{% endif %}
+
+{% endblock %}

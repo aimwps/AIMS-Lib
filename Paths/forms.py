@@ -2,6 +2,34 @@ from django import forms
 from .models import VideoLecture, WrittenLecture, Pathway, PathwayContentSetting, Quiz
 from bootstrap_datepicker_plus import DatePickerInput
 
+
+
+class BenchmarkNewForm(forms.ModelForm):
+    class Meta:
+        model = Quiz
+        fields = ('title',)
+        widgets ={
+            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            }
+
+class WrittenLectureEditForm(forms.ModelForm):
+    class Meta:
+        model = WrittenLecture
+        fields = ('title',"body")
+        widgets ={
+            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            'body': forms.Textarea(attrs = {'class': 'form-control',
+                                            }),}
+
+class PathwayEditForm(forms.ModelForm):
+    class Meta:
+        model = Pathway
+        fields = ('title',"description")
+        widgets ={
+            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            'description': forms.Textarea(attrs = {'class': 'form-control',
+                                            }),}
+
 class PathwayObjNewForm(forms.ModelForm):
     class Meta:
         model =  PathwayContentSetting

@@ -20,17 +20,21 @@ class Pathway(models.Model): #### (GROUP)
     # is_cloneable = models.BooleanField()
     def get_absolute_url(self):
         return reverse('skill-paths')
-
-
-
+    def __str__(self):
+        return f"pathway_{self.id}"
 
 class Quiz(models.Model): # A collection of questions
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     publish_date = models.DateField(auto_now_add=True)
     publish_time = models.TimeField(auto_now_add=True)
+    
     def __str__(self):
-        return f"<Quiz : {self.title}>"
+        return f"quiz_{self.id}"
+    def get_absolute_url(self):
+        return reverse('user-benchmarks')
+
+
 
 
 class GeneratedQuestionBank(models.Model):
@@ -50,9 +54,6 @@ class GeneratedQuestionBank(models.Model):
     question = models.TextField()
     answer = models.TextField()
     user_proof = models.CharField(max_length=255, choices=PROOF_OPTIONS, default="unknown")
-
-
-
 
 class QuizQuestion(models.Model):
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
@@ -138,6 +139,7 @@ class PathwayContentSetting(models.Model):
     def get_next_order_by(self):
         max_rated_entry = self.objects.latest()
         return int(max_rated_entry.details) + 1
+
 class PathwayCompletitionRecords(models.Model):
     record_date = models.DateField(auto_now_add=True)
     record_time = models.TimeField(auto_now_add=True)

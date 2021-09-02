@@ -24,7 +24,7 @@
       {% if user.is_authenticated %}
         {% if user.id == lit_lec.author.id %}
         <span>
-        <p><a href="#" class="btn btn-primary btn-sm btn-block"><i class="far fa-edit"></i></a></p>
+        <p><a href="{% url 'edit-literature' lit_lec.id %}#begin" class="btn btn-primary btn-sm btn-block"><i class="far fa-edit"></i></a></p>
         <p><a href="#" class="btn btn-primary btn-sm btn-block"><i class="far fa-trash-alt"></i></a></p>
         </span>
         {% else %}

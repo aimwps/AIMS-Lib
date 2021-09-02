@@ -260,18 +260,19 @@ class AimsDash(TemplateView):
 
 
     # Get all trackers
-        all_behaviours  = Lever.objects.filter(on_aim__user=self.request.user)
-        for behaviour in all_behaviours:
-            trackers = behaviour.get_trackers()
-            for tracker in trackers:
-                tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
-                if not tracker_complete:
-                    if uncomplete_trackers[freq_bracket] != None:
-                        uncomplete_trackers[freq_bracket][2].append(tracker)
-                    else:
-                        uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
+        if self.request.user.is_authenticated:
+            all_behaviours  = Lever.objects.filter(on_aim__user=self.request.user)
+            for behaviour in all_behaviours:
+                trackers = behaviour.get_trackers()
+                for tracker in trackers:
+                    tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
+                    if not tracker_complete:
+                        if uncomplete_trackers[freq_bracket] != None:
+                            uncomplete_trackers[freq_bracket][2].append(tracker)
+                        else:
+                            uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
 
-                    eval(f"uncomplete_{freq_bracket}").append(tracker)
+                        eval(f"uncomplete_{freq_bracket}").append(tracker)
         context['uncomplete_trackers'] = uncomplete_trackers
         context['min_aim_form'] = TrackerMinAimRecordsForm(self.request.POST)
         context['boolean_form'] = TrackerBooleanRecordsForm(self.request.POST)

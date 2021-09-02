@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit Benchmark{% endblock %}
+{% block modulenav %}
+{% include "pathway_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
+{% if user.is_authenticated %}
+  {% if user.id == benchmark.author.id %}
+    <h4 class="my-4">Editing {{ benchmark.title }}</h4>
+
+
+
+  {% endif %}
+{% endif %}
+
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+    const data ='{{gqb_json}}'
+    console.log(data)
+</script>
+{% endblock scripts%}
