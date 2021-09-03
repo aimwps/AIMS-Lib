@@ -6,9 +6,14 @@ from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
 from ckeditor.fields import RichTextField
 from embed_video.fields import EmbedVideoField
+from django.core import serializers
 
-
-
+class QuizModelManager(models.Manager):
+    def get_by_natural_key(self, title):
+        return self.get(title=title)
+class QuestionModelManager(models.Manager):
+    def get_by_natural_key(self, on_quiz, question_text, answer_type, order_by):
+        return self.get(on_quiz=on_quiz, question_text=question_text, answer_type=answer_type, order_by=order_by)
 
 class Pathway(models.Model): #### (GROUP)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
@@ -24,19 +29,18 @@ class Pathway(models.Model): #### (GROUP)
         return f"pathway_{self.id}"
 
 class Quiz(models.Model): # A collection of questions
+    objects = QuizModelManager()
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     publish_date = models.DateField(auto_now_add=True)
     publish_time = models.TimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"quiz_{self.id}"
     def get_absolute_url(self):
         return reverse('user-benchmarks')
-
-
-
-
+    def natural_key(self):
+        return (self.title,)
 class GeneratedQuestionBank(models.Model):
     SOURCE_TYPE = (("transcript","transcript"),
                             ("literature","literature"),
@@ -56,6 +60,7 @@ class GeneratedQuestionBank(models.Model):
     user_proof = models.CharField(max_length=255, choices=PROOF_OPTIONS, default="unknown")
 
 class QuizQuestion(models.Model):
+    objects = QuestionModelManager()
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
                     ("multiple-correct-choice","Multiple correct choices"),
                     ("text-entry-exact", "Text entry (Exact)"),
@@ -63,8 +68,10 @@ class QuizQuestion(models.Model):
 
     on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question_text = models.TextField()
-    answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES)
+    answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
     order_by = models.PositiveIntegerField()
+    def natural_key(self):
+        return (self.on_quiz, self.question_text, self.answer_type, self.order_by)
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -73,8 +80,7 @@ class QuizQuestion(models.Model):
             )
         ]
     def __str__(self):
-        return f"<QuizQuestion : {self.answer_type}>"
-
+        return f"QuizQuestion_{self.id}"
 
 class QuizAnswer(models.Model):
     to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
@@ -82,12 +88,6 @@ class QuizAnswer(models.Model):
     answer_text = models.TextField()
     def __str__(self):
         return f"<QuizAnswer>"
-    # def get_absolute_url(self):
-    #     return reverse('skill-paths')
-        #return reverse('home')
-
-
-
 
 class VideoLecture(models.Model): #### (PERSON)
     title = models.CharField(max_length=255)
@@ -101,7 +101,6 @@ class VideoLecture(models.Model): #### (PERSON)
         return f"<VideoLecture : {self.title}>"
     def get_absolute_url(self):
         return reverse('skill-paths')
-        #return reverse('home')
 
 class WrittenLecture(models.Model): # A body of text with extra elements e.g. Data Tables, recipes or images
     title = models.CharField(max_length=255)
@@ -113,7 +112,6 @@ class WrittenLecture(models.Model): # A body of text with extra elements e.g. Da
         return f"<WrittenLecture : {self.title}>"
     def get_absolute_url(self):
         return reverse('skill-paths')
-        #return reverse('home')
 
 class PathwayContentSetting(models.Model):
     PATHWAY_CONTENT_TYPE = (("video-lecture","Video Lecture"),

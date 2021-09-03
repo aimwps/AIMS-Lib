@@ -1,5 +1,5 @@
 
-from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz, GeneratedQuestionBank
+from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz, QuizQuestion, QuizAnswer, GeneratedQuestionBank
 from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm, PathwayEditForm, WrittenLectureEditForm, BenchmarkNewForm
 from Members.models import MemberProfile
 from django.views.generic import TemplateView, CreateView, View, UpdateView
@@ -15,8 +15,48 @@ from .utils import textpreperation_qag
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
+from django.core import serializers
 
-QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+#QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+def get_benchmark_content(request):
+    print("We made it")
+    if request.method=="POST":
+        benchmark_id = json.loads(request.body).get('benchmark_id')
+        questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
+        x = questions.values()
+        print()
+        serialized_data = serializers.serialize("json", list(questions), use_natural_foreign_keys=True)
+        print(type(serialized_data))
+        return JsonResponse(serialized_data, safe=False)
+
+def create_qa_pair(request):
+    if request.method=="POST":
+        print(request.POST)
+        question = request.POST['question']
+        print(question)
+        answer = request.POST['answer']
+        benchmark_id = get_object_or_404(Quiz, id=int(request.POST['benchmark_id']))
+        next_order_by = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by('order_by')
+        for i, existing_question in enumerate(next_order_by):
+            existing_question.in_order = i
+            existing_question.save()
+
+        new_question = QuizQuestion(
+                        on_quiz = benchmark_id,
+                        question_text = question,
+                        order_by = len(next_order_by),
+        )
+        new_question.save()
+
+        new_answer = QuizAnswer(
+                        to_question = new_question,
+                        is_correct = True,
+                        answer_text = answer,
+        )
+        new_answer.save()
+        test_return = "this is the test return"
+
+        return HttpResponse(test_return)
 
 def search_questions(request):
     if request.method=="POST":
@@ -29,9 +69,10 @@ def search_questions(request):
                 question__icontains=search_str, generated_by = request.user.id)| GeneratedQuestionBank.objects.filter(
                 answer__icontains=search_str, generated_by = request.user.id)
         data = gqb.values()
+        print(type(data))
 
-        return JsonResponse(list(data), safe=False)
 
+        return JsonResponse(data, safe=False)
 
 
 
