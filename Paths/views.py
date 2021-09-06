@@ -15,26 +15,29 @@ from .utils import textpreperation_qag
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from django.core import serializers
+from .path_serializers import QuizQuestionSerializer, QuizSerializer
+
 
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 def get_benchmark_content(request):
     if request.method=="POST":
         benchmark_id = json.loads(request.body).get('benchmark_id')
-        answers = QuizAnswer.objects.filter(to_question__on_quiz=benchmark_id)
-        questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
-        serialized_data = serializers.serialize("json", questions, use_natural_foreign_keys=True)
-        print(serialized_data)
 
-        return JsonResponse(serialized_data, safe=False)
+        questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
+        print(questions)
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        q = QuizSerializer(data=questions, many=True)
+        print(q)
+        print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+        qas = QuizQuestionSerializer(questions, many=True)
+        print(qas)
+        return JsonResponse(qas.data, safe=False)
     else:
         print("Oh fuck")
 
 def create_qa_pair(request):
     if request.method=="POST":
-        print(request.POST)
         question = request.POST['question']
-        print(question)
         answer = request.POST['answer']
         benchmark_id = get_object_or_404(Quiz, id=int(request.POST['benchmark_id']))
         next_order_by = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by('order_by')

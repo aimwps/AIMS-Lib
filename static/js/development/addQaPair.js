@@ -20,18 +20,24 @@ function displayQaList(){
     })
     .then((response) => response.json())
     .then((data) => {
-      data = JSON.parse(data);
       console.log("benchmarkData", data);
       if(data.length===0) {
         benchmarkQaList.innerHTML = "No questions added yet";
       }else{
         benchmarkQaList.innerHTML = "";
         data.forEach((item) => {
+          benchmarkQaList.innerHTML +=`
+          <li class="list-group-item"><strong>Q:</strong> ${item.question_text}
+          <ul class="list-group list-group-flush"></li>`;
+          item.answers.forEach((ans) => {
+            benchmarkQaList.innerHTML +=`
+            <li class="list-group-item ms-4"><strong>A:</strong> ${ans.answer_text}, <small>correct: ${ans.is_correct}</small></li>`
+          })
         benchmarkQaList.innerHTML +=`
-        <li class="list-group-item">${item.fields.question_text}| ${item.fields.question}</li>`
-        })
-      }
-    })
+        </ul>`
+      })
+    }
+  })
 };
 
 

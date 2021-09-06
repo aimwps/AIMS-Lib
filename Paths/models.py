@@ -6,17 +6,17 @@ from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
 from ckeditor.fields import RichTextField
 from embed_video.fields import EmbedVideoField
-from django.core import serializers
+from rest_framework import serializers
 
-class QuizModelManager(models.Manager):
-    def get_by_natural_key(self, title):
-        return self.get(title=title)
-class QuestionModelManager(models.Manager):
-    def get_by_natural_key(self, on_quiz, question_text, answer_type, order_by, answer_text):
-        return self.get(on_quiz=on_quiz, question_text=question_text, answer_type=answer_type, order_by=order_by)
-class AnswerModelManager(models.Manager):
-    def get_by_natural_key(self, to_question, is_correct, answer_text):
-        return self.get(to_question=to_question,is_correct=is_correct, answer_text=answer_text)
+# class QuizModelManager(models.Manager):
+#     def get_by_natural_key(self, title):
+#         return self.get(title=title)
+# class QuestionModelManager(models.Manager):
+#     def get_by_natural_key(self, on_quiz, question_text, answer_type, order_by, answer_text,question_answers):
+#         return self.get(on_quiz=on_quiz, question_text=question_text, answer_type=answer_type, order_by=order_by, question_answers=question_answers)
+# class AnswerModelManager(models.Manager):
+#     def get_by_natural_key(self, to_question, is_correct, answer_text):
+#         return self.get(to_question=to_question,is_correct=is_correct, answer_text=answer_text)
 
 
 class Pathway(models.Model): #### (GROUP)
@@ -33,7 +33,7 @@ class Pathway(models.Model): #### (GROUP)
         return f"pathway_{self.id}"
 
 class Quiz(models.Model): # A collection of questions
-    objects = QuizModelManager()
+    # objects = QuizModelManager()
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     publish_date = models.DateField(auto_now_add=True)
@@ -43,8 +43,8 @@ class Quiz(models.Model): # A collection of questions
         return f"quiz_{self.id}"
     def get_absolute_url(self):
         return reverse('user-benchmarks')
-    def natural_key(self):
-        return (self.title,)
+    # def natural_key(self):
+    #     return (self.title,)
 class GeneratedQuestionBank(models.Model):
     SOURCE_TYPE = (("transcript","transcript"),
                             ("literature","literature"),
@@ -64,18 +64,18 @@ class GeneratedQuestionBank(models.Model):
     user_proof = models.CharField(max_length=255, choices=PROOF_OPTIONS, default="unknown")
 
 class QuizQuestion(models.Model):
-    objects = QuestionModelManager()
+    # objects = QuestionModelManager()
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
                     ("multiple-correct-choice","Multiple correct choices"),
                     ("text-entry-exact", "Text entry (Exact)"),
                     ("text-entry-nearest", "Text entry (Close enough)"))
 
-    on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
     question_text = models.TextField()
     answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
     order_by = models.PositiveIntegerField()
-    def natural_key(self):
-        return (self.on_quiz, self.question_text, self.answer_type, self.order_by)
+    # def natural_key(self):
+    #     return (self.on_quiz, self.question_text, self.answer_type, self.order_by, self.question_answers)
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -87,12 +87,12 @@ class QuizQuestion(models.Model):
         return f"QuizQuestion_{self.id}"
 
 class QuizAnswer(models.Model):
-    objects = AnswerModelManager()
-    to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    # objects = AnswerModelManager()
+    to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, related_name="answers")
     is_correct = models.BooleanField()
     answer_text = models.TextField()
-    def natural_key(self):
-        return (self.to_question, self.is_correct, self.answer_text)
+    # def natural_key(self):
+    #     return (self.to_question, self.is_correct, self.answer_text)
     def __str__(self):
         return f"<QuizAnswer>"
 
