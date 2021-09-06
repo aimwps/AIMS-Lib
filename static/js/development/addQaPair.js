@@ -41,43 +41,6 @@ function displayQaList(){
                   <a type="button" href='#' data-bs-toggle="modal" data-bs-target="#answerModal${ans.id}"><i class="fas fa-ellipsis-h"></i></a>
                 </div>
               </div>
-              <!-- Answer Settings Modal -->
-              <div class="modal fade" id="answerModal${ans.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="answerModal${ans.id}Label" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="answerModal${ans.id}Label">Answer Settings</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                    <p class="lead">Question:</p>
-                    <p>${item.question_text}</p>
-                    <form action="." method="POST">
-                      <textarea type="text" class="form-control" id="answerTextEdit" rows=3>${ans.answer_text}</textarea>
-                      <br>
-                      <div class="row">
-                        <div class="col-4 mt-2">
-                          Marked as correct:
-                        </div>
-                        <div class="col-8">
-                          <select class="form-select" aria-label="trueFalseSelect" value="${ans.is_correct}">
-                            <option value="True">true</option>
-                            <option value="False">false</option>
-                          </select>
-                        </div>
-                      </div>
-                    <br>
-                    <div class="modal-footer">
-                    <button value="${ans.id}" class="btn btn-primary">Update</button>
-                      </form>
-                      <form id="#answerDeleteForm" method="POST">
-                        <button type="submit" value="${ans.id}" class="btn btn-secondary">
-                          <i class="far fa-trash-alt"></i></button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </li>
             `;
 
