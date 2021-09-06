@@ -21,11 +21,7 @@ from django.core import serializers
 def get_benchmark_content(request):
     if request.method=="POST":
         benchmark_id = json.loads(request.body).get('benchmark_id')
-        print(f"benchmark_id {benchmark_id}, type: {type(benchmark_id)}")
         answers = QuizAnswer.objects.filter(to_question__on_quiz=benchmark_id)
-        print("x")
-        print(answers)
-        print("y")
         questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
         serialized_data = serializers.serialize("json", questions, use_natural_foreign_keys=True)
         print(serialized_data)

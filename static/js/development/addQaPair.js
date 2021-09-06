@@ -14,7 +14,6 @@ window.onload = function() {
 function displayQaList(){
     banswer.value = "";
     bquestion.value = "";
-    benchmarkQaList.innerHTML = ""';
     fetch("/display-quiz-dev/", {
       body:JSON.stringify({benchmark_id: $("#onBenchmark").val()}),
       method: "POST",
@@ -26,6 +25,7 @@ function displayQaList(){
       if(data.length===0) {
         benchmarkQaList.innerHTML = "No questions added yet";
       }else{
+        benchmarkQaList.innerHTML = "";
         data.forEach((item) => {
         benchmarkQaList.innerHTML +=`
         <li class="list-group-item">${item.fields.question_text}| ${item.fields.question}</li>`
@@ -46,7 +46,8 @@ qaForm.addEventListener('submit', function(e){
       benchmark_id:$("#onBenchmark").val(),
       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
     },
-    success: displayQaList()
+    success: function(){
+        displayQaList();
+    }
   })
-
 });
