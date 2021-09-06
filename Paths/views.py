@@ -19,15 +19,16 @@ from django.core import serializers
 
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 def get_benchmark_content(request):
-    print("We made it")
     if request.method=="POST":
         benchmark_id = json.loads(request.body).get('benchmark_id')
+        print(f"benchmark_id {benchmark_id}, type: {type(benchmark_id)}")
         questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
-        x = questions.values()
-        print()
-        serialized_data = serializers.serialize("json", list(questions), use_natural_foreign_keys=True)
-        print(type(serialized_data))
+        serialized_data = serializers.serialize("json", questions, use_natural_foreign_keys=True)
+        print(serialized_data)
+
         return JsonResponse(serialized_data, safe=False)
+    else:
+        print("Oh fuck")
 
 def create_qa_pair(request):
     if request.method=="POST":
@@ -68,10 +69,7 @@ def search_questions(request):
                 source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
                 question__icontains=search_str, generated_by = request.user.id)| GeneratedQuestionBank.objects.filter(
                 answer__icontains=search_str, generated_by = request.user.id)
-        data = gqb.values()
-        print(type(data))
-
-
+        data = list(gqb.values())
         return JsonResponse(data, safe=False)
 
 
