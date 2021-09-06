@@ -12,8 +12,12 @@ class QuizModelManager(models.Manager):
     def get_by_natural_key(self, title):
         return self.get(title=title)
 class QuestionModelManager(models.Manager):
-    def get_by_natural_key(self, on_quiz, question_text, answer_type, order_by):
+    def get_by_natural_key(self, on_quiz, question_text, answer_type, order_by, answer_text):
         return self.get(on_quiz=on_quiz, question_text=question_text, answer_type=answer_type, order_by=order_by)
+class AnswerModelManager(models.Manager):
+    def get_by_natural_key(self, to_question, is_correct, answer_text):
+        return self.get(to_question=to_question,is_correct=is_correct, answer_text=answer_text)
+
 
 class Pathway(models.Model): #### (GROUP)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
@@ -83,9 +87,12 @@ class QuizQuestion(models.Model):
         return f"QuizQuestion_{self.id}"
 
 class QuizAnswer(models.Model):
+    objects = AnswerModelManager()
     to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
     is_correct = models.BooleanField()
     answer_text = models.TextField()
+    def natural_key(self):
+        return (self.to_question, self.is_correct, self.answer_text)
     def __str__(self):
         return f"<QuizAnswer>"
 

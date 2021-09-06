@@ -3,18 +3,19 @@ const benchmarkDev = document.querySelector("#benchmarkDev");
 const benchmarkQaList = document.getElementById("benchmarkQaList")
 const bquestion = document.getElementById("questionField")
 const banswer = document.getElementById("answerField")
-const gqbList = document.getElementById("gqbList")
-const gqbOutput = document.getElementById("gqbOutput")
+const searchField = document.querySelector("#searchField");
+const gqbOutput = document.querySelector(".gqbOutputView");
+const gqbList = document.querySelector(".gqbList");
 
 window.onload = function() {
-  gqbOutput.style.display="none";
   displayQaList();
+  gqbOutput.style.display = "none";
 };
+
 
 function displayQaList(){
     banswer.value = "";
     bquestion.value = "";
-    benchmarkQaList.innerHTML = ""';
     fetch("/display-quiz-dev/", {
       body:JSON.stringify({benchmark_id: $("#onBenchmark").val()}),
       method: "POST",
@@ -33,20 +34,3 @@ function displayQaList(){
       }
     })
 };
-
-
-qaForm.addEventListener('submit', function(e){
-  e.preventDefault();
-  $.ajax({
-    type:"POST",
-    url: "/create-question-answer/",
-    data:{
-      question:$("#questionField").val(),
-      answer:$("#answerField").val(),
-      benchmark_id:$("#onBenchmark").val(),
-      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-    },
-    success: displayQaList()
-  })
-
-});

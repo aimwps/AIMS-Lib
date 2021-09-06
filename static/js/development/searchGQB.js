@@ -1,7 +1,7 @@
 searchField.addEventListener('keyup', (e) => {
   const searchValue = e.target.value;
   if(searchValue.trim().length>0){
-    gqbList.innerHTML = " ";
+    gqbList.innerHTML = "";
     fetch("/search-generated-questions/", {
       body:JSON.stringify({searchText: searchValue}),
       method:"POST",
@@ -23,6 +23,5 @@ searchField.addEventListener('keyup', (e) => {
   }else{
     gqbOutput.style.display = "none";
     benchmarkDev.style.display = "block";
-
   }
-})
+});
