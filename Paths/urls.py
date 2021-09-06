@@ -17,7 +17,8 @@ from .views import (PathsHomeView,
                     UserBenchmarkEditView,
                     search_questions,
                     create_qa_pair,
-                    get_benchmark_content)
+                    get_benchmark_content,
+                    quiz_answer_delete)
 
 urlpatterns = [
     path('pathway/', PathsHomeView.as_view(), name="skill-paths"),
@@ -38,5 +39,6 @@ urlpatterns = [
     path("create-question-answer/", create_qa_pair, name="create-qa-pair"),
     path("display-quiz-dev/", csrf_exempt(get_benchmark_content), name="display-quiz-dev"),
     path('pathway/develop/generate_questions/<str:source_type>/<int:source_id>', QuestionGeneratorView.as_view(), name="generate-qas"),
+    path("quiz-answer-delete/", quiz_answer_delete, name="quiz-answer-ddelete")
 
 ]
