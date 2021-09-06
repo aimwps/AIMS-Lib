@@ -28,13 +28,19 @@ function displayQaList(){
         data.forEach((item) => {
           benchmarkQaList.innerHTML +=`
           <li class="list-group-item"><strong>Q:</strong> ${item.question_text}
-          <ul class="list-group list-group-flush"></li>`;
+          <ul class="list-group list-group-flush" id="${item.id}">`
           item.answers.forEach((ans) => {
-            benchmarkQaList.innerHTML +=`
-            <li class="list-group-item ms-4"><strong>A:</strong> ${ans.answer_text}, <small>correct: ${ans.is_correct}</small></li>`
+            const innerList = document.getElementById(item.id)
+            innerList.innerHTML +=`
+            <div class=col-8>
+            <li class="list-group-item"><strong>A: </strong>${ans.answer_text}, <small>correct: ${ans.is_correct}</small></li>
+            </div>
+            <div class=col-4>
+
+            </div>`
           })
         benchmarkQaList.innerHTML +=`
-        </ul>`
+        </ul></li>`
       })
     }
   })
