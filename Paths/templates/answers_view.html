@@ -1,0 +1,12 @@
+<ul class="list-group list-group-flush">
+  {% for answer in question_answers %}
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-10">
+        <strong>A:</strong>{{ answer.answer_text }}, <small>correct: {{answer.is_correct}} </small>
+      </div>
+      <div class="col-2">
+        <a type="button" class="text-primary" onClick="editAnswer({{ answer.id }})" data-toggle="modal" data-target="#myModal"><i class="fas fa-ellipsis-h"></i></a>
+      </div>
+    </div>
+  </li>

@@ -19,6 +19,12 @@ from .path_serializers import QuizQuestionSerializer, QuizSerializer
 
 
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+def quiz_answers_view(request, question_id):
+    template_name = "answers_view.html"
+    context = {}
+    answers = QuizAnswer.objects.filter(to_question=question_id)
+    context['answers'] = answers
+    return render(request, template_name, context)
 
 def quiz_answer_delete(request):
     test_return = "this is the test return"
@@ -27,15 +33,9 @@ def quiz_answer_delete(request):
 def get_benchmark_content(request):
     if request.method=="POST":
         benchmark_id = json.loads(request.body).get('benchmark_id')
-
         questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
-        print(questions)
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         q = QuizSerializer(data=questions, many=True)
-        print(q)
-        print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
         qas = QuizQuestionSerializer(questions, many=True)
-        print(qas)
         return JsonResponse(qas.data, safe=False)
     else:
         print("Oh fuck")
@@ -93,7 +93,6 @@ class UserBenchmarkEditView(View):
                             sort_keys=True,
                             indent=1,
                             cls=DjangoJSONEncoder)
-        #print(gqb_json)
         context['benchmark'] = benchmark
         context["gqb_json"] = gqb_json
         return render(request, self.template_name, context)

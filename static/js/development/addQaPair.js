@@ -38,7 +38,7 @@ function displayQaList(){
                   <strong>A: </strong>${ans.answer_text}, <small>correct: ${ans.is_correct}</small>
                 </div>
                 <div class="col-2">
-                  <a type="button" href='#' data-bs-toggle="modal" data-bs-target="#answerModal${ans.id}"><i class="fas fa-ellipsis-h"></i></a>
+                  <a type="button" class="text-primary" onClick="editAnswer(${ans.id})" data-toggle="modal" data-target="#myModal")"><i class="fas fa-ellipsis-h"></i></a>
                 </div>
               </div>
             </li>
@@ -83,3 +83,12 @@ answerDeleteForm.addEventListener('submit', function(e){
     }
   })
 });
+
+function editAnswer(event, register_id) {
+    var modal = $('#modal_register_edit');
+    var url = $(event.target).closest('a').attr('href');
+    modal.find('.modal-body').html('').load(url, function() {
+        modal.modal('show');
+        formAjaxSubmit(popup, url);
+    });
+}
