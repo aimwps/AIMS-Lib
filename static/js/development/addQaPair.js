@@ -5,11 +5,15 @@ const bquestion = document.getElementById("questionField")
 const banswer = document.getElementById("answerField")
 const gqbList = document.getElementById("gqbList")
 const gqbOutput = document.getElementById("gqbOutput")
+const answerModal = document.getElementById("answerModal")
+const questionTable = document.getElementById("questionTable")
 
 window.onload = function() {
   gqbOutput.style.display="none";
   displayQaList();
 };
+
+
 
 function displayQaList(){
     banswer.value = "";
@@ -27,20 +31,21 @@ function displayQaList(){
         benchmarkQaList.innerHTML = "";
         data.forEach((item) => {
           benchmarkQaList.innerHTML +=`
-          <li class="list-group-item"><strong>Q:</strong> ${item.question_text}
-          <ul class="list-group list-group-flush" id="${item.id}">`
+          <li class="list-group-item">
+          <a type="button" onClick="editQuestion(${item.id})" class="text-primary" data-bs-toggle="modal" data-bs-target="#updateQuestionModal">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+          <strong>Q:</strong> ${item.question_text}
+
+          <ul class="list-group list-group-flush" id="qAs${item.id}">`;
           item.answers.forEach((ans) => {
-            const innerList = document.getElementById(item.id)
+            const innerList = document.getElementById("qAs" + item.id)
             innerList.innerHTML +=`
             <li class="list-group-item">
-              <div class="row">
-                <div class="col-10">
-                  <strong>A: </strong>${ans.answer_text}, <small>correct: ${ans.is_correct}</small>
-                </div>
-                <div class="col-2">
-                  <a type="button" class="text-primary" onClick="editAnswer(${ans.id})" data-toggle="modal" data-target="#myModal")"><i class="fas fa-ellipsis-h"></i></a>
-                </div>
-              </div>
+              <a type="button" onClick="editAnswer(${ans.id})" class="text-primary" data-bs-toggle="modal" data-bs-target="#updateAnswerModal">
+                <i class="fas fa-ellipsis-h"></i>
+              </a>
+              <strong>A: </strong>${ans.answer_text}, <small>correct: ${ans.is_correct}</small>
             </li>
             `;
 
@@ -51,6 +56,21 @@ function displayQaList(){
     }
   })
 };
+
+function editAnswer(answerID){
+  fetch("/answer-info/", {
+    body:JSON.stringify({answer_id: answerID}),
+    method: "POST",
+  })
+  .then((response) => response.json())
+  .then((answer) => {
+    console.log(answer.is_correct)
+    $('#answerModalAnswerTextInput').val(answer.answer_text);
+    $('#answerModalCorrectInput').val(answer.is_correct.toString()).change();
+  })
+
+  }
+
 
 
 qaForm.addEventListener('submit', function(e){
@@ -69,26 +89,3 @@ qaForm.addEventListener('submit', function(e){
     }
   })
 });
-const answerDeleteForm = document.querySelector("#answerDeleteForm")
-answerDeleteForm.addEventListener('submit', function(e){
-  e.preventDefault();
-  $.ajax({
-    type:"POST",
-    url: "/answer-delete/",
-    data:{
-      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-    },
-    success: function(){
-        displayQaList();
-    }
-  })
-});
-
-function editAnswer(event, register_id) {
-    var modal = $('#modal_register_edit');
-    var url = $(event.target).closest('a').attr('href');
-    modal.find('.modal-body').html('').load(url, function() {
-        modal.modal('show');
-        formAjaxSubmit(popup, url);
-    });
-}

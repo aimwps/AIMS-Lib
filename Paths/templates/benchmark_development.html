@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Edit Benchmark{% endblock %}
+{% block modulenav %}
+{% include "pathway_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+<script>
+$(document).ready(function(){
+  getQuestions();
+})
+</script>
+
+
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/development/quiz.js' %}"></script>
+{% endblock scripts%}

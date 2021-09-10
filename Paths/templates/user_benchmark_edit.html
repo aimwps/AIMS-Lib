@@ -38,12 +38,6 @@
   <!---END......................................................................Question & answer submit form-->
     <div class="row my-4" id="benchmarkDev">
       <h4 class="">{{ benchmark.title }}</h4>
-
-
-
-
-
-
       <ul class="list-group list-group-flush" id="benchmarkQaList">
 
       </ul>
@@ -57,8 +51,52 @@
       </ul>
 
     </div>
-
-
+    <!-- Modal -->
+    <div class="modal fade" id="updateAnswerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateAnswerModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateAnswerModalLabel">Answer Settings</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <textarea class="form-control" id="answerModalAnswerTextInput" rows=3></textarea>
+            <br>
+            <select class="form-select" id="answerModalCorrectInput" aria-label="Is Correct Answer Select">
+              <option value="false">False</option>
+              <option value="true">True</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="updateQuestionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateQuestionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateQuestionModalLabel">Answer Settings</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <textarea class="form-control" id="questionModalQuestionTextInput" rows=3></textarea>
+            <br>
+            <select class="form-select" id="questionModalCorrectInput" aria-label="Is Correct Answer Select">
+              <option value="0">False</option>
+              <option value="1">True</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   {% endif %}
 {% endif %}

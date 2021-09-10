@@ -15,20 +15,19 @@ from .utils import textpreperation_qag
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from .path_serializers import QuizQuestionSerializer, QuizSerializer
+from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer
 
 
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
-def quiz_answers_view(request, question_id):
-    template_name = "answers_view.html"
-    context = {}
-    answers = QuizAnswer.objects.filter(to_question=question_id)
-    context['answers'] = answers
-    return render(request, template_name, context)
-
-def quiz_answer_delete(request):
-    test_return = "this is the test return"
-    return HttpResponse(test_return)
+def get_answer_info(request):
+    print("It Triggered")
+    print(request.body)
+    answer_id = json.loads(request.body).get("answer_id")
+    print(answer_id)
+    answer = get_object_or_404(QuizAnswer, id=answer_id)
+    qas = QuizAnswerSerializer(answer)
+    print(qas.data)
+    return JsonResponse(qas.data, safe=False)
 
 def get_benchmark_content(request):
     if request.method=="POST":
