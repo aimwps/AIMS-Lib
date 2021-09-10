@@ -19,6 +19,10 @@ from .views import (PathsHomeView,
                     create_qa_pair,
                     get_benchmark_content,
                     get_answer_info,
+                    edit_answer,
+                    get_question_info,
+                    edit_question,
+
 )
 
 urlpatterns = [
@@ -40,6 +44,10 @@ urlpatterns = [
     path("create-question-answer/", create_qa_pair, name="create-qa-pair"),
     path("display-quiz-dev/", csrf_exempt(get_benchmark_content), name="display-quiz-dev"),
     path('pathway/develop/generate_questions/<str:source_type>/<int:source_id>', QuestionGeneratorView.as_view(), name="generate-qas"),
-    path("answer-info/", csrf_exempt(get_answer_info), name="answer-info")
+    path("answer-info/", csrf_exempt(get_answer_info), name="answer-info"),
+    path("answer-edit/", edit_answer, name="answer-edit"),
+    path("question-info/", csrf_exempt(get_question_info), name="question-info"),
+    path("question-edit/", edit_question, name="question-edit"),
+
 
 ]

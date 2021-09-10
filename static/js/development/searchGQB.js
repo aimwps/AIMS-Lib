@@ -12,9 +12,10 @@ searchField.addEventListener('keyup', (e) => {
       benchmarkDev.style.display = "none";
       gqbOutput.style.display ="block";
       if(data.length===0) {
-        gqbOutput.innerHTML = "No results found";
+        gqbList.innerHTML = "No results found";
       }else{
         data.forEach((item) => {
+        gqbList.innerHTML = "";
         gqbList.innerHTML +=`
         <li class="list-group-item">${item.question}, ${item.answer}, ${item.id}, ${item.user_proof}</li>`
         })

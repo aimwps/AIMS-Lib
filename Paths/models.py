@@ -64,7 +64,7 @@ class GeneratedQuestionBank(models.Model):
     user_proof = models.CharField(max_length=255, choices=PROOF_OPTIONS, default="unknown")
 
 class QuizQuestion(models.Model):
-    # objects = QuestionModelManager()
+
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
                     ("multiple-correct-choice","Multiple correct choices"),
                     ("text-entry-exact", "Text entry (Exact)"),
@@ -74,8 +74,7 @@ class QuizQuestion(models.Model):
     question_text = models.TextField()
     answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
     order_by = models.PositiveIntegerField()
-    # def natural_key(self):
-    #     return (self.on_quiz, self.question_text, self.answer_type, self.order_by, self.question_answers)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

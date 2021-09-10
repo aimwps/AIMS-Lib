@@ -60,39 +60,64 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+            <p class="lead">
+              An answer to the question:
+            </p>
+            <p id="answerModalQuestion"></p>
+            <hr>
+            <form method="POST" id="answerUpdateForm">
+              {% csrf_token %}
+              <input type="hidden" value="" name="answerIdInput">
+              <p class="lead"> Edit this Answer: </p>
+              <label> Answer text</label>
             <textarea class="form-control" id="answerModalAnswerTextInput" rows=3></textarea>
             <br>
+            <label>Correct answer</label>
             <select class="form-select" id="answerModalCorrectInput" aria-label="Is Correct Answer Select">
               <option value="false">False</option>
               <option value="true">True</option>
             </select>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Understood</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+            <button type="button" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
           </div>
         </div>
       </div>
     </div>
+
+
     <!-- Modal -->
     <div class="modal fade" id="updateQuestionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateQuestionModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="updateQuestionModalLabel">Answer Settings</h5>
+            <h5 class="modal-title" id="updateQuestionModalLabel">Question Settings</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+            <p id="questionModalQuestion"></p>
+            <hr>
+            <form method="POST" id="questionUpdateForm">
+              {% csrf_token %}
+              <input type="hidden" value="" name="questionIdInput">
+              <p class="lead"> Edit this question: </p>
+              <label> Question text</label>
             <textarea class="form-control" id="questionModalQuestionTextInput" rows=3></textarea>
             <br>
-            <select class="form-select" id="questionModalCorrectInput" aria-label="Is Correct Answer Select">
-              <option value="0">False</option>
-              <option value="1">True</option>
+            <label>Answer type</label>
+            <select class="form-select" id="questionModalAnswerType" aria-label="Is Correct Answer Select">
+              <option value="multiple-choice">Multiple choice</option>
+              <option value="multiple-correct-choice">Multiple correct choices</option>
+              <option value="text-entry-exact">Text entry (Exact)</option>
+              <option value="text-entry-nearest">Text entry (Close enough)</option>
             </select>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Understood</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+            <button type="button" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
           </div>
         </div>
       </div>
@@ -105,6 +130,6 @@
 
 {% endblock %}
 {% block scripts %}
-<script src="{% static 'js/development/searchGQB.js' %}"></script>
-<script src="{% static 'js/development/addQaPair.js' %}"></script>
+<script src="{% static 'js/development/benchmarkDevelopment.js' %}"></script>
+
 {% endblock scripts%}

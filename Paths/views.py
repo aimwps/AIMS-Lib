@@ -16,18 +16,44 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer
-
-
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+
+def get_question_info(request):
+    question_id = json.loads(request.body).get("question_id")
+    question = get_object_or_404(QuizQuestion, id=question_id)
+    question = QuizQuestionSerializer(question)
+    return JsonResponse(question.data, safe=False)
+
+
+def edit_question(request):
+    if request.method=="POST":
+        question = get_object_or_404(QuizQuestion, id=request.POST.get("question_id"))
+        question.answer_type = request.POST.get("answer_type")
+        question.question_text = request.POST.get("question_text")
+        question.save()
+        response = json.dumps({"complete":True})
+
+        return HttpResponse(response, content_type="application/json")
+
 def get_answer_info(request):
-    print("It Triggered")
-    print(request.body)
     answer_id = json.loads(request.body).get("answer_id")
-    print(answer_id)
     answer = get_object_or_404(QuizAnswer, id=answer_id)
-    qas = QuizAnswerSerializer(answer)
-    print(qas.data)
-    return JsonResponse(qas.data, safe=False)
+    question = QuizQuestion.objects.get(answers=answer_id)
+    answer = QuizAnswerSerializer(answer)
+    data = {"answer": answer.data, "question": question.question_text}
+    return JsonResponse(data, safe=False)
+def edit_answer(request):
+    if request.method=="POST":
+        print(request.POST)
+        answer = get_object_or_404(QuizAnswer, id=request.POST.get("answer_id"))
+        answer.answer_text = request.POST.get("answer_text")
+        answer_is_correct = eval(request.POST.get("is_correct").capitalize())
+        answer.is_correct = answer_is_correct
+        answer.save()
+        response = json.dumps({"complete":True})
+        return HttpResponse(response, content_type="application/json")
+
+
 
 def get_benchmark_content(request):
     if request.method=="POST":
@@ -62,9 +88,9 @@ def create_qa_pair(request):
                         answer_text = answer,
         )
         new_answer.save()
-        test_return = "this is the test return"
+        reponse = json.dumps({"complete":True})
 
-        return HttpResponse(test_return)
+        return HttpResponse(response,content_type="application/json")
 
 def search_questions(request):
     if request.method=="POST":
