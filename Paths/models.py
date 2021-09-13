@@ -71,6 +71,7 @@ class QuizQuestion(models.Model):
                     ("text-entry-nearest", "Text entry (Close enough)"))
 
     on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
+    genereated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
     question_text = models.TextField()
     answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
     order_by = models.PositiveIntegerField()
@@ -86,12 +87,12 @@ class QuizQuestion(models.Model):
         return f"QuizQuestion_{self.id}"
 
 class QuizAnswer(models.Model):
-    # objects = AnswerModelManager()
+
     to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, related_name="answers")
+    genereated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
     is_correct = models.BooleanField()
     answer_text = models.TextField()
-    # def natural_key(self):
-    #     return (self.to_question, self.is_correct, self.answer_text)
+
     def __str__(self):
         return f"<QuizAnswer>"
 

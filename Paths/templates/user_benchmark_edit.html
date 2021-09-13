@@ -31,6 +31,7 @@
       <textarea type="text" class="form-control" id="questionField" placeholder="Enter a question or add by searching your generated questions" rows=3></textarea>
       <input type="text" class="form-control my-2" id="answerField" placeholder="Enter the answer to then question">
       <input type="hidden" id="onBenchmark" value="{{ benchmark.id }}">
+      <input type="hidden" id="generatedFromGqbId" value="">
       <button type="submit" class="btn btn-primary" id="submitQA">Add Question & answer to benchmark</button>
     </form>
   </div>
@@ -65,7 +66,7 @@
             </p>
             <p id="answerModalQuestion"></p>
             <hr>
-            <form method="POST" id="answerUpdateForm">
+            <form method="post" id="answerUpdateForm">
               {% csrf_token %}
               <input type="hidden" value="" name="answerIdInput">
               <p class="lead"> Edit this Answer: </p>
@@ -122,6 +123,17 @@
         </div>
       </div>
     </div>
+
+
+<form method="POST" id="quickAddGqbQuestion" >
+  {% csrf_token %}
+  <input name="gqbAddQuestionText" type="hidden">
+  <input name="gqbAddAnswerText" type="hidden">
+  <input name="gqbAddGqbId" type="hidden">
+  <input name="benchmarkID" type="hidden" value="{{ benchmark.id }}">
+  <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
 
   {% endif %}
 {% endif %}

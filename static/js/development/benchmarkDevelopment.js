@@ -8,9 +8,11 @@ const gqbOutput = document.getElementById("gqbOutput")
 const answerModal = document.getElementById("updateAnswerModal")
 const answerEditForm = document.getElementById("answerUpdateForm")
 const questionEditForm = document.getElementById("questionUpdateForm")
+const quickAddGqbQuestion = document.getElementById("quickAddGqbQuestion")
 
 window.onload = function() {
   gqbOutput.style.display="none";
+  quickAddGqbQuestion.style.display = 'none';
   displayQaList();
 };
 
@@ -37,8 +39,16 @@ searchField.addEventListener('keyup', (e) => {
         data.forEach((item) => {
         gqbList.innerHTML +=`
         <li class="list-group-item">
-          <p>${item.question}</p>
-        , ${item.answer}, ${item.id}, ${item.user_proof}</li>`
+          <p><strong>Q:</strong> ${item.question}</p>
+          <p><strong>A:</strong> ${item.answer} <small>[quality: ${item.user_proof}]</small></p>
+          <a type="button" id="quickAddQuestion${item.id}" onClick="getGqbInfo(${item.id})" class="text-primary">
+            Add to benchmark
+          </a>
+          <a type="button" id="addToEditQuestion${item.id}" onClick="addToEditQuestion(${item.id})" class="text-primary">
+            Edit question
+          </a>
+          </p>
+        </li>`
         })
       }
     })
@@ -47,6 +57,41 @@ searchField.addEventListener('keyup', (e) => {
     benchmarkDev.style.display = "block";
   }
 });
+
+function getGqbInfo(gqb_id){
+  fetch("/get-gqb-info/", {
+    body:JSON.stringify({gqb_id : gqb_id}),
+    method: "POST",
+  })
+  .then((response) => response.json())
+  .then((gqb_item) => {
+    console.log(gqb_item);
+    $('input[name=gqbAddQuestionText]').val(gqb_item.question);
+    $('input[name=gqbAddAnswerText]').val(gqb_item.answer);
+    $('input[name=gqbAddGqbId]').val(gqb_item.id);
+  });
+  quickAddGqbQuestion.submit()
+};
+
+quickAddGqbQuestion.addEventListener('submit', function(e){
+  e.preventDefault();
+  $.ajax({
+    type:"POST",
+    url: "/create-gqb-question-answer/",
+    data:{
+      question:$("inpt[name=gqbAddQuestionText]").val(),
+      answer:$("input[name=gqbAddAnswerText]").val(),
+      benchmark_id:$("input[name=benchmarkId").val(),
+      gqb_id:$("input[name=gqbAddGqbId").val(),
+      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+    },
+    success: function(){
+      displayQaList();
+    }
+  })
+});
+
+
 
 // FOR DISPLAYING THE BENCHMARK Q&A LIST........................................
 function displayQaList(){
@@ -76,13 +121,13 @@ function displayQaList(){
             const innerList = document.getElementById("qAs" + item.id)
             innerList.innerHTML +=`
             <li class="list-group-item">
+              <form method="POST">
               <a type="button" onClick="editAnswer(${ans.id})" class="text-primary" data-bs-toggle="modal" data-bs-target="#updateAnswerModal">
                 <i class="fas fa-ellipsis-h"></i>
               </a>
               <strong>A: </strong>${ans.answer_text}, <small>correct: ${ans.is_correct}</small>
             </li>
             `;
-
           })
         benchmarkQaList.innerHTML +=`
         </ul></li>`
@@ -121,8 +166,9 @@ function editAnswer(answerID){
     $('#answerModalAnswerTextInput').val(answer.answer.answer_text);
     $('#answerModalQuestion').text(answer.question);
     $('#answerModalCorrectInput').val(answer.answer.is_correct.toString()).change();
+
   })
-  }
+};
 answerEditForm.addEventListener('submit', function(e){
   e.preventDefault();
   $.ajax({
@@ -142,7 +188,7 @@ answerEditForm.addEventListener('submit', function(e){
 function answerEditSubmit(){
   $('#updateAnswerModal').modal('toggle');
   displayQaList();
-}
+};
 
 // FOR EDITING QUESTIONS.........................................................
 function editQuestion(questionId){
@@ -157,8 +203,8 @@ function editQuestion(questionId){
     $('#questionModalQuestion').text(question.question_text);
     $('#questionModalAnswerType').val(question.answer_type).change();
   })
+};
 
-  }
 questionEditForm.addEventListener('submit', function(e){
   e.preventDefault();
   $.ajax({
@@ -178,4 +224,4 @@ questionEditForm.addEventListener('submit', function(e){
 function questionEditSubmit(){
   $('#updateQuestionModal').modal('toggle');
   displayQaList();
-}
+};

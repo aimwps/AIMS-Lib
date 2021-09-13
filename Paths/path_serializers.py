@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Quiz,QuizQuestion, QuizAnswer
+from .models import Quiz,QuizQuestion, QuizAnswer, GeneratedQuestionBank
 
 class QuizAnswerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,3 +17,9 @@ class QuizSerializer(serializers.ModelSerializer):
   class Meta:
     model = Quiz
     fields = ('id', 'title', "questions")
+
+
+class GeneratedQuestionBankSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = GeneratedQuestionBank
+    fields = ('id',"generated_date", "generated_time", "source_type", "source_id", "question", "answer", "user_proof")

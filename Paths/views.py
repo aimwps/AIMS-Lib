@@ -15,15 +15,25 @@ from .utils import textpreperation_qag
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer
+from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
+def quick_add_gqb_to_benchmark(request):
+    print(request)
+    response = json.dumps({"complete":True})
+    return HttpResponse(response)
+
+def get_gqb_info(request):
+    print("whoop first step")
+    gqb_id = json.loads(request.body).get("gqb_id")
+    gqb = get_object_or_404(GeneratedQuestionBank, id=gqb_id)
+    gqb = GeneratedQuestionBankSerializer(gqb)
+    return JsonResponse(gqb.data, safe=False)
 def get_question_info(request):
     question_id = json.loads(request.body).get("question_id")
     question = get_object_or_404(QuizQuestion, id=question_id)
     question = QuizQuestionSerializer(question)
     return JsonResponse(question.data, safe=False)
-
 
 def edit_question(request):
     if request.method=="POST":
@@ -33,7 +43,7 @@ def edit_question(request):
         question.save()
         response = json.dumps({"complete":True})
 
-        return HttpResponse(response, content_type="application/json")
+        return HttpResponse(response)
 
 def get_answer_info(request):
     answer_id = json.loads(request.body).get("answer_id")
@@ -51,7 +61,7 @@ def edit_answer(request):
         answer.is_correct = answer_is_correct
         answer.save()
         response = json.dumps({"complete":True})
-        return HttpResponse(response, content_type="application/json")
+        return HttpResponse(response)
 
 
 
@@ -88,9 +98,9 @@ def create_qa_pair(request):
                         answer_text = answer,
         )
         new_answer.save()
-        reponse = json.dumps({"complete":True})
+        response = json.dumps({"complete":True})
 
-        return HttpResponse(response,content_type="application/json")
+        return HttpResponse(response)
 
 def search_questions(request):
     if request.method=="POST":
