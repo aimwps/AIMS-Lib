@@ -32,6 +32,7 @@
       <input type="text" class="form-control my-2" id="answerField" placeholder="Enter the answer to then question">
       <input type="hidden" id="onBenchmark" value="{{ benchmark.id }}">
       <input type="hidden" id="generatedFromGqbId" value="">
+      <input type="hidden" id="hasBeenModified" value="">
       <button type="submit" class="btn btn-primary" id="submitQA">Add Question & answer to benchmark</button>
     </form>
   </div>
@@ -123,16 +124,6 @@
         </div>
       </div>
     </div>
-
-
-<form method="POST" id="quickAddGqbQuestion">
-  {% csrf_token %}
-  <input class="hiddenForm" name="gqbAddQuestionText">
-  <input class="hiddenForm" name="gqbAddAnswerText">
-  <input class="hiddenForm" name="gqbAddGqbId">
-  <input class="hiddenForm" name="benchmarkId" value="{{ benchmark.id }}">
-  <button class="hiddenForm" id="qqasubmit" type="submit" onclick="clearQuick()">
-</form>
 
 
   {% endif %}

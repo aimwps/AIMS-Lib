@@ -12,7 +12,6 @@ const quickAddGqbQuestion = document.getElementById("quickAddGqbQuestion");
 
 window.onload = function() {
   gqbOutput.style.display="none";
-  //quickAddGqbQuestion.style.display = 'none';
   displayQaList();
 };
 
@@ -41,7 +40,7 @@ searchField.addEventListener('keyup', (e) => {
         <li class="list-group-item">
           <p><strong>Q:</strong> ${item.question}</p>
           <p><strong>A:</strong> ${item.answer} <small>[quality: ${item.user_proof}]</small></p>
-          <a type="button" id="quickAddQuestion${item.id}" onClick="getGqbInfo(${item.id})" class="text-primary">
+          <a type="button" id="quickAddQuestion${item.id}" onClick="quickSubmitGqb(${item.id})" class="text-primary">
             Add to benchmark
           </a>
           <a type="button" id="addToEditQuestion${item.id}" onClick="addToEditQuestion(${item.id})" class="text-primary">
@@ -58,38 +57,22 @@ searchField.addEventListener('keyup', (e) => {
   }
 });
 
-function getGqbInfo(gqb_id){
-  fetch("/get-gqb-info/", {
+
+// FOR SUBMITTING A GQB Q&A WITHOUT EDITING
+function quickSubmitGqb(gqb_id){
+  fetch("/quick-add-gqb-info/", {
     body:JSON.stringify({gqb_id : gqb_id}),
     method: "POST",
   })
   .then((response) => response.json())
   .then((gqb_item) => {
     console.log(gqb_item);
-    $('input[name=gqbAddQuestionText]').val(gqb_item.question);
-    $('input[name=gqbAddAnswerText]').val(gqb_item.answer);
-    $('input[name=gqbAddGqbId]').val(gqb_item.id);
-    $('#qqasubmit').click();
+    $('#questionField').val(gqb_item.question);
+    $('#answerField').val(gqb_item.answer);
+    $('#generatedFromGqbId').val(gqb_item.id);
+    submitQA.click();
   });
 };
-
-quickAddGqbQuestion.addEventListener('submit', function(e){
-  e.preventDefault();
-  $.ajax({
-    type:"POST",
-    url: "/create-gqb-question-answer/",
-    data:{
-      question:$("input[name=gqbAddQuestionText]").val(),
-      answer:$("input[name=gqbAddAnswerText]").val(),
-      benchmark_id:$("input[name=benchmarkId").val(),
-      gqb_id:$("input[name=gqbAddGqbId").val(),
-      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
-    },
-    success: function(){
-      displayQaList();
-    }
-  })
-});
 
 
 
@@ -146,6 +129,8 @@ qaForm.addEventListener('submit', function(e){
       question:$("#questionField").val(),
       answer:$("#answerField").val(),
       benchmark_id:$("#onBenchmark").val(),
+      generated_from:$("#generatedFromGqbId").val(),
+      has_been_modified:$("#hasBeenModified").val(),
       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
     },
     success: function(){

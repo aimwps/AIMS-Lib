@@ -72,6 +72,7 @@ class QuizQuestion(models.Model):
 
     on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
     genereated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
+    has_been_modified = models.BooleanField(blank=True, null=True)
     question_text = models.TextField()
     answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
     order_by = models.PositiveIntegerField()

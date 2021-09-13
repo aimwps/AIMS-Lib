@@ -18,35 +18,7 @@ from django.http import JsonResponse
 from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
-def quick_add_gqb_to_benchmark(request):
-    if request.method=="POST":
-        question = request.POST['question']
-        answer = request.POST['answer']
-        benchmark_id = get_object_or_404(Quiz, id=int(request.POST['benchmark_id']))
-        next_order_by = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by('order_by')
-        for i, existing_question in enumerate(next_order_by):
-            existing_question.in_order = i
-            existing_question.save()
-
-        new_question = QuizQuestion(
-                        on_quiz = benchmark_id,
-                        question_text = question,
-                        order_by = len(next_order_by),
-        )
-        new_question.save()
-
-        new_answer = QuizAnswer(
-                        to_question = new_question,
-                        is_correct = True,
-                        answer_text = answer,
-        )
-        new_answer.save()
-        response = json.dumps({"complete":True})
-
-        return HttpResponse(response)
-
-def get_gqb_info(request):
-    print("whoop first step")
+def quick_add_gqb_info(request):
     gqb_id = json.loads(request.body).get("gqb_id")
     gqb = get_object_or_404(GeneratedQuestionBank, id=gqb_id)
     gqb = GeneratedQuestionBankSerializer(gqb)
@@ -56,7 +28,6 @@ def get_question_info(request):
     question = get_object_or_404(QuizQuestion, id=question_id)
     question = QuizQuestionSerializer(question)
     return JsonResponse(question.data, safe=False)
-
 def edit_question(request):
     if request.method=="POST":
         question = get_object_or_404(QuizQuestion, id=request.POST.get("question_id"))
@@ -109,7 +80,7 @@ def create_qa_pair(request):
 
         new_question = QuizQuestion(
                         on_quiz = benchmark_id,
-                        question_text = question,
+                        question_text = question.strip(),
                         order_by = len(next_order_by),
         )
         new_question.save()
@@ -117,7 +88,7 @@ def create_qa_pair(request):
         new_answer = QuizAnswer(
                         to_question = new_question,
                         is_correct = True,
-                        answer_text = answer,
+                        answer_text = answer.strip(),
         )
         new_answer.save()
         response = json.dumps({"complete":True})

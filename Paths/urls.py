@@ -22,8 +22,7 @@ from .views import (PathsHomeView,
                     edit_answer,
                     get_question_info,
                     edit_question,
-                    get_gqb_info,
-                    quick_add_gqb_to_benchmark,
+                    quick_add_gqb_info,
 )
 
 urlpatterns = [
@@ -49,8 +48,8 @@ urlpatterns = [
     path("answer-edit/", edit_answer, name="answer-edit"),
     path("question-info/", csrf_exempt(get_question_info), name="question-info"),
     path("question-edit/", edit_question, name="question-edit"),
-    path("create-gqb-question-answer/",quick_add_gqb_to_benchmark, name="quick-add-gqb"),
-    path("get-gqb-info/",csrf_exempt(get_gqb_info), name="get-gqb-info"),
+    path("create-gqb-question-answer/",create_qa_pair, name="quick-add-gqb"),
+    path("quick-add-gqb-info/",csrf_exempt(quick_add_gqb_info), name="quick-add-gqb-info"),
 
 
 
