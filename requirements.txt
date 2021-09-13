@@ -1,6 +1,5 @@
 absl-py==0.13.0
 asgiref==3.4.1
-beautifulsoup4==4.9.3
 cachetools==4.2.2
 certifi==2021.5.30
 charset-normalizer==2.0.4
@@ -24,12 +23,9 @@ google-auth==1.35.0
 google-auth-oauthlib==0.4.5
 grpcio==1.39.0
 gunicorn==20.1.0
-huggingface-hub==0.0.12
 idna==3.2
 joblib==1.0.1
 Markdown==3.3.4
-nlp==0.4.0
-nltk==3.6.2
 numpy==1.21.2
 oauthlib==3.1.1
 packaging==21.0
@@ -61,16 +57,12 @@ smmap==4.0.0
 soupsieve==2.2.1
 sqlparse==0.4.1
 subprocess32==3.5.4
-tensorboard==2.6.0
-tensorboard-data-server==0.6.1
-tensorboard-plugin-wit==1.8.0
+
 tokenizers==0.8.0rc4
-torch==1.9.0
 tqdm==4.62.2
 transformers==3.0.0
 typing-extensions==3.10.0.0
 urllib3==1.26.6
-wandb==0.12.0
 Werkzeug==2.0.1
 whitenoise==5.3.0
 xxhash==2.0.2
