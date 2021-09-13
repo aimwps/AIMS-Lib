@@ -69,7 +69,10 @@ def create_qa_pair(request):
     if request.method=="POST":
         question = request.POST['question']
         answer = request.POST['answer']
-        generated_from = get_object_or_404(GeneratedQuestionBank, id=int(request.POST['generated_from']))
+        if request.POST['generated_from']:
+            generated_from = get_object_or_404(GeneratedQuestionBank, id=int(request.POST['generated_from']))
+        else:
+            generated_from = None
         has_been_modified = request.POST['has_been_modified']
         benchmark_id = get_object_or_404(Quiz, id=int(request.POST['benchmark_id']))
         next_order_by = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by('order_by')
