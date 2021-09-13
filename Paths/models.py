@@ -8,43 +8,30 @@ from ckeditor.fields import RichTextField
 from embed_video.fields import EmbedVideoField
 from rest_framework import serializers
 
-# class QuizModelManager(models.Manager):
-#     def get_by_natural_key(self, title):
-#         return self.get(title=title)
-# class QuestionModelManager(models.Manager):
-#     def get_by_natural_key(self, on_quiz, question_text, answer_type, order_by, answer_text,question_answers):
-#         return self.get(on_quiz=on_quiz, question_text=question_text, answer_type=answer_type, order_by=order_by, question_answers=question_answers)
-# class AnswerModelManager(models.Manager):
-#     def get_by_natural_key(self, to_question, is_correct, answer_text):
-#         return self.get(to_question=to_question,is_correct=is_correct, answer_text=answer_text)
 
 
-class Pathway(models.Model): #### (GROUP)
+class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
     title = models.CharField(max_length=255)
     participants = models.ManyToManyField(User, blank=True, related_name="pathway_users")
     description = models.TextField(blank=True)
-    # organisations = models.ManyToManyField(User, blank=True, related_name="pathway_users")
-    # public_records = models.BooleanField()
-    # is_cloneable = models.BooleanField()
+
     def get_absolute_url(self):
         return reverse('skill-paths')
     def __str__(self):
         return f"pathway_{self.id}"
 
-class Quiz(models.Model): # A collection of questions
-    # objects = QuizModelManager()
+
+class Quiz(models.Model):
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     publish_date = models.DateField(auto_now_add=True)
     publish_time = models.TimeField(auto_now_add=True)
-
     def __str__(self):
         return f"quiz_{self.id}"
     def get_absolute_url(self):
         return reverse('user-benchmarks')
-    # def natural_key(self):
-    #     return (self.title,)
+
 class GeneratedQuestionBank(models.Model):
     SOURCE_TYPE = (("transcript","transcript"),
                             ("literature","literature"),
