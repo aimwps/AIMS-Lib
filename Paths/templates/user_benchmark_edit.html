@@ -125,13 +125,13 @@
     </div>
 
 
-<form method="POST" id="quickAddGqbQuestion" >
+<form method="POST" id="quickAddGqbQuestion">
   {% csrf_token %}
-  <input name="gqbAddQuestionText" type="hidden">
-  <input name="gqbAddAnswerText" type="hidden">
-  <input name="gqbAddGqbId" type="hidden">
-  <input name="benchmarkID" type="hidden" value="{{ benchmark.id }}">
-  <input type="submit" </input>
+  <input class="hiddenForm" name="gqbAddQuestionText">
+  <input class="hiddenForm" name="gqbAddAnswerText">
+  <input class="hiddenForm" name="gqbAddGqbId">
+  <input class="hiddenForm" name="benchmarkId" value="{{ benchmark.id }}">
+  <button class="hiddenForm" id="qqasubmit" type="submit" onclick="clearQuick()">
 </form>
 
 

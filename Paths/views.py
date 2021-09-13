@@ -19,9 +19,31 @@ from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswer
 #QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
 def quick_add_gqb_to_benchmark(request):
-    print(request)
-    response = json.dumps({"complete":True})
-    return HttpResponse(response)
+    if request.method=="POST":
+        question = request.POST['question']
+        answer = request.POST['answer']
+        benchmark_id = get_object_or_404(Quiz, id=int(request.POST['benchmark_id']))
+        next_order_by = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by('order_by')
+        for i, existing_question in enumerate(next_order_by):
+            existing_question.in_order = i
+            existing_question.save()
+
+        new_question = QuizQuestion(
+                        on_quiz = benchmark_id,
+                        question_text = question,
+                        order_by = len(next_order_by),
+        )
+        new_question.save()
+
+        new_answer = QuizAnswer(
+                        to_question = new_question,
+                        is_correct = True,
+                        answer_text = answer,
+        )
+        new_answer.save()
+        response = json.dumps({"complete":True})
+
+        return HttpResponse(response)
 
 def get_gqb_info(request):
     print("whoop first step")

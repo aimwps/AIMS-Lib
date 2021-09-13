@@ -1,18 +1,18 @@
 const qaForm = document.querySelector("#submitQAform");
 const benchmarkDev = document.querySelector("#benchmarkDev");
-const benchmarkQaList = document.getElementById("benchmarkQaList")
-const bquestion = document.getElementById("questionField")
-const banswer = document.getElementById("answerField")
-const gqbList = document.getElementById("gqbList")
-const gqbOutput = document.getElementById("gqbOutput")
-const answerModal = document.getElementById("updateAnswerModal")
-const answerEditForm = document.getElementById("answerUpdateForm")
-const questionEditForm = document.getElementById("questionUpdateForm")
-const quickAddGqbQuestion = document.getElementById("quickAddGqbQuestion")
+const benchmarkQaList = document.getElementById("benchmarkQaList");
+const bquestion = document.getElementById("questionField");
+const banswer = document.getElementById("answerField");
+const gqbList = document.getElementById("gqbList");
+const gqbOutput = document.getElementById("gqbOutput");
+const answerModal = document.getElementById("updateAnswerModal");
+const answerEditForm = document.getElementById("answerUpdateForm");
+const questionEditForm = document.getElementById("questionUpdateForm");
+const quickAddGqbQuestion = document.getElementById("quickAddGqbQuestion");
 
 window.onload = function() {
   gqbOutput.style.display="none";
-  quickAddGqbQuestion.style.display = 'none';
+  //quickAddGqbQuestion.style.display = 'none';
   displayQaList();
 };
 
@@ -69,7 +69,7 @@ function getGqbInfo(gqb_id){
     $('input[name=gqbAddQuestionText]').val(gqb_item.question);
     $('input[name=gqbAddAnswerText]').val(gqb_item.answer);
     $('input[name=gqbAddGqbId]').val(gqb_item.id);
-    quickAddGqbQuestion.submit();
+    $('#qqasubmit').click();
   });
 };
 
@@ -79,7 +79,7 @@ quickAddGqbQuestion.addEventListener('submit', function(e){
     type:"POST",
     url: "/create-gqb-question-answer/",
     data:{
-      question:$("inpt[name=gqbAddQuestionText]").val(),
+      question:$("input[name=gqbAddQuestionText]").val(),
       answer:$("input[name=gqbAddAnswerText]").val(),
       benchmark_id:$("input[name=benchmarkId").val(),
       gqb_id:$("input[name=gqbAddGqbId").val(),
@@ -225,3 +225,7 @@ function questionEditSubmit(){
   $('#updateQuestionModal').modal('toggle');
   displayQaList();
 };
+
+function clearQuick(){
+  displayQaList();
+}

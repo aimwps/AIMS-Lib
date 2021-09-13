@@ -49,8 +49,9 @@ urlpatterns = [
     path("answer-edit/", edit_answer, name="answer-edit"),
     path("question-info/", csrf_exempt(get_question_info), name="question-info"),
     path("question-edit/", edit_question, name="question-edit"),
+    path("create-gqb-question-answer/",quick_add_gqb_to_benchmark, name="quick-add-gqb"),
     path("get-gqb-info/",csrf_exempt(get_gqb_info), name="get-gqb-info"),
-    path("create-gqb-question-answer/",quick_add_gqb_to_benchmark, name="quick-add-gqb")
+
 
 
 

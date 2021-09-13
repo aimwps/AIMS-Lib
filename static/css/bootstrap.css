@@ -11434,3 +11434,7 @@ a.anchor {
   padding: 12px;
   box-sizing: border-box;
 }
+
+.hiddenForm{
+  display: none;
+}
