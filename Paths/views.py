@@ -37,7 +37,6 @@ def edit_question(request):
         response = json.dumps({"complete":True})
 
         return HttpResponse(response)
-
 def get_answer_info(request):
     answer_id = json.loads(request.body).get("answer_id")
     answer = get_object_or_404(QuizAnswer, id=answer_id)
@@ -55,9 +54,6 @@ def edit_answer(request):
         answer.save()
         response = json.dumps({"complete":True})
         return HttpResponse(response)
-
-
-
 def get_benchmark_content(request):
     if request.method=="POST":
         benchmark_id = json.loads(request.body).get('benchmark_id')
@@ -69,11 +65,15 @@ def get_benchmark_content(request):
         print("Oh fuck")
 
 def create_qa_pair(request):
+    print(request.POST)
     if request.method=="POST":
         question = request.POST['question']
         answer = request.POST['answer']
+        generated_from = get_object_or_404(GeneratedQuestionBank, id=int(request.POST['generated_from']))
+        has_been_modified = request.POST['has_been_modified']
         benchmark_id = get_object_or_404(Quiz, id=int(request.POST['benchmark_id']))
         next_order_by = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by('order_by')
+
         for i, existing_question in enumerate(next_order_by):
             existing_question.in_order = i
             existing_question.save()
@@ -82,6 +82,8 @@ def create_qa_pair(request):
                         on_quiz = benchmark_id,
                         question_text = question.strip(),
                         order_by = len(next_order_by),
+                        generated_from=generated_from,
+                        has_been_modified=has_been_modified
         )
         new_question.save()
 
@@ -89,6 +91,7 @@ def create_qa_pair(request):
                         to_question = new_question,
                         is_correct = True,
                         answer_text = answer.strip(),
+                        generated_from=generated_from,
         )
         new_answer.save()
         response = json.dumps({"complete":True})

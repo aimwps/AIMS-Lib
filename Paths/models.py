@@ -71,7 +71,7 @@ class QuizQuestion(models.Model):
                     ("text-entry-nearest", "Text entry (Close enough)"))
 
     on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
-    genereated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
+    generated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
     has_been_modified = models.BooleanField(blank=True, null=True)
     question_text = models.TextField()
     answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
@@ -90,7 +90,7 @@ class QuizQuestion(models.Model):
 class QuizAnswer(models.Model):
 
     to_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, related_name="answers")
-    genereated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
+    generated_from = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
     is_correct = models.BooleanField()
     answer_text = models.TextField()
 

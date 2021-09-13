@@ -78,8 +78,10 @@ function quickSubmitGqb(gqb_id){
 
 // FOR DISPLAYING THE BENCHMARK Q&A LIST........................................
 function displayQaList(){
-    banswer.value = "";
-    bquestion.value = "";
+    $("#questionField").val("");
+    $("#answerField").val("");
+    $("#generatedFromGqbId").val("");
+    $("#hasBeenModified").val("");
     fetch("/display-quiz-dev/", {
       body:JSON.stringify({benchmark_id: $("#onBenchmark").val()}),
       method: "POST",
