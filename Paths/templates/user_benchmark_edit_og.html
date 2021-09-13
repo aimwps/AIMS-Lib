@@ -15,56 +15,46 @@
   {% if user.id == benchmark.author.id %}
   <div class="row my-4">
     <div class="col-md-7">
-      <h4 class="pt-1"> Add a question </h4>
-
-      <div class="form my-2">
-        <form id="submitQAform" method="post">
-          {% csrf_token %}
-          <textarea type="text" class="form-control" id="questionField" placeholder="Enter a question or add by searching your generated questions" rows=3></textarea>
-          <input type="text" class="form-control my-2" id="answerField" placeholder="Enter the answer to then question">
-          <input type="hidden" id="onBenchmark" value="{{ benchmark.id }}">
-          <input type="hidden" id="generatedFromGqbId" value="">
-          <input type="hidden" id="hasBeenModified" value="">
-          <button type="submit" class="btn btn-primary" id="submitQA">Add Question & answer to benchmark</button>
-        </form>
-      </div>
-
-
-      <div class="row my-4" id="benchmarkDev">
-        <h4 class="">{{ benchmark.title }}</h4>
-        <ul class="list-group list-group-flush" id="benchmarkQaList">
-
-        </ul>
-      </div>
-    </div>
-
-    <div class="col-md-5">
-      <br>
-      <br>
       <h4 class="pt-1"> Search your generated questions: </h4>
+    </div>
+    <div class="col-md-5">
       <div class="form-group">
         <input type="text" class="form-control" id="searchField" placeholder="Search questions you've generated">
-      </div>
-      <div class="row my-4" id="gqbOutput">
-
-        <h4>Generated question search results..</h4>
-        <hr>
-        <ul class="list-group list-group-flush" id="gqbList">
-
-        </ul>
-
       </div>
     </div>
   </div>
   <hr>
 <!---Question & answer submit form...........................................................................-->
-
+  <div class="form my-2">
+    <form id="submitQAform" method="post">
+      {% csrf_token %}
+      <textarea type="text" class="form-control" id="questionField" placeholder="Enter a question or add by searching your generated questions" rows=3></textarea>
+      <input type="text" class="form-control my-2" id="answerField" placeholder="Enter the answer to then question">
+      <input type="hidden" id="onBenchmark" value="{{ benchmark.id }}">
+      <input type="hidden" id="generatedFromGqbId" value="">
+      <input type="hidden" id="hasBeenModified" value="">
+      <button type="submit" class="btn btn-primary" id="submitQA">Add Question & answer to benchmark</button>
+    </form>
+  </div>
 
   <!---END......................................................................Question & answer submit form-->
+    <div class="row my-4" id="benchmarkDev">
+      <h4 class="">{{ benchmark.title }}</h4>
+      <ul class="list-group list-group-flush" id="benchmarkQaList">
+
+      </ul>
+    </div>
 
 
+    <div class="row my-4" id="gqbOutput">
 
+      <h4>Generated question search results..</h4>
+      <hr>
+      <ul class="list-group list-group-flush" id="gqbList">
 
+      </ul>
+
+    </div>
     <!-- Modal -->
     <div class="modal fade" id="updateAnswerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateAnswerModalLabel" aria-hidden="true">
       <div class="modal-dialog">

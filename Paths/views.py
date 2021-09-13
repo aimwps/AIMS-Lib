@@ -55,6 +55,7 @@ def edit_answer(request):
         response = json.dumps({"complete":True})
         return HttpResponse(response)
 def get_benchmark_content(request):
+    print(request.POST)
     if request.method=="POST":
         benchmark_id = json.loads(request.body).get('benchmark_id')
         questions = QuizQuestion.objects.filter(on_quiz=benchmark_id).order_by("order_by")
@@ -102,6 +103,10 @@ def create_qa_pair(request):
         return HttpResponse(response)
 
 def search_questions(request):
+    print("ppppp")
+    #benchmark_id = json.loads(request.body).get('on_benchmark')
+    print(request.body)
+    print("uuuuu")
     if request.method=="POST":
         search_str = json.loads(request.body).get('searchText')
         written_lecture = WrittenLecture.objects.filter(title__icontains=search_str, author=request.user.id)
@@ -111,8 +116,15 @@ def search_questions(request):
                 source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
                 question__icontains=search_str, generated_by = request.user.id)| GeneratedQuestionBank.objects.filter(
                 answer__icontains=search_str, generated_by = request.user.id)
-        data = list(gqb.values())
-        return JsonResponse(data, safe=False)
+        benchmark_qs = QuizQuestion.objects.filter(on_quiz=json.loads(request.body).get('on_benchmark'))
+
+        new_data = []
+        for q in gqb:
+            new_data.append(
+            {"question":GeneratedQuestionBankSerializer(q).data,
+            "benchmark_status":benchmark_qs.filter(generated_from=q.id).exists()})
+        print(new_data)
+        return JsonResponse(new_data, safe=False)
 
 
 

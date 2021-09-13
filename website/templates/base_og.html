@@ -48,10 +48,14 @@
        <div class="row">
     <!-- LEFT BAR
     ################################################################################# -->
-
+        <div class="col-md-3 col-xs-12 bg-white my-2">
+          {% block leftbar %}
+            {% include "top_left.html"%}
+          {% endblock %}
+        </div>
     <!-- MAIN CONTENT
     ################################################################################# -->
-        <div class="col-md-12 col-xs-12 rounded bg-white my-2">
+        <div class="col-md-7 col-xs-12 rounded bg-white my-2">
           {% block modulenav %}
           {% include "base_nav.html" %}
           {% endblock %}
@@ -62,7 +66,11 @@
 
     <!-- TOP RIGHT SIDE
     ################################################################################# -->
-
+        <div class="col-md-2 col-xs-12 bg-white my-2">
+          {% block rightbar %}
+            {% include "top_right.html" %}
+          {% endblock %}
+        </div>
 <!-- END OF TOP HALF CONTAINERS
 ################################################################################# -->
       </div>
@@ -84,11 +92,15 @@
 
     <!-- BOTTOM LEFT BAR
     ################################################################################# -->
-
+        <div class="col-md-3 col-xs-12 bg-white my-2">
+          {% block bottomleftbar %}
+            {% include "bottom_left.html"%}
+          {% endblock %}
+        </div>
 
     <!-- BOTTOM CENTER CONTENT
     ################################################################################# -->
-        <div class="col-md-12 col-xs-12 bg-white my-2">
+        <div class="col-md-7 col-xs-12 bg-white my-2">
           {% block modulenav_bottom %}
           {% endblock %}
           {% block bottomcontent %}
@@ -98,7 +110,11 @@
 
     <!-- bottom right bar
     ################################################################################# -->
-
+        <div class="col-md-2 col-xs-12 bg-white my-2">
+          {% block bottomrightbar %}
+            {% include "bottom_right.html" %}
+          {% endblock %}
+        </div>
       </div>
     </div>
 
