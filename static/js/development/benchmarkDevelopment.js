@@ -69,8 +69,8 @@ function getGqbInfo(gqb_id){
     $('input[name=gqbAddQuestionText]').val(gqb_item.question);
     $('input[name=gqbAddAnswerText]').val(gqb_item.answer);
     $('input[name=gqbAddGqbId]').val(gqb_item.id);
+    quickAddGqbQuestion.submit();
   });
-  quickAddGqbQuestion.submit()
 };
 
 quickAddGqbQuestion.addEventListener('submit', function(e){
