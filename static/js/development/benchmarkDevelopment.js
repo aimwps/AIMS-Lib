@@ -40,7 +40,9 @@ searchField.addEventListener('keyup', (e) => {
         gqbList.innerHTML +=`
         <li class="list-group-item">
           <p><strong>Q:</strong> ${item.question}</p>
+          <div class="container">
           <p><strong>A:</strong> ${item.answer} <small>[quality: ${item.user_proof}]</small></p>
+          </div>
           <a type="button" id="quickAddQuestion${item.id}" onClick="quickSubmitGqb(${item.id})" class="text-primary">
             Add to benchmark
           </a>
