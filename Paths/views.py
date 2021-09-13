@@ -16,7 +16,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
-#QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
 def quick_add_gqb_info(request):
     gqb_id = json.loads(request.body).get("gqb_id")
