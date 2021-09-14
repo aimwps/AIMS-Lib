@@ -1,10 +1,9 @@
 import itertools
 import logging
 from typing import Optional, Dict, Union
-
+import torch
 from nltk import sent_tokenize
 import os
-#import torch
 from transformers import(
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
@@ -33,7 +32,7 @@ class QGPipeline:
 
         self.qg_format = qg_format
 
-        self.device = "cpu"#"cuda" if torch.cuda.is_available() and use_cuda else "cpu"
+        self.device = "cuda" if torch.cuda.is_available() and use_cuda else "cpu"
         self.model.to(self.device)
 
         if self.ans_model is not self.model:
@@ -218,7 +217,7 @@ class E2EQGPipeline:
         self.model = model
         self.tokenizer = tokenizer
 
-        self.device = "cpu"#"cuda" if torch.cuda.is_available() and use_cuda else "cpu"
+        self.device = "cuda" if torch.cuda.is_available() and use_cuda else "cpu"
         self.model.to(self.device)
 
         assert self.model.__class__.__name__ in ["T5ForConditionalGeneration", "BartForConditionalGeneration"]
