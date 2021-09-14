@@ -17,13 +17,8 @@ import requests
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
-#QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
-API_TOKEN = ""
-headers = {"Authorization": f"Bearer {API_TOKEN}"}
-API_URL = "https://api-inference.huggingface.co/models/valhalla/t5-small-qg-prepend"
+QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
-valhalla/t5-small-qg-prepend
-def huggingface_query()
 
 def quick_add_gqb_info(request):
     gqb_id = json.loads(request.body).get("gqb_id")
@@ -71,7 +66,6 @@ def get_benchmark_content(request):
         return JsonResponse(qas.data, safe=False)
     else:
         print("Oh fuck")
-
 def create_qa_pair(request):
     print(request.POST)
     if request.method=="POST":
@@ -108,7 +102,6 @@ def create_qa_pair(request):
         response = json.dumps({"complete":True})
 
         return HttpResponse(response)
-
 def search_questions(request):
     print("ppppp")
     #benchmark_id = json.loads(request.body).get('on_benchmark')
@@ -133,9 +126,6 @@ def search_questions(request):
         print(new_data)
         return JsonResponse(new_data, safe=False)
 
-
-
-
 class UserBenchmarkEditView(View):
     template_name = "user_benchmark_edit.html"
     def get(self, request, benchmark_id):
@@ -159,8 +149,6 @@ class UserBenchmarksView(View):
         print(user_benchmarks)
         context['user_benchmarks'] = user_benchmarks
         return render(request, self.template_name, context)
-
-
 
 class BenchmarkCreatorView(CreateView):
     model = Quiz
@@ -269,19 +257,16 @@ class PathwayObjNew(View):
                 print("FORM TYPE NOT RECOGNISED")
 
         return HttpResponseRedirect('/pathway/')
+
 class EditWrittenLectureView(UpdateView):
     model= WrittenLecture
     form_class = WrittenLectureEditForm
     template_name = 'written_lecture_edit.html'
-    #fields = ('title', 'skill_area', 'body')
-
 
 class EditPathwayView(UpdateView):
     model= Pathway
     form_class = PathwayEditForm
     template_name = 'pathway_edit.html'
-    #fields = ('title', 'skill_area', 'body')
-
 
 class PathwayNew(CreateView):
     model = Pathway
