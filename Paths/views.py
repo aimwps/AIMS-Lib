@@ -13,10 +13,17 @@ from django.contrib import messages
 from NLP.question_generation.pipelines import pipeline
 from .utils import textpreperation_qag
 import json
+import requests
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from .path_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
-QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+#QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
+API_TOKEN = ""
+headers = {"Authorization": f"Bearer {API_TOKEN}"}
+API_URL = "https://api-inference.huggingface.co/models/valhalla/t5-small-qg-prepend"
+
+valhalla/t5-small-qg-prepend
+def huggingface_query()
 
 def quick_add_gqb_info(request):
     gqb_id = json.loads(request.body).get("gqb_id")
