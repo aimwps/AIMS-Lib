@@ -41,7 +41,12 @@ INSTALLED_APPS = [
     'ckeditor',
     'bootstrap_datepicker_plus',
     'embed_video',
-    'rest_framework'
+    'rest_framework',
+    'Benchmark',
+    'QuestionGenerator',
+    'VideoLecture',
+    'WrittenLecture',
+    #'Benchmark'
 
 
 ]
