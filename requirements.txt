@@ -37,4 +37,4 @@ tqdm==4.62.2
 typing-extensions==3.10.0.2
 urllib3==1.26.6
 whitenoise==5.3.0
-./transformers
+.NLP/transformers
