@@ -1,7 +1,7 @@
 from django.db import models
 from QuestionGenerator.models import GeneratedQuestionBank
 from django.contrib.auth.models import User
-from Paths.models import PathwayCompletitionRecords
+#from Paths.models import PathwayCompletitionRecords
 
 class Quiz(models.Model):
     title = models.CharField(max_length=255)
@@ -48,9 +48,9 @@ class QuizAnswer(models.Model):
         return f"<QuizAnswer>"
 
 
-class QuizLectureCompletionRecord(models.Model):
-    RECORD_STATUS = (('first_completion', 'first_completion'),
-                    ('did_not_complete', 'did_not_complete'),
-                    ('recap_completion', 'recap_completion'))
-    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+# class QuizLectureCompletionRecord(models.Model):
+#     RECORD_STATUS = (('first_completion', 'first_completion'),
+#                     ('did_not_complete', 'did_not_complete'),
+#                     ('recap_completion', 'recap_completion'))
+#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)

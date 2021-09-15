@@ -7,9 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from ckeditor.fields import RichTextField
 from embed_video.fields import EmbedVideoField
 from rest_framework import serializers
-from Benchmark.models import Quiz
 from VideoLecture.models import VideoLecture
-from WrittenLecture.models import WrittenLecture
 
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')

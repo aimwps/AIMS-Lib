@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'forum',
     'Development',
     'Members',
-    'Paths',
     'ckeditor',
     'bootstrap_datepicker_plus',
     'embed_video',
@@ -46,6 +45,7 @@ INSTALLED_APPS = [
     'QuestionGenerator',
     'VideoLecture',
     'WrittenLecture',
+    'Paths',
     #'Benchmark'
 
 
