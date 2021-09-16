@@ -1,5 +1,6 @@
-
-from .models import Pathway, PathwayContentSetting, VideoLecture, WrittenLecture, PathwayContentSetting, Quiz, QuizQuestion, QuizAnswer, GeneratedQuestionBank
+from .models import Pathway, PathwayContentSetting, PathwayContentSetting
+from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
+from QuestionGenerator.models import GeneratedQuestionBank
 from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm, PathwayEditForm, WrittenLectureEditForm, BenchmarkNewForm
 from Members.models import MemberProfile
 from django.views.generic import TemplateView, CreateView, View, UpdateView
@@ -16,45 +17,9 @@ import json
 import requests
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from .benchmarkDev_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
-QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
 
 
-class UserBenchmarkEditView(View):
-    template_name = "user_benchmark_edit.html"
-    def get(self, request, benchmark_id):
-        abc = search_questions(request)
-        context = {}
-        benchmark = get_object_or_404(Quiz, id=benchmark_id)
-        gqb_json = json.dumps(list(GeneratedQuestionBank.objects.filter(generated_by=request.user.id).values()),
-                            sort_keys=True,
-                            indent=1,
-                            cls=DjangoJSONEncoder)
-        context['benchmark'] = benchmark
-        context["gqb_json"] = gqb_json
-        return render(request, self.template_name, context)
 
-class UserBenchmarksView(View):
-    template_name = "user_benchmarks.html"
-    def get(self, request):
-
-        context = {}
-        user_benchmarks = Quiz.objects.filter(author=request.user.id).order_by('-publish_date', '-publish_time')
-        print(user_benchmarks)
-        context['user_benchmarks'] = user_benchmarks
-        return render(request, self.template_name, context)
-
-class BenchmarkCreatorView(CreateView):
-    model = Quiz
-    form_class = BenchmarkNewForm
-    template_name = "create_benchmark.html"
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
 
 class PathwayView(View):
     template_name = "pathway_view.html"
@@ -152,10 +117,7 @@ class PathwayObjNew(View):
 
         return HttpResponseRedirect('/pathway/')
 
-class EditWrittenLectureView(UpdateView):
-    model= WrittenLecture
-    form_class = WrittenLectureEditForm
-    template_name = 'written_lecture_edit.html'
+
 
 class EditPathwayView(UpdateView):
     model= Pathway
@@ -174,33 +136,8 @@ class PathwayNew(CreateView):
         context = super().get_context_data(**kwargs)
         return context
 
-class VideoLectureNew(CreateView):
-    model = VideoLecture
-    form_class = VideoLectureNewForm
-    template_name = "video_lecture_new.html"
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        #context['aim_for_lever'] = Aim.objects.get(id=self.kwargs['aim_id'])
-        return context
-
-class WrittenLectureNew(CreateView):
-    model = WrittenLecture
-    form_class = WrittenLectureNewForm
-    template_name = "written_lecture_new.html"
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        #context['aim_for_lever'] = Aim.objects.get(id=self.kwargs['aim_id'])
-        return context
 
 class PathsHomeView(View):
     template_name = "paths.html"
@@ -235,20 +172,7 @@ class PathsHomeView(View):
             messages.success(request, 'the item was deleted successfully. BYE!')
         return HttpResponseRedirect(request.path)
 
-class VideoLectureView(View):
-    template_name = "video_lecture.html"
-    def get(self, request, vid_lec_id):
-        video = get_object_or_404(VideoLecture, id=vid_lec_id)
-        context = {'vid_lec':video}
-        return render(request, self.template_name, context)
 
-class WrittenLectureView(View):
-    template_name = "written_lecture.html"
-    def get(self, request, lit_lec_id):
-        literature = get_object_or_404(WrittenLecture, id=lit_lec_id)
-        context = {"lit_lec": literature}
-
-        return render(request, self.template_name, context)
 
 class QuestionGeneratorView(View):
     template_name="question_generator.html"
@@ -295,9 +219,3 @@ class QuestionGeneratorView(View):
                     print("duplicate found! not saving")
 
         return HttpResponseRedirect('/create_benchmark/#begin')
-
-class QuizView(TemplateView):
-    template_name = "quiz.html"
-    def get(self, request, quiz_id):
-        context = {}
-        return render(request, self.template_name, context)

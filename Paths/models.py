@@ -4,10 +4,11 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
-from ckeditor.fields import RichTextField
 from embed_video.fields import EmbedVideoField
 from rest_framework import serializers
 from VideoLecture.models import VideoLecture
+from WrittenLecture.models import WrittenLecture
+from Benchmark.models import Quiz
 
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
@@ -51,3 +52,24 @@ class PathwayCompletitionRecords(models.Model):
     record_date = models.DateField(auto_now_add=True)
     record_time = models.TimeField(auto_now_add=True)
     pathway_content = models.ForeignKey(PathwayContentSetting, on_delete=models.CASCADE)
+
+class VideoLectureCompletionRecord(models.Model):
+    RECORD_STATUS = (('first_completion', 'first_completion'),
+                    ('did_not_complete', 'did_not_complete'),
+                    ('recap_completion', 'recap_completion'))
+    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+
+class QuizLectureCompletionRecord(models.Model):
+    RECORD_STATUS = (('first_completion', 'first_completion'),
+                    ('did_not_complete', 'did_not_complete'),
+                    ('recap_completion', 'recap_completion'))
+    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+
+class WrittenLectureCompletionRecord(models.Model):
+    RECORD_STATUS = (('first_completion', 'first_completion'),
+                    ('did_not_complete', 'did_not_complete'),
+                    ('recap_completion', 'recap_completion'))
+    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
