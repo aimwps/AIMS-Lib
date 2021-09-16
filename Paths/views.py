@@ -1,7 +1,7 @@
 from .models import Pathway, PathwayContentSetting, PathwayContentSetting
 from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
 from QuestionGenerator.models import GeneratedQuestionBank
-from .forms  import VideoLectureNewForm, WrittenLectureNewForm, PathwayNewForm, PathwayObjNewForm, PathwayEditForm, WrittenLectureEditForm, BenchmarkNewForm
+from .forms import PathwayObjNewForm, PathwayEditForm, PathwayNewForm
 from Members.models import MemberProfile
 from django.views.generic import TemplateView, CreateView, View, UpdateView
 from django.http import HttpResponse
