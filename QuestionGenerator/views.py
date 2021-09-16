@@ -1,10 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import GeneratedQuestionBank
 from WrittenLecture.models import WrittenLecture
 from VideoLecture.models import VideoLecture
 from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
 from .sserializers import GeneratedQuestionBankSerializer
-from django.views.generic import CreateView, View
+from django.views.generic import CreateView, View, TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
 import requests
@@ -42,36 +42,48 @@ class QuestionGeneratorView(View):
             print("big errors")
             source_doc = ""
         clean_text = textpreperation_qag(source_doc, source_type)
-        django_rq.enqueue(getqag, )
-        context['questions'] = qas
-        context['number_of_questions'] = len(qas)
+        getqag.delay(clean_text, source_type, source_id, request.user.id)
+        return redirect('generator-pending',source_type=source_type, source_id=source_id)
+
+
+
+    # def post(self, request,source_type, source_id):
+    #     if "proofed_questions" in request.POST:
+    #         for i in range(int(request.POST.get('proofed_questions'))):
+    #             if f'proof_{i}' in request.POST:
+    #                 user_proof = request.POST.get(f'proof_{i}')
+    #             else:
+    #                 user_proof = "unknown"
+    #             new_question = request.POST.get(f"q_{i}")
+    #             new_answer = request.POST.get(f"a_{i}")
+    #             existing_gqb = list(GeneratedQuestionBank.objects.filter(question=new_question, answer=new_answer))
+    #             if len(existing_gqb) > 0:
+    #                 already_exists = True
+    #             else:
+    #                 already_exists = False
+    #             if not already_exists:
+    #                 gen_question = GeneratedQuestionBank(
+    #                         generated_by = self.request.user,
+    #                         source_type = source_type,
+    #                         source_id = source_id,
+    #                         question = new_question,
+    #                         answer = new_answer,
+    #                         user_proof = user_proof
+    #                         )
+    #                 gen_question.save()
+    #             else:
+    #                 print("duplicate found! not saving")
+    #
+    #     return HttpResponseRedirect('/create_benchmark/#begin')
+
+
+class QuestionGeneratorProof(View):
+    pass
+
+class QuestionGeneratorPending(View):
+    template_name = "generator_pending.html"
+    def get(self, request, source_type, source_id):
+        context = {}
+        context['source_type'] = source_type
+        context['source_id'] = source_id
         return render(request, self.template_name, context)
-
-    def post(self, request,source_type, source_id):
-        if "proofed_questions" in request.POST:
-            for i in range(int(request.POST.get('proofed_questions'))):
-                if f'proof_{i}' in request.POST:
-                    user_proof = request.POST.get(f'proof_{i}')
-                else:
-                    user_proof = "unknown"
-                new_question = request.POST.get(f"q_{i}")
-                new_answer = request.POST.get(f"a_{i}")
-                existing_gqb = list(GeneratedQuestionBank.objects.filter(question=new_question, answer=new_answer))
-                if len(existing_gqb) > 0:
-                    already_exists = True
-                else:
-                    already_exists = False
-                if not already_exists:
-                    gen_question = GeneratedQuestionBank(
-                            generated_by = self.request.user,
-                            source_type = source_type,
-                            source_id = source_id,
-                            question = new_question,
-                            answer = new_answer,
-                            user_proof = user_proof
-                            )
-                    gen_question.save()
-                else:
-                    print("duplicate found! not saving")
-
-        return HttpResponseRedirect('/create_benchmark/#begin')

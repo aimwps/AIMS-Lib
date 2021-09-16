@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Pathway{% endblock %}
+
+{% block modulenav %}
+{% include "pathway_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+<h1> {{ source_type }} ||| {{ source_id }}</h1>
+<div class="container">
+  <h4> We're working on it</h4>
+  <p class="lead">Depending on AIMS Library traffic this may take a moment</p>
+  <p> In the mean time you can continue to work on this pathway, including submitting more documents for question genreation</p>
+  <p> We will notify you when this task is complete</p>
+  <p> You'll be automatically taken back to your document in a few seconds, or select an option from the pathways menu</p>
+</div>
+
+{% endblock %}
