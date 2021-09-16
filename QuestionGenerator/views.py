@@ -6,11 +6,9 @@ from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
 from .sserializers import GeneratedQuestionBankSerializer
 from django.views.generic import CreateView, View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-
 import json
 import requests
-from .utils import textpreperation_qag
-from ..utils import getqag
+from .tasks import textpreperation_qag, getqag
 
 # Create your views here.
 def search_questions(request):
