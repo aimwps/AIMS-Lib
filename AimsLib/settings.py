@@ -81,7 +81,7 @@ TEMPLATES = [
 ]
 
 
-RQ_QUEUES = {
+CELERY_BROKER_URL = 'redis://localhost:6379'
 
 WSGI_APPLICATION = 'AimsLib.wsgi.application'
 
