@@ -15,6 +15,7 @@ urlpatterns = [
     path('', include('QuestionGenerator.urls')),
     path('Members/', include("django.contrib.auth.urls")),
     path('Members/', include('Members.urls')),
+    path('django-rq/', include('django_rq.urls')),
 ]
 
 if settings.DEBUG:

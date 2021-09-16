@@ -81,6 +81,8 @@ TEMPLATES = [
 ]
 
 
+RQ_QUEUES = {
+
 WSGI_APPLICATION = 'AimsLib.wsgi.application'
 
 

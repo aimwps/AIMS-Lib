@@ -10,7 +10,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
 import requests
 from .utils import textpreperation_qag
-from NLP.question_generation.pipelines import pipeline
+from ..utils import getqag
+
 # Create your views here.
 def search_questions(request):
     if request.method=="POST":
@@ -31,6 +32,7 @@ def search_questions(request):
             "benchmark_status":benchmark_qs.filter(generated_from=q.id).exists()})
         print(new_data)
         return JsonResponse(new_data, safe=False)
+
 class QuestionGeneratorView(View):
     template_name="question_generator.html"
     def get(self, request, source_type, source_id):
@@ -42,9 +44,7 @@ class QuestionGeneratorView(View):
             print("big errors")
             source_doc = ""
         clean_text = textpreperation_qag(source_doc, source_type)
-        QAG_NLP  = pipeline("question-generation", model="valhalla/t5-small-qg-prepend", qg_format="prepend")
-        qas = QAG_NLP(clean_text)
-        context = {}
+        django_rq.enqueue(getqag, )
         context['questions'] = qas
         context['number_of_questions'] = len(qas)
         return render(request, self.template_name, context)
