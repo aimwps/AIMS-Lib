@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, View
 from .forms import VideoLectureNewForm
 from .models import VideoLecture
+import json
+import requests
 # Create your views here.
 class VideoLectureView(View):
     template_name = "video_lecture.html"

@@ -1,7 +1,8 @@
 from django.db import models
 from QuestionGenerator.models import GeneratedQuestionBank
 from django.contrib.auth.models import User
-#from Paths.models import PathwayCompletitionRecords
+from django.urls import reverse
+
 
 class Quiz(models.Model):
     title = models.CharField(max_length=255)

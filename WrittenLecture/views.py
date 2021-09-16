@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, View, UpdateView
 from .forms import WrittenLectureNewForm, WrittenLectureEditForm
 from .models import WrittenLecture
+import json
+import requests
 # Create your views here.
 class WrittenLectureEdit(UpdateView):
     model= WrittenLecture

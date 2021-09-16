@@ -4,19 +4,15 @@ from QuestionGenerator.models import GeneratedQuestionBank
 from .forms import PathwayObjNewForm, PathwayEditForm, PathwayNewForm
 from Members.models import MemberProfile
 from django.views.generic import TemplateView, CreateView, View, UpdateView
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from ckeditor.fields import RichTextField
 from django.contrib import messages
 from NLP.question_generation.pipelines import pipeline
-from .utils import textpreperation_qag
 import json
 import requests
-from django.core.serializers.json import DjangoJSONEncoder
-from django.http import JsonResponse
 
 
 
@@ -52,7 +48,6 @@ class PathwayView(View):
         return HttpResponseRedirect(next)
 
 class PathwayObjNew(View):
-    #model = PathwayContentSetting
     form_class = PathwayObjNewForm
     template_name = "pathway_new_obj.html"
     def get(self, request, pathway_id):
@@ -117,8 +112,6 @@ class PathwayObjNew(View):
 
         return HttpResponseRedirect('/pathway/')
 
-
-
 class EditPathwayView(UpdateView):
     model= Pathway
     form_class = PathwayEditForm
@@ -135,9 +128,6 @@ class PathwayNew(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-
-
-
 
 class PathsHomeView(View):
     template_name = "paths.html"
@@ -171,51 +161,3 @@ class PathsHomeView(View):
             PathwayContentSetting.objects.filter(id=request.POST.get("delete_pathwayOBJ")).delete()
             messages.success(request, 'the item was deleted successfully. BYE!')
         return HttpResponseRedirect(request.path)
-
-
-
-class QuestionGeneratorView(View):
-    template_name="question_generator.html"
-    def get(self, request, source_type, source_id):
-        if source_type == 'literature':
-            source_doc = get_object_or_404(WrittenLecture, id=source_id).body
-        elif source_type == 'transcript':
-            source_doc = get_object_or_404(VideoLecture, id=source_id).transcript
-        else:
-            print("big errors")
-            source_doc = ""
-        clean_text = textpreperation_qag(source_doc, source_type)
-        qas = QAG_NLP(clean_text)
-        context = {}
-        context['questions'] = qas
-        context['number_of_questions'] = len(qas)
-        return render(request, self.template_name, context)
-
-    def post(self, request,source_type, source_id):
-        if "proofed_questions" in request.POST:
-            for i in range(int(request.POST.get('proofed_questions'))):
-                if f'proof_{i}' in request.POST:
-                    user_proof = request.POST.get(f'proof_{i}')
-                else:
-                    user_proof = "unknown"
-                new_question = request.POST.get(f"q_{i}")
-                new_answer = request.POST.get(f"a_{i}")
-                existing_gqb = list(GeneratedQuestionBank.objects.filter(question=new_question, answer=new_answer))
-                if len(existing_gqb) > 0:
-                    already_exists = True
-                else:
-                    already_exists = False
-                if not already_exists:
-                    gen_question = GeneratedQuestionBank(
-                            generated_by = self.request.user,
-                            source_type = source_type,
-                            source_id = source_id,
-                            question = new_question,
-                            answer = new_answer,
-                            user_proof = user_proof
-                            )
-                    gen_question.save()
-                else:
-                    print("duplicate found! not saving")
-
-        return HttpResponseRedirect('/create_benchmark/#begin')

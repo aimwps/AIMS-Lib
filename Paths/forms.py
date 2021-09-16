@@ -1,6 +1,9 @@
 from django import forms
 from .models import Pathway, PathwayContentSetting
 from bootstrap_datepicker_plus import DatePickerInput
+from Benchmark.models import Quiz
+from VideoLecture.models import VideoLecture
+from WrittenLecture.models import WrittenLecture
 
 
 class PathwayEditForm(forms.ModelForm):
@@ -23,6 +26,7 @@ class PathwayObjNewForm(forms.ModelForm):
                     'must_complete_previous': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
     def __init__(self, user=None, *args,**kwargs):
+        super(PathwayObjNewForm, self).__init__(*args, **kwargs)
         user_quiz = sorted([(q.id, str(q)) for q in Quiz.objects.filter(author=user)])
         user_lit = sorted([(l.id, str(l)) for l in WrittenLecture.objects.filter(author=user)])
         user_vid = sorted([(v.id, str(v)) for v in VideoLecture.objects.filter(author=user)])

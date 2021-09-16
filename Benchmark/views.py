@@ -1,10 +1,14 @@
-from django.shortcuts import render
-from .benchmark_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, CreateView, View
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Quiz, QuizQuestion, QuizAnswer
 from .forms import BenchmarkNewForm
-
-
+from .benchmark_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
+from QuestionGenerator.views import search_questions
+from QuestionGenerator.models import GeneratedQuestionBank
+import json
+import requests
+from django.core.serializers.json import DjangoJSONEncoder
 # Create your views here.
 def quick_add_gqb_info(request):
     gqb_id = json.loads(request.body).get("gqb_id")
