@@ -1,19 +1,35 @@
 {% extends 'base.html' %}
 {% block title %}Pathway{% endblock %}
 
+{% block topcarousel %}
+{% endblock %}
 {% block modulenav %}
 {% include "pathway_nav.html" %}
 {% endblock %}
 
 
 {% block content %}
-<h1> {{ source_type }} ||| {{ source_id }}</h1>
-<div class="container">
+<br>
+<div class="container text-center">
   <h4> We're working on it</h4>
   <p class="lead">Depending on AIMS Library traffic this may take a moment</p>
   <p> In the mean time you can continue to work on this pathway, including submitting more documents for question genreation</p>
-  <p> We will notify you when this task is complete</p>
-  <p> You'll be automatically taken back to your document in a few seconds, or select an option from the pathways menu</p>
+  <p> We will notify you when this task is complete.</p>
+  <p> You'll be automatically taken back to your document in a few seconds. </p>
+  <p> Alternatively select an option from the pathways menu or go back to the previous document by clicking below.</p>
+  <p> <a id='redirect_to_source' href="{% if source_type == 'literature' %}{% url 'written-lecture' source_id %}{% else %}{% url 'video-lecture' source_id %}{% endif %}">Back to: {{ source_object.title }}</a></p>
+
 </div>
 
 {% endblock %}
+{% block scripts %}
+  <script type="text/JavaScript">
+    var redirectLink = $('#redirect_to_source').attr('href');
+    $(window).on('load', function () {
+      window.setTimeout(function (){
+        window.location.href = redirectLink;
+      }, 20000)
+    });
+
+    </script>
+{% endblock scripts %}

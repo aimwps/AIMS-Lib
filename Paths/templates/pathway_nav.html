@@ -45,9 +45,30 @@
       <li class="nav-item">
         <a class="nav-link" href="#developer"><i class="fas fa-wrench"></i></a>
       </li>
+    </ul>
+    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+      <li id="verifyQAGstatus" class="nav-item">
+      </li>
       </ul>
 
     </div>
   </div>
 </nav>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function (){
+  checkGQBstatus();
+  setInterval(checkGQBstatus, 10000);
+});
+function checkGQBstatus(){
+  $.ajax({url: "/check-gqb-status/",
+          type: "POST",
+          success: function(response){
+            var textLink = '<a class="nav-link active" href="/verify-gqb/">['+response.gqb_quantity+' ready to verify]</a>'
+            if(response.gqb_quantity > 0){
+              $('#verifyQAGstatus').html(textLink)
+            };
+          }})
+}
+</script>

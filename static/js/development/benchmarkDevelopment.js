@@ -16,6 +16,7 @@ window.onload = function() {
   displayQaList();
 };
 
+
 // FOR SEARCHING GENERATED QUESTIONS BANK.......................................
 searchField.addEventListener('keyup', (e) => {
   const searchValue = e.target.value;
@@ -66,6 +67,9 @@ searchField.addEventListener('keyup', (e) => {
             <a class="nav-link" type="button" id="addToEditQuestion${item.question.id}" onClick="editSubmitGqb(${item.question.id})" class="text-primary">
               Edit before adding
             </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" onClick="clearGqb()">clear results</a>
           </li>`
         }
         })

@@ -9,7 +9,22 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
 import requests
 from .tasks import textpreperation_qag, getqag
+from django.db.models import Q
 
+class VerifyGqbView(View):
+    pass
+
+def check_gqb_status(request):
+    print("xxxx")
+    print(request)
+    print(request.method)
+    print(request.user)
+    print("xxxx")
+    if request.method=="POST":
+        outstanding_gqb = GeneratedQuestionBank.objects.filter(generated_by=request.user.id, user_proof="unknown")
+        print(outstanding_gqb)
+        data = {"gqb_quantity": len(outstanding_gqb)}
+    return JsonResponse(data, safe=False)
 # Create your views here.
 def search_questions(request):
     if request.method=="POST":
@@ -32,7 +47,6 @@ def search_questions(request):
         return JsonResponse(new_data, safe=False)
 
 class QuestionGeneratorView(View):
-    template_name="question_generator.html"
     def get(self, request, source_type, source_id):
         if source_type == 'literature':
             source_doc = get_object_or_404(WrittenLecture, id=source_id).body
@@ -46,37 +60,6 @@ class QuestionGeneratorView(View):
         return redirect('generator-pending',source_type=source_type, source_id=source_id)
 
 
-
-    # def post(self, request,source_type, source_id):
-    #     if "proofed_questions" in request.POST:
-    #         for i in range(int(request.POST.get('proofed_questions'))):
-    #             if f'proof_{i}' in request.POST:
-    #                 user_proof = request.POST.get(f'proof_{i}')
-    #             else:
-    #                 user_proof = "unknown"
-    #             new_question = request.POST.get(f"q_{i}")
-    #             new_answer = request.POST.get(f"a_{i}")
-    #             existing_gqb = list(GeneratedQuestionBank.objects.filter(question=new_question, answer=new_answer))
-    #             if len(existing_gqb) > 0:
-    #                 already_exists = True
-    #             else:
-    #                 already_exists = False
-    #             if not already_exists:
-    #                 gen_question = GeneratedQuestionBank(
-    #                         generated_by = self.request.user,
-    #                         source_type = source_type,
-    #                         source_id = source_id,
-    #                         question = new_question,
-    #                         answer = new_answer,
-    #                         user_proof = user_proof
-    #                         )
-    #                 gen_question.save()
-    #             else:
-    #                 print("duplicate found! not saving")
-    #
-    #     return HttpResponseRedirect('/create_benchmark/#begin')
-
-
 class QuestionGeneratorProof(View):
     pass
 
@@ -86,4 +69,9 @@ class QuestionGeneratorPending(View):
         context = {}
         context['source_type'] = source_type
         context['source_id'] = source_id
+        if source_type == "literature":
+            object = get_object_or_404(WrittenLecture, id=source_id)
+        else:
+            object = get_object_or_404(VideoLecture, id=source_id)
+        context['source_object'] = object
         return render(request, self.template_name, context)
