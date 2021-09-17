@@ -9,7 +9,8 @@ class GeneratedQuestionBank(models.Model):
     PROOF_OPTIONS = (("perfect", "perfect"),
                     ("editable", "editable"),
                     ("incorrect","incorrect"),
-                    ("unknown", "unknown"))
+                    ("unknown", "unknown"),
+                    ("trashed", "trashed"))
 
     generated_date = models.DateField(auto_now_add=True)
     generated_time = models.TimeField(auto_now_add=True)

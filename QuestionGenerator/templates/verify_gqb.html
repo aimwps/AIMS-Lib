@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pathway{% endblock %}
+
+{% block modulenav %}
+{% include "pathway_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+{% csrf_token %}
+<ul id='unverifiedGQB' class="list-group list-group-flush">
+
+</ul>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/QuestionGenerator/verifyGQB.js' %}"></script>
+{% endblock scripts %}

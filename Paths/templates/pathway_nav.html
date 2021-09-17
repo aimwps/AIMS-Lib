@@ -59,15 +59,17 @@
 <script type="text/javascript">
 $(document).ready(function (){
   checkGQBstatus();
-  setInterval(checkGQBstatus, 10000);
+  setInterval(checkGQBstatus, 500);
 });
 function checkGQBstatus(){
   $.ajax({url: "/check-gqb-status/",
-          type: "POST",
+          type: "GET",
           success: function(response){
             var textLink = '<a class="nav-link active" href="/verify-gqb/">['+response.gqb_quantity+' ready to verify]</a>'
             if(response.gqb_quantity > 0){
               $('#verifyQAGstatus').html(textLink)
+            }else{
+              $('#verifyQAGstatus').empty();
             };
           }})
 }

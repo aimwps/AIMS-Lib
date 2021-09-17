@@ -38,7 +38,6 @@ def get_answer_info(request):
     return JsonResponse(data, safe=False)
 def edit_answer(request):
     if request.method=="POST":
-        print(request.POST)
         answer = get_object_or_404(QuizAnswer, id=request.POST.get("answer_id"))
         answer.answer_text = request.POST.get("answer_text")
         answer_is_correct = eval(request.POST.get("is_correct").capitalize())
