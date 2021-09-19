@@ -51,6 +51,24 @@
 
     <!-- MAIN CONTENT
     ################################################################################# -->
+    {% block pageInfo %}
+      <div class="card text-center  border-0 navpad">
+        <div class="card-body">
+          <h5 class="card-title">
+            <br><br>
+            {% block pageInfo_title %}
+            HOME
+            {% endblock pageInfo_title %}
+          </h5>
+          <p class="card-text">
+            {% block pageInfo_message %}
+            Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+            {% endblock pageInfo_message %}
+          </p>
+        </div>
+      </div>
+    {% endblock pageInfo %}
+
         <div class="col-md-12 col-xs-12 rounded bg-white my-2">
           {% block modulenav %}
           {% include "base_nav.html" %}

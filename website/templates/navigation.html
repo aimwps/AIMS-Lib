@@ -8,20 +8,20 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'aims-dash' %}#myaims">My AIMS</a>
+          <a class="nav-link active" href="{% url 'aims-dash' %}">My AIMS</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Library</a>
+          <a class="nav-link disabled" href="#">Library</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'skill-paths' %}#begin">Pathways</a>
+          <a class="nav-link active" href="{% url 'skill-paths' %}">Pathways</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="{% url 'forum-home' %}#aimscategory">Community</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'forum-home' %}">Community</a>
         </li>
         {% if user.is_authenticated %}
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{ user.get_username }}
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">

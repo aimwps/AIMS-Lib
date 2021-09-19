@@ -1,13 +1,6 @@
 
-<div class="card text-center  border-0 navpad">
-
-  <div class="card-body">
-    <h5 class="card-title">PATHWAYS</h5>
-    <p class="card-text">Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking</p>
-  </div>
-</div>
 <div class="sticky-top navpad">
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-primary bg-white border border-primary">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">PATHWAYS</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,31 +12,31 @@
           Browse
         </span>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#"><i class="fas fa-file-alt"></i></a>
+          <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="tooltip" title="Written lectures created by you"><i class="fas fa-file-alt"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-file-video"></i></a>
+          <a class="nav-link active" href="#"  data-bs-toggle="tooltip" title="Video lectures created by you"><i class="fas fa-file-video"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'user-benchmarks' %}#begin"><i class="fas fa-file-signature"></i></a>
+          <a class="nav-link active" href="{% url 'user-benchmarks' %}"  data-bs-toggle="tooltip" title="Benchmarks created by you"><i class="fas fa-file-signature"></i></a>
         </li>
       <span class="navbar-text">
         Develop
       </span>
       <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="{% url 'new-written-lecture' %}#begin"><i class="fas fa-file-alt"></i></a>
+        <a class="nav-link active" aria-current="page" href="{% url 'new-written-lecture' %}"><i class="fas fa-file-alt"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'new-video-lecture' %}#begin"><i class="fas fa-file-video"></i></a>
+        <a class="nav-link active" href="{% url 'new-video-lecture' %}"><i class="fas fa-file-video"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'new-pathway' %}#begin"><i class="fas fa-file-signature"></i></a>
+        <a class="nav-link active" href="{% url 'new-pathway' %}"><i class="fas fa-file-signature"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'create-benchmark' %}#begin"><i class="fas fa-file-signature"></i></a>
+        <a class="nav-link active" href="{% url 'create-benchmark' %}"><i class="fas fa-file-signature"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#developer"><i class="fas fa-wrench"></i></a>
+        <a class="nav-link active" href="#developer"><i class="fas fa-wrench"></i></a>
       </li>
     </ul>
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">

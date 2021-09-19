@@ -1,10 +1,20 @@
 {% extends 'base.html' %}
+{% block title %}Pathways{% endblock %}
 
-{% block title %} Edit Literature{% endblock %}
-{% block modulenav %}
-{% include "pathway_nav.html" %}
+{% block topcarousel %}
 {% endblock %}
 
+{% block pageInfo_title %}
+PATHWAYS HOME
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
