@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block pageInfo_title %}
-PATHWAYS HOME
+PATHWAYS
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+Pathways are learnable content based on video lectures & written articles. User engagement is tested with benchmarks. Track your progression below and see an overview of pathways you're developing.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -25,7 +25,7 @@ Here you can track your pathway progress or develop your own. Pathway organises 
 
 <div class="row my-4">
 
-  <h4>Progression</h4>
+  <h4>Pathways you're completing</h4>
   <hr>
   <div class="row">
   {% for path, path_items in user_pathways.items %}
@@ -45,25 +45,25 @@ Here you can track your pathway progress or develop your own. Pathway organises 
         </div>
       </div>
     {% endfor %}
-    <hr>
+
     {% endfor %}
   </div>
 </div>
 <br/>
 
   <div class="row">
-      <h4>Development</h4>
+      <h4>Pathways you're developing</h4>
+       <hr>
  </div>
- <hr>
 
 <!-- ***********************************************************************************-->
 
 {% for path, path_items in developer_pathways.items %}
 <div class="row">
-    <div class="col-8">
-      <a href='{% url "view-pathway" path.id %}#begin'data-bs-toggle="tooltip" title="Go to this pathway"><h4> {{ path.title }}</h4></a>
+    <div class="col-6">
+      <a href='{% url "view-pathway" path.id %}#begin'data-bs-toggle="tooltip" title="Go to this pathway"><h5 class="mt-2"> {{ path.title }}</h5></a>
     </div>
-    <div class="col-4">
+    <div class="col-6">
       <ul class="nav justify-content-end">
         <li class="nav-item">
           <a class="nav-link active" href="{% url 'new-pathway-obj' path.pk %}#begin" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
@@ -99,7 +99,7 @@ Here you can track your pathway progress or develop your own. Pathway organises 
    </div>
  </div>
 </div>
- <div class="row">
+ <div class="container">
    {{ path.description }}
  </div>
   {% for path_content in path_items %}
@@ -111,18 +111,21 @@ Here you can track your pathway progress or develop your own. Pathway organises 
     <div class="col-3 mt-2">
       {{ path_content.content_type|title }}
     </div>
-    <div class="col-5 mt-2">
+    <div class="col-4 mt-2">
       {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}#begin">{{ path_content.written_lecture.title }}</a>{% endif %}
       {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}#begin">{{ path_content.video_lecture.title }}</a>{% endif %}
       {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
     </div>
-    <div class="col-3">
+    <div class="col-4">
       <ul class="nav justify-content-end">
         <li class="nav-item">
-          <a class="nav-link active" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move up in order"><i class="fas fa-chevron-up"></i></i></a>
+          <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move up in order"><i class="fas fa-chevron-up"></i></i></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="fas fa-chevron-down"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="far fa-edit"></i></a>
         </li>
         <li class="nav-item">
           <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathwayOBJ_delete_modal_{{ forloop.counter0 }}">

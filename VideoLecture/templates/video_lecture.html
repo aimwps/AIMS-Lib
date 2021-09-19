@@ -1,67 +1,33 @@
-{% extends 'base.html' %}
-{% load embed_video_tags %}
-{% block title %}Pathways{% endblock %}
+  {% extends 'base.html' %}
+  {% load embed_video_tags %}
+  {% block title %}Pathways{% endblock %}
 
-{% block topcarousel %}
-{% endblock %}
+  {% block topcarousel %}
+  {% endblock %}
 
-{% block pageInfo_title %}
-PATHWAYS HOME
-{% endblock pageInfo_title %}
+  {% block pageInfo_title %}
+  VIDEO LECTURE
+  {% endblock pageInfo_title %}
 
-{% block pageInfo_message %}
-Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
-{% endblock pageInfo_message %}
+  {% block pageInfo_message %}
+  This is a video lecture. Clear your mind, absorb knowledge. If you found the content helpful, give it a thumbs up! If you're the developer, use it to generate benchmark content from the pathways menu.
+  {% endblock pageInfo_message %}
 
-{% block modulenav %}
-  {% include "pathway_nav.html" %}
-{% endblock %}
+  {% block modulenav %}
+    {% include "pathway_nav.html" %}
+  {% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-<br/>
-  <h3 class="text-center">{{ vid_lec.title }}</h3>
-<br/>
-</div>
-  {% video vid_lec.video_link '100% x 50%' %}
-
-{% endblock %}
-
-{% block contentCarousel %}
-{% endblock %}
-
-{% block secondtopcontent %}
-{% if vid_lec.author.id == user.id %}
-
-<div class="row">
-  <h1 class="text-start">Develop</h1>
+  {% block content %}
+  <div class="container mt-4">
   <br/>
-  <div class="col-3">
+    <h3 class="text-center">{{ vid_lec.title }}</h3>
+  <br/>
   </div>
-  <div class="col-9">
-    <div class="bs-component">
-      <figure>
-        <blockquote class="blockquote">
-          <p>"Hey {{ user.get_username }} you are the author of this video study, you can use it to generate benchmark content for pathways.Do you need help with benchmark generation? check my <a href='#'>full guide</a></a>"
-             </p>
-        </blockquote>
-        <figcaption class="blockquote-footer">
-        AIMSducator <cite title="Source Title">Using AIMS-Lib</cite>
-        </figcaption>
-      </figure>
+  <div class="container">
+
+    <div class="d-flex justify-content-center">
+
+        {% video vid_lec.video_link  %}
     </div>
   </div>
-</div>
-{% endif %}
-{% endblock %}
-
-
-
-{% block bottomleftbar %}
-{% endblock %}
-
-{% block bottomcontent %}
-{% endblock %}
-
-{% block bottomrightbar  %}
-{% endblock %}
+  {% endblock %}
