@@ -1,34 +1,36 @@
 {% extends 'base.html' %}
-
-{% block title %} Select a Tracker{% endblock %}
-
+{% block title %}AIMS{% endblock %}
 
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfo_title %}
+TRACKER
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Time for action! A tracker records progress in changing your behaviours. There are many options from frequency to a minimum expected effort. Start small. Life is a marathon, not a sprint.
+If you're confused at this point, go back to our pathway article <a href="#">Crafting your future</a>.
+
+{% endblock pageInfo_message %}
 
 {% block modulenav %}
 {% include "aims_nav.html" %}
 {% endblock %}
 {% block content %}
-<div class="container">
-  <a class="anchor" id="begin"></a>
-</div>
-<br/>
-<h4>Add a tracker</h4>
-<br/>
-
-<div class="container">
+<div class="container my-4">
   <!-- Button trigger modal -->
-  <p class="lead"> "{{ on_lever.description }}"</p>
+  <div class="my-4">
+    <p class="lead text-center">"{{ on_lever.description }}"</p>
+  </div>
   <div class="accordion" id="AvailableTrackerAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
           Minimum to Aim tracker
         </button>
       </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#AvailableTrackerAccordion">
+      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#AvailableTrackerAccordion">
         <div class="accordion-body">
           <p>
           <strong>The Minimum to Aim tracker</strong> gives you an easily achievable 'show up' target alongside one that you know will bring the gains! This is invaluable when
@@ -53,8 +55,9 @@
 
                   {% endfor %}
                   {# {{ min_aim_form.as_table }} #}
-                  <input type="submit" name="min_aim_tracker_submit" value="Submit">
-
+                  <div class="container text-center my-4">
+                  <input type="submit" class="btn btn-primary" name="min_aim_tracker_submit" value="Begin this tracker">
+                </div>
               </form>
 
 
@@ -92,9 +95,10 @@
 
 
                   {% endfor %}
-                  {# {{ min_aim_form.as_table }} #}
-                  <input type="submit" name="boolean_submit" value="Submit">
+                  <div class="container text-center my-4">
 
+                  <input class="btn btn-primary" type="submit" name="boolean_submit" value="Begin this tracker">
+                </div>
               </form>
 
 

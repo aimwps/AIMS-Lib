@@ -41,7 +41,7 @@ Pathways are learnable content based on video lectures & written articles. User 
         <div class="col-8">
           {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}#begin">{{ path_content.written_lecture.title }}</a>{% endif %}
           {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}#begin">{{ path_content.video_lecture.title }}</a>{% endif %}
-          {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
+          {% if path_content.quiz %}<a href="{% url 'benchmark' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
         </div>
       </div>
     {% endfor %}
@@ -114,7 +114,7 @@ Pathways are learnable content based on video lectures & written articles. User 
     <div class="col-4 mt-2">
       {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}#begin">{{ path_content.written_lecture.title }}</a>{% endif %}
       {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}#begin">{{ path_content.video_lecture.title }}</a>{% endif %}
-      {% if path_content.quiz %}<a href="{% url 'quiz-app' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
+      {% if path_content.quiz %}<a href="{% url 'benchmark' path_content.quiz.id %}#begin">{{ path_content.quiz.title }}</a>{% endif %}
     </div>
     <div class="col-4">
       <ul class="nav justify-content-end">

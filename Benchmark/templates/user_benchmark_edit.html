@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
-
-{% block title %} Edit Benchmark{% endblock %}
+{% block title %}Pathways{% endblock %}
 
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfo_title %}
+EDITNG BENCHMARK
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+You can add new questions to your benchmark manually or by searching for questions you previously generated. Once added, click a question for other settings. You can set the answer style, supply incorrect answers for multiple-choice questions and set time constraints for answering.
+{% endblock pageInfo_message %}
+
 {% block modulenav %}
-{% include "pathway_nav.html" %}
+  {% include "pathway_nav.html" %}
 {% endblock %}
+
 
 
 {% block content %}

@@ -111,7 +111,9 @@ class LeverNewForm(forms.ModelForm):
         model = Lever
         fields = ('description',)
         widgets = {
-            'description': forms.TextInput(attrs = {'class': 'form-control'}),}
+            'description': forms.TextInput(attrs = {'class': 'form-control',
+                                                    'placeholder': 'Enter your new behaviour here - e.g. "I go to the gym" or "I do not smoke cigarettes"',
+                                                    }),}
 
 class AimNewForm(forms.ModelForm):
     class Meta:

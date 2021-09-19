@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
-
-{% block title %} Create a new Aim{% endblock %}
+{% block title %}AIMS{% endblock %}
 
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfo_title %}
+CREATING AN AIM
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Hey {{ user }}! Just by being here, you're taking a step closer to the future you desire. Set a category, change your aim, and your reasons why below. If you need help structuring a successful aim, check out our pathway article, <a href="#">Crafting your future</a>.
+{% endblock pageInfo_message %}
+
 {% block modulenav %}
 {% include "aims_nav.html" %}
-
 {% endblock %}
-
 
 {% block content %}
 <div class="container">

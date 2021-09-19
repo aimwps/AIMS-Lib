@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Pathways{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+MY BENCHMARKS
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+This is an overview of the benchmarks you have created. You'll see how they are being shared and other helpful stats on your content in the future.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  {% for obj in object_list %}
+  <div class="row">
+    <div class="col-10">
+      <p class="lead"><a href='{% url "benchmark" obj.id %}'>{{ obj.title }}</a></p>
+    </div>
+    <div class="col-2">
+          <a class="nav-link" href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit benchmark"><i class="far fa-edit"></i></a>
+    </div>
+  </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

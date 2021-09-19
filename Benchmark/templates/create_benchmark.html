@@ -5,23 +5,19 @@
 {% endblock %}
 
 {% block pageInfo_title %}
-PATHWAYS HOME
+CREATE BENCHMARK
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+You're creating a new benchmark, firstly set the title and then we'll begin adding questions.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
   {% include "pathway_nav.html" %}
 {% endblock %}
 {% block content %}
-<div class="container">
-  <a class="anchor" id="begin"></a>
-</div>
-<h4>Adding a new benchmark</h4>
-<p class="lead">Begin by giving a title to your benchmark</p>
-<div class="container">
+
+<div class="container my-4">
 
   <div class="form-group">
     <form method="post">

@@ -15,6 +15,4 @@ urlpatterns = [
     path('edit_pathway/<int:pk>/', EditPathwayView.as_view(), name="edit-pathway"),
 
 
-
-
 ]

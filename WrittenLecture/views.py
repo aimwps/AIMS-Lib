@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, View, UpdateView
+from django.views.generic import CreateView, View, UpdateView, ListView
 from .forms import WrittenLectureNewForm, WrittenLectureEditForm
 from .models import WrittenLecture
 import json
@@ -29,3 +29,14 @@ class WrittenLectureView(View):
         context = {"lit_lec": literature}
 
         return render(request, self.template_name, context)
+
+
+class WrittenLectureUserView(ListView):
+    model = WrittenLecture
+    paginate_by = 100  # if pagination is desired
+    template_name = "developer_written_lectures.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def get_queryset(self):
+        return WrittenLecture.objects.filter(author=self.request.user)

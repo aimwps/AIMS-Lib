@@ -164,7 +164,7 @@ CKEDITOR_CONFIGS = {
         'width': "100%",
     },
     'article_editor': {
-        'height': "100%",
+        'height': "500",
         'width': "100%",
         'toolbar': 'Custom',
         'toolbar_Custom':[

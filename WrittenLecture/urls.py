@@ -4,11 +4,13 @@ from .views import (
                     WrittenLectureView,
                     WrittenLectureNew,
                     WrittenLectureEdit,
+                    WrittenLectureUserView
 )
 
 urlpatterns = [
     path('written_lecture/<int:lit_lec_id>', WrittenLectureView.as_view(), name="written-lecture"),
     path('create_writtenlecture/', WrittenLectureNew.as_view(), name="new-written-lecture"),
     path('edit_literature/<int:pk>/', WrittenLectureEdit.as_view(), name="edit-literature"),
+    path('developer/written_articles/', WrittenLectureUserView.as_view(), name="user-dev-articles"),
 
 ]

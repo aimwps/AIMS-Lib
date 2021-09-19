@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
-
+{% block title %}AIMS{% endblock %}
 
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfo_title %}
+EDITING AIM
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Hey {{ user }}! Just by being here, you're taking a step closer to the future you desire. Set a category, change your aim, and your reasons why below. If you need help structuring a successful aim, check out our pathway article, <a href="#">Crafting your future</a>.
+{% endblock pageInfo_message %}
 
 {% block modulenav %}
 {% include "aims_nav.html" %}
@@ -11,20 +18,17 @@
 {% block content %}
 
 <div class="container">
-  <a class="anchor" id="begin"></a>
-</div>
-<br/>
-<h4> Eding aim</h4>
-<br/>
-
-<div class="container">
 
 
   <div class="form-group">
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-
+      {{ form.cateogory }}
+      <br>
+      {{ form.title }}
+      <br>
+      {{ form.why }}
+      <br>
       <!-- doing as_p decides the element that each will be created for each field -->
       <button class="btn btn-primary">Update</button>
       </form>

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView, CreateView, View
+from django.views.generic import TemplateView, CreateView, View, ListView
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse
 from .models import Quiz, QuizQuestion, QuizAnswer
 from .forms import BenchmarkNewForm
 from .benchmark_serializers import QuizQuestionSerializer, QuizSerializer, QuizAnswerSerializer,GeneratedQuestionBankSerializer
@@ -9,6 +10,21 @@ from QuestionGenerator.models import GeneratedQuestionBank
 import json
 import requests
 from django.core.serializers.json import DjangoJSONEncoder
+
+
+
+class BenchmarkUserView(ListView):
+    model = Quiz
+    paginate_by = 100  # if pagination is desired
+    template_name = "developer_benchmarks.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def get_queryset(self):
+        return Quiz.objects.filter(author=self.request.user).order_by('-publish_date', '-publish_time')
+
+
+
 # Create your views here.
 def quick_add_gqb_info(request):
     gqb_id = json.loads(request.body).get("gqb_id")
@@ -105,15 +121,7 @@ class UserBenchmarkEditView(View):
         context['benchmark'] = benchmark
         context["gqb_json"] = gqb_json
         return render(request, self.template_name, context)
-class UserBenchmarksView(View):
-    template_name = "user_benchmarks.html"
-    def get(self, request):
 
-        context = {}
-        user_benchmarks = Quiz.objects.filter(author=request.user.id).order_by('-publish_date', '-publish_time')
-        print(user_benchmarks)
-        context['user_benchmarks'] = user_benchmarks
-        return render(request, self.template_name, context)
 class BenchmarkCreatorView(CreateView):
     model = Quiz
     form_class = BenchmarkNewForm
@@ -125,8 +133,17 @@ class BenchmarkCreatorView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-class QuizView(TemplateView):
-    template_name = "quiz.html"
+
+    def get_success_url(self):
+        return reverse('edit-benchmark', kwargs={'benchmark_id' : self.object.pk})
+
+class QuizView(View):
+    template_name = "benchmark_view.html"
     def get(self, request, quiz_id):
         context = {}
+        benchmark_data = get_object_or_404(Quiz, id=quiz_id)
+        pure_data = QuizSerializer(benchmark_data).data
+
+        print(pure_data)
+        context['benchmark_data'] = pure_data
         return render(request, self.template_name, context)

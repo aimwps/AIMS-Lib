@@ -9,7 +9,7 @@ PATHWAYS
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-Pathways are learnable content based on video lectures & written articles. User engagement is tested with benchmarks. Track your progression below and see an overview of pathways you're developing. 
+Pathways are learnable content based on video lectures & written articles. User engagement is tested with benchmarks. Track your progression below and see an overview of pathways you're developing.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -68,7 +68,7 @@ Pathways are learnable content based on video lectures & written articles. User 
    <div class="col-5 mt-2">
      {% if pathway_obj.written_lecture %}<a href="{% url 'written-lecture' pathway_obj.written_lecture.id %}#begin">{{ pathway_obj.written_lecture.title }}</a>{% endif %}
      {% if pathway_obj.video_lecture %}<a href="{% url 'video-lecture' pathway_obj.video_lecture.id %}#begin">{{ pathway_obj.video_lecture.title }}</a>{% endif %}
-     {% if pathway_obj.quiz %}<a href="{% url 'quiz-app' pathway_obj.quiz.id %}#begin">{{ pathway_obj.quiz.title }}</a>{% endif %}
+     {% if pathway_obj.quiz %}<a href="{% url 'benchmark' pathway_obj.quiz.id %}#begin">{{ pathway_obj.quiz.title }}</a>{% endif %}
    </div>
    <div class="col-3">
      {% if user.is_authenticated %}

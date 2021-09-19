@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Pathways{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+MY VIDEO LECTURES
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+This is an overview of the video lectures you have created. You'll see how they are being shared and other helpful stats on your content in the future.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+<div class="d-flex justify-content-center">
+  {% for obj in object_list %}
+    <p class="lead"><a href='{% url "video-lecture" obj.id %}'>{{ obj.title }}</a></p>
+    {% endfor %}
+
+</div>
+</div>
+
+{% endblock %}

@@ -11,8 +11,14 @@ class Quiz(models.Model):
     publish_time = models.TimeField(auto_now_add=True)
     def __str__(self):
         return f"quiz_{self.id}"
-    def get_absolute_url(self):
-        return reverse('user-benchmarks')
+    def get_success_url(self):
+        return reverse('edit-benchmark', kwargs={'benchmark_id' : self.object.pk})
+
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(Quiz, self).get_form_kwargs(
+            *args, **kwargs)
+        return kwargs
+
 
 class QuizQuestion(models.Model):
 

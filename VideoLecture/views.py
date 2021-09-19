@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, View
+from django.views.generic import CreateView, View, ListView
 from .forms import VideoLectureNewForm
 from .models import VideoLecture
 import json
@@ -24,3 +24,12 @@ class VideoLectureNew(CreateView):
         context = super().get_context_data(**kwargs)
         #context['aim_for_lever'] = Aim.objects.get(id=self.kwargs['aim_id'])
         return context
+class VideoLectureUserView(ListView):
+    model = VideoLecture
+    paginate_by = 100  # if pagination is desired
+    template_name = "developer_video_lectures.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def get_queryset(self):
+        return VideoLecture.objects.filter(author=self.request.user)
