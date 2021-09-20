@@ -125,10 +125,11 @@ Pathways are learnable content based on video lectures & written articles. User 
   {% endfor %}
 
   {% if participation_status %}
-    You are already tracking this pathway
-        <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Stop tracking</a>
+    <p class="lead text-center my-4">You are already tracking your progress on this pathway</p>
+        <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Stop tracking</a></p>
   {% else %}
-    <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Start tracking</a>
+  <p class="lead text-center my-4">You are not tracking your progression on this pathway</p>
+  <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Start tracking</a></p>
     {% endif %}
 
     <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
@@ -143,7 +144,7 @@ Pathways are learnable content based on video lectures & written articles. User 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <form action="{% url 'view-pathway' path.id %}#begin" method="POST">
+            <form action="." method="POST">
               {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
             <button name="leave_pathway" value="{{path.id}}" class="btn btn-primary">Leave</button>
@@ -165,7 +166,7 @@ Pathways are learnable content based on video lectures & written articles. User 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <form action="{% url 'view-pathway' path.id %}#begin" method="POST">
+            <form action="." method="POST">
               {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
             <button name="join_pathway" value="{{path.id}}" class="btn btn-primary">Join</button>

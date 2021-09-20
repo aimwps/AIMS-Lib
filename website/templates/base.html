@@ -69,17 +69,14 @@
       </div>
     {% endblock pageInfo %}
 
-        <div class="col-md-12 col-xs-12 rounded bg-white my-2">
+        <div class="col my-2">
           {% block modulenav %}
-          {% include "base_nav.html" %}
+
           {% endblock %}
 
           {% block content %}
           {% endblock %}
         </div>
-
-    <!-- TOP RIGHT SIDE
-    ################################################################################# -->
 
 <!-- END OF TOP HALF CONTAINERS
 ################################################################################# -->
@@ -89,7 +86,6 @@
 <!--MID PAGECAROUSEL
 ################################################################################# -->
     {% block contentCarousel %}
-      {% include "base_main_carousel.html" %}
     {% endblock %}
 <!--END MID CAROUSEL
 ################################################################################# -->
@@ -99,33 +95,24 @@
 ################################################################################# -->
       <div class="container">
        <div class="row">
+         <div class="col my-2">
+           {% block bottomnav %}
 
-    <!-- BOTTOM LEFT BAR
-    ################################################################################# -->
+           {% endblock bottomnav %}
 
-
-    <!-- BOTTOM CENTER CONTENT
-    ################################################################################# -->
-        <div class="col-md-12 col-xs-12 bg-white my-2">
-          {% block modulenav_bottom %}
-          {% endblock %}
-          {% block bottomcontent %}
-          {% endblock %}
+        {% block bottomcontent %}
+        {% endblock %}
         </div>
-
-
-    <!-- bottom right bar
-    ################################################################################# -->
-
       </div>
     </div>
 
-
+    <!-- BOTTOM CAROSEUL
+    ################################################################################# -->
     {% block bottomcarousel %}
+    {% include "base_bottom_carousel.html" %}
     {% endblock %}
 
-<!-- BOTTOM NAV
-################################################################################# -->
+
     {% block scripts %}
     {% endblock scripts %}
 

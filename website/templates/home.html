@@ -1,102 +1,61 @@
 {% extends 'base.html' %}
 {% block title %}AIMS-LIB{% endblock %}
 {% load static %}
+{% block pageInfo_title %}
+AIMS LIBRARY
+{% endblock pageInfo_title %}
 
+{% block pageInfo_message %}
+Welcome to the home of personal & workplace development. We aim to use artificial intelligence to provide efficiency to workplaces. We are firm believers that time
+is the second most important resource. Our tools create time by automating aspects of your business.<br> Then, you can concentrate on the number one resource, people.
+<div class="row text-start my-4">
+  <h4 class="text-primary">AIMS</h4>
+    <hr>
+  <p>
+    I'm baby pug af pickled, art party activated charcoal bushwick post-ironic portland ramps four loko mustache. Wolf authentic lomo dreamcatcher pork belly deep v. Neutra coloring book craft beer copper mug migas. 8-bit slow-carb bushwick hoodie kogi flexitarian post-ironic, church-key pour-over bicycle rights taiyaki readymade 3 wolf moon. XOXO four dollar toast iPhone, disrupt umami marfa pour-over edison bulb PBR&B pug church-key humblebrag. Plaid gluten-free single-origin coffee +1 four loko fingerstache, retro stumptown wolf marfa edison bulb. Messenger bag photo booth austin williamsburg woke, XOXO occupy franzen bespoke freegan tote bag normcore.
+    Photo booth la croix shoreditch venmo. Poutine whatever offal, YOLO scenester locavore +1 pop-up glossier bushwick viral single-origin coffee retro green juice. Sustainable lumbersexual kale chips, vegan etsy adaptogen four loko aesthetic vexillologist letterpress truffaut synth. Blue bottle ugh twee, cliche pop-up humblebrag craft beer.
+  </p>
+</div>
+<div class="text-end row my-4">
+  <h4 class="text-primary">LIBRARY</h4>
+    <hr>
+  <p>
+    I'm baby pug af pickled, art party activated charcoal bushwick post-ironic portland ramps four loko mustache. Wolf authentic lomo dreamcatcher pork belly deep v. Neutra coloring book craft beer copper mug migas. 8-bit slow-carb bushwick hoodie kogi flexitarian post-ironic, church-key pour-over bicycle rights taiyaki readymade 3 wolf moon. XOXO four dollar toast iPhone, disrupt umami marfa pour-over edison bulb PBR&B pug church-key humblebrag. Plaid gluten-free single-origin coffee +1 four loko fingerstache, retro stumptown wolf marfa edison bulb. Messenger bag photo booth austin williamsburg woke, XOXO occupy franzen bespoke freegan tote bag normcore.
+    Photo booth la croix shoreditch venmo. Poutine whatever offal, YOLO scenester locavore +1 pop-up glossier bushwick viral single-origin coffee retro green juice. Sustainable lumbersexual kale chips, vegan etsy adaptogen four loko aesthetic vexillologist letterpress truffaut synth. Blue bottle ugh twee, cliche pop-up humblebrag craft beer.
+  </p>
+</div>
+<div class="text-start row my-4">
+  <h4 class=" text-primary">PATHWAYS</h4>
+    <hr>
+  <p>
+    I'm baby pug af pickled, art party activated charcoal bushwick post-ironic portland ramps four loko mustache. Wolf authentic lomo dreamcatcher pork belly deep v. Neutra coloring book craft beer copper mug migas. 8-bit slow-carb bushwick hoodie kogi flexitarian post-ironic, church-key pour-over bicycle rights taiyaki readymade 3 wolf moon. XOXO four dollar toast iPhone, disrupt umami marfa pour-over edison bulb PBR&B pug church-key humblebrag. Plaid gluten-free single-origin coffee +1 four loko fingerstache, retro stumptown wolf marfa edison bulb. Messenger bag photo booth austin williamsburg woke, XOXO occupy franzen bespoke freegan tote bag normcore.
+    Photo booth la croix shoreditch venmo. Poutine whatever offal, YOLO scenester locavore +1 pop-up glossier bushwick viral single-origin coffee retro green juice. Sustainable lumbersexual kale chips, vegan etsy adaptogen four loko aesthetic vexillologist letterpress truffaut synth. Blue bottle ugh twee, cliche pop-up humblebrag craft beer.
+  </p>
+</div>
+<div class="text-end row my-4">
+  <h4 class="text-primary">COMMUNITY</h4>
+  <hr>
+
+  <p>
+    I'm baby pug af pickled, art party activated charcoal bushwick post-ironic portland ramps four loko mustache. Wolf authentic lomo dreamcatcher pork belly deep v. Neutra coloring book craft beer copper mug migas. 8-bit slow-carb bushwick hoodie kogi flexitarian post-ironic, church-key pour-over bicycle rights taiyaki readymade 3 wolf moon. XOXO four dollar toast iPhone, disrupt umami marfa pour-over edison bulb PBR&B pug church-key humblebrag. Plaid gluten-free single-origin coffee +1 four loko fingerstache, retro stumptown wolf marfa edison bulb. Messenger bag photo booth austin williamsburg woke, XOXO occupy franzen bespoke freegan tote bag normcore.
+    Photo booth la croix shoreditch venmo. Poutine whatever offal, YOLO scenester locavore +1 pop-up glossier bushwick viral single-origin coffee retro green juice. Sustainable lumbersexual kale chips, vegan etsy adaptogen four loko aesthetic vexillologist letterpress truffaut synth. Blue bottle ugh twee, cliche pop-up humblebrag craft beer.
+  </p>
+</div>
+<div class="text-start row my-4">
+  <h4 class="text-primary">THE FUTURE</h4>
+<hr>
+  <p>
+    I'm baby pug af pickled, art party activated charcoal bushwick post-ironic portland ramps four loko mustache. Wolf authentic lomo dreamcatcher pork belly deep v. Neutra coloring book craft beer copper mug migas. 8-bit slow-carb bushwick hoodie kogi flexitarian post-ironic, church-key pour-over bicycle rights taiyaki readymade 3 wolf moon. XOXO four dollar toast iPhone, disrupt umami marfa pour-over edison bulb PBR&B pug church-key humblebrag. Plaid gluten-free single-origin coffee +1 four loko fingerstache, retro stumptown wolf marfa edison bulb. Messenger bag photo booth austin williamsburg woke, XOXO occupy franzen bespoke freegan tote bag normcore.
+    Photo booth la croix shoreditch venmo. Poutine whatever offal, YOLO scenester locavore +1 pop-up glossier bushwick viral single-origin coffee retro green juice. Sustainable lumbersexual kale chips, vegan etsy adaptogen four loko aesthetic vexillologist letterpress truffaut synth. Blue bottle ugh twee, cliche pop-up humblebrag craft beer.
+  </p>
+</div>
+
+{% endblock pageInfo_message %}
 {% block modulenav %}
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <div class="row">
-    <h1 class="text-start">CRAFT YOUR FUTURE</h1>
-    <br/>
-    <div class="col-4">
-      <img class="card-img-top" src="{% static 'media/web/l3.png' %}" alt="Card image cap">
-    </div>
-    <div class="col-8">
-      <div class="bs-component">
-        <figure>
-          <blockquote class="blockquote">
-            <p>“Every action you take is a vote for the type of person you wish to become. No single instance will transform your beliefs,
-              but as the votes build up, so does the evidence of your new identity” </p>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-          James Clear <cite title="Source Title">Atomic Habits</cite>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
-    <div class="row">
-      <p class="lead">Twee ugh irony raw denim you probably haven't heard of them wayfarers. </p>
-      <p> Hot chicken pork belly selfies street art mlkshk kickstarter +1 chillwave readymade humblebrag put a bird on it unicorn kale chips. Everyday carry forage hoodie, raw denim seitan wolf umami kombucha banjo keytar flexitarian farm-to-table chambray trust fund. Migas trust fund hoodie brooklyn cardigan, palo santo bicycle rights bespoke ramps shabby chic hell of kickstarter offal tumeric cloud bread. Pour-over waistcoat pickled seitan meditation. You probably haven't heard of them gastropub farm-to-table, sustainable leggings fam williamsburg locavore deep v stumptown.
 
-Raclette pitchfork leggings hashtag poutine lumbersexual. Drinking vinegar coloring book hell of, pickled whatever vegan fashion axe truffaut jianbing. Listicle tumeric hot chicken skateboard schlitz iPhone poke keffiyeh mustache. Kogi photo booth selvage synth food truck meggings hashtag.
-
-Kitsch hell of actually brunch craft beer tumblr vice blue bottle. Vexillologist dreamcatcher meditation thundercats normcore, craft beer mumblecore yr. Deep v poke humblebrag poutine ethical pitchfork squid. Fashion axe pug pickled gastropub portland everyday carry vape hammock asymmetrical pok pok vaporware taxidermy hot chicken ennui.</p>
-  </div>
-
-  <div class="row">
-
-    <h1 class="text-end">TAKE & MAKE AIMS</h1>
-    <br/>
-    <div class="col-9">
-      <div class="bs-component">
-        <figure>
-          <blockquote class="blockquote">
-            <p>“Every action you take is a vote for the type of person you wish to become. No single instance will transform your beliefs,
-              but as the votes build up, so does the evidence of your new identity” </p>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-          James Clear <cite title="Source Title">Atomic Habits</cite>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-  <div class="col-3">
-
-  </div>
 </div>
-  <div class="row">
-    <p class="lead">Twee ugh irony raw denim you probably haven't heard of them wayfarers. </p>
-    <p> Hot chicken pork belly selfies street art mlkshk kickstarter +1 chillwave readymade humblebrag put a bird on it unicorn kale chips. Everyday carry forage hoodie, raw denim seitan wolf umami kombucha banjo keytar flexitarian farm-to-table chambray trust fund. Migas trust fund hoodie brooklyn cardigan, palo santo bicycle rights bespoke ramps shabby chic hell of kickstarter offal tumeric cloud bread. Pour-over waistcoat pickled seitan meditation. You probably haven't heard of them gastropub farm-to-table, sustainable leggings fam williamsburg locavore deep v stumptown.
-
-  Raclette pitchfork leggings hashtag poutine lumbersexual. Drinking vinegar coloring book hell of, pickled whatever vegan fashion axe truffaut jianbing. Listicle tumeric hot chicken skateboard schlitz iPhone poke keffiyeh mustache. Kogi photo booth selvage synth food truck meggings hashtag.
-
-  Kitsch hell of actually brunch craft beer tumblr vice blue bottle. Vexillologist dreamcatcher meditation thundercats normcore, craft beer mumblecore yr. Deep v poke humblebrag poutine ethical pitchfork squid. Fashion axe pug pickled gastropub portland everyday carry vape hammock asymmetrical pok pok vaporware taxidermy hot chicken ennui.</p>
-  </div>
-</div>
-{% endblock %}
-
-{% block secondtopcontent %}
-<div class="container">
-  <div class="row">
-    <h1 class="text-start">CRAFT YOUR FUTURE</h1>
-    <br/>
-    <div class="col-3">
-    </div>
-    <div class="col-9">
-      <div class="bs-component">
-        <figure>
-          <blockquote class="blockquote">
-            <p>“Every action you take is a vote for the type of person you wish to become. No single instance will transform your beliefs,
-              but as the votes build up, so does the evidence of your new identity” </p>
-          </blockquote>
-          <figcaption class="blockquote-footer">
-          James Clear <cite title="Source Title">Atomic Habits</cite>
-          </figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
-    <div class="row">
-      <p class="lead">Twee ugh irony raw denim you probably haven't heard of them wayfarers. </p>
-      <p> Hot chicken pork belly selfies street art mlkshk kickstarter +1 chillwave readymade humblebrag put a bird on it unicorn kale chips. Everyday carry forage hoodie, raw denim seitan wolf umami kombucha banjo keytar flexitarian farm-to-table chambray trust fund. Migas trust fund hoodie brooklyn cardigan, palo santo bicycle rights bespoke ramps shabby chic hell of kickstarter offal tumeric cloud bread. Pour-over waistcoat pickled seitan meditation. You probably haven't heard of them gastropub farm-to-table, sustainable leggings fam williamsburg locavore deep v stumptown.
-
-Raclette pitchfork leggings hashtag poutine lumbersexual. Drinking vinegar coloring book hell of, pickled whatever vegan fashion axe truffaut jianbing. Listicle tumeric hot chicken skateboard schlitz iPhone poke keffiyeh mustache. Kogi photo booth selvage synth food truck meggings hashtag.
-
-Kitsch hell of actually brunch craft beer tumblr vice blue bottle. Vexillologist dreamcatcher meditation thundercats normcore, craft beer mumblecore yr. Deep v poke humblebrag poutine ethical pitchfork squid. Fashion axe pug pickled gastropub portland everyday carry vape hammock asymmetrical pok pok vaporware taxidermy hot chicken ennui.</p>
-  </div>
-</div>
-
 {% endblock %}

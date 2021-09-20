@@ -53,7 +53,6 @@ class PathwayDevelopView(View):
             return HttpResponseRedirect('/pathway/')
         if "delete_pathwayOBJ" in request.POST:
             pathway_content = PathwayContentSetting.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
-            print(pathway_content)
             pathway_content.delete()
         return HttpResponseRedirect(request.path)
 

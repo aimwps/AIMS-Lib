@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block pageInfo_title %}
-AIMS
+AIMS DASH
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-This content is still under development.<br> In the future, this is where you will complete the content and submit your results. Benchmarks can be customised to allow different formats of questions and completion times.
+Set your aims, behaviours & trackers below. Go to quickfire aims to log any outstanding trackers.<br> If your new, checkout the userguide or complete the pathway <a href="#">Crafting your future</a> before you proceed!
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -19,6 +19,7 @@ This content is still under development.<br> In the future, this is where you wi
 <div class="container">
   <a class="anchor" id="myaims"></a>
 </div>
+<div class="container">
   {% if user.is_authenticated %}
     {% if has_user_profile %}
       {% include "user_aims.html" %}
@@ -41,7 +42,6 @@ This content is still under development.<br> In the future, this is where you wi
           </div>
         </div>
       </div>
-      <br/>
       <p class="text-center"><a  href="{% url 'member-profile-create' %}#begin"> Activate member profile </a></p>
     {% endif %}
     {% else %}
@@ -64,16 +64,27 @@ This content is still under development.<br> In the future, this is where you wi
       </div>
     </div>
     {% endif %}
+  </div>
+    {% endblock %}
+    {% block contentCarousel %}
+      {% include "base_bottom_carousel.html" %}
     {% endblock %}
 
-    {% block modulenav_bottom %}
-    {% include "aims_nav.html" %}
-    {% endblock %}
+    {% block bottomnav %}
+      {% include "aims_nav.html" %}
+    {% endblock bottomnav %}
 
     {% block bottomcontent %}
-    {% if user.is_authenticated %}
-      {% if has_user_profile %}
-    {% include "quick_fire_aims.html" %}
-    {% endif %}
-    {% endif %}
+      {% if user.is_authenticated %}
+        {% if has_user_profile %}
+          <div class="container my-4">
+
+            {% include "quick_fire_aims.html" %}
+
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endblock %}
+
+    {% block bottomcarousel %}
     {% endblock %}
