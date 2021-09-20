@@ -17,5 +17,23 @@
 {% endblock %}
 
 {% block content %}
+<div class="container my-4">
 
+
+  <div class="form-group">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="text-center">
+        <select name="content_id" class="form-select" aria-label="Default select example">
+        <option selected>Select a pathway</option>
+          {% for choice in form_choices %}
+          <option value="{{choice.0}}">{{choice.1}}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="group_id" value="{{group_id}}">
+        <button name="create_group_pathway" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

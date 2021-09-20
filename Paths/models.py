@@ -17,11 +17,11 @@ class Pathway(models.Model):
     description = models.TextField(blank=True)
     def __str__(self):
         return f"pathway_{self.id}"
-    def get_success_url(self):
-        return reverse('', kwargs={'view-pathway' : self.object.pk})
+    # def get_success_url(self):
+    #     return reverse('', kwargs={'view-pathway' : self.object.pk})
 
     def get_form_kwargs(self, *args, **kwargs):
-        kwargs = super(Quiz, self).get_form_kwargs(
+        kwargs = super(Pathway, self).get_form_kwargs(
             *args, **kwargs)
         return kwargs
 
