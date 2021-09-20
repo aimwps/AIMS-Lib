@@ -1,3 +1,4 @@
 from django.contrib import admin
-
-# Register your models here.
+from .models import UserCreatedGroup, UserCreatedGroupContent
+admin.site.register(UserCreatedGroup)
+admin.site.register(UserCreatedGroupContent)
