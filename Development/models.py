@@ -17,13 +17,13 @@ METRIC_FREQ = (
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
 
-class SkillArea(models.Model):
-    skill_area_name = models.CharField(max_length=255)
-    created_date = models.DateField(auto_now_add=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    forum_rules = models.TextField()
-    def __str__(self):
-        return self.skill_area_name #This changes the displayed object name into relevant text information
+# class SkillArea(models.Model):
+#     skill_area_name = models.CharField(max_length=255)
+#     created_date = models.DateField(auto_now_add=True)
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     forum_rules = models.TextField()
+#     def __str__(self):
+#         return self.skill_area_name #This changes the displayed object name into relevant text information
 
 ## Base include 'Health', 'Mind Set', 'Skills'
 class DevelopmentCategory(models.Model):

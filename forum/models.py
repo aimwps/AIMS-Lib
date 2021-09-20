@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from datetime import datetime, date
-from Development.models import SkillArea, DevelopmentCategory
+from Development.models import DevelopmentCategory #,SkillArea
 from ckeditor.fields import RichTextField
 
 class VoteManager(models.Manager):
@@ -33,13 +33,6 @@ class VoteUpDown(models.Model):
 
     def __str__(self):
         return f"<VoteUpDown by {self.votee} is_up_vote: {self.is_up_vote}>"
-
-
-
-    # def get_absolute_url(self):
-    #     return reverse('forum-home')
-    #     #return reverse('home')
-
 
 class CommentManager(models.Manager):
     def filter_by_instance(self,instance):
