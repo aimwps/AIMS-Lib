@@ -12,6 +12,7 @@ from django.db.models import Q
 import calendar
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
@@ -25,28 +26,38 @@ def get_category_path(cat, current_path=""):
         new_path += current_path
         return new_path
 
-class AimEdit(UpdateView):
+class AimEdit(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= Aim
     form_class = AimNewForm
     template_name = 'aim_edit.html'
 
-class LeverEdit(UpdateView):
+class LeverEdit(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= Lever
     form_class = LeverNewForm
     template_name = 'lever_edit.html'
 
 
-class TrackerMinAimEdit(UpdateView):
+class TrackerMinAimEdit(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= TrackerMinAim
     form_class = TrackerMinAimNewForm
     template_name = 'tracker_minaim_edit.html'
 
-class TrackerBooleanEdit(UpdateView):
+class TrackerBooleanEdit(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= TrackerBoolean
     form_class = TrackerBooleanNewForm
     template_name = 'tracker_boolean_edit.html'
 
-class LogAnyTracker(View):
+class LogAnyTracker(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "new_tracker_log.html"
     def get(self, request, tracker_type, tracker_id):
         context = {
@@ -82,7 +93,9 @@ class LogAnyTracker(View):
 
 
 
-class AssignTrackerView(View):
+class AssignTrackerView(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "tracker_select.html"
 
     def get(self, request, lever_id):
@@ -145,7 +158,9 @@ class AssignTrackerView(View):
 
 
 # Create your views here.
-class LeverNew(CreateView):
+class LeverNew(LoginRequiredMixin, CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Lever
     form_class = LeverNewForm
     template_name = "lever_new.html"
@@ -171,7 +186,9 @@ class LeverNew(CreateView):
 
 
 
-class AimNew(CreateView):
+class AimNew(LoginRequiredMixin, CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Aim
     form_class = AimNewForm
     template_name = "aim_new.html"
@@ -196,7 +213,9 @@ class AimNew(CreateView):
             context['nav_data'] = nav_data[0]
         return context
 
-class AimView(TemplateView):
+class AimView(LoginRequiredMixin, TemplateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "aims.html"
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
@@ -208,7 +227,9 @@ class AimView(TemplateView):
         return context
 
 
-class AimsDash(TemplateView):
+class AimsDash(LoginRequiredMixin, TemplateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "aims_dash.html"
     #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):

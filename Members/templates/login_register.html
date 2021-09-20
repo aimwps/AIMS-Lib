@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+REGISTRATION REQUIRED
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+You are trying to access content that requires registration to use. Registration only takes a few moments and then you'll have full access to all our tools.
+You can follow the link below to register, alternatively if you are already member simply login!
+{% endblock pageInfo_message %}
+
+{% block content %}
+<div class="container text-center my-4">
+  <p class="text-center my-2"><a class="btn btn-primary" href="{% url 'member-register' %}">Register</a></p>
+  <p class="text-center my-2"><a class="btn btn-primary" href="{% url 'login' %}">Login</a></p>
+
+</div>
+
+{% endblock %}

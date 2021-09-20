@@ -8,7 +8,7 @@ urlpatterns = [
     path('password/', MemberEditPasswordView.as_view()),
     path('<int:pk>/profile/', MemberProfileView.as_view(), name='member-profile'),
     path('create_profile/', MemberProfileCreate.as_view(), name='member-profile-create'),
-    path('edit_profile/<int:pk>', MemberProfileEdit.as_view(), name='member-profile-edit')
+    path('edit_profile/<int:pk>', MemberProfileEdit.as_view(), name='member-profile-edit'),
     #path('password/', auth_views.PasswordChangeView.as_view(template_name='registration/change_password.html')),
 
     #path('login/', MemberRegisterView.as_view(), name='member-login')

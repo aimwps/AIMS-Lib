@@ -10,13 +10,18 @@ import json
 import requests
 from .tasks import textpreperation_qag, getqag
 from django.db.models import Q
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 def submit_status_change(request):
     if request.method=="POST":
         gqb = get_object_or_404(GeneratedQuestionBank, id=request.POST.get('submit_id'))
         gqb.user_proof = request.POST.get('submit_status')
         gqb.save()
         return JsonResponse({"Success":"success"})
-class VerifyGqbView(View):
+class VerifyGqbView(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "verify_gqb.html"
     def get(self, request):
         context = {}
@@ -54,7 +59,9 @@ def search_questions(request):
         print(new_data)
         return JsonResponse(new_data, safe=False)
 
-class QuestionGenerator(View):
+class QuestionGenerator(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     def get(self, request, source_type, source_id):
         if source_type == 'literature':
             source_doc = get_object_or_404(WrittenLecture, id=source_id).body
@@ -68,8 +75,7 @@ class QuestionGenerator(View):
         return redirect('generator-pending',source_type=source_type, source_id=source_id)
 
 
-class QuestionGeneratorProof(View):
-    pass
+
 
 class QuestionGeneratorPending(View):
     template_name = "generator_pending.html"

@@ -13,10 +13,9 @@ from django.contrib import messages
 from NLP.question_generation.pipelines import pipeline
 import json
 import requests
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class PathwayView(DetailView):
-
     model = Pathway
     template_name = "pathway_view.html"
     def get_context_data(self, **kwargs):
@@ -24,7 +23,9 @@ class PathwayView(DetailView):
         return context
 
 
-class PathwayDevelopView(View):
+class PathwayDevelopView(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'    
     template_name = "pathway_dev_view.html"
 
     def get(self, request, pathway_id):
@@ -57,10 +58,14 @@ class PathwayDevelopView(View):
         return HttpResponseRedirect(request.path)
 
 
-class PathwayObjNew(View):
+class PathwayObjNew(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     form_class = PathwayObjNewForm
     template_name = "pathway_new_obj.html"
     def get(self, request, pathway_id):
+        if not request.user.is_authenticated:
+            return reverse("login-or-register")
         context = {
         "on_pathway": Pathway.objects.get(id=pathway_id),
         "form": PathwayObjNewForm(user=request.user)}
@@ -122,12 +127,16 @@ class PathwayObjNew(View):
 
         return HttpResponseRedirect('/pathway/')
 
-class EditPathwayView(UpdateView):
+class EditPathwayView(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= Pathway
     form_class = PathwayEditForm
     template_name = 'pathway_edit.html'
 
-class PathwayNew(CreateView):
+class PathwayNew(LoginRequiredMixin, CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Pathway
     form_class = PathwayNewForm
     template_name = "pathway_new.html"
@@ -141,9 +150,12 @@ class PathwayNew(CreateView):
     def get_success_url(self):
         return reverse('new-pathway-obj', kwargs={'pathway_id' : self.object.pk})
 
-class PathsHomeView(View):
+class PathsHomeView(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "paths.html"
     def get(self, request):
+
         context = {}
         user_pathway_data = {}
         if self.request.user.is_authenticated:

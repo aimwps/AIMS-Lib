@@ -4,12 +4,19 @@ from .forms import WrittenLectureNewForm, WrittenLectureEditForm
 from .models import WrittenLecture
 import json
 import requests
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 # Create your views here.
-class WrittenLectureEdit(UpdateView):
+class WrittenLectureEdit(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= WrittenLecture
     form_class = WrittenLectureEditForm
     template_name = 'written_lecture_edit.html'
-class WrittenLectureNew(CreateView):
+
+class WrittenLectureNew(LoginRequiredMixin, CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = WrittenLecture
     form_class = WrittenLectureNewForm
     template_name = "written_lecture_new.html"
@@ -31,7 +38,9 @@ class WrittenLectureView(View):
         return render(request, self.template_name, context)
 
 
-class WrittenLectureUserView(ListView):
+class WrittenLectureUserView(LoginRequiredMixin, ListView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = WrittenLecture
     paginate_by = 100  # if pagination is desired
     template_name = "developer_written_lectures.html"

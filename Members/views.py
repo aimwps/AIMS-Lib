@@ -7,8 +7,8 @@ from django.urls import reverse_lazy, reverse
 from .forms import MemberRegisterForm, MemberEditForm, MemberEditPasswordForm
 from django.contrib.auth.views import PasswordChangeView
 from .models import MemberProfile
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-# Create your views here.
 
 class MemberRegisterView(generic.CreateView):
     form_class = MemberRegisterForm
@@ -41,7 +41,9 @@ class MemberProfileView(generic.DetailView):
         return context
 
 
-class MemberProfileCreate(generic.CreateView):
+class MemberProfileCreate(LoginRequiredMixin, generic.CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = MemberProfile
     form_class = MemberProfileForm
     template_name ="registration/create_profile.html"
@@ -51,7 +53,9 @@ class MemberProfileCreate(generic.CreateView):
         form.instance.user_profile = self.request.user
         return super().form_valid(form)
 
-class MemberProfileEdit(generic.UpdateView):
+class MemberProfileEdit(LoginRequiredMixin, generic.UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = MemberProfile
     form_class = MemberProfileForm
     template_name ="registration/edit_profile.html"

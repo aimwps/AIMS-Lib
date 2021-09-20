@@ -8,9 +8,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-
-
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
@@ -335,12 +333,17 @@ def ForumTopicView(request, pk):
 
 ###############################################################################################
 ### For viewing a topic, replying and making comments
-class ForumTopicNew(CreateView):
+class ForumTopicNew(LoginRequiredMixin,CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+
     model = Post
     form_class = ForumTopicNewForm
     template_name = "forum_topic_new.html"
 
-class ForumTopicReply(CreateView):
+class ForumTopicReply(LoginRequiredMixin,CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Reply
     form_class = ForumTopicReplyForm
     template_name = "forum_topic_reply.html"
@@ -360,7 +363,9 @@ class ForumTopicReply(CreateView):
         messages.success(self.request, 'Your reply has been posted successfully')
         return super().form_valid(form)
 
-class ForumTopicNewCat(CreateView):
+class ForumTopicNewCat(LoginRequiredMixin,CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Post
     form_class = ForumTopicNewCatForm
     template_name = "forum_topic_new_cat.html"
@@ -384,13 +389,17 @@ class ForumTopicNewCat(CreateView):
         messages.success(self.request, 'Your Topic has been posted successfully')
         return super().form_valid(form)
 
-class ForumTopicEdit(UpdateView):
+class ForumTopicEdit(LoginRequiredMixin,UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= Post
     form_class = ForumTopicEditForm
     template_name = 'forum_topic_edit.html'
     #fields = ('title', 'skill_area', 'body')
 
-class ForumTopicDelete(DeleteView):
+class ForumTopicDelete(LoginRequiredMixin,DeleteView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model= Post
     template_name = 'forum_topic_delete.html'
     success_url = reverse_lazy('home')

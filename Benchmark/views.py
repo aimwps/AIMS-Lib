@@ -10,10 +10,12 @@ from QuestionGenerator.models import GeneratedQuestionBank
 import json
 import requests
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-
-class BenchmarkUserView(ListView):
+class BenchmarkUserView(LoginRequiredMixin, ListView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Quiz
     paginate_by = 100  # if pagination is desired
     template_name = "developer_benchmarks.html"
@@ -108,7 +110,9 @@ def create_qa_pair(request):
 
         return HttpResponse(response)
 
-class UserBenchmarkEditView(View):
+class UserBenchmarkEditView(LoginRequiredMixin,View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     template_name = "user_benchmark_edit.html"
     def get(self, request, benchmark_id):
         abc = search_questions(request)
@@ -122,7 +126,9 @@ class UserBenchmarkEditView(View):
         context["gqb_json"] = gqb_json
         return render(request, self.template_name, context)
 
-class BenchmarkCreatorView(CreateView):
+class BenchmarkCreatorView(LoginRequiredMixin, CreateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
     model = Quiz
     form_class = BenchmarkNewForm
     template_name = "create_benchmark.html"
