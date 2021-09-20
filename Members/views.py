@@ -3,7 +3,7 @@ from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from .forms import MemberProfileForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from .forms import MemberRegisterForm, MemberEditForm, MemberEditPasswordForm
 from django.contrib.auth.views import PasswordChangeView
 from .models import MemberProfile
@@ -55,8 +55,9 @@ class MemberProfileEdit(generic.UpdateView):
     model = MemberProfile
     form_class = MemberProfileForm
     template_name ="registration/edit_profile.html"
-    success_url = reverse_lazy('aims-dash')
 
+    def get_success_url(self):
+        return reverse('member-profile', kwargs={"pk": self.request.user.profile.id})
     def get_context_data(self,*args, **kwargs):
         #users = MemberProfile.objects.all()
         context = super(MemberProfileEdit, self).get_context_data(*args, **kwargs)

@@ -25,8 +25,7 @@
             {{ user.get_username }}
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{% url 'member-profile' user.pk %}">Profile</a></li>
-            <li><a class="dropdown-item" href="{% url 'aims-dash' %}">AIMS</a></li>
+            <li><a class="dropdown-item" href="{% url 'member-profile' user.profile.id %}">Profile</a></li>
             <li><a class="dropdown-item" href="{% url 'member-edit' %}">Account settings</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
