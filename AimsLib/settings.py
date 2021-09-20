@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'VideoLecture',
     'WrittenLecture',
     'Paths',
+    'ShareContent'
     #'Benchmark'
 
 

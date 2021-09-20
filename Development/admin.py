@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import SkillArea, DevelopmentCategory, Lever, Aim,TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
-admin.site.register(SkillArea)
+from .models import DevelopmentCategory, Lever, Aim,TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
 admin.site.register(DevelopmentCategory)
 admin.site.register(Lever)
 admin.site.register(Aim)

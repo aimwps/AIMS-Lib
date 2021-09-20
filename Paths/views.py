@@ -10,7 +10,6 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from ckeditor.fields import RichTextField
 from django.contrib import messages
-from NLP.question_generation.pipelines import pipeline
 import json
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -25,7 +24,7 @@ class PathwayView(DetailView):
 
 class PathwayDevelopView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
-    redirect_field_name = 'redirect_to'    
+    redirect_field_name = 'redirect_to'
     template_name = "pathway_dev_view.html"
 
     def get(self, request, pathway_id):
@@ -64,8 +63,6 @@ class PathwayObjNew(LoginRequiredMixin, View):
     form_class = PathwayObjNewForm
     template_name = "pathway_new_obj.html"
     def get(self, request, pathway_id):
-        if not request.user.is_authenticated:
-            return reverse("login-or-register")
         context = {
         "on_pathway": Pathway.objects.get(id=pathway_id),
         "form": PathwayObjNewForm(user=request.user)}

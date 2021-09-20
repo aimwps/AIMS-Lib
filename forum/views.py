@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View,ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, FormView
 from .models import Post, Comment, Reply, VoteUpDown
-from Development.models import SkillArea, DevelopmentCategory
+from Development.models import DevelopmentCategory
 from .forms import ForumTopicNewForm, ForumTopicEditForm, ForumTopicCommentForm, ForumTopicReplyForm, ForumTopicNewCatForm
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator

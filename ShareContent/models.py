@@ -6,11 +6,13 @@ from django.urls import reverse
 
 class UserCreatedGroup(models.Model):
     name = models.CharField(max_length=255)
-    founder = models.ForeignKey(User, on_delete=models.SET_NULL)
-    members = models.ManytoMany(User)
+    founder = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="founder")
+    members = models.ManyToManyField(User,related_name="group_members")
     created_date = models.DateField(auto_now=False, auto_now_add = True)
     created_time = models.TimeField(auto_now=False, auto_now_add = True)
 
+    def __str__(self):
+        return "".join([c for c in self.name.split() if c != " "]) + "UserGroup"
 
 class UserCreatedGroupManager(models.Manager):
     def filter_by_instance(self,instance):
@@ -18,6 +20,7 @@ class UserCreatedGroupManager(models.Manager):
         content_type = ContentType.objects.get_for_model(instance)
         qs = super(UserCreatedGroupManager, self).filter(content_type=content_type, object_id=obj_id)
         return qs
+
 
 
 class UserCreatedGroupContent(models.Model):
