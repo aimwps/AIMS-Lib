@@ -1,49 +1,40 @@
 
 <div class="sticky-top navpad">
-<nav class="navbar navbar-expand-lg navbar-primary bg-white border border-primary">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border border-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'skill-paths' %}">PATHWAYS</a>
+    <a class="navbar-brand text-primary" href="{% url 'skill-paths' %}">PATHWAYS</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <span class="navbar-text">
-          Browse
-        </span>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'user-dev-articles' %}" data-bs-toggle="tooltip" title="Written lectures created by you"><i class="fas fa-file-alt"></i></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'user-dev-videos' %}"  data-bs-toggle="tooltip" title="Video lectures created by you"><i class="fas fa-file-video"></i></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'user-dev-benchmarks' %}"  data-bs-toggle="tooltip" title="Benchmarks created by you"><i class="fas fa-file-signature"></i></a>
-        </li>
-      <span class="navbar-text">
-        Develop
-      </span>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="{% url 'new-written-lecture' %}"><i class="fas fa-file-alt"></i></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="{% url 'new-video-lecture' %}"><i class="fas fa-file-video"></i></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="{% url 'new-pathway' %}"><i class="fas fa-file-signature"></i></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="{% url 'create-benchmark' %}"><i class="fas fa-file-signature"></i></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="#developer"><i class="fas fa-wrench"></i></a>
-      </li>
-    </ul>
+      <ul class="navbar-nav me-auto ms-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Browse
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="{% url 'user-dev-articles' %}">My Articles</a></li>
+              <li><a class="dropdown-item" href="{% url 'user-dev-videos' %}">My Videos</a></li>
+              <li><a class="dropdown-item" href="{% url 'user-dev-benchmarks' %}">My Benchmarks</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Develop
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="{% url 'new-written-lecture' %}">Create Article</a></li>
+                <li><a class="dropdown-item" href="{% url 'new-video-lecture' %}">Create Video</a></li>
+                <li><a class="dropdown-item" href="{% url 'create-benchmark' %}">Create Benchmark</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'new-pathway' %}">New Pathway</a></li>
+              </ul>
+          </li>
+      </ul>
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
       <li id="verifyQAGstatus" class="nav-item">
       </li>
       </ul>
-
     </div>
   </div>
 </nav>
