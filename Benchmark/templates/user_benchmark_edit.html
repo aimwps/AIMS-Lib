@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block pageInfo_title %}
-EDITNG BENCHMARK
+<a id="begin">EDITNG BENCHMARK</a>
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
@@ -23,7 +23,7 @@ You can add new questions to your benchmark manually or by searching for questio
 {% if user.is_authenticated %}
   {% if user.id == benchmark.author.id %}
   <div class="container my-4">
-    <h4 id="begin" class="text-center">{{ benchmark.title }}</h4>
+    <h4 class="text-center">{{ benchmark.title }}</h4>
     <div class="container">
       <div class="row my-2">
           <div class="form my-2">

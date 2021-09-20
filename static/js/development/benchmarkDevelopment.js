@@ -115,7 +115,7 @@ function editSubmitGqb(gqb_id){
     $('#answerField').val(gqb_item.answer);
     $('#generatedFromGqbId').val(gqb_item.id);
     $('#hasBeenModified').val(1);
-    $('#begin').scrollIntoView();
+    scrollToAnchor();
   });
 };
 
@@ -197,7 +197,6 @@ function editAnswer(answerID){
     $('#answerModalAnswerTextInput').val(answer.answer.answer_text);
     $('#answerModalQuestion').text(answer.question);
     $('#answerModalCorrectInput').val(answer.answer.is_correct.toString()).change();
-
   })
 };
 answerEditForm.addEventListener('submit', function(e){
@@ -259,4 +258,8 @@ function questionEditSubmit(){
 
 function clearQuick(){
   displayQaList();
+}
+function scrollToAnchor(){
+    var aTag = $("#begin");
+    $('html,body').animate({scrollTop: aTag.offset().top},'fast');
 }
