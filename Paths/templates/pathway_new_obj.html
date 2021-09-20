@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block pageInfo_title %}
-PATHWAYS HOME
+ADD CONTENT TO PATHWAY
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+Here you can add content to your pathway. Select the article, video or benchmark tab.  You can add anything you've created or tagged to the pathway. We will place it at the end, but you can change this later.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -17,18 +17,14 @@ Here you can track your pathway progress or develop your own. Pathway organises 
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <a class="anchor" id="begin"></a>
-</div>
-<h3>What item do you want to add to the "{{ on_pathway.title }}" pathway?</h3>
 
-<br/>
-<div class="container">
+<div class="container my-4">
+  <h4>What item do you want to add to the "{{ on_pathway.title }}" pathway?</h4>
   <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-      <button class="nav-link active" id="lit-lec-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Literature</button>
-      <button class="nav-link" id="vid-lec-tab" data-bs-toggle="tab" data-bs-target="#vid-lec" type="button" role="tab" aria-controls="vid-lec" aria-selected="false">Video</button>
-      <button class="nav-link" id="benchmark-tab" data-bs-toggle="tab" data-bs-target="#benchmark" type="button" role="tab" aria-controls="benchmark" aria-selected="false">Benchmark</button>
+      <button class="nav-link active  ms-auto me-auto" id="lit-lec-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Article</button>
+      <button class="nav-link  ms-auto me-auto" id="vid-lec-tab" data-bs-toggle="tab" data-bs-target="#vid-lec" type="button" role="tab" aria-controls="vid-lec" aria-selected="false">Video</button>
+      <button class="nav-link  ms-auto me-auto" id="benchmark-tab" data-bs-toggle="tab" data-bs-target="#benchmark" type="button" role="tab" aria-controls="benchmark" aria-selected="false">Benchmark</button>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -52,7 +48,10 @@ Here you can track your pathway progress or develop your own. Pathway organises 
               </div>
             </div>
             <br/>
-            <button class="btn btn-primary" name="lit-submit">Add written study to path</button>
+            <div class="d-flex justify-content-center">
+               <button class="btn btn-primary" name="lit-submit">Add written study to path</button>
+            </div>
+
           </form>
         </div>
       </div>
@@ -76,7 +75,9 @@ Here you can track your pathway progress or develop your own. Pathway organises 
             </div>
           </div>
           <br/>
+          <div class="d-flex justify-content-center">
           <button class="btn btn-primary"  name="vid-submit">Add video study to path</button>
+        </div>
         </form>
       </div>
     </div>
@@ -100,7 +101,9 @@ Here you can track your pathway progress or develop your own. Pathway organises 
             </div>
           </div>
           <br/>
+          <div class="d-flex justify-content-center">
           <button class="btn btn-primary" name="quiz-submit">Add benchmark to path</button>
+        </div>
         </form>
       </div>
     </div>

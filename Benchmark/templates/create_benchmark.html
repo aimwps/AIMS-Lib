@@ -23,9 +23,14 @@ You're creating a new benchmark, firstly set the title and then we'll begin addi
     <form method="post">
       {% csrf_token %}
 
-      {{ form.as_p }}
+      {{ form.title }}
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button class="btn btn-primary">Create</button>
+      <br>
+      <div class="text-center">
+
+        <button class="btn btn-primary">Create Benchmark</button>
+
+      </div>
       </form>
   </div>
 </div>

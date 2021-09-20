@@ -9,5 +9,6 @@ class BenchmarkNewForm(forms.ModelForm):
         model = Quiz
         fields = ('title',)
         widgets ={
-            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            'title': forms.TextInput(attrs = {'class': 'form-control',
+                                            'placeholder': 'Enter the title of your new benchmark'}),
             }

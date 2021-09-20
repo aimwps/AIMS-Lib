@@ -21,63 +21,71 @@ This is an article; lay your thoughts still, read and learn. If you found the co
   <a class="anchor" id="begin"></a>
 </div>
 <div class="container">
-  <div class="row my-4">
-    <div class="col-9">
+  <div class="row mt-4 text-center">
       <h4>{{ lit_lec.title }}</h4>
       <h6>Created {{ lit_lec.publish_date}} @ {{ lit_lec.publish_time }} by {{ lit_lec.author }}</h6>
     </div>
 <!-- REPLY OR LOGIN FOR TOPIC TITLE ROW
 ################################################################################################################################################### -->
-    <div class="col-1">
-      {% if user.is_authenticated %}
-        {% if user.id == lit_lec.author.id %}
-        <span>
-        <p><a href="{% url 'edit-literature' lit_lec.id %}#begin"><i class="far fa-edit"></i></a></p>
-        <p><a href="#"><i class="far fa-trash-alt"></i></a></p>
-        </span>
-        {% else %}
-        <a href="#"><i class="fas fa-reply"></i></a>
-        {% endif %}
-      {% else %}
-        <a href="{% url 'login' %}"  role="button"><i class="far fa-user"></i></a>
+    <div class="row">
 
-        {% endif %}
-      </div>
-    <div class="col-2">
-<!-- VOTING FOR TOPIC TITLE ROW
-################################################################################################################################################### -->
-      <div class="span">
-        <form method="POST" action="#">
-            {% csrf_token %}
-            <input type="hidden" value="#" name="topic_id_to_vote">
-            <p>
-              {% if user.is_authenticated %}
-                <a type="submit" class="text-primary" name="topic_vote_up"><i class="far fa-thumbs-up"></i></a>
-                {% else %}
-                <a type="disabled" class="text-primary"><i class="far fa-thumbs-up"></i></a>
-                {% endif %}
-            </p>
-        </form>
-        <form method="POST" action="#">
-            {% csrf_token %}
-            <input type="hidden" value="#" name="topic_id_to_vote">
-            <p>
-              {% if user.is_authenticated %}
-                <a type="submit" class="text-primary" name="topic_vote_down"><i class="far fa-thumbs-down"></i></a>
-                {% else %}
-                <a type="disabled" class="text-primary"><i class="far fa-thumbs-down"></i></a>
-                {% endif %}
-              </p>
-        </form>
-      </div>
+<ul class="nav justify-content-center">
+  {% if user.is_authenticated %}
+    {% if user.id == lit_lec.author.id %}
+    <li class="nav-item px-2">
+      <a href='{% url "generate-qas" "literature" lit_lec.id %}'><i class="fas fa-brain"></i></a>
+    </li>
+      <li class="nav-item px-2">
+        <a href="{% url 'edit-literature' lit_lec.id %}"><i class="far fa-edit"></i></a>
+      </li>
+      <li class="nav-item px-2">
+            <p><a href="#"><i class="far fa-trash-alt"></i></a></p>
+      </li>
+    {% else %}
+      <li class="nav-item px-2">
+          <a href="#"><i class="fas fa-reply"></i></a>
+      </li>
+    {% endif %}
+  {% else %}
+  <li class="nav-item px-2">
+      <a href="{% url 'login' %}"  role="button"><i class="far fa-user"></i></a>
+  </li>
+  {% endif %}
+  <li class="nav-item px-2">
+    <form method="POST" action="#">
+        {% csrf_token %}
+        <input type="hidden" value="#" name="topic_id_to_vote">
+        <p>
+          {% if user.is_authenticated %}
+            <a type="submit" class="text-primary" name="topic_vote_up" data-bs-toggle="tooltip" title="Vote up!"><i class="far fa-thumbs-up"></i></a>
+            {% else %}
+            <a type="disabled" class="text-secondary" data-bs-toggle="tooltip" title="You must be logged into vote"><i class="far fa-thumbs-up"></i></a>
+            {% endif %}
+        </p>
+    </form>
+  </li>
+  <li class="nav-item px-2">
+    <form method="POST" action="#">
+        {% csrf_token %}
+        <input type="hidden" value="#" name="topic_id_to_vote">
+        <p>
+          {% if user.is_authenticated %}
+            <a type="submit" class="text-primary" name="topic_vote_down" data-bs-toggle="tooltip" title="Vote down!"><i class="far fa-thumbs-down"></i></a>
+            {% else %}
+            <a type="disabled" class="text-secondary" data-bs-toggle="tooltip" title="You must be logged into vote"><i class="far fa-thumbs-down"></i></a>
+            {% endif %}
+          </p>
+    </form>
+  </li>
+</ul>
     </div>
-  </div>
+  <div class="row">
   <div class='text-break'>
     <hr>
     <p class="text-break">{{ lit_lec.body|safe }}</p>
   </div>
 </div>
 <div class="row">
-  <a href='{% url "generate-qas" "literature" lit_lec.id %}#begin'>Generate draft questions</a>
+
 </div>
 {% endblock %}

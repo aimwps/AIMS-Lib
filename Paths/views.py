@@ -3,9 +3,9 @@ from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
 from QuestionGenerator.models import GeneratedQuestionBank
 from .forms import PathwayObjNewForm, PathwayEditForm, PathwayNewForm
 from Members.models import MemberProfile
-from django.views.generic import TemplateView, CreateView, View, UpdateView
+from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from ckeditor.fields import RichTextField
@@ -15,10 +15,17 @@ import json
 import requests
 
 
+class PathwayView(DetailView):
 
-
-class PathwayView(View):
+    model = Pathway
     template_name = "pathway_view.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class PathwayDevelopView(View):
+    template_name = "pathway_dev_view.html"
 
     def get(self, request, pathway_id):
         context = {}
@@ -32,20 +39,24 @@ class PathwayView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, pathway_id):
-        print(request.POST)
         if "join_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("join_pathway"))
             pathway.participants.add(request.user)
             pathway.save()
-
         if "leave_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("leave_pathway"))
             pathway.participants.remove(request.user)
             pathway.save()
         if "delete_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("delete_pathway"))
-        next = request.POST.get('next','/')
-        return HttpResponseRedirect(next)
+            pathway.delete()
+            return HttpResponseRedirect('/pathway/')
+        if "delete_pathwayOBJ" in request.POST:
+            pathway_content = PathwayContentSetting.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
+            print(pathway_content)
+            pathway_content.delete()
+        return HttpResponseRedirect(request.path)
+
 
 class PathwayObjNew(View):
     form_class = PathwayObjNewForm
@@ -128,6 +139,8 @@ class PathwayNew(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+    def get_success_url(self):
+        return reverse('new-pathway-obj', kwargs={'pathway_id' : self.object.pk})
 
 class PathsHomeView(View):
     template_name = "paths.html"

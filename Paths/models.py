@@ -15,12 +15,15 @@ class Pathway(models.Model):
     title = models.CharField(max_length=255)
     participants = models.ManyToManyField(User, blank=True, related_name="pathway_users")
     description = models.TextField(blank=True)
-
-    def get_absolute_url(self):
-        return reverse('skill-paths')
     def __str__(self):
         return f"pathway_{self.id}"
+    def get_success_url(self):
+        return reverse('', kwargs={'view-pathway' : self.object.pk})
 
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super(Quiz, self).get_form_kwargs(
+            *args, **kwargs)
+        return kwargs
 
 
 class PathwayContentSetting(models.Model):

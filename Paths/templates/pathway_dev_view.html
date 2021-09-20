@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Pathways{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+PATHWAYS
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Pathways are learnable content based on video lectures & written articles. User engagement is tested with benchmarks. Track your progression below and see an overview of pathways you're developing.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <a class="anchor" id="begin"></a>
+</div>
+  {% for path, pathway_objs in pathway.items %}
+  <h4 class="my-4">
+    {% if user.is_authenticated %}
+      {% if user.id == path.author.id %}
+      <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ path }}">
+      <i class="fas fa-ellipsis-h"></i></a>
+      {% endif %}
+    {% endif %}
+     {{ path.title }}
+  </h4>
+  <!-- Modal -->
+  <div class="modal fade" id="modal_{{ path }}" tabindex="-1" aria-labelledby="modal_{{ path }}Label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal_{{ path }}Label">Pathway Selected</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="lead">{{ path.title }}</p>
+          <p> You created this pathway so you have some extra options. Set your public access, edit or delete this pathway below</p>
+
+        </div>
+        <div class="modal-footer">
+          <a href='#' class="btn btn-primary"><i class="far fa-plus"></i></a>
+          <a href='#' class="btn btn-primary"><i class="far fa-edit"></i></a>
+
+          <form action="." method="POST">
+            {% csrf_token %}
+            <button name="delete_pathway" value="{{ path.id }}" class="btn btn-secondary">
+              <i class="far fa-trash-alt"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% for pathway_obj in pathway_objs %}
+  <div class="row">
+   <div class="col-1 mt-2">
+     {{ pathway_obj.order_by }}
+   </div>
+   <div class="col-3 mt-2">
+     {{ pathway_obj.content_type|title }}
+   </div>
+   <div class="col-5 mt-2">
+     {% if pathway_obj.written_lecture %}<a href="{% url 'written-lecture' pathway_obj.written_lecture.id %}#begin">{{ pathway_obj.written_lecture.title }}</a>{% endif %}
+     {% if pathway_obj.video_lecture %}<a href="{% url 'video-lecture' pathway_obj.video_lecture.id %}#begin">{{ pathway_obj.video_lecture.title }}</a>{% endif %}
+     {% if pathway_obj.quiz %}<a href="{% url 'benchmark' pathway_obj.quiz.id %}#begin">{{ pathway_obj.quiz.title }}</a>{% endif %}
+   </div>
+   <div class="col-3">
+     {% if user.is_authenticated %}
+       {% if user.id == path.author.id %}
+         <ul class="nav justify-content-end">
+           <li class="nav-item">
+             <a class="nav-link active" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move up in order"><i class="fas fa-chevron-up"></i></i></a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="fas fa-chevron-down"></i></a>
+           </li>
+           <li class="nav-item">
+             <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathwayOBJ_delete_modal_{{ forloop.counter0 }}">
+               <i class="far fa-trash-alt"></i>
+             </a>
+           </li>
+         </ul>
+      {% endif %}
+     {% endif %}
+   </div>
+   <div class="modal fade" id="pathwayOBJ_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="pathwayOBJ_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title" id="pathwayOBJ_delete_modal_{{ forloop.counter0 }}Label">Delete a {{ path.content_type }} from pathway</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+           Do you want to delete
+           {% if pathway_obj.written_lecture %}{{ pathway_obj.written_lecture.title }}{% endif %}
+           {% if pathway_obj.video_lecture %}{{ pathway_obj.video_lecture.title }}{% endif %}
+           {% if pathway_obj.quiz %}{{ pathway_obj.quiz.title }}{% endif %}
+            from this pathway?
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+           <form action="." method="POST">
+             {% csrf_token %}
+           <button name="delete_pathwayOBJ" value="{{ pathway_obj.id }}" class="btn btn-primary">Delete</button>
+         </form>
+         </div>
+       </div>
+     </div>
+   </div>
+
+
+ </div>
+
+
+
+
+
+
+  {% endfor %}
+
+  {% if participation_status %}
+    You are already tracking this pathway
+        <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Stop tracking</a>
+  {% else %}
+    <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Start tracking</a>
+    {% endif %}
+
+    <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pathway_leaveLabel">Leave pathway confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You are trying to leave a pathway, leaving may effect your previous progress, Are you sure?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="{% url 'view-pathway' path.id %}#begin" method="POST">
+              {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button name="leave_pathway" value="{{path.id}}" class="btn btn-primary">Leave</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="pathway_join" tabindex="-1" aria-labelledby="pathway_joinLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="pathway_joinLabel">Join pathway confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            You are joining this pathway, your progress can be tracked by the author, are you sure?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="{% url 'view-pathway' path.id %}#begin" method="POST">
+              {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button name="join_pathway" value="{{path.id}}" class="btn btn-primary">Join</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+<hr>
+{% endfor %}
+
+{% endblock %}

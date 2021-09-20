@@ -27,9 +27,9 @@ class PathwayObjNewForm(forms.ModelForm):
         }
     def __init__(self, user=None, *args,**kwargs):
         super(PathwayObjNewForm, self).__init__(*args, **kwargs)
-        user_quiz = sorted([(q.id, str(q)) for q in Quiz.objects.filter(author=user)])
-        user_lit = sorted([(l.id, str(l)) for l in WrittenLecture.objects.filter(author=user)])
-        user_vid = sorted([(v.id, str(v)) for v in VideoLecture.objects.filter(author=user)])
+        user_quiz = sorted([(q.id, str(q.title)) for q in Quiz.objects.filter(author=user)])
+        user_lit = sorted([(l.id, str(l.title)) for l in WrittenLecture.objects.filter(author=user)])
+        user_vid = sorted([(v.id, str(v.title)) for v in VideoLecture.objects.filter(author=user)])
         self.fields['quiz'].choices = user_quiz
         self.fields['written_lecture'].choices = user_lit
         self.fields['video_lecture'].choices = user_vid
