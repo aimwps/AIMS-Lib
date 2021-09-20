@@ -13,6 +13,7 @@ urlpatterns = [
     path('', include('VideoLecture.urls')),
     path('', include('WrittenLecture.urls')),
     path('', include('QuestionGenerator.urls')),
+    path('', include("ShareContent.urls")),
     path('Members/', include("django.contrib.auth.urls")),
     path('Members/', include('Members.urls')),
 ]
