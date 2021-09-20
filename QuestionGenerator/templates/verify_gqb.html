@@ -1,19 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Pathway{% endblock %}
+{% block title %}Verify{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+VERIFY GENERATED QUESTIONS
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Before you can use your questions you need to rate the quality, incorrect answers will be excluded from your bank of questions. If you've generated multiple
+documents at once the questions will all be displayed here. We're working on this limitation. In the mean time you can verify by looking at the source documentation if required.
+{% endblock pageInfo_message %}
 
 {% block modulenav %}
-{% include "pathway_nav.html" %}
-{% endblock %}
-{% block topcarousel %}
+  {% include "pathway_nav.html" %}
 {% endblock %}
 
 {% block content %}
 {% csrf_token %}
+<div class="container text-center">
+
+
 <ul id='unverifiedGQB' class="list-group list-group-flush">
 
 </ul>
-
+</div>
 
 {% endblock %}
 

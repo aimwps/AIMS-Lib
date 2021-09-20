@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class WrittenLectureEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
-    model= WrittenLecture
+    model = WrittenLecture
     form_class = WrittenLectureEditForm
     template_name = 'written_lecture_edit.html'
 

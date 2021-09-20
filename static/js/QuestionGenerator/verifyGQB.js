@@ -11,14 +11,14 @@ function getUnverifiedGqb() {
       $.each(gqb, function(i, item){
           $('#unverifiedGQB').append(`
           <li class="list-group-item"><strong>Q: </strong>${item.question}
-            <div class="container">
+            <div class="container text-center">
               <strong>A:</strong> ${item.answer}
               <ul class="list-group list-group-horizontal">
-                <li class="list-group-item border-0"><a href='#'>View source</a></li>
+                <li class="list-group-item border-0 ms-auto"><a href='#'>View source</a></li>
                 <li class="list-group-item border-0">Rate the quality:</li>
                 <li class="list-group-item border-0"><a type="button" class="text-primary" onClick="submitGqbStatus(${item.id}, 'perfect')">Perfect</a></li>
                 <li class="list-group-item border-0"><a type="button"class="text-primary"  onClick="submitGqbStatus(${item.id}, 'iffy')">Iffy</a></li>
-                <li class="list-group-item border-0"><a type="button"class="text-primary"  onClick="submitGqbStatus(${item.id}, 'incorrect')">Incorrect</a></li>
+                <li class="list-group-item border-0 me-auto"><a type="button"class="text-primary"  onClick="submitGqbStatus(${item.id}, 'incorrect')">Incorrect</a></li>
               </ul>
             </div>
             </li>`)
