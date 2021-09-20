@@ -1,10 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %} Edit User {% endblock %}
+{% block title %}Profile{% endblock %}
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+EDIT PROFILE
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Your profile has some settings vital to your aims such as the times and dates you want to reset tracking on. If you create public content it's great to share your profile so other users
+can relate to who you are, you never know who you might inspire!
+{% endblock pageInfo_message %}
 
 {% block content %}
-
-<h1> Edit your account settings </h1>
 
 <div class="container">
 
@@ -14,8 +23,9 @@
       {% csrf_token %}
       {{ form.as_p }}
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button>Update</button>
-      </form>
+      <div class="text-center">
+        <button class="btn btn-primary">Update profile</button>
+      </div>
   </div>
 </div>
 

@@ -1,23 +1,34 @@
 {% extends 'base.html' %}
 
-{% block title %} {% endblock %}
+{% block title %}Profile{% endblock %}
+{% block topcarousel %}
+{% endblock %}
 
+{% block pageInfo_title %}
+MEMBER PROFILE
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Your profile has some settings vital to your aims such as the times and dates you want to reset tracking on. If you create public content it's great to share your profile so other users
+can relate to who you are, you never know who you might inspire!
+{% endblock pageInfo_message %}
 {% block content %}
 <div class="container">
 
+  {{ user_profile }}
+  <br/>
+  <h4>{{ user.get_username }}</h4>
+  {{ user_profile.power_quote }}
+  {{ user_profile.biography }}
+  {{ user_profile.personal_website }}
+  {{ user_profile.day_reset_time }}
+  {{ user_profile.week_reset_day }}
+  {{ user_profile.month_reset_day }}
+  {{ user_profile.year_reset_month }}
+  </div>
+<div class="text-center">
+  <a class="btn btn-primary" href="{% url 'member-profile-edit' user_profile.pk %}">Edit your profile</a>
 
-{{ user_profile }}
-<br/>
-<h4>{{ user.get_username }}</h4>
-{{ user_profile.power_quote }}
-{{ user_profile.biography }}
-{{ user_profile.personal_website }}
-{{ user_profile.day_reset_time }}
-{{ user_profile.week_reset_day }}
-{{ user_profile.month_reset_day }}
-{{ user_profile.year_reset_month }}
 </div>
-
-<a class="dropdown-item" href="{% url 'member-profile-edit' user_profile.pk %}">Edit Profile</a><
 
 {% endblock %}

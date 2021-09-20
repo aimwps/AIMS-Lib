@@ -18,9 +18,6 @@ This is an article; lay your thoughts still, read and learn. If you found the co
 
 {% block content %}
 <div class="container">
-  <a class="anchor" id="begin"></a>
-</div>
-<div class="container">
   <div class="row mt-4 text-center">
       <h4>{{ lit_lec.title }}</h4>
       <h6>Created {{ lit_lec.publish_date}} @ {{ lit_lec.publish_time }} by {{ lit_lec.author }}</h6>
@@ -33,13 +30,13 @@ This is an article; lay your thoughts still, read and learn. If you found the co
   {% if user.is_authenticated %}
     {% if user.id == lit_lec.author.id %}
     <li class="nav-item px-2">
-      <a href='{% url "generate-qas" "literature" lit_lec.id %}'><i class="fas fa-brain"></i></a>
+      <a href='{% url "generate-qas" "literature" lit_lec.id %}' data-bs-toggle="tooltip" title="Generate questions from this content"><i class="fas fa-brain"></i></a>
     </li>
       <li class="nav-item px-2">
-        <a href="{% url 'edit-literature' lit_lec.id %}"><i class="far fa-edit"></i></a>
+        <a href="{% url 'edit-literature' lit_lec.id %}" data-bs-toggle="tooltip" title="Edit this article"><i class="far fa-edit"></i></a>
       </li>
       <li class="nav-item px-2">
-            <p><a href="#"><i class="far fa-trash-alt"></i></a></p>
+            <p><a href="#" data-bs-toggle="tooltip" title="Delete this article"><i class="far fa-trash-alt"></i></a></p>
       </li>
     {% else %}
       <li class="nav-item px-2">
@@ -48,7 +45,7 @@ This is an article; lay your thoughts still, read and learn. If you found the co
     {% endif %}
   {% else %}
   <li class="nav-item px-2">
-      <a href="{% url 'login' %}"  role="button"><i class="far fa-user"></i></a>
+      <a href="{% url 'login' %}"  role="button" data-bs-toggle="tooltip" title="Login to vote"><i class="far fa-user"></i></a>
   </li>
   {% endif %}
   <li class="nav-item px-2">
@@ -85,7 +82,5 @@ This is an article; lay your thoughts still, read and learn. If you found the co
     <p class="text-break">{{ lit_lec.body|safe }}</p>
   </div>
 </div>
-<div class="row">
-
 </div>
 {% endblock %}

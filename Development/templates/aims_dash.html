@@ -13,7 +13,11 @@ Set your aims, behaviours & trackers below. Go to quickfire aims to log any outs
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
-{% include "aims_nav.html" %}
+  {% if user.is_authenticated %}
+    {% if has_user_profile %}
+      {% include "aims_nav.html" %}
+    {% endif %}
+  {% endif %}
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -24,45 +28,17 @@ Set your aims, behaviours & trackers below. Go to quickfire aims to log any outs
     {% if has_user_profile %}
       {% include "user_aims.html" %}
       {% else %}
-      <div class="row">
-        <h1 class="text-start">MEMBER PROFILE REQUIRED</h1>
-        <br/>
-        <div class="col-3">
-        </div>
-        <div class="col-9">
-          <div class="bs-component">
-            <figure>
-              <blockquote class="blockquote">
-                <p>"You have to activate your profile before using this feature. Follow the link below</p>
-              </blockquote>
-              <figcaption class="blockquote-footer">
-              AI@MSlib <cite title="Source Title">Using Aims-Lib</cite>
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </div>
-      <p class="text-center"><a  href="{% url 'member-profile-create' %}#begin"> Activate member profile </a></p>
+      <div class="text-center my-4">
+        <p class="lead"> You haven't activated your profile yet, until you do you cannot use this feature. Click the link below, confirm your details and your set to go!</p>
+      <p class="text-center"><a  href="{% url 'member-profile-create' %}"> Activate member profile </a></p>
+    </div>
     {% endif %}
     {% else %}
-    <div class="row">
-      <h1 class="text-start">USER REGISTRATION REQUIRED</h1>
-      <br/>
-      <div class="col-3">
-      </div>
-      <div class="col-9">
-        <div class="bs-component">
-          <figure>
-            <blockquote class="blockquote">
-              <p>"We can't take you any further until you have registered as a user, please follow the link below"</p>
-            </blockquote>
-            <figcaption class="blockquote-footer">
-            Aimsducator <cite title="Source Title">Using Aims-Lib</cite>
-            </figcaption>
-          </figure>
-        </div>
-      </div>
-    </div>
+    <div class="text-center my-4">
+      <p class="lead"> You aren't logged in or haven't registered yet. You'll have to do that before you continue. Follow a link below to continue.</p>
+      <p class="text-center my-2"><a class="btn btn-primary" href="{% url 'member-register' %}">Register</a></p>
+      <p class="text-center my-2"><a class="btn btn-primary" href="{% url 'login' %}">Login</a></p>
+  </div>
     {% endif %}
   </div>
     {% endblock %}

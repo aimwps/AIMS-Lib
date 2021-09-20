@@ -1,21 +1,28 @@
 {% extends 'base.html' %}
 
-{% block title %} Member Register{% endblock %}
+{% block title %}Profile{% endblock %}
+{% block topcarousel %}
+{% endblock %}
 
-{% block content %}
+{% block pageInfo_title %}
+REGISTER
+{% endblock pageInfo_title %}
 
-<h1> Members Register </h1>
-
-<div class="container">
-
+{% block pageInfo_message %}
+Registering allows you to use alot more of our features. You are limited to reading content without registering. After registering it's reccomended that you activate your
+profile to confirm some further settings that are utilised in setting your aims!
+{% endblock pageInfo_message %}
+{% block content%}
+<div class="container  my-4">
 
   <div class="form-group">
     <form method="POST">
       {% csrf_token %}
       {{ form.as_p }}
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button>Register</button>
-      </form>
+      <div class="text-center">
+        <button class="btn btn-primary">Take a step forwards</button>
+      </div>
   </div>
 </div>
 

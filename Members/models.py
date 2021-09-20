@@ -14,7 +14,7 @@ class MemberProfile(models.Model):
     user_profile = models.OneToOneField(User, null=True, on_delete=models.CASCADE, related_name="profile")
     power_quote = models.TextField(max_length=255, null=True, blank=True)
     profile_picture =  models.ImageField(null=True, blank=True, upload_to="path to images") ### STILL NEED TO SET IMAGE PATHS
-    biography = RichTextField(blank=True, null=True)
+    biography = RichTextField(config_name="article_editor", blank=True, null=True)
     personal_website = models.CharField(max_length=255, null=True, blank=True)
     linked_in = models.CharField(max_length=255, null=True, blank=True)
     day_reset_time = models.TimeField(default=datetime.time(datetime(1800, 12, 25, 5, 0,0,0)))

@@ -12,14 +12,14 @@ class MemberProfileForm(forms.ModelForm):
                                             'class': 'form-control',
                                             'placeholder': "Something that inspires you",
                                             "rows": 3}),
-            #'author': forms.Select(attrs = {'class': 'form-control'}),
             'biography': forms.Textarea(attrs = {
                                             'class': 'form-control',
-                                            'placeholder': 'As much or as little about your self as you wish',
-                                            "rows": 8}),
+                                            'placeholder': "A little bit about yourself",
+                                            "rows": 3}),
             'personal_website': forms.Textarea(attrs = {
                                             'class': 'form-control',
                                             'placeholder': 'a link to your own website',
+                                            "rows":1,
                                             }),
             'week_reset_day': forms.Select(attrs = {
                                             'class': 'form-control',
