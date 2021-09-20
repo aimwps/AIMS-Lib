@@ -115,7 +115,7 @@ function editSubmitGqb(gqb_id){
     $('#answerField').val(gqb_item.answer);
     $('#generatedFromGqbId').val(gqb_item.id);
     $('#hasBeenModified').val(1);
-    document.getElementById('begin').scrollIntoView();
+    $('#begin').scrollIntoView();
   });
 };
 
