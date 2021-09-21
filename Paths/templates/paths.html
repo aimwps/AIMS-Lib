@@ -23,10 +23,8 @@ Pathways are learnable content based on video lectures & written articles. User 
 <div class="container my-4">
 
 
-<div class="row">
-
-  <h4 class="text-center">Progressing</h4>
-  <hr>
+<div class="row my-4 border border-primary px-2 py-4">
+  <h4 class="text-center">Pathways I've selectd</h4>
   <div class="row">
   {% for path, path_items in user_pathways.items %}
     <a href='{% url "view-pathway" path.id %}' data-bs-toggle="tooltip" title="View this pathway"><h4> {{ path.title }}</h4></a>
@@ -38,10 +36,15 @@ Pathways are learnable content based on video lectures & written articles. User 
         <div class="col-3">
           {{ path_content.content_type|title }}
         </div>
-        <div class="col-8">
+        <div class="col-4">
           {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}">{{ path_content.written_lecture.title }}</a>{% endif %}
           {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}">{{ path_content.video_lecture.title }}</a>{% endif %}
           {% if path_content.quiz %}<a href="{% url 'benchmark' path_content.quiz.id %}">{{ path_content.quiz.title }}</a>{% endif %}
+        </div>
+        <div class="col-4">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%"></div>
+          </div>
         </div>
       </div>
     {% endfor %}
@@ -49,17 +52,53 @@ Pathways are learnable content based on video lectures & written articles. User 
     {% endfor %}
   </div>
 </div>
-<br/>
+<!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxUSER GROUP PATHWAYSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
+<div class="row my-4 border border-primary px-2 py-4">
 
-  <div class="row">
+  <h4 class="text-center">Pathways Assigned to me</h4>
+  {% for group in user_groups %}
+
+    <div class="row my-4">
+    <h4 class="text-end">From {{ group.name }}</h4>
+    <hr>
+    {% for item in group.group_pathways.all %}
+    <h4><a href="">{{item.content_object.title|title }}</a></h4>
+      {% for path_content in item.content_object.full_pathway.all %}
+      <div class="row">
+        <div class="col-1">
+          {{ path_content.order_by }}
+        </div>
+        <div class="col-3">
+          {{ path_content.content_type|title }}
+        </div>
+        <div class="col-4">
+          {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}">{{ path_content.written_lecture.title }}</a>{% endif %}
+          {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}">{{ path_content.video_lecture.title }}</a>{% endif %}
+          {% if path_content.quiz %}<a href="{% url 'benchmark' path_content.quiz.id %}">{{ path_content.quiz.title }}</a>{% endif %}
+        </div>
+        <div class="col-4">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%"></div>
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+      {% endfor %}
+
+
+  </div>
+    {% endfor %}
+</div>
+
+
+<!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-->
+  <div class="row border border-primary px-2 py-4">
       <h4 class="text-center">Developing</h4>
-       <hr>
- </div>
-
 <!-- ***********************************************************************************-->
 
 {% for path, path_items in developer_pathways.items %}
-<div class="row">
+<div class="row my-4">
     <div class="col-6">
       <a href='{% url "view-dev-pathway" path.id %}'data-bs-toggle="tooltip" title="Go to this pathway"><h5 class="mt-2"> {{ path.title }}</h5></a>
     </div>
@@ -99,6 +138,7 @@ Pathways are learnable content based on video lectures & written articles. User 
    </div>
  </div>
 </div>
+
  <div class="container">
    {{ path.description }}
  </div>
@@ -164,10 +204,12 @@ Pathways are learnable content based on video lectures & written articles. User 
 <!--- Modal ---------------------------------------------------------------------------------------------------------------------------------->
 
     </div>
+
     <hr>
 {% endfor %}
 
 {% endfor %}
+  </div>
 {% else %}
 <p class=lead> You must be logged in to develop pathways</p>
 

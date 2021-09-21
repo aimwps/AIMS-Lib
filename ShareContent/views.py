@@ -4,8 +4,9 @@ from .forms import UserGroupCreateForm, UserGroupEditForm, UserGroupPathwayCreat
 from Paths.models import Pathway
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, CreateView, UpdateView, View
+from django.views.generic import DetailView, CreateView, UpdateView, View, ListView
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponseRedirect
 class UserGroupView(LoginRequiredMixin,DetailView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -31,7 +32,7 @@ class UserGroupEdit(LoginRequiredMixin, UpdateView):
     model = UserCreatedGroup
     form_class = UserGroupEditForm
     def get_success_url(self):
-        return reverse('view-user-group', kwargs={'pk' : self.object.pk})
+        return reverse('view-my-groups')
 ################################################################################
 
 class UserGroupContentView(LoginRequiredMixin, DetailView):
@@ -60,7 +61,7 @@ class UserGroupPathwayCreate(LoginRequiredMixin, View):
 
 
             new_group_pathway.save()
-            return reverse("view-user-group", kwargs={"pk":user_group_id})
+            return HttpResponseRedirect("/my-groups/")
 
 
 
@@ -78,3 +79,23 @@ class UserGroupPathwayEdit(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.content_type = ContentType.objects.get_for_model(Pathway)
         return super().form_valid(form)
+
+
+class AllMyUserGroupsView(LoginRequiredMixin,ListView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    template_name = "my_groups.html"
+    model = UserCreatedGroup
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def get_queryset(self):
+        x = UserCreatedGroup.objects.filter(founder=self.request.user)
+        print(x)
+        return x
+
+    def post(self, request):
+        if "remove_pathway_from_group" in request.POST:
+            group_content = get_object_or_404(UserCreatedGroupContent, id=request.POST.get("remove_pathway_from_group"))
+            group_content.delete()
+            return HttpResponseRedirect("/my-groups/")

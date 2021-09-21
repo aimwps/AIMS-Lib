@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Groups{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfo_title %}
+
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="accordion accordion-flush" id="myGroupsAccordion">
+    {% for group in object_list %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="flush_{{group.id}}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{group.id}}" aria-expanded="false" aria-controls="collapse_{{group.id}}">
+           {{ group.name }}
+        </button>
+      </h2>
+      <div id="collapse_{{group.id}}" class="accordion-collapse collapse" aria-labelledby="flush_{{group.id}}" data-bs-parent="#myGroupsAccordion">
+        <div class="accordion-body">
+          <h4 class="text-center text-primary"> {{ group.name }}</h4>
+          <p class="text-center"> Founder: {{ group.founder }} | Created: {{ group.created_date }} | # Members: {{ group.members.all|length }} | <a href="{% url 'create-group-pathway-content' group.id %}">Add Pathway</a> | <a href="{% url 'edit-user-group' group.id %}">Edit Members</a></p>
+          <div class="row text-center">
+            <div class="col-6">
+              <h5> Members of Group</h5>
+              <ul class="list-group list-group-flush">
+                {% for member in group.members.all %}
+                <li class="list-group-item">[{{ member.get_username }}] {{member.get_full_name}}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <div class="col-6 border border-primary">
+              <h5 class="my-3">Assigned Pathways</h5>
+
+              <ul class="list-group list-group-flush">
+                {% for item in group.group_pathways.all %}
+                <li class="list-group-item"><a href="{% url 'view-pathway' item.content_id %}">{{ item.content_object.title }}</a> | <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#removePathway{{item.id}}">
+                  <i class="far fa-trash-alt"></i>
+                </a></li>
+                <div class="modal fade" id="removePathway{{item.id}}" tabindex="-1" aria-labelledby="removePathway{{item.id}}Label" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="removePathway{{item.id}}Label">Remove pathway from group</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to remove this pathway from the group? Particpants will still keep there records of completion but they
+                        won't be able to access the content (unless it is public) and your access to their records of completion will be removed.
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="." method="POST">
+                          {% csrf_token %}
+                        <button name="remove_pathway_from_group" value="{{item.id}}" class="btn btn-primary">Remove pathway</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+   {% endfor %}
+
+  </div>
+</div>
+
+
+<!-- Modal -->
+
+{% endblock %}

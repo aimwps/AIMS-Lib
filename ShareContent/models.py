@@ -24,7 +24,7 @@ class UserCreatedGroupManager(models.Manager):
 
 
 class UserCreatedGroupContent(models.Model):
-    assigned_group = models.ForeignKey(UserCreatedGroup, on_delete=models.CASCADE)
+    assigned_group = models.ForeignKey(UserCreatedGroup, on_delete=models.CASCADE, related_name="group_pathways")
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     content_id = models.PositiveIntegerField()
     content_object =  GenericForeignKey('content_type', 'content_id')

@@ -13,6 +13,7 @@ from django.contrib import messages
 import json
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
+from ShareContent.models import UserCreatedGroup, UserCreatedGroupContent
 
 class PathwayView(DetailView):
     model = Pathway
@@ -55,7 +56,6 @@ class PathwayDevelopView(LoginRequiredMixin, View):
             pathway_content = PathwayContentSetting.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
             pathway_content.delete()
         return HttpResponseRedirect(request.path)
-
 
 class PathwayObjNew(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
@@ -172,6 +172,11 @@ class PathsHomeView(LoginRequiredMixin, View):
                 pathway_objs = list(PathwayContentSetting.objects.filter(pathway=dev_pathway).order_by('order_by'))
                 developer_pathway_data[dev_pathway] = pathway_objs
             context['developer_pathways'] = developer_pathway_data
+
+            user_groups = UserCreatedGroup.objects.filter(members=self.request.user.id)
+            context["user_groups"] = user_groups
+
+
         return render(request, self.template_name, context)
 
     def post(self, request):

@@ -9,25 +9,34 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto ms-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Browse
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
               <li><a class="dropdown-item" href="{% url 'user-dev-articles' %}">My Articles</a></li>
               <li><a class="dropdown-item" href="{% url 'user-dev-videos' %}">My Videos</a></li>
               <li><a class="dropdown-item" href="{% url 'user-dev-benchmarks' %}">My Benchmarks</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Develop
               </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
                 <li><a class="dropdown-item" href="{% url 'new-written-lecture' %}">Create Article</a></li>
                 <li><a class="dropdown-item" href="{% url 'new-video-lecture' %}">Create Video</a></li>
                 <li><a class="dropdown-item" href="{% url 'create-benchmark' %}">Create Benchmark</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'new-pathway' %}">New Pathway</a></li>
+              </ul>
+          </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Share
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown3">
+                <li><a class="dropdown-item" href="{% url 'create-user-group' %}">New group</a></li>
+                <li><a class="dropdown-item" href="{% url 'view-my-groups' %}">View my groups</a></li>
               </ul>
           </li>
       </ul>
