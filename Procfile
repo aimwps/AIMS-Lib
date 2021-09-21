@@ -1,2 +1,2 @@
 web: gunicorn AimsLib.wsgi
-celery: celery worker -A AimsLib.celery -l info -c 4
+celery: celery -A AimsLib worker -l info -c 
