@@ -179,4 +179,4 @@ django_heroku.settings(locals())
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
-CELERY_BROKER_URL = "redis://:p8c5f18d96ba462329b34de0fe3e7a11b0ff29d66d78996858e275138b824a2e7@ec2-52-210-51-149.eu-west-1.compute.amazonaws.com:20470"
+CELERY_BROKER_URL = config('REDIS_URL')
