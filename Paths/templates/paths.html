@@ -24,7 +24,7 @@ Pathways are learnable content based on video lectures & written articles. User 
 
 
 <div class="row my-4 border border-primary px-2 py-4">
-  <h4 class="text-center">Pathways I've selectd</h4>
+  <h4 class="text-center">Pathways I've selected</h4>
   <div class="row">
   {% for path, path_items in user_pathways.items %}
     <a href='{% url "view-pathway" path.id %}' data-bs-toggle="tooltip" title="View this pathway"><h4> {{ path.title }}</h4></a>
@@ -165,7 +165,11 @@ Pathways are learnable content based on video lectures & written articles. User 
           <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="fas fa-chevron-down"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="far fa-edit"></i></a>
+          {% if path_content.content_type == "benchmark"  %}
+          <a class="nav-link" href="{% url 'edit-benchmark' path_content.quiz.id %}"><i class="far fa-edit"></i></a>
+          {% else %}
+          <a class="nav-link" href="#"><i class="far fa-edit"></i></a>
+          {% endif %}
         </li>
         <li class="nav-item">
           <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathwayOBJ_delete_modal_{{ forloop.counter0 }}">

@@ -141,7 +141,7 @@ class BenchmarkCreatorView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('edit-benchmark', kwargs={'benchmark_id' : self.object.pk})
+        return reverse("skill-paths")
 
 class QuizView(View):
     template_name = "benchmark_view.html"
