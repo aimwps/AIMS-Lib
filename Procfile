@@ -1,2 +1,2 @@
 web: gunicorn AimsLib.wsgi
-worker: celery worker --app=tasks.app
+worker: celery -A AimsLib.celery worker -B --loglevel=info
