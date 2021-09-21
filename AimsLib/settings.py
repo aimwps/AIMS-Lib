@@ -19,7 +19,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -179,4 +179,4 @@ django_heroku.settings(locals())
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
-CELERY_BROKER_URL = ""
+CELERY_BROKER_URL = "redis://:p2d75b7c09d68d70852071884b5b51cc56215e5bda9ef1eaf776bc88eb37ef3ac@ec2-34-242-168-78.eu-west-1.compute.amazonaws.com:15140"
