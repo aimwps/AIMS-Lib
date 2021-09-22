@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block pageInfo_title %}
-PATHWAYS HOME
+CREATE ARTICLE
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+Create an article. These are used for development purposes. Articles allow benchmark generation and can be added to a pathway. If you want to get the most out of this
+from a readers perspective, and for benchmark generation purposes use the formatting tools to prettify it!
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -20,16 +21,15 @@ Here you can track your pathway progress or develop your own. Pathway organises 
 <div class="container">
   <a class="anchor" id="begin"></a>
 </div>
-<div class="container">
+<div class="container text-center my-4">
 
 
   <div class="form-group">
     <form method="post">
       {% csrf_token %}
       {{ form.media }}
-      {{ form.as_p }}
-
-      <div class="d-flex justify-content-center">
+      <p class="text-center">{{ form.title }}</p>
+      <p>{{ form.body}}</p>
 
       <button class="btn btn-primary">Create Article</button>
     </div>

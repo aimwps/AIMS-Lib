@@ -17,14 +17,31 @@ This is an overview of the video lectures you have created. You'll see how they 
 {% endblock %}
 
 {% block content %}
-<div class="container my-4">
 
-<div class="d-flex justify-content-center">
-  {% for obj in object_list %}
-    <p class="lead"><a href='{% url "video-lecture" obj.id %}'>{{ obj.title }}</a></p>
-    {% endfor %}
+<div class="container text-center my-4">
+    <ul class="list-group list-group-flush">
+    {% for obj in object_list %}
+    <li class="list-group-item">
+      <div class="row">
+      <div class="col-3">
+
+      </div>
+      <div class="col-6">
+        <p class="lead pt-1"><a href='{% url "video-lecture" obj.id %}'>{{ obj.title }}</a> <small>{{ obj.publish_date }} @ {{ obj.publish_time }}</small></p>
+      </div>
+      <div class="col-3">
+          <ul class="list-group list-group-horizontal border-0">
+            <li class="list-group-item border-0"><a href="{% url 'edit-video-lecture' obj.id %}"><i class="far fa-edit"></i></a></li>
+            <li class="list-group-item border-0"><a href="#"><i class="far fa-trash-alt"></i></a></li>
+          </ul>
+        <p> </p>
+      </div>
+      </div>
+      </li>
+      {% endfor %}
+</ul>
+
 
 </div>
 </div>
-
 {% endblock %}

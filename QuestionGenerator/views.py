@@ -71,7 +71,8 @@ class QuestionGenerator(LoginRequiredMixin, View):
             print("big errors")
             source_doc = ""
         clean_text = textpreperation_qag(source_doc, source_type)
-        getqag.delay(clean_text, source_type, source_id, request.user.id)
+        for passage in clean_text:
+            getqag.delay(passage, source_type, source_id, request.user.id)
         return redirect('generator-pending',source_type=source_type, source_id=source_id)
 
 

@@ -19,9 +19,9 @@ This is an overview of the articles you have created. You'll see how they are be
 {% block content %}
 <div class="container my-4">
 
-<div class="d-flex justify-content-center">
+<div class="text-center">
   {% for obj in object_list %}
-    <p class="lead"><a href='{% url "written-lecture" obj.id %}'>{{ obj.title }}</a></p>
+    <p class="lead"><a href='{% url "written-lecture" obj.id %}'>{{ obj.title }}</a> | {{ obj.publish_date }} @ {{ obj.publish_time }}</p>
     {% endfor %}
 
 </div>

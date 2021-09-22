@@ -15,3 +15,15 @@ class VideoLectureNewForm(forms.ModelForm):
                                                 'row':4,
                                                 }),
                                                 }
+class VideoLectureEditForm(forms.ModelForm):
+    class Meta:
+        model = VideoLecture
+        fields = ('title','video_link','notes',)
+        widgets ={
+            'title': forms.TextInput(       attrs = {'class': 'form-control'}),
+            'video_link': forms.TextInput(  attrs = {'class': 'form-control'}),
+            'notes': forms.Textarea(        attrs = {
+                                                'class': 'form-control',
+                                                'row':4,
+                                                }),
+                                                }

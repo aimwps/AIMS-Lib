@@ -7,7 +7,8 @@ class WrittenLectureEditForm(forms.ModelForm):
         model = WrittenLecture
         fields = ('title',"body")
         widgets ={
-            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            'title': forms.TextInput(attrs = {'class': 'form-control text-center',
+                                            "placeholder": "Inset a title here"}),
             'body': forms.Textarea(attrs = {'class': 'form-control',
                                             }),}
 
@@ -17,6 +18,7 @@ class WrittenLectureNewForm(forms.ModelForm):
         model = WrittenLecture
         fields = ('title','body')
         widgets = {
-            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            'title': forms.TextInput(attrs = {'class': 'form-control text-center',
+                                            "placeholder": "Inset a title here"}),
             'body': forms.Textarea(attrs = {'class': 'form-control',}),
                 }

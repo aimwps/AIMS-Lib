@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, View, ListView
-from .forms import VideoLectureNewForm
+from django.views.generic import CreateView, View, ListView, UpdateView
+from .forms import VideoLectureNewForm, VideoLectureEditForm
 from .models import VideoLecture
 import json
 import requests
@@ -39,3 +39,11 @@ class VideoLectureUserView(LoginRequiredMixin, ListView):
         return context
     def get_queryset(self):
         return VideoLecture.objects.filter(author=self.request.user)
+
+class VideoLectureEdit(LoginRequiredMixin, UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    model = VideoLecture
+    form_class = VideoLectureEditForm
+    paginate_by = 100  # if pagination is desired
+    template_name = "video_lecture_edit.html"

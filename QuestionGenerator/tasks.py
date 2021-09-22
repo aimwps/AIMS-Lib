@@ -6,12 +6,20 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 def textpreperation_qag(text, source_type):
+    payloads = []
     if source_type == "literature":
         text_soup = BeautifulSoup(text, "html.parser")
         text_soup = text_soup.get_text()
-        print(f"TRYING TEXT LENGTH OF: {len(text_soup)}")
-
-    return text_soup
+        while len(text_soup) >= 512:
+            temp = text_soup[512:]
+            for i, c in enumerate(temp):
+                if c == ".":
+                    payload = text_soup[:512+i+1]
+                    payloads.append(payload.strip())
+                    text_soup = text_soup[512+i+1:].strip()
+                    break
+        payloads.append(text_soup)
+    return payloads
 
 @shared_task
 def getqag(clean_text, source_type, source_id, user_id):
@@ -22,7 +30,6 @@ def getqag(clean_text, source_type, source_id, user_id):
     for q,a in qas.items():
         q_clean = "".join(q.strip())
         a_clean = "".join(a.replace("<pad>", "").strip())
-        print(a_clean)
         new_gq = GeneratedQuestionBank(
             generated_by = user,
             source_type = source_type,
