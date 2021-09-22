@@ -18,6 +18,7 @@
 
     <!-- NAVIGATION & Messages (FIXED TO TOP)
     ################################################################################# -->
+    {% block main_nav %}
         <div class="fixed-top">
             <div class="container">
               {% include 'navigation.html' %}
@@ -35,6 +36,7 @@
             </div>
             {% endif %}
         </div>
+        {% endblock main_nav %}
   <!-- MAIN CAROUSELF (FULL SCREEN WIDTH)
   ################################################################################# -->
 {% block topcarousel %}

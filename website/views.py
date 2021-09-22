@@ -5,3 +5,8 @@ def home(request):
 
 class LoginRegisterRequiredView(TemplateView):
     template_name = "login_register.html"
+
+
+
+class AIMwpSView(TemplateView):
+    template_name = "aimwps.html"
