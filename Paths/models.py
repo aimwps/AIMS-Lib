@@ -7,72 +7,87 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from embed_video.fields import EmbedVideoField
 from rest_framework import serializers
 from VideoLecture.models import VideoLecture
-from WrittenLecture.models import WrittenLecture
+from WrittenLecture.models import Article
 from Benchmark.models import Quiz
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
     title = models.CharField(max_length=255)
-    participants = models.ManyToManyField(User, blank=True, related_name="pathway_users")
+    #participants = models.ManyToManyField(User, blank=True, related_name="pathway_users")
     description = models.TextField(blank=True)
+    create_date = models.DateField(auto_now=False,auto_now_add=True)
+    create_time = models.TimeField(auto_now=False,auto_now_add=True)
+    modify_date = models.DateField(auto_now=True,auto_now_add=False)
+    modify_time = models.TimeField(auto_now=True,auto_now_add=False)
     def __str__(self):
         return f"pathway_{self.id}"
-    # def get_success_url(self):
-    #     return reverse('', kwargs={'view-pathway' : self.object.pk})
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super(Pathway, self).get_form_kwargs(
             *args, **kwargs)
         return kwargs
 
+class PathwayContentManager(models.Manager):
+    def filter_by_instance(self,instance):
+        obj_id = instance.id
+        content_type = ContentType.objects.get_for_model(instance)
+        qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
+        return qs
 
-class PathwayContentSetting(models.Model):
+class PathwayContent(models.Model):
     PATHWAY_CONTENT_TYPE = (("video-lecture","Video Lecture"),
                             ("written-lecture","Written Lecture"),
                             ("quiz","Knowledge Incrementer"),)
-    pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name='full_pathway')
-    content_type = models.CharField(max_length=255, choices=PATHWAY_CONTENT_TYPE)
-    video_lecture = models.ForeignKey(VideoLecture, on_delete=models.CASCADE, blank=True, null=True)
-    written_lecture = models.ForeignKey(WrittenLecture, on_delete=models.CASCADE, blank=True, null=True)
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, blank=True, null=True)
-    order_by = models.PositiveIntegerField()
-    must_complete_previous = models.BooleanField()
-    must_revise_continous = models.BooleanField(default=True)
+    on_pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name='full_pathway')
+    order_position = models.PositiveIntegerField()
+    create_date = models.DateField(auto_now=False,auto_now_add=True)
+    create_time = models.TimeField(auto_now=False,auto_now_add=True)
+    modify_date = models.DateField(auto_now=True,auto_now_add=False)
+    modify_time = models.TimeField(auto_now=True,auto_now_add=False)
+    complete_previous = models.BooleanField()
+    revise_continous = models.BooleanField(default=True)
+    content_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    objects = PathwayContentManager()
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['pathway', 'order_by'],
+                fields=['on_pathway', 'order_position'],
                 name='pathway_order_by'
             )
         ]
         get_latest_by ='order_by'
+
     def get_next_order_by(self):
         max_rated_entry = self.objects.latest()
         return int(max_rated_entry.details) + 1
 
-class PathwayCompletitionRecords(models.Model):
-    record_date = models.DateField(auto_now_add=True)
-    record_time = models.TimeField(auto_now_add=True)
-    pathway_content = models.ForeignKey(PathwayContentSetting, on_delete=models.CASCADE)
+class PathwayCompletitionRecord(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_record")
+    create_date = models.DateField(auto_now_add=True)
+    create_time = models.TimeField(auto_now_add=True)
+    pathway_content = models.ForeignKey(PathwayContent, on_delete=models.CASCADE)
 
-class VideoLectureCompletionRecord(models.Model):
-    RECORD_STATUS = (('first_completion', 'first_completion'),
-                    ('did_not_complete', 'did_not_complete'),
-                    ('recap_completion', 'recap_completion'))
-    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
-
-class QuizLectureCompletionRecord(models.Model):
-    RECORD_STATUS = (('first_completion', 'first_completion'),
-                    ('did_not_complete', 'did_not_complete'),
-                    ('recap_completion', 'recap_completion'))
-    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
-
-class WrittenLectureCompletionRecord(models.Model):
-    RECORD_STATUS = (('first_completion', 'first_completion'),
-                    ('did_not_complete', 'did_not_complete'),
-                    ('recap_completion', 'recap_completion'))
-    record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-    pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+# class VideoLectureCompletionRecord(models.Model):
+#     RECORD_STATUS = (('first_completion', 'first_completion'),
+#                     ('did_not_complete', 'did_not_complete'),
+#                     ('recap_completion', 'recap_completion'))
+#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+#
+# class QuizLectureCompletionRecord(models.Model):
+#     RECORD_STATUS = (('first_completion', 'first_completion'),
+#                     ('did_not_complete', 'did_not_complete'),
+#                     ('recap_completion', 'recap_completion'))
+#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
+#
+# class WrittenLectureCompletionRecord(models.Model):
+#     RECORD_STATUS = (('first_completion', 'first_completion'),
+#                     ('did_not_complete', 'did_not_complete'),
+#                     ('recap_completion', 'recap_completion'))
+#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
+#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)

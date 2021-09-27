@@ -5,12 +5,11 @@ from datetime import datetime, date
 from ckeditor.fields import RichTextField
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+DAY_CHOICES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+DAY_CHOICES = ((d,d) for d in DAY_CHOICES)
 # Create your models here.
 class MemberProfile(models.Model):
-    DAY_CHOICES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-    DAY_CHOICES = ((d,d) for d in DAY_CHOICES)
-    user_profile = models.OneToOneField(User, null=True, on_delete=models.CASCADE, related_name="profile")
+    author = models.OneToOneField(User, null=True, on_delete=models.CASCADE, related_name="profile")
     power_quote = models.TextField(max_length=255, null=True, blank=True)
     profile_picture =  models.ImageField(null=True, blank=True, upload_to="path to images") ### STILL NEED TO SET IMAGE PATHS
     biography = RichTextField(config_name="article_editor", blank=True, null=True)
@@ -20,9 +19,10 @@ class MemberProfile(models.Model):
     week_reset_day = models.CharField(max_length=100, choices=DAY_CHOICES, default="Monday")
     month_reset_day = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(31)])
     year_reset_month = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(12)])
-    #social_media = models.CharField(max_length=255, null=True, blank=True)
-    # social_media = models.CharField(max_length=255, null=True, blank=True)
-    # social_media = models.CharField(max_length=255, null=True, blank=True)
+    create_date = models.DateField(auto_now_add=True)
+    create_time = models.TimeField(auto_now_add=True)
+    modify_date = models.DateField(auto_now=True,auto_now_add=False)
+    modify_time = models.TimeField(auto_now=True,auto_now_add=False)
 
     def __str__(self):
         return str(self.user_profile)

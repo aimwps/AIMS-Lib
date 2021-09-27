@@ -4,31 +4,33 @@ from django.urls import reverse
 from datetime import datetime, date
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
-USER_STATUS = (('deleted', 'deleted'),
+USER_STATUS =   (('deleted', 'deleted'),
                 ('active', 'active'),
                 ('inactive', 'inactive'),
-                ('completed', 'completed'),)
-METRIC_FREQ = (
-        ('daily', 'daily'),
-        ('weekly', 'weekly'),
-        ('monthly', 'monthly'),
-        ('yearly', 'yearly'),
-)
+                ('completed', 'completed'),
+                )
+RECORD_FREQUENCY =(('daily', 'daily'),
+                ('weekly', 'weekly'),
+                ('monthly', 'monthly'),
+                ('yearly', 'yearly'),
+                ('custom', 'custom'),
+                )
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
 
-# class SkillArea(models.Model):
-#     skill_area_name = models.CharField(max_length=255)
-#     created_date = models.DateField(auto_now_add=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-#     forum_rules = models.TextField()
-#     def __str__(self):
-#         return self.skill_area_name #This changes the displayed object name into relevant text information
-
-## Base include 'Health', 'Mind Set', 'Skills'
-class DevelopmentCategory(models.Model):
+TRACKER_TYPE = (('maximize', 'Count Up'),
+                ('minimize', 'Count Down'),
+                ('boolean', 'Yes or No'),
+                )
+NUMBER_TYPE = (('float', 'Upto 2 decimal places'),
+                ('integer', 'Whole number only'),
+                )
+class ContentCategory(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    create_date = models.DateField(auto_now_add=True)
+    create_time = models.TimeField(auto_now_add=True)
     parent_category = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
     global_standard = models.BooleanField(default=False)
 
@@ -39,178 +41,70 @@ class DevelopmentCategory(models.Model):
             full_path.append(k.title)
             k = k.parent_category
         return ' > '.join(full_path[::-1])
-## A user can create many aims
+
 class Aim(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(DevelopmentCategory, blank=True, null=True, on_delete=models.SET_NULL)
     title = models.TextField()
-    why = models.TextField(blank=True, null=True)
+    motivation = models.TextField(blank=True, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(ContentCategory, blank=True, null=True, on_delete=models.SET_NULL)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    in_order = models.PositiveIntegerField(default=9999)
+    order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True, blank=True, null=True)
     create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')
+            models.UniqueConstraint(fields=['author', 'order_positon'], name='unique_order_of_aims')
         ]
     def __str__(self):
-        return f"Aim{self.id}"#This changes the displayed object name into relevant text information
+        return f"Aim_{self.id}"
+
     def get_absolute_url(self):
         return reverse('aims-dash')
 
 
-
-
-class Lever(models.Model):
-    description = models.TextField()
-    in_order = models.PositiveIntegerField()
+class Behaviour(models.Model):
+    title = models.TextField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
+    order_positon = models.PositiveIntegerField()
+    create_date = models.DateField(auto_now_add=True, blank=True, null=True)
+    create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['on_aim', 'in_order'], name='unique_order_of_levers')
+            models.UniqueConstraint(fields=['on_aim', 'order_position'], name='unique_order_of_behaviours')
         ]
 
     def get_trackers(self):
-        min_aim = list(TrackerMinAim.objects.filter(Q(lever=self)).filter(~Q(user_status="deleted")))
-        boolean = list(TrackerBoolean.objects.filter(Q(lever=self)).filter(~Q(user_status="deleted")))
-        payload = min_aim+boolean
-        sorted_payload = sorted(payload, key=lambda instance: instance.start_date)
-
-        return sorted_payload
+        return []
 
     def __str__(self):
-        return f"Behaviour{self.id}"#This changes the displayed object name into relevant text information
+        return f"Behaviour_{self.id}"
     def get_absolute_url(self):
         return reverse('aims-dash')
 
-
-
-class TrackerMinAim(models.Model):
-    # This model is a tracker for completing a recurring lever. The user can set a frequency
-    # and will have to complete somewhere between the minimum and the aim.
-    lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_min_aim" )
-    metric_type = models.CharField(max_length=100) # A description of what the intgers mean. hours, #reps, #minutes #count
-    metric_min = models.PositiveIntegerField()# The minimum amount accepted
-    metric_aim = models.PositiveIntegerField() # The standard you are trying to hit each day: "8 hours"
-    metric_description = models.TextField(blank=True, null=True) # Represents the amount of minutes I spent jogging today
-    frequency = models.CharField(max_length=100,choices=METRIC_FREQ) # Choi
-    frequency_quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
-    start_date = models.DateField() # Auto adds today or user can set the first day to start on.
-    end_date = models.DateField(blank=True, null=True) # If blank the Tracker runs forever.
+class StepTracker(models.Model):
+    on_behaviour = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="trackers")
+    metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE)
+    metric_action = models.TextField(blank=True, null=True)
+    metric_unit = models.CharField(max_length=100)
+    metric_number_display_type = models.CharField(max_length=100, choices=NUMBER_TYPE)
+    metric_min = models.FloatField()
+    metric_max = models.FloatField()
+    minimum_show_allowed = models.BooleanField()
+    minimum_show_description = models.TextField(blank=True, null=True)
+    record_type = models.CharField(max_length=100,choices=METRIC_FREQ)
+    record_start_date = models.TimeField(auto_now_add=True, blank=True, null=True)
+    record_frequency = models.CharField(max_length=100,choices=METRIC_FREQ)
+    record_multiple_per_frequency = models.CharField(max_length=100,choices=METRIC_FREQ)
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
     complete_value = models.PositiveIntegerField()
-    has_prompt = models.BooleanField(default=True)
-    has_timeout = models.BooleanField(default=True)
-    has_public_logs = models.BooleanField(default=False)
-    allows_multi_period_logs = models.BooleanField(default=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    # use user week settings
-    # use user sleep settings
-
-
-    def get_tclass(self):
-        class_name = "TrackerMinAim"
-        return class_name
+    order_positon = models.PositiveIntegerField()
+    create_date = models.DateField(auto_now_add=True, blank=True, null=True)
+    create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['on_behaviour', 'order_position'], name='unique_order_of_trackers')
+        ]
     def __str__(self):
-        return f"MinAimTracker{self.id}"#This changes the displayed object name into relevant text information
-    def get_absolute_url(self):
-        return reverse('aims-dash')
-
-    def get_tsentence(self):
-
-        sentence_start = f"I will show up and {self.metric_description} {self.metric_min} { self.metric_type} "
-        if self.frequency_quantity > 1:
-            sentence_start += f"{ self.frequency_quantity} times "
-        sentence_start +=  f"{self.frequency}. "
-
-        sentence_start+= f"After {self.complete_value} { self.complete_criteria} {self.frequency}  periods of "
-        if self.frequency_quantity > 1:
-            sentence_start += f"{self.frequency_quantity} * "
-        sentence_start +=f"{self.metric_aim} {self.metric_type} I have moved mountains to achieve my aims"
-        if self.end_date:
-            sentence_start+=f"This tracker is actively trackd until { self.end_date }."
-        return sentence_start
-
-    def get_tquestion(self):
-        verbose =  {'daily':'today',
-                    'weekly': 'this week',
-                    'monthly':'this month',
-                    'yearly': 'this year'}
-        question = f"You aimed to {self.metric_description} {self.metric_min} to {self.metric_aim} {self.metric_type} "
-        if self.frequency_quantity > 1:
-            question += f"{self.frequency_quantity} times "
-        verbose_frequency = verbose[self.frequency]
-        question += f"{verbose_frequency}. How did you get on?"
-        return question
-
-    def get_pretty_tclass(self):
-        class_name = "Minimum show to goal"
-        return class_name
-
-
-class TrackerMinAimRecords(models.Model):
-    tracker = models.ForeignKey(TrackerMinAim,on_delete=models.CASCADE)
-    lever_performed = models.BooleanField(default=False)
-    record_date = models.DateField(auto_now_add=True)
-    record_time = models.TimeField(auto_now_add=True)
-    metric_quantity  = models.IntegerField(blank=True, null=True)
-
-    def get_absolute_url(self):
-        return reverse('aims-dash')
-
-
-
-##################################################################################################################################
-class TrackerBoolean(models.Model):
-
-    # This model is a tracker for completing a recurring lever. The user can set a frequency
-    # and will have to complete somewhere between the minimum and the aim.
-    lever = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="tracker_boolean" )
-    metric_description = models.TextField(max_length=500) # Represents the amount of minutes I spent jogging today
-    frequency = models.CharField(max_length=100,choices=METRIC_FREQ) # Choi
-    frequency_quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
-    start_date = models.DateField() # Auto adds today or user can set the first day to start on.
-    end_date = models.DateField(blank=True, null=True) # If blank the Tracker runs forever.
-    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
-    complete_value = models.PositiveIntegerField()
-    has_prompt = models.BooleanField(default=True)
-    has_timeout = models.BooleanField(default=True)
-    has_public_logs = models.BooleanField(default=False)
-    allows_multi_period_logs = models.BooleanField(default=True)
-    user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-
-    def get_tclass(self):
-        class_name = "TrackerBoolean"
-        return class_name
-    def __str__(self):
-        return f"TrackerBoolean{self.id}"#This changes the displayed object name into relevant text information
-
-    def get_absolute_url(self):
-        return reverse('aims-dash')
-
-    def get_tsentence(self):
-        sentence = f"On a "
-        if self.frequency_quantity > 1:
-            sentence += f"{self.frequncy_quantity} times "
-        sentence += f"{self.frequency} basis; {self.metric_description}"
-        return sentence
-
-    def get_pretty_tclass(self):
-        class_name = "Yes or no statement"
-        return class_name
-
-
-    def get_tquestion(self):
-        x = f'You said; "{self.metric_description}". Are you taking a step forwards?'
-        return x
-
-class TrackerBooleanRecords(models.Model):
-    tracker = models.ForeignKey(TrackerBoolean,on_delete=models.CASCADE)
-    lever_performed = models.BooleanField()
-    record_date = models.DateField(auto_now_add=True)
-    record_time = models.TimeField(auto_now_add=True)
-    metric_quantity  = models.BooleanField(choices=((True,"Yes"), (False, "No")), default="Yes")
-
-    def get_absolute_url(self):
-        return reverse('aims-dash')
+        return f"StepTracker_{self.id}"
