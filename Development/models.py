@@ -47,6 +47,8 @@ class Aim(models.Model):
     why = models.TextField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     in_order = models.PositiveIntegerField(default=9999)
+    create_date = models.DateField(auto_now_add=True, blank=True, null=True)
+    create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'in_order'], name='unique_aims_orderby')

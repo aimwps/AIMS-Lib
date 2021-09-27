@@ -11419,10 +11419,11 @@ fieldset:disabled .btn {
         display: none;
     }
 }
+
 a.anchor {
     display: block;
     position: relative;
-    top: -350px;
+    top: -60px;
     visibility: hidden;
 }
 

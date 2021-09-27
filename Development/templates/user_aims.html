@@ -4,17 +4,35 @@
   <div class="accordion-item">
     <h2 class="accordion-header" id="heading_{{aim_data.1}}">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{aim_data.1}}" aria-expanded="false" aria-controls="flush_{{aim_data.1}}">
-        {{aim_data.2}}
+        <h4>{{aim_data.2}}</h4>
       </button>
     </h2>
     <div id="flush_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
       <div class="accordion-body">
         {% for aim, behaviours in aim_data.4.items %}
-          <p class="lead">
-          <!-- Button trigger modal -->
-          <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ aim }}">
-          <i class="fas fa-ellipsis-h"></i>
-          </a> {{aim.title}} </p>
+        <div class="row text-center">
+            <h4>AIM</h4>
+            <h6>Created {{ aim.publish_date}} @ {{ aim.publish_time }} set by {{ aim.user }}</h6>
+          </div>
+          <div class="row">
+            <ul class="nav justify-content-center">
+              {% if user.is_authenticated %}
+                {% if user.id == aim.user.id %}
+                <!-- Button trigger modal -->
+                <li class="nav-item px-2">
+                  <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ aim }}"><i class="fas fa-bars"></i></a>
+                </li>
+                  <li class="nav-item px-2">
+                    <a href="#" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
+                  </li>
+                  <li class="nav-item px-2">
+                      <p><a href="#" data-bs-toggle="tooltip" title="Delete this aim"><i class="far fa-trash-alt"></i></a></p>
+                  </li>
+                {% endif %}
+              {% endif %}
+            </ul>
+          </div>
+
 
           <!-- Modal -->
           <div class="modal fade" id="modal_{{ aim }}" tabindex="-1" aria-labelledby="modal_{{ aim }}Label" aria-hidden="true">
@@ -44,6 +62,8 @@
               </div>
             </div>
           </div>
+          <!-- Modal end -------------------------------------------------------------------------------------------------------->
+
           <p>{{ aim.why }}</p>
           <div class="accordion accordion-flush" id="accordionBehaviours">
           <p class="lead"></a> Behaviours that support my aim</p>

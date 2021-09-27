@@ -19,7 +19,7 @@
     <!-- NAVIGATION & Messages (FIXED TO TOP)
     ################################################################################# -->
     {% block main_nav %}
-        <div class="fixed-top">
+        <div class="fixed-top bg-primary">
             <div class="container">
               {% include 'navigation.html' %}
             </div>
@@ -46,18 +46,34 @@
 
 <!-- TOP HALF PAGE
 ################################################################################# -->
-      <div class="container">
+      <div class="container navpad">
        <div class="row">
     <!-- LEFT BAR
     ################################################################################# -->
 
     <!-- MAIN CONTENT
     ################################################################################# -->
-    {% block pageInfo %}
-      <div class="card text-center  border-0 navpad">
+    {% block pageInfoCaro %}
+      <div class="card text-center border-0">
         <div class="card-body">
           <h5 class="card-title">
-            <br><br>
+            {% block pageInfo_titleCaro %}
+            HOME
+            {% endblock pageInfo_titleCaro %}
+          </h5>
+          <p class="card-text">
+            {% block pageInfo_messageCaro %}
+            Here you can track your pathway progress or develop your own. Pathway organises & shares course content providing automated assessment and recap benchmarking
+            {% endblock pageInfo_messageCaro %}
+          </p>
+        </div>
+      </div>
+    {% endblock pageInfoCaro %}
+
+    {% block pageInfo %}
+      <div class="card text-center border-0 navpad">
+        <div class="card-body">
+          <h5 class="card-title">
             {% block pageInfo_title %}
             HOME
             {% endblock pageInfo_title %}
@@ -71,7 +87,8 @@
       </div>
     {% endblock pageInfo %}
 
-        <div class="col my-2">
+
+        <div class="col">
           {% block modulenav %}
 
           {% endblock %}
@@ -120,6 +137,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/allWebsite.js"></script>
   </body>
 
 </html>
