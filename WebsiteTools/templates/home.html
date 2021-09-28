@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}AIMS-LIB{% endblock %}
+{% load static %}
+{% block pageInfo_titleCaro %}
+AIMS LIBRARY
+{% endblock pageInfo_titleCaro %}
+
+{% block pageInfo_messageCaro %}
+Welcome to the home of personal & workplace development. Aims library is a collection of tools that enable individuals and workplaces to grow together. Below, you'll get an understanding of what each feature provides and any development currently underway.
+{% endblock pageInfo_messageCaro %}
+
+{% block pageInfo %}
+{% endblock pageInfo %}
+
+{% block modulenav %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <a id="aimsInfo" class="anchor"></a>
+  <h4 class="text-primary text-end">AIMS</h4>
+  <hr>
+  <p>
+  Aims is a feature that directs you towards your desired purpose. Set an aim for your life, declare behaviour's that you need. Take steps to make those behaviours habitual. Fulfil your aim. Based on cognitive behavioural therapy, the methodology replaces your preventative behaviours, thoughts and beliefs with productive ones.
+  </p>
+  <p class="lead">In development</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Graphical analysis of your progression for the steps you are tracking</li>
+      <li class="list-group-item">A user guide to crafting your future</li>
+      <li class="list-group-item"><a href="#libraryInfo">Library</a> content on cognitive behavioural therapy</li>
+      <li class="list-group-item">Quick fire aims notifications and a redeveloped interface for submitting them</li>
+      <li class="list-group-item">Sentiment analysis to enforce the 80/20 forumla for your motivation.</li>
+      <li class="list-group-item">Details on the 80/20 motivation formula.</li>
+    </ul>
+</div>
+<div class="container my-4">
+  <a id="libraryInfo" class="anchor"></a>
+  <h4 class="text-primary text-end">LIBRARY</h4>
+  <hr>
+  <p>
+    The library is a collection of <a href="#aimsInfo">Aims</a>, <a href="#pathwayInfo">Pathways</a> and <a href="#communityInfo">Community topics</a>, alongside our research on the best books, podcasts and applications for personal development. Workplaces will also find the tools we developed that allow employers to put employee development at the heart of their business.
+  <p class="lead">In development</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">The library itself - you'll notice access is restricted currently. This is a top priority and coming very soon.</li>
+    </ul>
+</div>
+
+<div class="container my-4">
+  <a id="pathwayInfo" class="anchor"></a>
+  <h4 class="text-primary text-end">PATHWAYS</h4>
+  <hr>
+  <p>
+    Pathways are a way to structure everything we learn. Revolving around three main features; articles, video lectures & benchmarks. Pathway creators can structure these documents to be completed in a certain order. We use AI question & answer generation for speedy creation of benchmarks so you can focus on quality content.
+  <p class="lead">In development</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Benchmark completion. Currently they can be generated but there is no application for using them.</li>
+      <li class="list-group-item">Skillsets. These will be made by linking groups of pathways together to form a skill.</li>
+      <li class="list-group-item">Refined question generation handling more document types. Automatically uploading PDF's for example.</li>
+      <li class="list-group-item">Handling more datatypes. Currently the question generator operates from written articles only. In the future transcripts will be scraped or generated for more data & tabular data will also be an excepted data type</li>
+    </ul>
+</div>
+
+<div class="container my-4">
+  <a id="communityInfo" class="anchor"></a>
+  <h4 class="text-primary text-end">COMMUNITY</h4>
+  <hr>
+  <p>
+    The community board is a place to discuss Aims Library content. Users can create a topic in the relevant cateogory. From  sharing their struggles to promoting their pathways and succesful aims setting models, you'll find it all here.
+  <p class="lead">In development</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Better categorisation of topics</li>
+      <li class="list-group-item">More dynamic topic creation including images.</li>
+      <li class="list-group-item">Content. It's a message board with no messages!!</li>
+      <li class="list-group-item">Layout. This is the first applicatio on Aims library, it's already outdated.</li>
+    </ul>
+</div>
+{% endblock %}
