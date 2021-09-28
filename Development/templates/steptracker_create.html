@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% block title %}AIMS{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
+{% block pageInfo_title %}
+CREATING STEP TRACKER
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Now we're getting to the nitty gritty. Here's where you create a step that when repeated moves you towards new behaviours and your aims. There's a few setttings, click the info button on each one for more details. or read the guide <a href="#">here</a>.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+{% include "aims_nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="container my-4">
+
+
+  <div class="form-group">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.media }}
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">The type of tracker <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MtrackerType"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <p class="text-center">{{ form.metric_tracker_type}}</p>
+          </div>
+        </div>
+
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">The action you're tracking <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MmetricAction"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <p class="text-center">{{ form.metric_action}}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">The unit of measurement <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MmetricUnit"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <p class="text-center">{{ form.metric_unit}}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Minimum expectation <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MmetricMin"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <p class="text-center">{{ form.metric_min}}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Awesome performance <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MmetricMax"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <p class="text-center">{{ form.metric_max}}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Allow 'show up' alternative <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MminShowAllowed"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-xs-12 col-md-8">
+            <p class="text-sm-right text-start pt-2">{{ form.minimum_show_allowed }}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">'Show up' statement <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MminShowDescription"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-center">{{ form.minimum_show_description }}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Record Frequency <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MrecordFrequency"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-center">{{ form.record_frequency }}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-3">Record start date <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MrecordStartDate"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-center">{{ form.record_start_date }}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Record multiple per period <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MrecordMultiple"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-start">{{ form.record_multiple_per_frequency }}</p>
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Completion criteria <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteCriteria"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-center">{{ form.complete_criteria }}</p>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Completion value <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#complete_value"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-center">{{ form.complete_value }}</p>
+          </div>
+        </div>
+
+
+        <div class="text-center">
+          <button class="btn btn-primary">Start tracking your aim</button>
+        </div>
+      </form>
+    </div>
+</div>
+
+
+<!-- Modals -->
+<div class="modal fade" id="MtrackerType" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MtrackerTypeLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MtrackerTypeLabel"><i class="fas fa-info"></i> Types of tracker</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="lead">Here's the types of trackers and example use cases.</p>
+        <p><strong>'Count Up'</strong>: You're building your meditation behaviour. You want to do atleast 20 minutes meditation a day. But, you know 1 minute is a realistic starting point. Start progressing towards that 20 minutes with a count up tracker.</p>
+        <p><strong>'Count Down'</strong>: You've decided to quit smoking and want to smoke 0 cigarettes a day. Currently you smoke 20, start counting down to success with this tracker.</p>
+        <p><strong>'Yes or No'</strong>: Having decided to be more organised. You are going to make your bed every morning. Did you complete it, yes or no? <small>(This option will disable a lot of further questions)</small>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MmetricAction" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MmetricActionLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MmetricActionLabel"><i class="fas fa-info"></i> The action you're tracking</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="lead">Here's how to enter an action</p>
+        <p><strong>'For counting trackers'</strong>: It's simply a verb, if you're trying to run more, 'run' is the keyword. Want to do more yoga? 'practise yoga' would be perfect.</p>
+        <p><strong>'Yes or No trackers'</strong>: You'll need to enter a statement. "I made my bed" or "I got out of bed wthout an alarm clock" are some examples.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MmetricUnit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MmetricUnitLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MmetricUnitLabel"><i class="fas fa-info"></i> Unit of measurement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Counting trackers only</strong>: Enter the unit you're recording. For example. An action of run might track 'miles' or 'minutes'.
+        Or, an action of read could be 'pages of a book' or 'new words'.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MmetricMin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MmetricMinLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MmetricMinLabel"><i class="fas fa-info"></i>Minimum Expectation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Counting trackers only</strong>: Enter the minimum you expect of yourself, this should be close to what you currently achieve. If you're minimizing screen time and are currently at 8 hours a day you need to be realistic. Cutting down to 7 is progress and worthy minimum expectation of yourself. So, enter 7.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MmetricMax" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MmetricMaxLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MmetricMaxLabel"><i class="fas fa-info"></i> Awesome performance</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Counting trackers only</strong>: This is what you have envisioned for yourself. If you're counting down to 0 of something in your life. The 0 is your awesome performance. It is value you you're stepping towards that truly builds the behaviour.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MminShowAllowed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MminShowAllowedLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MminShowAllowedLabel"><i class="fas fa-info"></i> Minimum show allowed</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>For all trackers</strong>:Some days the world kicks you in the butt. Never give up. If you check this you'll allow yourself a minimum show up statement.</p>
+        <p class=""><strong>Minimum show statement</strong>: You've been out running miles every morning before work. You're proud, you're getting somewhere, then, you don't sleep that night. There's nothing left in the tank and you dread coming off the pedal for the fear you'll stop completely.
+        A minimum show statement would be "I put running clothes on and walked to the end of my road".</p>
+    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="MminShowDescription" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MminShowDescriptionLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MminShowDescriptionLabel"><i class="fas fa-info"></i> 'Show up' statement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Minimum show statement</strong>: You've been out running miles every morning before work. Your proud, your getting somewhere, then, don't sleep that night. There's nothing left in the tank and you dread coming off the pedal for the fear you'll stop completely.
+        A minimum show statement would be "I put running clothes on and walked to the end of my road". <small>Only works if enabled</small>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="MrecordFrequency" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MrecordFrequencyLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MrecordFrequencyLabel"><i class="fas fa-info"></i> Record Frequency</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Record frequency</strong>: how often you will record the action </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MrecordStartDate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MrecordStartDateLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MrecordStartDateLabel"><i class="fas fa-info"></i> Record start date</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Record start date</strong>: defaults to today. Those organised can plan in future tracking starting points by adding a custom start date.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MrecordMultiple" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MrecordMultipleLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MrecordMultipleLabel"><i class="fas fa-info"></i> Record multiple per period</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Record start date</strong>: Only applies to counting trackers, if you want to record everytime you take an action check this box. For example if you're aiming to read 40 minutes a day you can submit 8 x 5 minute blocks to reach your aim. </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="McompleteCriteria" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="McompleteCriteriaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="McompleteCriteriaLabel"><i class="fas fa-info"></i> Complete Criteria</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Complete criteria</strong>:How you know you've made real progression.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="complete_value" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="complete_valueLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="complete_valueLabel"><i class="fas fa-info"></i> Complete Value</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Complete value </strong>:The quantity of times that you complete you're action either conseuctively or in total</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

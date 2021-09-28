@@ -87,7 +87,7 @@ def create_qa_pair(request):
         next_order_by = Question.objects.filter(on_quiz=benchmark_id).order_by('order_by')
 
         for i, existing_question in enumerate(next_order_by):
-            existing_question.in_order = i
+            existing_question.order_position = i
             existing_question.save()
 
         new_question = Question(

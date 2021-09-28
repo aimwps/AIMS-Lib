@@ -2,31 +2,31 @@
 <div class="accordion accordion-flush" id="aims_accordion">
   {% for aim_data in sorted_aims %}
   <div class="accordion-item">
-    <h2 class="accordion-header" id="heading_{{aim_data.1}}">
+    <h2 class="accordion-header border border-primary" id="heading_{{aim_data.1}}">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{aim_data.1}}" aria-expanded="false" aria-controls="flush_{{aim_data.1}}">
         <h4>{{aim_data.2}}</h4>
       </button>
     </h2>
     <div id="flush_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
-      <div class="accordion-body">
+      <div class="accordion-body border border-primary">
         {% for aim, behaviours in aim_data.4.items %}
-        <div class="row text-center">
+        <div class="text-center">
             <h4>AIM</h4>
-            <h6>Created {{ aim.publish_date}} @ {{ aim.publish_time }} set by {{ aim.user }}</h6>
+            <h6>Created {{ aim.create_date}} @ {{ aim.create_time }} by {{ aim.author }}</h6>
           </div>
-          <div class="row">
+          <div class="text-center">
             <ul class="nav justify-content-center">
               {% if user.is_authenticated %}
-                {% if user.id == aim.user.id %}
+                {% if user.id == aim.author.id %}
                 <!-- Button trigger modal -->
                 <li class="nav-item px-2">
                   <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ aim }}"><i class="fas fa-bars"></i></a>
                 </li>
                   <li class="nav-item px-2">
-                    <a href="#" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
+                    <a href="{% url 'aim-edit' aim.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
                   </li>
                   <li class="nav-item px-2">
-                      <p><a href="#" data-bs-toggle="tooltip" title="Delete this aim"><i class="far fa-trash-alt"></i></a></p>
+                      <a href='{% url "behaviour-create" aim.id %}' class="text-primary"><i class="far fa-plus"></i></a>
                   </li>
                 {% endif %}
               {% endif %}
@@ -50,9 +50,8 @@
 
                 </div>
                 <div class="modal-footer">
-                  <a href='{% url "lever-new" aim.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                  <a href='{% url "edit-aim" aim.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
-
+                  <a href='{% url "behaviour-create" aim.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                  <a href='{% url "aim-edit" aim.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
                   <form action="." method="POST">
                     {% csrf_token %}
                     <button name="delete_aim" value="{{aim.id}}" class="btn btn-secondary">
@@ -64,24 +63,35 @@
           </div>
           <!-- Modal end -------------------------------------------------------------------------------------------------------->
 
-          <p>{{ aim.why }}</p>
+          <p>{{ aim.motivation }}</p>
           <div class="accordion accordion-flush" id="accordionBehaviours">
-          <p class="lead"></a> Behaviours that support my aim</p>
           {% for behaviour, trackers in behaviours.items %}
             <div class="accordion-item">
 
               <h2 class="accordion-header" id="heading_{{behaviour.id}}">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{behaviour.id}}" aria-expanded="false" aria-controls="flush_{{behaviour.id}}">
-                    {{ behaviour.description }}
+                    <h5>{{ behaviour.title }}</h5>
                 </button>
               </h2>
               <div id="flush_{{behaviour.id}}" class="accordion-collapse collapse" aria-labelledby="heading_{{behaviour.id}}" data-bs-parent="#accordionBehaviours">
                 <div class="accordion-body">
-                <p class="lead">
+                  <div class="text-center">
+                    <h5>BEHAVIOUR</h5>
+                    <h6>Created {{ behaviour.create_date}} @ {{ behaviour.create_time }}</h6>
+                    <ul class="nav justify-content-center">
+                        <!-- Button trigger modal -->
+                        <li class="nav-item px-2">
+                          <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ behaviour.id }}"><i class="fas fa-bars"></i></a>
+                        </li>
+                          <li class="nav-item px-2">
+                            <a href="{% url 'behaviour-edit' behaviour.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
+                          </li>
+                          <li class="nav-item px-2">
+                              <a href='{% url "steptracker-create" behaviour.id %}' class="text-primary"><i class="far fa-plus"></i></a>
+                          </li>
+                    </ul>
+                  </div>
                 <!-- Button trigger modal -->
-                <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ behaviour.id }}">
-                  <i class="fas fa-ellipsis-h"></i>
-                </a> {{ behaviour.description}}</p>
 
                 <!-- Modal -->
                 <div class="modal fade" id="modal_{{ behaviour.id }}" tabindex="-1" aria-labelledby="modal_{{ behaviour.id }}Label" aria-hidden="true">
@@ -92,13 +102,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <p class="lead">{{behaviour.description }}</p>
+                        <p class="lead">{{behaviour.title }}</p>
                         <p>A behaviuour is something you can do that moves you closer towards your aims.</p>
                         <p>You can add a tracker to monitor measurable progress and also edit or delete this behaviour below</p>
                       </div>
                       <div class="modal-footer">
-                        <a href='{% url "tracker-select" behaviour.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                        <a href='{% url "edit-lever" behaviour.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
+
+                        <a href='{% url "behaviour-edit" behaviour.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
 
                         <form action="." method="POST">
                           {% csrf_token %}
@@ -138,14 +148,14 @@
 
                             </div>
                             <div class="modal-footer">
-                              <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                              <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
 
                               {% if tracker.get_tclass == "TrackerMinAim" %}
-                                <a href='{% url "edit-min-tracker" tracker.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                                <a href='{% url "edit-min-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
                               {% endif %}
 
                               {% if tracker.get_tclass == "TrackerBoolean" %}
-                                <a href='{% url "edit-bool-tracker" tracker.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                                <a href='{% url "edit-bool-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
                               {% endif %}
 
                               <form action="." method="POST">

@@ -50,7 +50,7 @@ class MemberProfileCreate(LoginRequiredMixin, generic.CreateView):
     success_url = reverse_lazy('aims-dash')
 
     def form_valid(self,form):
-        form.instance.user_profile = self.request.user
+        form.instance.author = self.request.user
         return super().form_valid(form)
 
 class MemberProfileEdit(LoginRequiredMixin, generic.UpdateView):
