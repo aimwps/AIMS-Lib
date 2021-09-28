@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import GeneratedQuestionBank
-from WrittenLecture.models import WrittenLecture
+from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
-from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
+from Benchmark.models import Benchmark, Question, Answer
 from .sserializers import GeneratedQuestionBankSerializer
 from django.views.generic import CreateView, View, TemplateView
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -49,14 +49,14 @@ def search_questions(request):
                 source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
                 question__icontains=search_str, generated_by = request.user.id)| GeneratedQuestionBank.objects.filter(
                 answer__icontains=search_str, generated_by = request.user.id)
-        benchmark_qs = QuizQuestion.objects.filter(on_quiz=json.loads(request.body).get('on_benchmark'))
+        benchmark_qs = Question.objects.filter(on_quiz=json.loads(request.body).get('on_benchmark'))
 
         new_data = []
         for q in gqb:
             new_data.append(
             {"question":GeneratedQuestionBankSerializer(q).data,
             "benchmark_status":benchmark_qs.filter(generated_from=q.id).exists()})
-        print(new_data)
+
         return JsonResponse(new_data, safe=False)
 
 class QuestionGenerator(LoginRequiredMixin, View):

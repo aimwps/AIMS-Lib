@@ -52,3 +52,10 @@ class ReplyCreateForm(forms.ModelForm):
         model = Reply
         fields = ('body',)
         widgets ={'body': forms.Textarea(attrs = {'class': 'form-control',})}
+
+
+class ReplyEditForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ('body',)
+        widgets ={'body': forms.Textarea(attrs = {'class': 'form-control',})}

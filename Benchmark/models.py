@@ -29,7 +29,7 @@ class Question(models.Model):
                     ("text-entry-nearest", "Text entry (Close enough)"))
 
     on_benchmark = models.ForeignKey(Benchmark, on_delete=models.CASCADE, related_name="questions")
-    generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
+    generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True, related_name="question_source")
     source_was_modified  = models.BooleanField(blank=True, null=True)
     question_text = models.TextField()
     answer_type = models.CharField(max_length=255, choices=ANSWER_TYPES, default="text-entry-exact")
@@ -49,7 +49,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     on_question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
-    generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
+    generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True, related_name="answer_source")
     source_was_modified = models.BooleanField(blank=True, null=True)
     answer_text = models.TextField()
     is_correct = models.BooleanField()
@@ -61,11 +61,11 @@ class Answer(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['to_question', 'order_position'],
+                fields=['on_question', 'order_position'],
                 name='answer_order_position'
             ),
             models.UniqueConstraint(
-                fields=['to_question'],
+                fields=['on_question'],
                 condition=Q(is_default=True),
                 name='default_correct_answer'
             )

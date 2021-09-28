@@ -1,10 +1,10 @@
 from django import forms
-from .models import WrittenLecture
+from .models import Article
 
 
-class WrittenLectureEditForm(forms.ModelForm):
+class ArticleEditForm(forms.ModelForm):
     class Meta:
-        model = WrittenLecture
+        model = Article
         fields = ('title',"body")
         widgets ={
             'title': forms.TextInput(attrs = {'class': 'form-control text-center',
@@ -13,9 +13,9 @@ class WrittenLectureEditForm(forms.ModelForm):
                                             }),}
 
         # this is applying the css classes 'form-control' is predetermined
-class WrittenLectureNewForm(forms.ModelForm):
+class ArticleCreateForm(forms.ModelForm):
     class Meta:
-        model = WrittenLecture
+        model = Article
         fields = ('title','body')
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control text-center',

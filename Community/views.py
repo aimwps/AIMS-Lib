@@ -3,7 +3,7 @@ from django.views.generic import View,ListView, DetailView, CreateView, UpdateVi
 from .models import Topic, Reply
 from Interactions.models import VoteContent, CommentContent
 from Development.models import ContentCategory
-from .forms import TopicCreateForm, TopicEditForm, TopicCommentForm, ReplyCreateForm, TopicCreateInCatForm
+from .forms import TopicCreateForm, TopicEditForm, TopicCommentForm, ReplyCreateForm, TopicCreateInCatForm, ReplyEditForm
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
@@ -24,7 +24,7 @@ def get_category_path(cat, current_path=""):
         return new_path
 
 
-def CommunityTopicCategory(request, cat_id):
+def TopicCategoryView(request, cat_id):
     category = ContentCategory.objects.get(id=cat_id)
     skill_area_topics = Topic.objects.filter(category=cat_id)
     paginator = Paginator(skill_area_topics, 5)
@@ -33,7 +33,7 @@ def CommunityTopicCategory(request, cat_id):
     return render(request, 'community_view_category.html', {"category": category,
                                                         "skill_area_topics": page_obj})
 
-class CommunnityHomeView(TemplateView):
+class CommunityHomeView(TemplateView):
     template_name = "community_home.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -329,8 +329,12 @@ def TopicView(request, pk):
 
     return render(request, template_name, context)
 
-
-
+class ReplyEdit(LoginRequiredMixin,UpdateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    model = Reply
+    form_class = ReplyEditForm
+    template_name = "reply_edit.html"
 ###############################################################################################
 ### For viewing a topic, replying and making comments
 class TopicCreate(LoginRequiredMixin,CreateView):
@@ -362,7 +366,7 @@ class ReplyCreate(LoginRequiredMixin,CreateView):
         messages.success(self.request, 'Your reply has been posted successfully')
         return super().form_valid(form)
 
-class TopicNewCat(LoginRequiredMixin,CreateView):
+class TopicCreateInCat(LoginRequiredMixin,CreateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     model = Topic

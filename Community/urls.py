@@ -1,14 +1,15 @@
 from django.urls import path
-from .views import ForumViewHome,ForumDevAreaTopics, ForumTopicView, ForumTopicNew, ForumTopicEdit, ForumTopicDelete, ForumTopicReply, ForumTopicNewCat
+from .views import CommunityHomeView, TopicCategoryView, TopicView, TopicCreate, TopicCreateInCat, TopicEdit, TopicDelete, ReplyCreate, ReplyEdit
 
 urlpatterns = [
-    path('forum/', ForumViewHome.as_view(), name="forum-home"),
-    path('forum/<int:devCatPk>', ForumDevAreaTopics, name="forum-dev-area"),
-    path('forum_topic/<int:pk>', ForumTopicView, name="forum-topic-view"), #<int:pk> references the specifc blog
-    path('forum_topic/new/', ForumTopicNew.as_view(), name="forum-topic-new"),
-    path('forum_topic/new/<int:cat_id>', ForumTopicNewCat.as_view(), name="forum-topic-new-cat"),
-    path('forum_topic/edit/<int:pk>', ForumTopicEdit.as_view(), name="forum-topic-edit"),
-    path('forum_topic/delete/<int:pk>', ForumTopicDelete.as_view(), name="forum-topic-delete"),
-    path('forum_topic/<int:pk>/reply/', ForumTopicReply.as_view(), name="forum-topic-reply"),
+    path('community/', CommunityHomeView.as_view(), name="community-home"),
+    path('community/topic/category/<int:cat_id>/', TopicCategoryView, name="topic-category-view"),
+    path('community/topic/<int:pk>/', TopicView, name="topic-view"),
+    path('community/topic/create/', TopicCreate.as_view(), name="topic-create"),
+    path('community/topic/category/create/<int:cat_id>/', TopicCreateInCat.as_view(), name="topic-create-in-cat"),
+    path('community/topic/edit/<int:pk>/', TopicEdit.as_view(), name="community-topic-edit"),
+    path('community/topic/delete/<int:pk>/', TopicDelete.as_view(), name="topic-delete"),
+    path('community/topic/<int:pk>/reply/', ReplyCreate.as_view(), name="reply-create"),
+    path('community/reply/<int:pk>/edit/', ReplyEdit.as_view(), name="reply-edit"),
 
 ]

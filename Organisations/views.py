@@ -81,7 +81,7 @@ class OrganisationContentEdit(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class UserOrganisationView(LoginRequiredMixin,ListView):
+class UserOrganisationsView(LoginRequiredMixin,ListView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     template_name = "user_organisations.html"

@@ -39,7 +39,7 @@ class Aim(models.Model):
     create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['author', 'order_positon'], name='unique_order_of_aims')
+            models.UniqueConstraint(fields=['author', 'order_position'], name='unique_order_of_aims')
         ]
     def __str__(self):
         return f"Aim_{self.id}"
@@ -52,7 +52,7 @@ class Behaviour(models.Model):
     title = models.TextField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    order_positon = models.PositiveIntegerField()
+    order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True, blank=True, null=True)
     create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
     class Meta:
@@ -84,7 +84,7 @@ class StepTracker(models.Model):
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
     complete_value = models.PositiveIntegerField()
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
-    order_positon = models.PositiveIntegerField()
+    order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True, blank=True, null=True)
     create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
     class Meta:

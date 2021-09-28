@@ -12,6 +12,10 @@ from Benchmark.models import Benchmark
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+
+CONTENT_TYPE = (('Article', "Article"),
+                ('VideoLecture', "Video Lecture"),
+                )
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
     title = models.CharField(max_length=255)
@@ -29,28 +33,19 @@ class Pathway(models.Model):
             *args, **kwargs)
         return kwargs
 
-class PathwayContentManager(models.Manager):
-    def filter_by_instance(self,instance):
-        obj_id = instance.id
-        content_type = ContentType.objects.get_for_model(instance)
-        qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
-        return qs
 
 class PathwayContent(models.Model):
-    PATHWAY_CONTENT_TYPE = (("video-lecture","Video Lecture"),
-                            ("written-lecture","Written Lecture"),
-                            ("quiz","Knowledge Incrementer"),)
     on_pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name='full_pathway')
-    order_position = models.PositiveIntegerField()
+    content_type =  models.CharField(max_length=100, choices=CONTENT_TYPE)
+    article = models.ForeignKey(Article, blank=True, null=True, on_delete=models.CASCADE)
+    video = models.ForeignKey(VideoLecture, blank=True, null=True, on_delete=models.CASCADE)
+    order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
     modify_date = models.DateField(auto_now=True,auto_now_add=False)
     modify_time = models.TimeField(auto_now=True,auto_now_add=False)
     complete_previous = models.BooleanField()
-    revise_continous = models.BooleanField(default=True)
-    content_type =  models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    objects = PathwayContentManager()
+    revise_continuous = models.BooleanField(default=True)
 
     class Meta:
         constraints = [
