@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from datetime import datetime, date
-from Development.models import ContentCategory #,SkillArea
+from Development.models import ContentCategory
 from ckeditor.fields import RichTextField
 
 class VoteManager(models.Manager):

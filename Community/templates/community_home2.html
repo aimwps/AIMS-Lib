@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Community{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+
+{% block modulenav %}
+{% include "community_nav.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <a class="anchor" id="aimscategory"></a>
+</div>
+
+{% for dev_area, dev_topic_set in dev_area_topics.items %}
+  <div class="row my-4">
+    <div class="col-8">
+      <h4 class="text-start">
+        {{ skill_area_topics }}
+        <a href='{% url "forum-dev-area" dev_area.pk %}' data-toggle="tooltip" title="See all from this category">{{ dev_topic_set.0 }}</a>
+      </h4>
+      </div>
+      <div class="col-4">
+        <h4 class="text-end">
+          <a href="{% url 'forum-topic-new-cat' dev_area.id %}" data-toggle="tooltip" title="Create a new topic in this category"><i class="far fa-file"></i></a>
+        </h4>
+      </div>
+    </div>
+      <div class="accordion accordion-flush" id="TopicAccordian">
+        {% for post in dev_topic_set.1 %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="topic_heading_{{ post.pk }}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#topic_collapse_{{ post.pk }}" aria-expanded="false" aria-controls="topic_collapse_{{ post.pk }}">
+                {{ post.title }} by {{ post.author }} on {{ post.publish_date }} at {{ post.publish_time}}</button>
+            </h2>
+            <div id="topic_collapse_{{ post.pk }}" class="accordion-collapse collapse" aria-labelledby="topic_heading_{{ post.pk }}" data-bs-parent="#TopicAccordian">
+              <div class="accordion-body text-break">
+                {% if post.topic_snippet %}
+                <p>{{ post.topic_snippet }}</p>
+                {% else %}
+                <p>{{ post.body|slice:500|safe}}
+                {% endif %}
+                <h6><a href="{% url 'forum-topic-view' post.pk %}">View full topic</a></h6>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+{% endfor %}
+
+
+
+<!-- DONT EDIT AFTER THIS POINT                                          ### -->
+<!-- ####################################################################### -->
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %} The Forum{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block modulenav %}
+{% include "community_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <br/>
+  <h1>Hello, Forum!</h1>
+  <br/>
+
+  {{ object_list }}
+  <div class="accordion accordion-flush" id="TopicAccordian">
+    {% for post in object_list %}
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="topic_heading_{{ post.pk }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#topic_collapse_{{ post.pk }}" aria-expanded="false" aria-controls="topic_collapse_{{ post.pk }}">
+            {{ post.title }} | {{ post.author }} | {{ post.created_date}}
+          </button>
+        </h2>
+        <div id="topic_collapse_{{ post.pk }}" class="accordion-collapse collapse" aria-labelledby="topic_heading_{{ post.pk }}" data-bs-parent="#TopicAccordian">
+          <div class="accordion-body">
+            {{ post.body }}
+            <h6><a href="{% url 'forum-topic-view' post.pk %}">View full topic</a></h6>
+            <a href="{% url 'forum-topic-edit' post.pk %}">Edit</a>
+            <a href="{% url 'forum-topic-delete' post.pk %}">Del</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
