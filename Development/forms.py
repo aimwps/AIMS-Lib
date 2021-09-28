@@ -1,5 +1,5 @@
 from django import forms
-from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords, DevelopmentCategory
+from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords, ContentCategory
 from bootstrap_datepicker_plus import DatePickerInput
 
 class TrackerBooleanNewForm(forms.ModelForm):
@@ -130,6 +130,6 @@ class AimNewForm(forms.ModelForm):
         super(AimNewForm, self).__init__(*args, **kwargs)
         # this is pseudo code but you should get all variants
         # then get the product related to each variant
-        dev_cats = DevelopmentCategory.objects.all()
+        dev_cats = ContentCategory.objects.all()
         categories = sorted([(cat.id, str(cat)) for cat in dev_cats], key=lambda x: x[1])
         self.fields['category'].choices = categories

@@ -83,7 +83,7 @@ class Behaviour(models.Model):
         return reverse('aims-dash')
 
 class StepTracker(models.Model):
-    on_behaviour = models.ForeignKey(Lever,on_delete=models.CASCADE, related_name="trackers")
+    on_behaviour = models.ForeignKey(Behaviour,on_delete=models.CASCADE, related_name="trackers")
     metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE)
     metric_action = models.TextField(blank=True, null=True)
     metric_unit = models.CharField(max_length=100)
@@ -92,10 +92,10 @@ class StepTracker(models.Model):
     metric_max = models.FloatField()
     minimum_show_allowed = models.BooleanField()
     minimum_show_description = models.TextField(blank=True, null=True)
-    record_type = models.CharField(max_length=100,choices=METRIC_FREQ)
+    #record_type = models.CharField(max_length=100,choices=METRIC_FREQ)
     record_start_date = models.TimeField(auto_now_add=True, blank=True, null=True)
-    record_frequency = models.CharField(max_length=100,choices=METRIC_FREQ)
-    record_multiple_per_frequency = models.CharField(max_length=100,choices=METRIC_FREQ)
+    record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY)
+    record_multiple_per_frequency = models.BooleanField()
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
     complete_value = models.PositiveIntegerField()
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")

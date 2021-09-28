@@ -16,7 +16,7 @@ class Benchmark(models.Model):
         return reverse('edit-benchmark', kwargs={'benchmark_id' : self.object.pk})
 
     def get_form_kwargs(self, *args, **kwargs):
-        kwargs = super(Quiz, self).get_form_kwargs(
+        kwargs = super(Benchmark, self).get_form_kwargs(
             *args, **kwargs)
         return kwargs
 
@@ -28,7 +28,7 @@ class Question(models.Model):
                     ("text-entry-exact", "Text entry (Exact)"),
                     ("text-entry-nearest", "Text entry (Close enough)"))
 
-    on_quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
+    on_benchmark = models.ForeignKey(Benchmark, on_delete=models.CASCADE, related_name="questions")
     generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
     source_was_modified  = models.BooleanField(blank=True, null=True)
     question_text = models.TextField()
@@ -40,7 +40,7 @@ class Question(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['on_quiz', 'order_position'],
+                fields=['on_benchmark', 'order_position'],
                 name='question_order_position'
             )
         ]
@@ -48,12 +48,12 @@ class Question(models.Model):
         return f"Question_{self.id}"
 
 class Answer(models.Model):
-    on_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, related_name="answers")
+    on_question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
     generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True)
     source_was_modified = models.BooleanField(blank=True, null=True)
     answer_text = models.TextField()
     is_correct = models.BooleanField()
-    is_default = models.BooleanField(unique=true)
+    is_default = models.BooleanField(unique=True)
     order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
@@ -66,7 +66,7 @@ class Answer(models.Model):
             ),
             models.UniqueConstraint(
                 fields=['to_question'],
-                conditon=Q(is_default=True),
+                condition=Q(is_default=True),
                 name='default_correct_answer'
             )
         ]

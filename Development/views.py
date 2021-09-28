@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Aim, Lever, TrackerMinAim, DevelopmentCategory, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
+from .models import Aim, Lever, TrackerMinAim, ContentCategory, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords
 from Members.models import MemberProfile
 from website.models import ModuleNavData
 from .forms import AimNewForm, LeverNewForm, TrackerMinAimNewForm, TrackerMinAimRecordsForm, TrackerBooleanNewForm, TrackerBooleanRecordsForm#, TrackerMinAimEditForm, TrackerBooleanEditForm
@@ -166,7 +166,7 @@ class LeverNew(LoginRequiredMixin, CreateView):
     template_name = "lever_new.html"
 
     def form_valid(self, form):
-        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
+        #self.in_category = get_object_or_404(ContentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.on_aim = Aim.objects.get(id=self.kwargs['aim_id'])
         # For getting and resetting the correct order
         all_aim_levers = Lever.objects.filter(on_aim=self.kwargs['aim_id']).order_by('in_order')
@@ -193,7 +193,7 @@ class AimNew(LoginRequiredMixin, CreateView):
     form_class = AimNewForm
     template_name = "aim_new.html"
     def form_valid(self, form):
-        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
+        #self.in_category = get_object_or_404(ContentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.user = self.request.user
         all_user_aims = Aim.objects.filter(user=self.request.user).order_by("in_order")
         for i, aim in enumerate(all_user_aims):

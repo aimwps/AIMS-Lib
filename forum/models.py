@@ -64,7 +64,7 @@ class CommentContent(models.Model):
 
 class Topic(models.Model):
     title = models.CharField(max_length=255)
-    category = models.ForeignKey(DevelopmentCategory, null=True,on_delete=models.SET_NULL)
+    category = models.ForeignKey(ContentCategory, null=True,on_delete=models.SET_NULL)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     body = RichTextField(config_name="article_editor", )
     create_date = models.DateField(auto_now_add=True)

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View,ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, FormView
 from .models import Post, Comment, Reply, VoteUpDown
-from Development.models import DevelopmentCategory
+from Development.models import ContentCategory
 from .forms import ForumTopicNewForm, ForumTopicEditForm, ForumTopicCommentForm, ForumTopicReplyForm, ForumTopicNewCatForm
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -24,7 +24,7 @@ def get_category_path(cat, current_path=""):
 
 
 def ForumDevAreaTopics(request, devCatPk):
-    dev_area = DevelopmentCategory.objects.get(id=devCatPk)
+    dev_area = ContentCategory.objects.get(id=devCatPk)
     skill_area_topics = Post.objects.filter(dev_area=devCatPk)
     paginator = Paginator(skill_area_topics, 5)
     page_number = request.GET.get('page')
@@ -38,7 +38,7 @@ class ForumViewHome(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         skill_topic_set = {}
-        for dev_cat in DevelopmentCategory.objects.filter(global_standard=True):
+        for dev_cat in ContentCategory.objects.filter(global_standard=True):
             filtered_results = (get_category_path(dev_cat), list(Post.objects.filter(dev_area=dev_cat.id).order_by('-publish_date', '-publish_time')[:5]))
             skill_topic_set[dev_cat] = filtered_results
         x = sorted(skill_topic_set.items(), key=lambda x: x[1][0])
@@ -375,15 +375,15 @@ class ForumTopicNewCat(LoginRequiredMixin,CreateView):
         return reverse_lazy('forum-home')#, args=(self.kwargs['pk'],))
 
     def get_context_data(self, **kwargs):
-        on_cat = DevelopmentCategory.objects.get(id=self.kwargs['cat_id'])
+        on_cat = ContentCategory.objects.get(id=self.kwargs['cat_id'])
         kwargs['dev_area'] = on_cat
-        #skill_area_pk = DevelopmentCategory.objects.filter(dev_area=self.kwargs['cat_id'])[0]
+        #skill_area_pk = ContentCategory.objects.filter(dev_area=self.kwargs['cat_id'])[0]
         #kwargs['skill_area_pk'] = skill_area_pk
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        #self.in_category = get_object_or_404(DevelopmentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
-        form.instance.dev_area = DevelopmentCategory.objects.get(id=self.kwargs['cat_id'])
+        #self.in_category = get_object_or_404(ContentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
+        form.instance.dev_area = ContentCategory.objects.get(id=self.kwargs['cat_id'])
         form.instance.author = self.request.user
 
         messages.success(self.request, 'Your Topic has been posted successfully')

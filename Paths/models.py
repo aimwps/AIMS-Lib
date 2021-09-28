@@ -8,7 +8,7 @@ from embed_video.fields import EmbedVideoField
 from rest_framework import serializers
 from VideoLecture.models import VideoLecture
 from WrittenLecture.models import Article
-from Benchmark.models import Quiz
+from Benchmark.models import Benchmark
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
@@ -78,7 +78,7 @@ class PathwayCompletitionRecord(models.Model):
 #     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
 #     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
 #
-# class QuizLectureCompletionRecord(models.Model):
+# class BenchmarkLectureCompletionRecord(models.Model):
 #     RECORD_STATUS = (('first_completion', 'first_completion'),
 #                     ('did_not_complete', 'did_not_complete'),
 #                     ('recap_completion', 'recap_completion'))
