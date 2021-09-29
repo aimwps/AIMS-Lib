@@ -1,9 +1,9 @@
 <div class="row my-2">
   <div class="col-xs-12 col-md-4 text-end">
-    <p class="lead pt-1">Completion value<a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#complete_value"><i class="fas fa-info"></i></a></p>
+    <p class="lead pt-1">Whole numbers only<a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MmetricIntOnly"><i class="fas fa-info"></i></a></p>
   </div>
   <div class="col-md-8">
-    <p class="text-center">{{ form.complete_value }}</p>
+    <p class="text-center">{{ form.metric_int_only }}</p>
   </div>
 </div>
 
@@ -14,15 +14,15 @@
 
 
 
-<div class="modal fade" id="complete_value" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="complete_valueLabel" aria-hidden="true">
+<div class="modal fade" id="MmetricIntOnly" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MmetricIntOnlyLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="complete_valueLabel"><i class="fas fa-info"></i> Complete Value</h5>
+        <h5 class="modal-title" id="MmetricIntOnlyLabel"><i class="fas fa-info"></i> Whole Numbers</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p class=""><strong>Complete value </strong>:The quantity of times that you complete you're action either conseuctively or in total</p>
+        <p class=""><strong>Whole Numbers</strong>: As a default we'll only track whole numbers, any decimals will be rounded to the nearest whole number. By deselecting this option you can enter decimal numbers. When tracking kilometers walked and whole numbers is deselected you can enter "1.7" for 1.7km. With whole numbers selected it will be rounded to 2km </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
