@@ -127,9 +127,12 @@ class StepTracker(models.Model):
         return sentence
 
 class StepTrackerLogs(models.Model):
-    TRACKER_LOG_TYPE = (("no_submit","no submit"),
+    TRACKER_LOG_TYPE = (
                         ("count_showup","count show up"),
                         ("count_value","count submit"),
+                        ("boolean_showup", "boolean show up"),
+                        ("boolean_success", "boolean complete"),
+                        ("fail_or_no_submit","fail or no submit"),
                         )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")

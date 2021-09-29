@@ -5,6 +5,8 @@ from datetime import datetime, date
 from ckeditor.fields import RichTextField
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 DAY_CHOICES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 DAY_CHOICES = ((d,d) for d in DAY_CHOICES)
 # Create your models here.
@@ -26,3 +28,20 @@ class MemberProfile(models.Model):
 
     def __str__(self):
         return str(self.user_profile)
+
+    # def get_reset_periods(self):
+    #     now = datetime.today()
+    #     reset_user_time = datetime.combine(now, self.day_reset_time)
+    #     # The current_date e.g. 29/09/21 @ 14:30 set to users reset periods Time
+    #                       # --> 29/09/21 @ 05:00
+    #     reset_user_date_time = reset_user_time + relativedelta(day=self.month_reset_day)
+    #     # The current_date e.g. 29/09/21 @ 14:30 set to users reset periods Time, Day
+    #                       # --> 01/09/21 @ 05:00
+    #
+    #     reset_user_year_date_time = reset_user_date_time + relativedelta(month=self.year_reset_month)
+    #     # The current date e.g. 29/09/21 @ 14:30 set to users reset periods Time, Day, Month
+    #                       # --> 01/01/21 @ 05:00
+    #     reset_periods = {"in_day_reset": reset_user_time,
+    #                     "in_month_reset":reset_user_date_time,
+    #                     "in_year_reset": reset_user_year_date_time}
+    #     return reset_periods

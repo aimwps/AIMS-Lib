@@ -2,12 +2,12 @@
 <div class="accordion accordion-flush" id="aims_accordion">
   {% for aim_data in sorted_aims %}
   <div class="accordion-item">
-    <h2 class="accordion-header border border-primary" id="heading_{{aim_data.1}}">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{aim_data.1}}" aria-expanded="false" aria-controls="flush_{{aim_data.1}}">
+    <h2 class="accordion-header border border-primary" id="aim_heading_{{aim_data.1}}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aim_acc_{{aim_data.1}}" aria-expanded="false" aria-controls="aim_acc_{{aim_data.1}}">
         <h4>{{aim_data.2}}</h4>
       </button>
     </h2>
-    <div id="flush_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
+    <div id="aim_acc_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="aim_heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
       <div class="accordion-body border border-primary">
         {% for aim, behaviours in aim_data.4.items %}
         <div class="text-center">
@@ -68,12 +68,12 @@
           {% for behaviour, trackers in behaviours.items %}
             <div class="accordion-item">
 
-              <h2 class="accordion-header" id="heading_{{behaviour.id}}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{behaviour.id}}" aria-expanded="false" aria-controls="flush_{{behaviour.id}}">
+              <h2 class="accordion-header" id="beh_heading_{{behaviour.id}}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beh_acc_{{behaviour.id}}" aria-expanded="false" aria-controls="beh_acc_{{behaviour.id}}">
                     <h5>{{ behaviour.title }}</h5>
                 </button>
               </h2>
-              <div id="flush_{{behaviour.id}}" class="accordion-collapse collapse" aria-labelledby="heading_{{behaviour.id}}" data-bs-parent="#accordionBehaviours">
+              <div id="beh_acc_{{behaviour.id}}" class="accordion-collapse collapse" aria-labelledby="beh_heading_{{behaviour.id}}" data-bs-parent="#accordionBehaviours">
                 <div class="accordion-body px-0">
                   <div class="text-center">
                     <h5>BEHAVIOUR: {{behaviour.title}}</h5>
@@ -123,18 +123,25 @@
                   {% for tracker in trackers %}
                   <!-- Button trigger modal -->
                     <li class="list-group-item px-0 border-white">
-                      <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.id}}">
-                        <i class="fas fa-bars"></i></a> {{ tracker.get_tsentence}}</p>
+                      <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.0.id}}">
+                        <i class="fas fa-bars"></i></a> {{ tracker.0.get_tsentence}}</p>
                         <ul class="list-group list-group-flush my-1 py-1">
                           <li class="list-group-item px-0">
                             <div class="row text-break">
-                              <div class='col-xs-12 col-md-4'>Frequency: {{ tracker.record_frequency|title }}</div>
-                              <div class="col-xs-12 col-md-8">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
+                              <div class='col-xs-12 col-md-4'>Frequency: {{ tracker.0.record_frequency|title }}</div>
+                              <div class="col-xs-12 col-md-8">{% for k, v in tracker.1.items %}
+                                {% if v %}
+                                {{ v }} <br>
+                                {%endif%}
+                                {% endfor %}
+
+                              </div>
+
                             </div>
                           </li>
                           <li class="list-group-item px-0">
                             <div class="row text-break">
-                              <div class='col-xs-12 col-md-4'>Milestone: {{ tracker.get_milestone_sentence|title }}</div>
+                              <div class='col-xs-12 col-md-4'>Milestone: {{ tracker.0.get_milestone_sentence|title }}</div>
                               <div class="colxs-12 col-md-8">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
                             </div>
                           </li>
@@ -143,18 +150,18 @@
                       </li>
 
                       <!-- Modal --------------------------------------------------------------------------------------------------------->
-                      <div class="modal fade" id="modal_{{tracker.id}}" tabindex="-1" aria-labelledby="modal_{{tracker.id}}Label" aria-hidden="true">
+                      <div class="modal fade" id="modal_{{tracker.0.id}}" tabindex="-1" aria-labelledby="modal_{{tracker.0.id}}Label" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="modal_{{tracker.id}}Label">Tracker Selected</h5>
+                              <h5 class="modal-title" id="modal_{{tracker.0.id}}Label">Tracker Selected</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                               <ul>
-                                <li> Type: {{ tracker.get_tclass }} </li>
-                                <li> Start Date: {{ tracker.record_start_date }} </li>
-                                <li> Track Frequency: {{ tracker.record_frequency }}</li>
+                                <li> Type: {{ tracker.0.get_tclass }} </li>
+                                <li> Start Date: {{ tracker.0.record_start_date }} </li>
+                                <li> Track Frequency: {{ tracker.0.record_frequency }}</li>
 
                               </ul>
                               <p>A tracker is a measurable step that supports your behaviour</p>
@@ -167,7 +174,7 @@
                               <form action="." method="POST">
                                 {% csrf_token %}
 
-                                <button name="delete_tracker" value="{{tracker.id}}" class="btn btn-secondary">
+                                <button name="delete_tracker" value="{{tracker.0.id}}" class="btn btn-secondary">
                                   <i class="far fa-trash-alt"></i></button>
                               </form>
                             </div>
