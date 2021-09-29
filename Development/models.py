@@ -64,25 +64,24 @@ class Behaviour(models.Model):
         return []
 
     def __str__(self):
-        return f"Behaviour_{self.id}"
-    def get_absolute_url(self):
+
         return reverse('aims-dash')
 
 class StepTracker(models.Model):
     on_behaviour = models.ForeignKey(Behaviour,on_delete=models.CASCADE, related_name="trackers")
-    metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE)
+    metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE, blank=True, null=True)
     metric_action = models.TextField(blank=True, null=True)
-    metric_unit = models.CharField(max_length=100)
-    metric_number_display_type = models.CharField(max_length=100, choices=NUMBER_TYPE)
-    metric_min = models.FloatField()
-    metric_max = models.FloatField()
-    minimum_show_allowed = models.BooleanField()
+    metric_unit = models.CharField(max_length=100, blank=True, null=True)
+    metric_number_display_type = models.CharField(max_length=100, choices=NUMBER_TYPE, default='float')
+    metric_min = models.FloatField(blank=True, null=True)
+    metric_max = models.FloatField(blank=True, null=True)
+    minimum_show_allowed = models.BooleanField(blank=True, null=True)
     minimum_show_description = models.TextField(blank=True, null=True)
-    record_start_date = models.TimeField(auto_now_add=False)
-    record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY)
-    record_multiple_per_frequency = models.BooleanField()
-    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA)
-    complete_value = models.PositiveIntegerField()
+    record_start_date = models.TimeField(auto_now_add=False, blank=True, null=True)
+    record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY, blank=True, null=True)
+    record_multiple_per_frequency = models.BooleanField(blank=True, null=True)
+    complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, blank=True, null=True)
+    complete_value = models.PositiveIntegerField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True, blank=True, null=True)

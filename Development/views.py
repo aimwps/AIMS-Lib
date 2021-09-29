@@ -20,8 +20,35 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
     form_class = StepTrackerCreateForm
     model = StepTracker
     template_name = "steptracker_create.html"
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['on_behaviour'] = get_object_or_404(Behaviour, id=self.kwargs['behaviour_id'])
+    #     context['form'] = eval(self.form_class)
     def get_success_url(self):
         return reverse("aims")
+
+    def form_valid(self, form):
+        print(self.request.POST)
+        print(form)
+        form.instance.on_behaviour = self.kwargs['behaviour_id']
+        all_behaviour_trackers =  StepTracker.objects.filter(on_behaviour=self.kwargs['behaviour_id']).order_by('order_position')
+        for i, tracker in  enumerate(all_behaviour_trackers):
+            tracker.order_position =  i
+            tracker.save()
+        form.instance.order_position = len(all_behaviour_trackers)
+        return super().form_valid(form)
+
+
+    def form_invalid(self, form):
+        print("INVALID")
+        print(self.request.POST)
+        print(form)
+        return self.render_to_response(self.get_context_data(form=form))
+    # def get_context_data(self):
+    #     context = super().get_context_data(**kwargs)
+    #     context['on_behaviour'] = Behaviour.objects.get(id=self.kwargs['behaviour_id'])
+    #     return context
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
