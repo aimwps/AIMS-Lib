@@ -20,6 +20,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
 {% endblock %}
 {% block content %}
 <div class="container my-4">
+  {{ form.non_field_errors }}
 
 
   <div class="form-group">
@@ -31,7 +32,8 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
             <p class="lead pt-1">The type of tracker <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MtrackerType"><i class="fas fa-info"></i></a></p>
           </div>
           <div class="col-xs-12 col-md-8">
-            <p class="text-center">{{ form.metric_tracker_type}}</p>
+            <p class="text-center">{{ form.metric_tracker_type }}</p>
+            {{ form.metric_tracker_type.errors }}
           </div>
         </div>
 
@@ -42,6 +44,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-xs-12 col-md-8">
             <p class="text-center">{{ form.metric_action}}</p>
+            {{ form.metric_action.errors }}
           </div>
         </div>
 
@@ -51,6 +54,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-xs-12 col-md-8">
             <p class="text-center">{{ form.metric_unit}}</p>
+            {{ form.metric_unit.errors }}
           </div>
         </div>
 
@@ -59,7 +63,8 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
             <p class="lead pt-1">Minimum expectation <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MmetricMin"><i class="fas fa-info"></i></a></p>
           </div>
           <div class="col-xs-12 col-md-8">
-            <p class="text-center">{{ form.metric_min}}</p>
+            <p class="text-center">{{ form.metric_min }}</p>
+            {{ form.metric_min.errors }}
           </div>
         </div>
 
@@ -69,6 +74,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-xs-12 col-md-8">
             <p class="text-center">{{ form.metric_max}}</p>
+            {{ form.metric_max.errors}}
           </div>
         </div>
 
@@ -78,6 +84,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-xs-12 col-md-8">
             <p class="text-sm-right text-start pt-2">{{ form.minimum_show_allowed }}</p>
+            {{ form.minimum_show_allowed.errors }}
           </div>
         </div>
 
@@ -87,6 +94,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-md-8">
             <p class="text-center">{{ form.minimum_show_description }}</p>
+            {{ form.minimum_show_description.errors }}
           </div>
         </div>
 
@@ -96,6 +104,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-md-8">
             <p class="text-center">{{ form.record_frequency }}</p>
+            {{ form.record_frequency.errors }}
           </div>
         </div>
 
@@ -105,6 +114,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-md-8">
             <p class="text-center">{{ form.record_start_date }}</p>
+            {{ form.record_start_date.errors }}
           </div>
         </div>
 
@@ -114,6 +124,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-md-8">
             <p class="text-start pt-2">{{ form.record_multiple_per_frequency }}</p>
+            {{ form.record_multiple_per_frequency.errors }}
           </div>
         </div>
 
@@ -123,6 +134,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-md-8">
             <p class="text-center">{{ form.complete_criteria }}</p>
+            {{ form.complete_criteria.errors }}
           </div>
         </div>
         <div class="row my-2">
@@ -131,6 +143,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
           </div>
           <div class="col-md-8">
             <p class="text-center">{{ form.complete_value }}</p>
+            {{ form.complete_value.errors }}
           </div>
         </div>
 

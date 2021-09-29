@@ -40,11 +40,11 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
         return super().form_valid(form)
 
 
-    def form_invalid(self, form):
-        print("INVALID")
-        print(self.request.POST)
-        print(form)
-        return self.render_to_response(self.get_context_data(form=form))
+    # def form_invalid(self, form):
+    #     print("INVALID")
+    #     print(self.request.POST)
+    #     print(form)
+    #     return self.render_to_response(self.get_context_data(form=form))
     # def get_context_data(self):
     #     context = super().get_context_data(**kwargs)
     #     context['on_behaviour'] = Behaviour.objects.get(id=self.kwargs['behaviour_id'])

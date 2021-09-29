@@ -77,7 +77,7 @@ class StepTracker(models.Model):
     metric_max = models.FloatField(blank=True, null=True)
     minimum_show_allowed = models.BooleanField(blank=True, null=True)
     minimum_show_description = models.TextField(blank=True, null=True)
-    record_start_date = models.TimeField(auto_now_add=False, blank=True, null=True)
+    record_start_date = models.DateField(auto_now_add=False, blank=True, null=True)
     record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY, blank=True, null=True)
     record_multiple_per_frequency = models.BooleanField(blank=True, null=True)
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, blank=True, null=True)
