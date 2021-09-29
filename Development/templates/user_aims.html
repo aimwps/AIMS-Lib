@@ -11,7 +11,7 @@
       <div class="accordion-body border border-primary">
         {% for aim, behaviours in aim_data.4.items %}
         <div class="text-center">
-            <h4>AIM</h4>
+            <h4>AIM: {{aim.title}}</h4>
             <h6>Created {{ aim.create_date}} @ {{ aim.create_time }} by {{ aim.author }}</h6>
           </div>
           <div class="text-center">
@@ -74,9 +74,9 @@
                 </button>
               </h2>
               <div id="flush_{{behaviour.id}}" class="accordion-collapse collapse" aria-labelledby="heading_{{behaviour.id}}" data-bs-parent="#accordionBehaviours">
-                <div class="accordion-body">
+                <div class="accordion-body px-0">
                   <div class="text-center">
-                    <h5>BEHAVIOUR</h5>
+                    <h5>BEHAVIOUR: {{behaviour.title}}</h5>
                     <h6>Created {{ behaviour.create_date}} @ {{ behaviour.create_time }}</h6>
                     <ul class="nav justify-content-center">
                         <!-- Button trigger modal -->
@@ -91,9 +91,8 @@
                           </li>
                     </ul>
                   </div>
-                <!-- Button trigger modal -->
 
-                <!-- Modal -->
+                <!-- Modal -------------------------------------------------------------------------------------------------------->
                 <div class="modal fade" id="modal_{{ behaviour.id }}" tabindex="-1" aria-labelledby="modal_{{ behaviour.id }}Label" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
@@ -119,14 +118,31 @@
                     </div>
                   </div>
                 </div>
-
-                <ul class="list-group list-group-flush">
+                <!-- Modal end -------------------------------------------------------------------------------------------------------->
+                <ul class="list-group list-group-flush px-0">
                   {% for tracker in trackers %}
                   <!-- Button trigger modal -->
-                    <li class="list-group-item">
-                      <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.id}}">
-                        <i class="fas fa-ellipsis-h"></i></a> {{ tracker.get_tsentence}} </li>
-                      <!-- Modal -->
+                    <li class="list-group-item px-0 border-white">
+                      <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.id}}">
+                        <i class="fas fa-bars"></i></a> {{ tracker.get_tsentence}}</p>
+                        <ul class="list-group list-group-flush my-1 py-1">
+                          <li class="list-group-item px-0">
+                            <div class="row text-break">
+                              <div class='col-xs-12 col-md-4'>Frequency: {{ tracker.record_frequency|title }}</div>
+                              <div class="col-xs-12 col-md-8">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
+                            </div>
+                          </li>
+                          <li class="list-group-item px-0">
+                            <div class="row text-break">
+                              <div class='col-xs-12 col-md-4'>Milestone: {{ tracker.get_milestone_sentence|title }}</div>
+                              <div class="colxs-12 col-md-8">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
+                            </div>
+                          </li>
+
+                        </ul>
+                      </li>
+
+                      <!-- Modal --------------------------------------------------------------------------------------------------------->
                       <div class="modal fade" id="modal_{{tracker.id}}" tabindex="-1" aria-labelledby="modal_{{tracker.id}}Label" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
@@ -135,33 +151,22 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-
-                              <p class="lead">{{tracker.get_tsentence }}</p>
                               <ul>
                                 <li> Type: {{ tracker.get_tclass }} </li>
-                                <li> Start Date: {{ tracker.start_date }} </li>
-                                <li> Track Frequency: {{ tracker.frequency }}</li>
-                                <li> Question: {{ tracker.get_tquestion }} </li>
+                                <li> Start Date: {{ tracker.record_start_date }} </li>
+                                <li> Track Frequency: {{ tracker.record_frequency }}</li>
+
                               </ul>
                               <p>A tracker is a measurable step that supports your behaviour</p>
                               <p>You can record an action and also edit or delete this tracker below.</p>
 
                             </div>
                             <div class="modal-footer">
-                              <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
-
-                              {% if tracker.get_tclass == "TrackerMinAim" %}
-                                <a href='{% url "edit-min-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
-                              {% endif %}
-
-                              {% if tracker.get_tclass == "TrackerBoolean" %}
-                                <a href='{% url "edit-bool-tracker" tracker.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
-                              {% endif %}
+                              <a href='#' class="btn btn-primary"><i class="far fa-plus"></i></a>
 
                               <form action="." method="POST">
                                 {% csrf_token %}
-                                <input type="hidden" value="{{ tracker.get_tclass }}" name="delete_tclass">
-                                <input type="hidden" value="{{ tracker.id }}" name="delete_tid">
+
                                 <button name="delete_tracker" value="{{tracker.id}}" class="btn btn-secondary">
                                   <i class="far fa-trash-alt"></i></button>
                               </form>
@@ -169,6 +174,7 @@
                           </div>
                         </div>
                       </div>
+                  <!-- Modal end -------------------------------------------------------------------------------------------------------->
 
                   {% endfor %}
                 </ul>

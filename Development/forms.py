@@ -19,13 +19,14 @@ class StepTrackerCreateForm(forms.ModelForm):
                 "record_start_date",
                 "record_frequency",
                 "record_multiple_per_frequency",
+                "complete_allowed",
                 "complete_criteria",
                 "complete_value",)
         widgets = {
                 "metric_tracker_type": forms.Select(attrs={'class': 'form-control', 'placeholder': 'type of tracker'}),
                 "metric_action": forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The action you are taking, usually a verb e.g. run or perform',}),
                 "metric_unit":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The unit type your recording e.g. hours, miles, grams, repititions',}),
-                "metric_int_only":forms.Select(attrs={'class': 'form-check-input'}),
+                "metric_int_only":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
                 "metric_min":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The lowest expectation of your unit actions',}),
                 "metric_max":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The kick-ass expectation of your unit actions',}),
                 "minimum_show_allowed":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -33,9 +34,14 @@ class StepTrackerCreateForm(forms.ModelForm):
                 "record_start_date":DatePickerInput(attrs = {'class': 'form-control','placeholder': 'Tracking will commence on..'}),
                 "record_frequency":forms.Select(attrs={'class': 'form-control'}),
                 "record_multiple_per_frequency":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+                "complete_allowed":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
                 "complete_criteria": forms.Select(attrs={"class": 'form-control'}),
                 "complete_value":forms.TextInput(attrs={'class': 'form-control', 'placeholder':"How many times you'll complete this to know it's engrained",}),
         }
+    def __init__(self, *args, **kwargs):
+        super(StepTrackerCreateForm, self).__init__(*args, **kwargs)
+        self.initial['metric_tracker_type'] = 'boolean'
+        self.initial['record_frequency'] = 'weekly'
 
 
 

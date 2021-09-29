@@ -21,6 +21,7 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
     model = StepTracker
     template_name = "steptracker_create.html"
 
+
     def get_success_url(self):
         return reverse("aims-dash")
 
@@ -32,7 +33,6 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
             tracker.save()
         form.instance.order_position = len(all_behaviour_trackers)
         return super().form_valid(form)
-
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
@@ -85,9 +85,6 @@ class BehaviourCreate(LoginRequiredMixin, CreateView):
         context['aim_for_lever'] = Aim.objects.get(id=self.kwargs['aim_id'])
         return context
 
-
-
-
 class AimCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -121,12 +118,10 @@ class AimView(LoginRequiredMixin, TemplateView):
         context['aims_list'] = aims
         return context
 
-
 class AimsDash(LoginRequiredMixin, TemplateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     template_name = "aims_dash.html"
-    #form_class = ForumTopicNewComment
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #### Check if user has profile and load if so.
@@ -137,90 +132,33 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             else:
                 context['has_user_profile'] = False
 
-            #### Get aLL the users aims
+        ########## Get aLL the users aims, behaviours & trackers######################################################
+        if self.request.user.is_authenticated:
             user_aims = Aim.objects.filter(Q(author=self.request.user) & ~Q(user_status="deleted"))
             user_aims_behaviours = {aim: list(Behaviour.objects.filter(on_aim=aim)) for aim in user_aims}
             user_all_aims = {}
             for aim, behaviours in user_aims_behaviours.items():
                 trackers_behaviours = {}
                 for behaviour in behaviours:
-                    trackers_behaviours[behaviour] = behaviour.get_trackers()
+                    trackers_behaviours[behaviour] = StepTracker.objects.filter(on_behaviour=behaviour.id)
                 user_all_aims[aim] = trackers_behaviours
             aims_cat = [(str(aim.category), aim.order_position, aim.title, aim.motivation, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
             sorted_aims = sorted(aims_cat, key=lambda x:x[1])
             context['sorted_aims'] = sorted_aims
 
-
-
-
-        aims_by_cat = []
-    # For gethering info on trackers
-        all_uncomplete_tracker_periods = ['uncomplete_daily','uncomplete_weekly', 'uncomplete_monthly', 'uncomplete_yearly']
-        uncomplete_trackers = OrderedDict({
-                                    'daily': None,
-                                    'weekly': None,
-                                    'monthly':  None,
-                                    'yearly': None,})
-        uncomplete_daily = []
-        uncomplete_weekly = []
-        uncomplete_monthly = []
-        uncomplete_yearly = []
-
-
-    # Get all trackers
+        ############ Get all the due periods for submission ################################################################
         if self.request.user.is_authenticated:
-            all_behaviours  = Behaviour.objects.filter(on_aim__author=self.request.user)
-            for behaviour in all_behaviours:
-                trackers = behaviour.get_trackers()
-                for tracker in trackers:
-                    tracker_complete, freq_bracket, start_date, end_date = self.check_tracker_status(tracker)
-                    if not tracker_complete:
-                        if uncomplete_trackers[freq_bracket] != None:
-                            uncomplete_trackers[freq_bracket][2].append(tracker)
-                        else:
-                            uncomplete_trackers[freq_bracket] = [start_date, end_date, [tracker]]
+            all_active_trackers = StepTracker.objects.filter(Q(on_behaviour__on_aim__author=self.request.user) & Q(user_status="active"))
 
-                        eval(f"uncomplete_{freq_bracket}").append(tracker)
-        context['uncomplete_trackers'] = uncomplete_trackers
-        context['min_aim_form'] = ""
-        context['boolean_form'] = ""
+
 
         return context
 
     def form_valid(self, form):
-        form.instance.tracker = self.request.POST.get("tracker_id")
-        form.instance.lever_peformed = True
         return super().form_valid(form)
 
     def post(self, form):
-        if "TrackerMinAim" in self.request.POST:
-            get_tracker = get_object_or_404(TrackerMinAim, id=self.request.POST.get('tracker_id'))
-            if self.request.POST.get("TrackerMinAim") == "dnc":
-                tcompleted = False
-            else:
-                tcompleted=True
-            new_log = TrackerMinAimRecords(
-                    tracker = get_tracker,
-                    lever_performed = tcompleted,
-                    metric_quantity = self.request.POST.get("metric_quantity")
-            )
-            new_log.save()
-            return HttpResponseRedirect(f"/aims/#QAloc_{self.request.POST.get('for_period')}")
-        elif "TrackerBoolean" in self.request.POST:
-            get_tracker = get_object_or_404(TrackerBoolean, id=self.request.POST.get('tracker_id'))
-            if self.request.POST.get("TrackerBoolean") == "dnc":
-                tcompleted = False
-            else:
-                tcompleted=True
-            new_log = TrackerBooleanRecords(
-                    tracker = get_tracker,
-                    lever_performed = tcompleted,
-                    metric_quantity = self.request.POST.get("metric_quantity")
-            )
-            new_log.save()
-            return HttpResponseRedirect(f"/aims/#QAloc_{self.request.POST.get('for_period')}")
-
-        elif "delete_behaviour" in self.request.POST:
+        if "delete_behaviour" in self.request.POST:
             get_lever = get_object_or_404(Behaviour, id=self.request.POST.get('delete_behaviour'))
             get_lever.user_status = "deleted"
             get_lever.save()
