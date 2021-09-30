@@ -251,7 +251,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             all_active_trackers = StepTracker.objects.filter(Q(on_behaviour__on_aim__author=self.request.user) & Q(user_status="active"))
             trackers_needs_logs = []
             for tracker in all_active_trackers:
-                tracker_logs = self.get_tracker_status(tracker)
+                tracker_logs = get_tracker_status(self.request.user.id,tracker)
                 if tracker_logs['logs_required'] == True:
                     trackers_needs_logs.append((tracker_logs['period_log_start'],tracker_logs['period_log_end'], tracker))
 

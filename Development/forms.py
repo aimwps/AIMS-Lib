@@ -41,7 +41,7 @@ class StepTrackerCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(StepTrackerCreateForm, self).__init__(*args, **kwargs)
         self.initial['metric_tracker_type'] = 'boolean'
-        self.initial['record_frequency'] = 'weekly'
+        self.initial['record_frequency'] = 'daily'
 
 
 

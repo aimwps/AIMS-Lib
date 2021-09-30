@@ -18,7 +18,6 @@ RECORD_FREQUENCY =(('daily', 'Daily'),
                 )
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
-
 TRACKER_TYPE = (('maximize', 'Count Up'),
                 ('minimize', 'Count Down'),
                 ('boolean', 'Yes or No'),
@@ -26,13 +25,6 @@ TRACKER_TYPE = (('maximize', 'Count Up'),
 NUMBER_TYPE = (('float', 'Upto 2 decimal places'),
                 ('integer', 'Whole number only'),
                 )
-
-
-### Users can select as many days of the week as they want,
-
-### e.g. they select Monday & Friday and they have a reset time of
-#### They will be propmpted
-
 CUSTOM_LOG_CODES =[
             ("Day repeat",
                         (
@@ -97,6 +89,7 @@ CUSTOM_LOG_CODES =[
                         )
             )]
 
+
 class Aim(models.Model):
     title = models.TextField()
     motivation = models.TextField(blank=True, null=True)
@@ -146,9 +139,9 @@ class StepTracker(models.Model):
     record_start_date = models.DateField(auto_now_add=False)
     record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY)
     record_multiple_per_frequency = models.BooleanField()
-    complete_allowed = models.BooleanField(default=True)
+    complete_allowed = models.BooleanField(default=False)
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, default="consecutive")
-    complete_value = models.PositiveIntegerField()
+    complete_value = models.PositiveIntegerField(blank=True, null=True)
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True)
