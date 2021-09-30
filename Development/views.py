@@ -15,6 +15,105 @@ from collections import OrderedDict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .utils import prettify_tracker_log_dict
 
+def get_tracker_status(user_id, tracker):
+    member_profile = MemberProfile.objects.get(author=user_id)
+    tracker_info  = {'tracker':tracker,}
+    now = datetime.today()
+    reset_user_time = datetime.combine(now, member_profile.day_reset_time)
+    reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
+    reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
+
+    ### Set the start and end date range for tracker filter based on the frequency of the tracker
+    if tracker.record_frequency == "daily":
+        if now > reset_user_time:
+            start_date = reset_user_time
+            end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+        else:
+            start_date = reset_user_time - timedelta(hours=24)
+            end_date =  reset_user_time - timedelta(seconds=1)
+    if tracker.record_frequency == "weekly":
+        if reset_user_time.strftime('%A') == member_profile.week_reset_day:
+            if now > reset_user_time:
+                start_date = reset_user_time
+                end_date =  reset_user_time + timedelta(days=6, hours = 23, minutes=59, seconds=59)
+            else:
+                start_date = reset_user_time - timedelta(days=7)
+                end_date =  reset_user_time - timedelta(seconds=1)
+        else:
+            while reset_user_time.strftime('%A') != member_profile.week_reset_day:
+                reset_user_time += timedelta(days=1)
+            end_date = reset_user_time - timedelta(seconds=1)
+            start_date = reset_user_time - timedelta(days=7)
+    if tracker.record_frequency == "monthly":
+        if reset_user_date_time.strftime('%d') == str(member_profile.month_reset_day).zfill(2):
+            if now > reset_user_date_time:
+                start_date = reset_user_date_time
+                end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
+            else:
+                start_date = reset_user_date_time - relativedelta(months=1)
+                end_date =  reset_user_date_time - timedelta(seconds=1)
+        elif reset_user_date_time.strftime('%d') > str(member_profile.month_reset_day).zfill(2):
+            start_date = reset_user_date_time - relativedelta(months=1)
+            end_date =  reset_user_date_time - timedelta(seconds=1)
+        else:
+            start_date = reset_user_date_time
+            end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
+    if tracker.record_frequency == "yearly":
+        if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
+            if now > reset_user_year_date_time:
+                start_date = reset_user_year_date_time
+                end_date  = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
+            else:
+                start_date = reset_user_date_time - relativedelta(years=1)
+                end_date =  reset_user_date_time - timedelta(seconds=1)
+        elif reset_user_year_date_time.strftime('%m') > str(member_profile.year_reset_month).zfill(2):
+            start_date = reset_user_date_time - relativedelta(years=1)
+            end_date =  reset_user_date_time - timedelta(seconds=1)
+        else:
+            start_date = reset_user_date_time
+            end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
+    if tracker.record_frequency == "custom":
+        all_custom_days = StepTrackerCustomFrequency
+
+    ## RETURN DICTIONARY OF TRACKER INFO
+    current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
+    total_logs = len(current_period_logs)
+    tracker_status ={
+            "tracker": tracker,
+            "logs_required": None,
+            "total_logs": total_logs,
+            "period_log_start": start_date,
+            "period_log_end": end_date,
+            "boolean_status": None,
+            "count_status": None,
+            "count_quantity": None,
+            "count_total": None,
+            }
+
+    if current_period_logs:
+        logs_status = list(current_period_logs.values_list('submit_type', flat=True))
+        if tracker.metric_tracker_type == "boolean":
+            if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
+                tracker_status['logs_required'] = False
+                tracker_status['boolean_status'] = logs_status[0]
+            else:
+                tracker_status['logs_required'] = True
+                tracker_status['boolean_status'] = logs_status[0]
+        else:
+            if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
+                tracker_status['logs_required'] = False
+                tracker_status['count_status'] = logs_status[0]
+            else:
+                value_counts = list(current_period_logs.values_list('count_value', flat=True))
+                sum_counts = sum([int(i) for i in value_counts])
+                tracker_status['logs_required'] = True
+                tracker_status['count_total'] = sum_counts
+                tracker_status['boolean_status'] = logs_status[0]
+                tracker_status['count_quantity'] = len(value_counts)
+    else:
+        tracker_status['logs_required'] = True
+    return tracker_status
+
 class StepTrackerCreate(LoginRequiredMixin,CreateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -141,7 +240,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             for aim, behaviours in user_aims_behaviours.items():
                 trackers_behaviours = {}
                 for behaviour in behaviours:
-                    trackers_behaviours[behaviour] = [(tracker, prettify_tracker_log_dict(self.get_tracker_status(tracker))) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
+                    trackers_behaviours[behaviour] = [(tracker, prettify_tracker_log_dict(get_tracker_status(self.request.user.id,tracker))) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
                 user_all_aims[aim] = trackers_behaviours
             aims_cat = [(str(aim.category), aim.order_position, aim.title, aim.motivation, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
             sorted_aims = sorted(aims_cat, key=lambda x:x[1])
@@ -185,114 +284,3 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             return HttpResponseRedirect('/aims/#myaims')
         else:
             return HttpResponseRedirect('/aims/#myaims')
-
-    def get_tracker_status(self, tracker):
-        member_profile = MemberProfile.objects.get(author=self.request.user.id)
-        tracker_info  = {'tracker':tracker,}
-        now = datetime.today()
-        reset_user_time = datetime.combine(now, member_profile.day_reset_time)
-        reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
-        reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
-
-        ### Set the start and end date range for tracker filter based on the frequency of the tracker
-        if tracker.record_frequency == "daily":
-            if now > reset_user_time:
-                start_date = reset_user_time
-                end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
-            else:
-                start_date = reset_user_time - timedelta(hours=24)
-                end_date =  reset_user_time - timedelta(seconds=1)
-        if tracker.record_frequency == "weekly":
-            if reset_user_time.strftime('%A') == member_profile.week_reset_day:
-                if now > reset_user_time:
-                    start_date = reset_user_time
-                    end_date =  reset_user_time + timedelta(days=6, hours = 23, minutes=59, seconds=59)
-                else:
-                    start_date = reset_user_time - timedelta(days=7)
-                    end_date =  reset_user_time - timedelta(seconds=1)
-            else:
-                while reset_user_time.strftime('%A') != member_profile.week_reset_day:
-                    reset_user_time += timedelta(days=1)
-                end_date = reset_user_time - timedelta(seconds=1)
-                start_date = reset_user_time - timedelta(days=7)
-        if tracker.record_frequency == "monthly":
-            if reset_user_date_time.strftime('%d') == str(member_profile.month_reset_day).zfill(2):
-                if now > reset_user_date_time:
-                    start_date = reset_user_date_time
-                    end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
-                else:
-                    start_date = reset_user_date_time - relativedelta(months=1)
-                    end_date =  reset_user_date_time - timedelta(seconds=1)
-            elif reset_user_date_time.strftime('%d') > str(member_profile.month_reset_day).zfill(2):
-                start_date = reset_user_date_time - relativedelta(months=1)
-                end_date =  reset_user_date_time - timedelta(seconds=1)
-            else:
-                start_date = reset_user_date_time
-                end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
-        if tracker.record_frequency == "yearly":
-            if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
-                if now > reset_user_year_date_time:
-                    start_date = reset_user_year_date_time
-                    end_date  = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
-                else:
-                    start_date = reset_user_date_time - relativedelta(years=1)
-                    end_date =  reset_user_date_time - timedelta(seconds=1)
-            elif reset_user_year_date_time.strftime('%m') > str(member_profile.year_reset_month).zfill(2):
-                start_date = reset_user_date_time - relativedelta(years=1)
-                end_date =  reset_user_date_time - timedelta(seconds=1)
-            else:
-                start_date = reset_user_date_time
-                end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
-        if tracker.record_frequency == "custom":
-            all_custom_days = StepTrackerCustomFrequency
-
-        # Custom every monday & friday
-            ### Current day is wednesday ###
-            ## mon start, end --> monday will not appear
-            ## fri start, end --> will appear in this week
-
-            ### Current day is  monday ###
-            ## mon start, end --> monday will appear in today
-            ## fri start, end --> will appear in this week
-
-        # Custom
-
-
-        ## RETURN DICTIONARY OF TRACKER INFO
-        current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
-        total_logs = len(current_period_logs)
-        tracker_status ={
-                "tracker": tracker,
-                "logs_required": None,
-                "total_logs": total_logs,
-                "period_log_start": start_date,
-                "period_log_end": end_date,
-                "boolean_status": None,
-                "count_status": None,
-                "count_quantity": None,
-                "count_total": None,
-                }
-
-        if current_period_logs:
-            logs_status = list(current_period_logs.values_list('submit_type', flat=True))
-            if tracker.metric_tracker_type == "boolean":
-                if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
-                    tracker_status['logs_required'] = False
-                    tracker_status['boolean_status'] = logs_status[0]
-                else:
-                    tracker_status['logs_required'] = True
-                    tracker_status['boolean_status'] = logs_status[0]
-            else:
-                if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
-                    tracker_status['logs_required'] = False
-                    tracker_status['count_status'] = logs_status[0]
-                else:
-                    value_counts = list(current_period_logs.values_list('count_value', flat=True))
-                    sum_counts = sum([int(i) for i in value_counts])
-                    tracker_status['logs_required'] = True
-                    tracker_status['count_total'] = sum_counts
-                    tracker_status['boolean_status'] = logs_status[0]
-                    tracker_status['count_quantity'] = len(value_counts)
-        else:
-            tracker_status['logs_required'] = True
-        return tracker_status
