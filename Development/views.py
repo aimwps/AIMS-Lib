@@ -22,7 +22,9 @@ def get_tracker_status(user_id, tracker):
     reset_user_time = datetime.combine(now, member_profile.day_reset_time)
     reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
     reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
-
+    start_dates = []
+    end_dates = []
+    all_tracker_status = []
     ### Set the start and end date range for tracker filter based on the frequency of the tracker
     if tracker.record_frequency == "daily":
         if now > reset_user_time:
@@ -31,6 +33,8 @@ def get_tracker_status(user_id, tracker):
         else:
             start_date = reset_user_time - timedelta(hours=24)
             end_date =  reset_user_time - timedelta(seconds=1)
+        start_dates.append(start_date)
+        end_dates.append(end_date)
     if tracker.record_frequency == "weekly":
         if reset_user_time.strftime('%A') == member_profile.week_reset_day:
             if now > reset_user_time:
@@ -44,6 +48,8 @@ def get_tracker_status(user_id, tracker):
                 reset_user_time += timedelta(days=1)
             end_date = reset_user_time - timedelta(seconds=1)
             start_date = reset_user_time - timedelta(days=7)
+        start_dates.append(start_date)
+        end_dates.append(end_date)
     if tracker.record_frequency == "monthly":
         if reset_user_date_time.strftime('%d') == str(member_profile.month_reset_day).zfill(2):
             if now > reset_user_date_time:
@@ -58,6 +64,8 @@ def get_tracker_status(user_id, tracker):
         else:
             start_date = reset_user_date_time
             end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
+        start_dates.append(start_date)
+        end_dates.append(end_date)
     if tracker.record_frequency == "yearly":
         if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
             if now > reset_user_year_date_time:
@@ -72,47 +80,64 @@ def get_tracker_status(user_id, tracker):
         else:
             start_date = reset_user_date_time
             end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
+        start_dates.append(start_date)
+        end_dates.append(end_date)
     if tracker.record_frequency == "custom":
-        all_custom_days = StepTrackerCustomFrequency
+        all_custom_codes = StepTrackerCustomFrequency(on_tracker=tracker)
+        
 
     ## RETURN DICTIONARY OF TRACKER INFO
-    current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
-    total_logs = len(current_period_logs)
-    tracker_status ={
-            "tracker": tracker,
-            "logs_required": None,
-            "total_logs": total_logs,
-            "period_log_start": start_date,
-            "period_log_end": end_date,
-            "boolean_status": None,
-            "count_status": None,
-            "count_quantity": None,
-            "count_total": None,
-            }
+    for start_date, end_date in zip(start_dates, end_dates):
+        current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
+        total_logs = len(current_period_logs)
+        tracker_status ={
+                "tracker": tracker,
+                "logs_required": None,
+                "total_logs": total_logs,
+                "period_log_start": start_date,
+                "period_log_end": end_date,
+                "boolean_status": None,
+                "count_status": None,
+                "count_quantity": None,
+                "count_total": None,
+                }
 
-    if current_period_logs:
-        logs_status = list(current_period_logs.values_list('submit_type', flat=True))
-        if tracker.metric_tracker_type == "boolean":
-            if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
-                tracker_status['logs_required'] = False
-                tracker_status['boolean_status'] = logs_status[0]
+        if current_period_logs:
+            logs_status = list(current_period_logs.values_list('submit_type', flat=True))
+            if tracker.metric_tracker_type == "boolean":
+                if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
+                    tracker_status['logs_required'] = False
+                    tracker_status['boolean_status'] = logs_status[0]
+                else:
+                    tracker_status['logs_required'] = True
+                    tracker_status['boolean_status'] = logs_status[0]
             else:
-                tracker_status['logs_required'] = True
-                tracker_status['boolean_status'] = logs_status[0]
+                if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
+                    tracker_status['logs_required'] = False
+                    tracker_status['count_status'] = logs_status[0]
+                else:
+                    value_counts = list(current_period_logs.values_list('count_value', flat=True))
+                    sum_counts = sum([int(i) for i in value_counts])
+                    tracker_status['logs_required'] = True
+                    tracker_status['count_total'] = sum_counts
+                    tracker_status['boolean_status'] = logs_status[0]
+                    tracker_status['count_quantity'] = len(value_counts)
         else:
-            if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
-                tracker_status['logs_required'] = False
-                tracker_status['count_status'] = logs_status[0]
-            else:
-                value_counts = list(current_period_logs.values_list('count_value', flat=True))
-                sum_counts = sum([int(i) for i in value_counts])
-                tracker_status['logs_required'] = True
-                tracker_status['count_total'] = sum_counts
-                tracker_status['boolean_status'] = logs_status[0]
-                tracker_status['count_quantity'] = len(value_counts)
+            tracker_status['logs_required'] = True
+        all_tracker_status.append(tracker_status)
+    return all_tracker_status
+
+def get_category_path(cat, current_path=""):
+    if cat.parent_category:
+        new_path = " > "
+        new_path += str(cat.title)
+        new_path += current_path
+        return get_category_path(cat.parent_category, current_path=new_path)
+
     else:
-        tracker_status['logs_required'] = True
-    return tracker_status
+        new_path = str(cat.title)
+        new_path += current_path
+        return new_path
 
 class StepTrackerCreate(LoginRequiredMixin,CreateView):
     login_url = '/login-or-register/'
@@ -133,21 +158,14 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
             tracker.order_position =  i
             tracker.save()
         form.instance.order_position = len(all_behaviour_trackers)
+        response = super().form_valid(form)
         if form.instance.record_frequency == "custom":
-            pass
-        return super().form_valid(form)
-
-def get_category_path(cat, current_path=""):
-    if cat.parent_category:
-        new_path = " > "
-        new_path += str(cat.title)
-        new_path += current_path
-        return get_category_path(cat.parent_category, current_path=new_path)
-
-    else:
-        new_path = str(cat.title)
-        new_path += current_path
-        return new_path
+            for key in self.request.POST:
+                if "customFreqCode" in key:
+                    code = key.replace("customFreqCode_", "")
+                    new_freq = StepTrackerCustomFrequency(on_tracker=form.instance, code=code)
+                    new_freq.save()
+        return response
 
 class AimEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
@@ -169,7 +187,6 @@ class BehaviourCreate(LoginRequiredMixin, CreateView):
     model = Behaviour
     form_class = BehaviourCreateForm
     template_name = "behaviour_create.html"
-
     def form_valid(self, form):
         #self.in_category = get_object_or_404(ContentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.on_aim = Aim.objects.get(id=self.kwargs['aim_id'])
@@ -181,7 +198,6 @@ class BehaviourCreate(LoginRequiredMixin, CreateView):
             lever.save()
         form.instance.order_position = len(all_aim_levers)
         return super().form_valid(form)
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
