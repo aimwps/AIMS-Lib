@@ -90,7 +90,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
 
         <div class="row my-2">
           <div class="col-xs-12 col-md-4 text-end">
-            <p class="lead pt-1">Allow 'show up' alternative <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MminShowAllowed"><i class="fas fa-info"></i></a></p>
+            <p class="lead pt-1">Add 'show up' alternative <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MminShowAllowed"><i class="fas fa-info"></i></a></p>
           </div>
           <div class="col-xs-12 col-md-8">
             <p class="text-sm-right text-start pt-2">{{ form.minimum_show_allowed }}</p>
@@ -469,7 +469,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
         </div>
         <div class="row my-2">
           <div class="col-xs-12 col-md-4 text-end">
-            <p class="lead pt-1">Add a milestone<a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteAllowed"><i class="fas fa-info"></i></a></p>
+            <p class="lead pt-1">Add a milestone <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteAllowed"><i class="fas fa-info"></i></a></p>
           </div>
           <div class="col-md-8">
             <p class="text-start pt-2">{{ form.complete_allowed }}</p>
@@ -477,16 +477,16 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
         </div>
         <div class="row my-2" id="milestone_crtieria" style="display: none;">
           <div class="col-xs-12 col-md-4 text-end">
-            <p class="lead pt-1">Milestone criteria<a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteCriteria"><i class="fas fa-info"></i></a></p>
+            <p class="lead pt-1">Milestone criteria <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteCriteria"><i class="fas fa-info"></i></a></p>
           </div>
-          <div class="col-md-8" id="milestone_quantity" style="display: none;">
+          <div class="col-md-8">
             <p class="text-center">{{ form.complete_criteria }}</p>
             {{ form.complete_criteria.errors }}
           </div>
         </div>
-        <div class="row my-2">
+        <div class="row my-2" id="milestone_quantity" style="display: none;">
           <div class="col-xs-12 col-md-4 text-end">
-            <p class="lead pt-1">Milestone quantity<a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteValue"><i class="fas fa-info"></i></a></p>
+            <p class="lead pt-1">Milestone quantity <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#McompleteValue"><i class="fas fa-info"></i></a></p>
           </div>
           <div class="col-md-8">
             <p class="text-center">{{ form.complete_value }}</p>

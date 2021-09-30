@@ -128,7 +128,7 @@ class Behaviour(models.Model):
 
 class StepTracker(models.Model):
     on_behaviour = models.ForeignKey(Behaviour,on_delete=models.CASCADE, related_name="trackers")
-    metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE)
+    metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE, default="boolean")
     metric_action = models.TextField(blank=True, null=True)
     metric_unit = models.CharField(max_length=100, blank=True, null=True)
     metric_int_only = models.BooleanField(blank=True, null=True)
@@ -137,7 +137,7 @@ class StepTracker(models.Model):
     minimum_show_allowed = models.BooleanField(blank=True, null=True)
     minimum_show_description = models.TextField(blank=True, null=True)
     record_start_date = models.DateField(auto_now_add=False)
-    record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY)
+    record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY, default="weekly")
     record_multiple_per_frequency = models.BooleanField()
     complete_allowed = models.BooleanField(default=False)
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, default="consecutive")
