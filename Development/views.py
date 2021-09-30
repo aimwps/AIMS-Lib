@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Aim, Behaviour, StepTracker, StepTrackerLogs
+from .models import Aim, Behaviour, StepTracker, StepTrackerLog, StepTrackerCustomFrequency
 from WebsiteTools.models import ContentCategory
 from Members.models import MemberProfile
 from .forms import AimCreateForm, BehaviourCreateForm, BehaviourEditForm, StepTrackerCreateForm
@@ -156,10 +156,6 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                 if tracker_logs['logs_required'] == True:
                     trackers_needs_logs.append((tracker_logs['period_log_start'],tracker_logs['period_log_end'], tracker))
 
-                    # { due today: {awaiting progress: tracker questions, multiple-per-frequency: tracker questions}
-                    # {due this week: {awaiting progress: tracker questions, multiple-per-frequency: tracker questions}
-                    # {}{awaiting progress: tracker questions, multiple-per-frequency: tracker questions}
-                    }
 
 
         context['uncomplete_trackers'] = trackers_needs_logs
@@ -247,17 +243,23 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             else:
                 start_date = reset_user_date_time
                 end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
+        if tracker.record_frequency == "custom":
+            all_custom_days = StepTrackerCustomFrequency
 
-            ### Current day is wednesday ###
         # Custom every monday & friday
+            ### Current day is wednesday ###
             ## mon start, end --> monday will not appear
             ## fri start, end --> will appear in this week
-        # Get the trackers current date range
-        #
+
+            ### Current day is  monday ###
+            ## mon start, end --> monday will appear in today
+            ## fri start, end --> will appear in this week
+
+        # Custom
 
 
         ## RETURN DICTIONARY OF TRACKER INFO
-        current_period_logs = StepTrackerLogs.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
+        current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
         total_logs = len(current_period_logs)
         tracker_status ={
                 "tracker": tracker,

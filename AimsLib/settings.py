@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'WrittenLecture',
     'Paths',
     'Organisations',
-    'WebsiteTools'
+    'WebsiteTools',
     #'ShareContent'
     #'Benchmark'
 

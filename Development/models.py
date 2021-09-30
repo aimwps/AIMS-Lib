@@ -10,11 +10,11 @@ USER_STATUS =   (('deleted', 'deleted'),
                 ('inactive', 'inactive'),
                 ('completed', 'completed'),
                 )
-RECORD_FREQUENCY =(('daily', 'daily'),
-                ('weekly', 'weekly'),
-                ('monthly', 'monthly'),
-                ('yearly', 'yearly'),
-                ('custom', 'custom'),
+RECORD_FREQUENCY =(('daily', 'Daily'),
+                ('weekly', 'Weekly'),
+                ('monthly', 'Monthly'),
+                ('yearly', 'Yearly'),
+                ('custom', 'Specific days'),
                 )
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
@@ -27,6 +27,75 @@ NUMBER_TYPE = (('float', 'Upto 2 decimal places'),
                 ('integer', 'Whole number only'),
                 )
 
+
+### Users can select as many days of the week as they want,
+
+### e.g. they select Monday & Friday and they have a reset time of
+#### They will be propmpted
+
+CUSTOM_LOG_CODES =[
+            ("Day repeat",
+                        (
+                            ("Monday", "Monday"),
+                            ("Tuesday", "Tuesday"),
+                            ("Wednesday", "Wendnesday"),
+                            ("Thursday", "Thursday"),
+                            ("Friday", "Friday"),
+                            ("Saturday", "Saturday"),
+                            ("Sunday", "Sunday")
+                        )
+            ),
+            ("Day of month repeat",
+                        (
+                            ("1", 1),
+                            ("2", 2),
+                            ("3", 3),
+                            ("4", 4),
+                            ("5", 5),
+                            ("6", 6),
+                            ("7", 7),
+                            ("8", 8),
+                            ("9", 9),
+                            ("10", 10),
+                            ("11", 11),
+                            ("12", 12),
+                            ("13", 13),
+                            ("14", 14),
+                            ("15", 15),
+                            ("16", 16),
+                            ("17", 17),
+                            ("18", 18),
+                            ("19", 19),
+                            ("20", 20),
+                            ("21", 21),
+                            ("22", 22),
+                            ("23", 23),
+                            ("24", 24),
+                            ("25", 25),
+                            ("26", 26),
+                            ("27", 27),
+                            ("28", 28),
+                            ("29", 29),
+                            ("30", 30),
+                            ("31", 31),
+                        )
+            ),
+            ("Month of year repeat",
+                        (
+                            ("January", "January"),
+                            ("February", "February"),
+                            ("March", "March"),
+                            ("April", "April"),
+                            ("May", "May"),
+                            ("June", "June"),
+                            ("July", "July"),
+                            ("August", "August"),
+                            ("September", "September"),
+                            ("October", "October"),
+                            ("November", "November"),
+                            ("December", "December")
+                        )
+            )]
 
 class Aim(models.Model):
     title = models.TextField()
@@ -46,7 +115,6 @@ class Aim(models.Model):
 
     def get_absolute_url(self):
         return reverse('aims-dash')
-
 
 class Behaviour(models.Model):
     title = models.TextField()
@@ -126,7 +194,7 @@ class StepTracker(models.Model):
             sentence += "No milestone set"
         return sentence
 
-class StepTrackerLogs(models.Model):
+class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
                         ("count_showup","count show up"),
                         ("count_value","count submit"),
@@ -143,3 +211,7 @@ class StepTrackerLogs(models.Model):
 
     def __str__(self):
         return f"TrackerLog_{self.id}"
+
+class StepTrackerCustomFrequency(models.Model):
+    on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE)
+    code = models.CharField(max_length=100, choices=CUSTOM_LOG_CODES)
