@@ -156,6 +156,11 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                 if tracker_logs['logs_required'] == True:
                     trackers_needs_logs.append((tracker_logs['period_log_start'],tracker_logs['period_log_end'], tracker))
 
+                    # { due today: {awaiting progress: tracker questions, multiple-per-frequency: tracker questions}
+                    # {due this week: {awaiting progress: tracker questions, multiple-per-frequency: tracker questions}
+                    # {}{awaiting progress: tracker questions, multiple-per-frequency: tracker questions}
+                    }
+
 
         context['uncomplete_trackers'] = trackers_needs_logs
 
@@ -186,8 +191,6 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             return HttpResponseRedirect('/aims/#myaims')
 
     def get_tracker_status(self, tracker):
-        print(type(tracker))
-
         member_profile = MemberProfile.objects.get(author=self.request.user.id)
         tracker_info  = {'tracker':tracker,}
         now = datetime.today()
@@ -245,6 +248,13 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                 start_date = reset_user_date_time
                 end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
 
+            ### Current day is wednesday ###
+        # Custom every monday & friday
+            ## mon start, end --> monday will not appear
+            ## fri start, end --> will appear in this week
+        # Get the trackers current date range
+        #
+
 
         ## RETURN DICTIONARY OF TRACKER INFO
         current_period_logs = StepTrackerLogs.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
@@ -260,6 +270,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                 "count_quantity": None,
                 "count_total": None,
                 }
+
         if current_period_logs:
             logs_status = list(current_period_logs.values_list('submit_type', flat=True))
             if tracker.metric_tracker_type == "boolean":
