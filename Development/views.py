@@ -13,6 +13,7 @@ import calendar
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .utils import prettify_tracker_log_dict
 
 class StepTrackerCreate(LoginRequiredMixin,CreateView):
     login_url = '/login-or-register/'
@@ -140,7 +141,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             for aim, behaviours in user_aims_behaviours.items():
                 trackers_behaviours = {}
                 for behaviour in behaviours:
-                    trackers_behaviours[behaviour] = [(tracker, self.get_tracker_status(tracker)) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
+                    trackers_behaviours[behaviour] = [(tracker, prettify_tracker_log_dict(self.get_tracker_status(tracker))) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
                 user_all_aims[aim] = trackers_behaviours
             aims_cat = [(str(aim.category), aim.order_position, aim.title, aim.motivation, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
             sorted_aims = sorted(aims_cat, key=lambda x:x[1])
