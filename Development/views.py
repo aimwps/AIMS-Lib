@@ -22,9 +22,9 @@ def get_tracker_status(user_id, tracker):
     reset_user_time = datetime.combine(now, member_profile.day_reset_time)
     reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
     reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
-    start_dates = []
-    end_dates = []
-    all_tracker_status = []
+    start_datetimes = []
+    end_datetimes = []
+    all_upcoming_trackers = []
     ### Set the start and end date range for tracker filter based on the frequency of the tracker
     if tracker.record_frequency == "daily":
         if now > reset_user_time:
@@ -33,8 +33,9 @@ def get_tracker_status(user_id, tracker):
         else:
             start_date = reset_user_time - timedelta(hours=24)
             end_date =  reset_user_time - timedelta(seconds=1)
-        start_dates.append(start_date)
-        end_dates.append(end_date)
+        start_datetimes.append(start_date)
+        end_datetimes.append(end_date)
+
     if tracker.record_frequency == "weekly":
         if reset_user_time.strftime('%A') == member_profile.week_reset_day:
             if now > reset_user_time:
@@ -48,8 +49,9 @@ def get_tracker_status(user_id, tracker):
                 reset_user_time += timedelta(days=1)
             end_date = reset_user_time - timedelta(seconds=1)
             start_date = reset_user_time - timedelta(days=7)
-        start_dates.append(start_date)
-        end_dates.append(end_date)
+        start_datetimes.append(start_date)
+        end_datetimes.append(end_date)
+
     if tracker.record_frequency == "monthly":
         if reset_user_date_time.strftime('%d') == str(member_profile.month_reset_day).zfill(2):
             if now > reset_user_date_time:
@@ -64,8 +66,10 @@ def get_tracker_status(user_id, tracker):
         else:
             start_date = reset_user_date_time
             end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
-        start_dates.append(start_date)
-        end_dates.append(end_date)
+        start_datetimes.append(start_date)
+        end_datetimes.append(end_date)
+
+
     if tracker.record_frequency == "yearly":
         if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
             if now > reset_user_year_date_time:
@@ -80,14 +84,55 @@ def get_tracker_status(user_id, tracker):
         else:
             start_date = reset_user_date_time
             end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
-        start_dates.append(start_date)
-        end_dates.append(end_date)
-    if tracker.record_frequency == "custom":
-        all_custom_codes = StepTrackerCustomFrequency(on_tracker=tracker)
-        
+        start_datetimes.append(start_date)
+        end_datetimes.append(end_date)
 
-    ## RETURN DICTIONARY OF TRACKER INFO
-    for start_date, end_date in zip(start_dates, end_dates):
+    if tracker.record_frequency == "custom":
+        all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=tracker))
+        for freq_code in all_custom_freq_code:
+            if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
+                temp_reset_user_time = reset_user_time
+                while temp_reset_user_time.strftime('%A') != freq_code.code:
+                    print(f"TESTING: {temp_reset_user_time.strftime('%A')} vs {freq_code.code}")
+                    temp_reset_user_time += relativedelta(days=1)
+                if now > reset_user_time:
+                    start_date = temp_reset_user_time
+                    end_date =  temp_reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+                else:
+                    start_date = temp_reset_user_time - timedelta(hours=24)
+                    end_date =  temp_reset_user_time - timedelta(seconds=1)
+                start_datetimes.append(start_date)
+                end_datetimes.append(end_date)
+            elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
+                temp_reset_user_time = reset_user_time
+                while temp_reset_user_time.strftime('%B') != freq_code.code:
+                    print(f"TESTING: {temp_reset_user_time.strftime('%B')} vs {freq_code.code}")
+                    temp_reset_user_time += relativedelta(months=1)
+                if now > temp_reset_user_time:
+                    start_date = temp_reset_user_time
+                    end_date =  temp_reset_user_time + relativedelta(months=1) - timedelta(seconds=1)
+                else:
+                    start_date = temp_reset_user_time - relativedelta(months=1)
+                    end_date =  temp_reset_user_time - timedelta(seconds=1)
+                start_datetimes.append(start_date)
+                end_datetimes.append(end_date)
+            else:
+                temp_reset_user_time = reset_user_time
+                while temp_reset_user_time.strftime('%-d') != freq_code.code:
+
+                    print(f"TESTING: {temp_reset_user_time.strftime('%-d')} vs {freq_code.code}")
+                    temp_reset_user_time += relativedelta(days=1)
+                if now > reset_user_time:
+                    start_date = temp_reset_user_time
+                    end_date =  temp_reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+                else:
+                    start_date = temp_reset_user_time - timedelta(hours=24)
+                    end_date =  temp_reset_user_time - timedelta(seconds=1)
+                start_datetimes.append(start_date)
+                end_datetimes.append(end_date)
+
+    for start_date, end_date in zip(start_datetimes, end_datetimes):
+        ## RETURN DICTIONARY OF TRACKER INFO
         current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
         total_logs = len(current_period_logs)
         tracker_status ={
@@ -124,8 +169,8 @@ def get_tracker_status(user_id, tracker):
                     tracker_status['count_quantity'] = len(value_counts)
         else:
             tracker_status['logs_required'] = True
-        all_tracker_status.append(tracker_status)
-    return all_tracker_status
+        all_upcoming_trackers.append(tracker_status)
+    return all_upcoming_trackers
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
@@ -262,7 +307,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             for aim, behaviours in user_aims_behaviours.items():
                 trackers_behaviours = {}
                 for behaviour in behaviours:
-                    trackers_behaviours[behaviour] = [(tracker, prettify_tracker_log_dict(get_tracker_status(self.request.user.id,tracker))) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
+                    trackers_behaviours[behaviour] = [(tracker, get_tracker_status(self.request.user.id,tracker)) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
                 user_all_aims[aim] = trackers_behaviours
             aims_cat = [(str(aim.category), aim.order_position, aim.title, aim.motivation, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
             sorted_aims = sorted(aims_cat, key=lambda x:x[1])
@@ -274,11 +319,16 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             trackers_needs_logs = []
             for tracker in all_active_trackers:
                 tracker_logs = get_tracker_status(self.request.user.id,tracker)
-                if tracker_logs['logs_required'] == True:
-                    trackers_needs_logs.append((tracker_logs['period_log_start'],tracker_logs['period_log_end'], tracker))
+
+                trackers_needs_logs.append(tracker_logs)
 
 
-
+        for t in trackers_needs_logs:
+            print("------------------------------------------------------------------")
+            for tt in t:
+                print("---------")
+                for k,v in tt.items():
+                    print(k, v)
         context['uncomplete_trackers'] = trackers_needs_logs
 
         return context
