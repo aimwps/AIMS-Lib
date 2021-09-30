@@ -123,15 +123,18 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
 
 
     def get_success_url(self):
-        return reverse("aims-dash")
+        return reverse("home")
 
     def form_valid(self, form):
+        print(self.request.POST)
         form.instance.on_behaviour = get_object_or_404(Behaviour, id=self.kwargs['behaviour_id'])
         all_behaviour_trackers =  StepTracker.objects.filter(on_behaviour=self.kwargs['behaviour_id']).order_by('order_position')
         for i, tracker in  enumerate(all_behaviour_trackers):
             tracker.order_position =  i
             tracker.save()
         form.instance.order_position = len(all_behaviour_trackers)
+        if form.instance.record_frequency == "custom":
+            pass
         return super().form_valid(form)
 
 def get_category_path(cat, current_path=""):
@@ -199,6 +202,9 @@ class AimCreate(LoginRequiredMixin, CreateView):
             aim.order_position = i
             aim.save()
         form.instance.order_position = (len(all_user_aims))
+
+
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
