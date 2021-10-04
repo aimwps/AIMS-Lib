@@ -146,6 +146,7 @@ class StepTracker(models.Model):
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
+    #last_verification_date = models.DateTimeField(blank=True, null=True)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['on_behaviour', 'order_position'], name='unique_order_of_trackers')
@@ -175,6 +176,7 @@ class StepTracker(models.Model):
 
     def get_tquestion(self):
         return  self.get_tsentence() + " How did you get on?"
+
     def get_milestone_sentence(self):
         period_words = {"daily": "days", "weekly": "weeks", "monthly": "months", "yearly": "years"}
         sentence = ""
@@ -193,7 +195,7 @@ class StepTrackerLog(models.Model):
                         ("count_value","count submit"),
                         ("boolean_showup", "boolean show up"),
                         ("boolean_success", "boolean complete"),
-                        ("fail_or_no_submit","fail or no submit"),
+                        ("fail_or_no_submit", "did not complete"),
                         )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
@@ -204,6 +206,7 @@ class StepTrackerLog(models.Model):
 
     def __str__(self):
         return f"TrackerLog_{self.id}"
+
 
 class StepTrackerCustomFrequency(models.Model):
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE)

@@ -69,7 +69,6 @@ def get_tracker_status(user_id, tracker):
         start_datetimes.append(start_date)
         end_datetimes.append(end_date)
 
-
     if tracker.record_frequency == "yearly":
         if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
             if now > reset_user_year_date_time:
@@ -170,6 +169,7 @@ def get_tracker_status(user_id, tracker):
         else:
             tracker_status['logs_required'] = True
         all_upcoming_trackers.append(tracker_status)
+
     return all_upcoming_trackers
 
 def get_category_path(cat, current_path=""):
@@ -289,6 +289,8 @@ class AimsDash(LoginRequiredMixin, TemplateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     template_name = "aims_dash.html"
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         #### Check if user has profile and load if so.
@@ -307,7 +309,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             for aim, behaviours in user_aims_behaviours.items():
                 trackers_behaviours = {}
                 for behaviour in behaviours:
-                    trackers_behaviours[behaviour] = [(tracker, get_tracker_status(self.request.user.id,tracker)) for tracker in StepTracker.objects.filter(on_behaviour=behaviour.id)]
+                    trackers_behaviours[behaviour] = [(tracker, get_tracker_status(self.request.user.id,tracker)) for tracker in StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active"))]
                 user_all_aims[aim] = trackers_behaviours
             aims_cat = [(str(aim.category), aim.order_position, aim.title, aim.motivation, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
             sorted_aims = sorted(aims_cat, key=lambda x:x[1])
@@ -318,7 +320,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             all_active_trackers = StepTracker.objects.filter(Q(on_behaviour__on_aim__author=self.request.user) & Q(user_status="active"))
             trackers_needs_logs = []
             for tracker in all_active_trackers:
-                tracker_logs = get_tracker_status(self.request.user.id,tracker)
+                tracker_logs = get_tracker_status(self.request.user.id, tracker)
 
                 trackers_needs_logs.append(tracker_logs)
 
@@ -342,17 +344,23 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             get_lever.user_status = "deleted"
             get_lever.save()
             return HttpResponseRedirect('/aims/#myaims')
-
         elif "delete_aim" in self.request.POST:
             get_aim = get_object_or_404(Aim, id=self.request.POST.get("delete_aim"))
             get_aim.user_status = "deleted"
             get_aim.save()
             return HttpResponseRedirect('/aims/#myaims')
         elif "delete_tracker" in self.request.POST:
-            tclass = self.request.POST.get("delete_tclass")
-            tracker = get_object_or_404(eval(tclass), id=self.request.POST.get("delete_tracker"))
+            tracker = get_object_or_404(StepTracker, id=self.request.POST.get("delete_tracker"))
             tracker.user_status = "deleted"
             tracker.save()
             return HttpResponseRedirect('/aims/#myaims')
         else:
             return HttpResponseRedirect('/aims/#myaims')
+
+
+
+## Check tracker history
+
+# Given the record start date (or last_checked_date)
+## and the frequency, find all possible logs from verification date until present date.
+## Verify there is a log for them, if there is not a log, create one saying no entry.
