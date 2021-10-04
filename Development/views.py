@@ -89,6 +89,8 @@ def get_tracker_status(user_id, tracker):
     if tracker.record_frequency == "custom":
         all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=tracker))
         for freq_code in all_custom_freq_code:
+
+    ### Set start and end period times for a specific day of the week, still uses the users daily reset time.
             if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
                 temp_reset_user_time = reset_user_time
                 while temp_reset_user_time.strftime('%A') != freq_code.code:
@@ -102,6 +104,7 @@ def get_tracker_status(user_id, tracker):
                     end_date =  temp_reset_user_time - timedelta(seconds=1)
                 start_datetimes.append(start_date)
                 end_datetimes.append(end_date)
+    ### Set start and end period times for a specific month of the year, still uses the monthly reset day.
             elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
                 temp_reset_user_time = reset_user_time
                 while temp_reset_user_time.strftime('%B') != freq_code.code:
@@ -115,10 +118,10 @@ def get_tracker_status(user_id, tracker):
                     end_date =  temp_reset_user_time - timedelta(seconds=1)
                 start_datetimes.append(start_date)
                 end_datetimes.append(end_date)
+    ### Set start and end period times for a specific day in the month, e.g. "the 12th of every month". Still users the daily reset time.
             else:
                 temp_reset_user_time = reset_user_time
                 while temp_reset_user_time.strftime('%-d') != freq_code.code:
-
                     print(f"TESTING: {temp_reset_user_time.strftime('%-d')} vs {freq_code.code}")
                     temp_reset_user_time += relativedelta(days=1)
                 if now > reset_user_time:
@@ -130,47 +133,53 @@ def get_tracker_status(user_id, tracker):
                 start_datetimes.append(start_date)
                 end_datetimes.append(end_date)
 
-    for start_date, end_date in zip(start_datetimes, end_datetimes):
+
+        min_start_date = min(start_datetimes)
+        period_index = start_datetimes.index(min_start_date)
+        start_date =  start_datetimes[period_index]
+        end_date = end_datetimes[period_index]
+
+    #for start_date, end_date in zip(start_datetimes, end_datetimes):
         ## RETURN DICTIONARY OF TRACKER INFO
-        current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
-        total_logs = len(current_period_logs)
-        tracker_status ={
-                "tracker": tracker,
-                "logs_required": None,
-                "total_logs": total_logs,
-                "period_log_start": start_date,
-                "period_log_end": end_date,
-                "boolean_status": None,
-                "count_status": None,
-                "count_quantity": None,
-                "count_total": None,
-                }
+    current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
+    total_logs = len(current_period_logs)
+    tracker_status ={
+            "tracker": tracker,
+            "logs_required": None,
+            "total_logs": total_logs,
+            "period_log_start": start_date,
+            "period_log_end": end_date,
+            "boolean_status": None,
+            "count_status": None,
+            "count_quantity": None,
+            "count_total": None,
+            }
 
-        if current_period_logs:
-            logs_status = list(current_period_logs.values_list('submit_type', flat=True))
-            if tracker.metric_tracker_type == "boolean":
-                if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
-                    tracker_status['logs_required'] = False
-                    tracker_status['boolean_status'] = logs_status[0]
-                else:
-                    tracker_status['logs_required'] = True
-                    tracker_status['boolean_status'] = logs_status[0]
+    if current_period_logs:
+        logs_status = list(current_period_logs.values_list('submit_type', flat=True))
+        if tracker.metric_tracker_type == "boolean":
+            if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
+                tracker_status['logs_required'] = False
+                tracker_status['boolean_status'] = logs_status[0]
             else:
-                if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
-                    tracker_status['logs_required'] = False
-                    tracker_status['count_status'] = logs_status[0]
-                else:
-                    value_counts = list(current_period_logs.values_list('count_value', flat=True))
-                    sum_counts = sum([int(i) for i in value_counts])
-                    tracker_status['logs_required'] = True
-                    tracker_status['count_total'] = sum_counts
-                    tracker_status['boolean_status'] = logs_status[0]
-                    tracker_status['count_quantity'] = len(value_counts)
+                tracker_status['logs_required'] = True
+                tracker_status['boolean_status'] = logs_status[0]
         else:
-            tracker_status['logs_required'] = True
-        all_upcoming_trackers.append(tracker_status)
+            if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
+                tracker_status['logs_required'] = False
+                tracker_status['count_status'] = logs_status[0]
+            else:
+                value_counts = list(current_period_logs.values_list('count_value', flat=True))
+                sum_counts = sum([int(i) for i in value_counts])
+                tracker_status['logs_required'] = True
+                tracker_status['count_total'] = sum_counts
+                tracker_status['boolean_status'] = logs_status[0]
+                tracker_status['count_quantity'] = len(value_counts)
+    else:
+        tracker_status['logs_required'] = True
+    #all_upcoming_trackers.append(tracker_status)
 
-    return all_upcoming_trackers
+    return tracker_status
 
 def get_category_path(cat, current_path=""):
     if cat.parent_category:
@@ -300,7 +309,6 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False
-
         ########## Get aLL the users aims, behaviours & trackers######################################################
         if self.request.user.is_authenticated:
             user_aims = Aim.objects.filter(Q(author=self.request.user) & ~Q(user_status="deleted"))
@@ -308,31 +316,24 @@ class AimsDash(LoginRequiredMixin, TemplateView):
             user_all_aims = {}
             for aim, behaviours in user_aims_behaviours.items():
                 trackers_behaviours = {}
+
+                ## For each behaviour find the trackers details
                 for behaviour in behaviours:
-                    trackers_behaviours[behaviour] = [(tracker, get_tracker_status(self.request.user.id,tracker)) for tracker in StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active"))]
+                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active"))
+
+                    ## Pass trackers that need logs to uncomplete_trackers for quick fire aims
+                    processed_trackers = []
+                    for tracker in all_behaviour_trackers:
+                        tracker_status = get_tracker_status(self.request.user.id, tracker)
+                        processed_trackers.append((tracker, prettify_tracker_log_dict(tracker_status)))
+
+                    ## Assign the trackers to the behaviours for viewing aims dash.
+                    trackers_behaviours[behaviour] = processed_trackers
+
                 user_all_aims[aim] = trackers_behaviours
             aims_cat = [(str(aim.category), aim.order_position, aim.title, aim.motivation, {aim:behaviour}) for aim, behaviour in user_all_aims.items()]
             sorted_aims = sorted(aims_cat, key=lambda x:x[1])
             context['sorted_aims'] = sorted_aims
-
-        ############ Get all the due periods for submission ################################################################
-        if self.request.user.is_authenticated:
-            all_active_trackers = StepTracker.objects.filter(Q(on_behaviour__on_aim__author=self.request.user) & Q(user_status="active"))
-            trackers_needs_logs = []
-            for tracker in all_active_trackers:
-                tracker_logs = get_tracker_status(self.request.user.id, tracker)
-
-                trackers_needs_logs.append(tracker_logs)
-
-
-        for t in trackers_needs_logs:
-            print("------------------------------------------------------------------")
-            for tt in t:
-                print("---------")
-                for k,v in tt.items():
-                    print(k, v)
-        context['uncomplete_trackers'] = trackers_needs_logs
-
         return context
 
     def form_valid(self, form):

@@ -14,7 +14,7 @@ RECORD_FREQUENCY =(('daily', 'Daily'),
                 ('weekly', 'Weekly'),
                 ('monthly', 'Monthly'),
                 ('yearly', 'Yearly'),
-                ('custom', 'Specific days'),
+                ('custom', 'Specific days or months'),
                 )
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
