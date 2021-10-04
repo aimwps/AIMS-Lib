@@ -139,6 +139,7 @@ class StepTracker(models.Model):
     record_start_date = models.DateField(auto_now_add=False)
     record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY, default="weekly")
     record_multiple_per_frequency = models.BooleanField()
+    record_verification_date = models.DateTimeField(blank=True, null=True)
     complete_allowed = models.BooleanField(default=False)
     complete_criteria =  models.CharField(max_length=100, choices=COMP_CRITERIA, default="consecutive")
     complete_value = models.PositiveIntegerField(blank=True, null=True)
@@ -146,7 +147,7 @@ class StepTracker(models.Model):
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
-    #last_verification_date = models.DateTimeField(blank=True, null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['on_behaviour', 'order_position'], name='unique_order_of_trackers')
