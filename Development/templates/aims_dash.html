@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}AIMS{% endblock %}
 
 {% block topcarousel %}
@@ -55,14 +56,17 @@ Set your aims, behaviours & trackers below. Go to quickfire aims to log any outs
     {% block bottomcontent %}
       {% if user.is_authenticated %}
         {% if has_user_profile %}
-          <div class="container my-4">
 
             {% include "quick_fire_aims.html" %}
 
-          </div>
         {% endif %}
       {% endif %}
     {% endblock %}
 
     {% block bottomcarousel %}
     {% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/development/aimsDash.js' %}"></script>
+{% endblock scripts %}

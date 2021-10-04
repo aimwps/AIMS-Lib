@@ -4,8 +4,7 @@ from WebsiteTools.models import ContentCategory
 from Members.models import MemberProfile
 from .forms import AimCreateForm, BehaviourCreateForm, BehaviourEditForm, StepTrackerCreateForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
 from datetime import datetime, timedelta
 from django.db.models import Q
@@ -14,6 +13,22 @@ from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .utils import prettify_tracker_log_dict
+from .development_serializers import StepTrackerSerializer
+
+def get_tracker_period(start_date, end_date):
+    now = datetime.today()
+    difference_in_hours = relativedelta(end_date, start_date).hours
+    if difference_in_hours <= 24:
+        return "displayToday"
+    if difference_in_hours <= 168:
+        return "displayWeek"
+    if difference_in_hours <=  744:
+        return "displayMonth"
+    else:
+        return "displayYear"
+
+
+
 
 def get_tracker_status(user_id, tracker):
     member_profile = MemberProfile.objects.get(author=user_id)
@@ -192,6 +207,32 @@ def get_category_path(cat, current_path=""):
         new_path = str(cat.title)
         new_path += current_path
         return new_path
+
+def request_uncomplete_trackers(request):
+    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active")))
+    # tracker_display_group = OrderedDict({"Today": [],
+    #                                     "This week": [],
+    #                                     "This month": [],
+    #                                     "This year": [],})
+    ## Find trackers that have uncompleted logs in their current period and assign them to a display group
+    uncomplete_trackers = []
+    for tracker in all_user_trackers:
+        tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
+        if tracker_status['logs_required']:
+            tracker_status['display_section'] = get_tracker_period(tracker_status['period_log_start'], tracker_status['period_log_end'])
+            serialize_tracker = StepTrackerSerializer(tracker_status['tracker']).data
+            tracker_status['tracker'] = serialize_tracker
+            tracker_status['question'] = tracker.get_tquestion()
+            uncomplete_trackers.append(tracker_status)
+    return JsonResponse(uncomplete_trackers, safe=False)
+
+
+
+
+
+
+
+
 
 class StepTrackerCreate(LoginRequiredMixin,CreateView):
     login_url = '/login-or-register/'
