@@ -25,6 +25,14 @@ function getUncompleteTrackers() {
                 <li class="list-group-item border border-white" id="completeShow_${index}">
                 </li>
                 <li class="list-group-item border border-white" id="noShow_${index}">
+                <div class="row">
+                  <div class="col-3 text-center">
+                  <a href="#"><p class="lead"><i class="fas fa-recycle"></i></p></a>
+                  </div>
+                  <div class="col-9">
+                  <p>Not this time, but next</p>
+                  </div>
+                </div>
                 </li>
               </ul>
           </li>`);
@@ -34,18 +42,19 @@ function getUncompleteTrackers() {
           <div class="row">
             <div class="col-3">
             </div>
-            <div class="col-8">
-              <p><strong>Submit, I showed up: </strong> ${item.tracker.minimum_show_description}</p>
+            <div class="col-9">
+              <p><strong><a href="#">Submit, I showed up: </a></strong> ${item.tracker.minimum_show_description}</p>
             </div>
           </div>
             `);
           } else {
             $(`#minShow_${index}`).append(`
             <div class="row">
-              <div class="col-3">
+              <div class="col-3 text-center">
+              <p class="lead"><a href="#"><i class="fas fa-compress"></i></a></p>
               </div>
               <div class="col-9">
-                <p>You've logged ${item.count_quantity} ${item.tracker.metric_unit} already this period. The minimum show option has been disabled.</p>
+                <p>You've logged ${item.count_quantity} ${item.tracker.metric_unit} already this period.</p>
               </div>
             </div>
               `);
@@ -68,7 +77,7 @@ function getUncompleteTrackers() {
             <div class="col-3">
             </div>
             <div class="col-9">
-              <p>I completed this successfully</p>
+              <p><a href="#"><strong>Submit, yes: </strong></a>was your step a succcess? </p>
             </div>
 
             </div>`)
@@ -79,7 +88,7 @@ function getUncompleteTrackers() {
               <input type="text" class="form-control" id="inputCountValue_${index}">
             </div>
             <div class="col-9">
-              <p><strong>Submit, count: </strong> Enter an amount of ${item.tracker.metric_unit} you have ${item.tracker.metric_action} this period and submit</p>
+              <p><strong><a href="#">Submit, count: </a></strong> Enter an amount of ${item.tracker.metric_unit} you have ${item.tracker.metric_action} this period</p>
             </div>
           </div>
               `)

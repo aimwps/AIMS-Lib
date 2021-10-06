@@ -15,14 +15,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .utils import prettify_tracker_log_dict
 from .development_serializers import StepTrackerSerializer
 
+
+
 def get_tracker_period(start_date, end_date):
     now = datetime.today()
-    difference_in_hours = relativedelta(end_date, start_date).hours
-    if difference_in_hours <= 24:
+    in_future = 0
+    while start_date < now < end_date:
+        now += relativedelta(days=1)
+        in_future += 1
+    if in_future <= 0:
         return "displayToday"
-    if difference_in_hours <= 168:
+    elif in_future <= 6:
         return "displayWeek"
-    if difference_in_hours <=  744:
+    elif in_future <= 31:
         return "displayMonth"
     else:
         return "displayYear"
