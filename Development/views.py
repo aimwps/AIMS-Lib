@@ -19,7 +19,6 @@ from .development_serializers import StepTrackerSerializer
 def submit_tracker_log(request):
     tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
     submit_user = get_object_or_404(User, id=request.POST.get("submit_user"))
-    print(request.POST)
     if request.POST.get("submit_value"):
         submit_value = request.POST.get("submit_value")
     else:
@@ -132,7 +131,7 @@ def get_tracker_status(user_id, tracker):
             if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
                 temp_reset_user_time = reset_user_time
                 while temp_reset_user_time.strftime('%A') != freq_code.code:
-                    print(f"TESTING: {temp_reset_user_time.strftime('%A')} vs {freq_code.code}")
+
                     temp_reset_user_time += relativedelta(days=1)
                 if now > reset_user_time:
                     start_date = temp_reset_user_time
@@ -146,7 +145,7 @@ def get_tracker_status(user_id, tracker):
             elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
                 temp_reset_user_time = reset_user_time
                 while temp_reset_user_time.strftime('%B') != freq_code.code:
-                    print(f"TESTING: {temp_reset_user_time.strftime('%B')} vs {freq_code.code}")
+
                     temp_reset_user_time += relativedelta(months=1)
                 if now > temp_reset_user_time:
                     start_date = temp_reset_user_time
@@ -160,7 +159,7 @@ def get_tracker_status(user_id, tracker):
             else:
                 temp_reset_user_time = reset_user_time
                 while temp_reset_user_time.strftime('%-d') != freq_code.code:
-                    print(f"TESTING: {temp_reset_user_time.strftime('%-d')} vs {freq_code.code}")
+
                     temp_reset_user_time += relativedelta(days=1)
                 if now > reset_user_time:
                     start_date = temp_reset_user_time
@@ -180,7 +179,7 @@ def get_tracker_status(user_id, tracker):
     #for start_date, end_date in zip(start_datetimes, end_datetimes):
         ## RETURN DICTIONARY OF TRACKER INFO
     current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
-    print(f"{tracker.id}---> {current_period_logs}")
+
     total_logs = len(current_period_logs)
     tracker_status ={
             "tracker": tracker,
@@ -196,7 +195,7 @@ def get_tracker_status(user_id, tracker):
 
     if current_period_logs:
         logs_status = list(current_period_logs.values_list('submit_type', flat=True))
-        print(logs_status)
+
         if tracker.metric_tracker_type == "boolean":
             if "min_showup" in logs_status or "fail_or_no_submit" in logs_status or "boolean_success" in logs_status:
                 tracker_status['logs_required'] = False
@@ -235,15 +234,10 @@ def get_category_path(cat, current_path=""):
 
 def request_uncomplete_trackers(request):
     all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active")))
-    # tracker_display_group = OrderedDict({"Today": [],
-    #                                     "This week": [],
-    #                                     "This month": [],
-    #                                     "This year": [],})
-    ## Find trackers that have uncompleted logs in their current period and assign them to a display group
     uncomplete_trackers = []
     for tracker in all_user_trackers:
         tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
-        print(tracker_status)
+
         if tracker_status['logs_required']:
             tracker_status['display_section'] = get_tracker_period(tracker_status['period_log_start'], tracker_status['period_log_end'])
             serialize_tracker = StepTrackerSerializer(tracker_status['tracker']).data
@@ -274,7 +268,6 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
         return reverse("home")
 
     def form_valid(self, form):
-        print(self.request.POST)
         form.instance.on_behaviour = get_object_or_404(Behaviour, id=self.kwargs['behaviour_id'])
         all_behaviour_trackers =  StepTracker.objects.filter(on_behaviour=self.kwargs['behaviour_id']).order_by('order_position')
         for i, tracker in  enumerate(all_behaviour_trackers):
