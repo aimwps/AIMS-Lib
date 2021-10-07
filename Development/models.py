@@ -192,9 +192,8 @@ class StepTracker(models.Model):
 
 class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
-                        ("count_showup","count show up"),
+                        ("min_showup","minimum show"),
                         ("count_value","count submit"),
-                        ("boolean_showup", "boolean show up"),
                         ("boolean_success", "boolean complete"),
                         ("fail_or_no_submit", "did not complete"),
                         )

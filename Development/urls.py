@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AimView, AimsDash, AimCreate, BehaviourCreate, BehaviourEdit, AimEdit, StepTrackerCreate, request_uncomplete_trackers
+from .views import AimView, AimsDash, AimCreate, BehaviourCreate, BehaviourEdit, AimEdit, StepTrackerCreate, request_uncomplete_trackers,submit_tracker_log
 # from .views import
 
 urlpatterns = [
@@ -10,7 +10,9 @@ urlpatterns = [
     path('behaviour/edit/<int:pk>', BehaviourEdit.as_view(), name="behaviour-edit"),
     path('aim/edit/<int:pk>', AimEdit.as_view(), name="aim-edit"),
     path('steptracker/create/<int:behaviour_id>', StepTrackerCreate.as_view(), name="steptracker-create"),
-    path('get_quickfire_trackers/', request_uncomplete_trackers, name="get-quickfire-trackers")
+    path('get_quickfire_trackers/', request_uncomplete_trackers, name="get-quickfire-trackers"),
+    path('submit_tracker/', submit_tracker_log, name="submit-tracker_log"),
+
 
 
 ]

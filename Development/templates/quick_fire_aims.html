@@ -2,6 +2,7 @@
 <div class="row">
   <a class="anchor" id="quickaims"></a>
   <input type="hidden" name="user_id" value="{{ user.id }}">
+  {% csrf_token %}
 </div>
 
 <div class="container-fluid my-4 px-0">

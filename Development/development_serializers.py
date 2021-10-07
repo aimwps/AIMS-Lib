@@ -5,7 +5,7 @@ from .models import StepTracker
 class StepTrackerSerializer(serializers.ModelSerializer):
     class Meta:
       model = StepTracker
-      fields = ("on_behaviour",
+      fields = ("id","on_behaviour",
               "metric_tracker_type",
               "metric_action",
               "metric_unit",

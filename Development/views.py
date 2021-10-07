@@ -8,14 +8,29 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
 from datetime import datetime, timedelta
 from django.db.models import Q
-import calendar
+import json
 from dateutil.relativedelta import relativedelta
 from collections import OrderedDict
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from .utils import prettify_tracker_log_dict
 from .development_serializers import StepTrackerSerializer
 
-
+def submit_tracker_log(request):
+    tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
+    submit_user = get_object_or_404(User, id=request.POST.get("submit_user"))
+    print(request.POST)
+    if request.POST.get("submit_value"):
+        submit_value = request.POST.get("submit_value")
+    else:
+        submit_value = None
+    new_log = StepTrackerLog(author=submit_user,
+                            on_tracker=tracker,
+                            submit_type=request.POST.get("submit_type"),
+                            count_value=submit_value)
+    new_log.save()
+    response = json.dumps({"complete":True})
+    return HttpResponse(response)
 
 def get_tracker_period(start_date, end_date):
     now = datetime.today()
@@ -23,9 +38,12 @@ def get_tracker_period(start_date, end_date):
     while start_date < now < end_date:
         now += relativedelta(days=1)
         in_future += 1
-    if in_future <= 0:
+        if in_future > 1000:
+            break
+
+    if in_future <= 1:
         return "displayToday"
-    elif in_future <= 6:
+    elif in_future <= 7:
         return "displayWeek"
     elif in_future <= 31:
         return "displayMonth"
@@ -162,6 +180,7 @@ def get_tracker_status(user_id, tracker):
     #for start_date, end_date in zip(start_datetimes, end_datetimes):
         ## RETURN DICTIONARY OF TRACKER INFO
     current_period_logs = StepTrackerLog.objects.filter(on_tracker=tracker.id, create_date__range=[start_date, end_date])
+    print(f"{tracker.id}---> {current_period_logs}")
     total_logs = len(current_period_logs)
     tracker_status ={
             "tracker": tracker,
@@ -177,20 +196,21 @@ def get_tracker_status(user_id, tracker):
 
     if current_period_logs:
         logs_status = list(current_period_logs.values_list('submit_type', flat=True))
+        print(logs_status)
         if tracker.metric_tracker_type == "boolean":
-            if "boolean_showup" in logs_status or "fail_or_no_submit" in log_status:
+            if "min_showup" in logs_status or "fail_or_no_submit" in logs_status or "boolean_success" in logs_status:
                 tracker_status['logs_required'] = False
                 tracker_status['boolean_status'] = logs_status[0]
             else:
                 tracker_status['logs_required'] = True
                 tracker_status['boolean_status'] = logs_status[0]
         else:
-            if "count_showup" in logs_status or "fail_or_no_submit" in logs_status:
+            if "min_showup" in logs_status or "fail_or_no_submit" in logs_status:
                 tracker_status['logs_required'] = False
                 tracker_status['count_status'] = logs_status[0]
             else:
                 value_counts = list(current_period_logs.values_list('count_value', flat=True))
-                sum_counts = sum([int(i) for i in value_counts])
+                sum_counts = sum([int(i) for i in value_counts if i != None])
                 tracker_status['logs_required'] = True
                 tracker_status['count_total'] = sum_counts
                 tracker_status['boolean_status'] = logs_status[0]
@@ -223,11 +243,14 @@ def request_uncomplete_trackers(request):
     uncomplete_trackers = []
     for tracker in all_user_trackers:
         tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
+        print(tracker_status)
         if tracker_status['logs_required']:
             tracker_status['display_section'] = get_tracker_period(tracker_status['period_log_start'], tracker_status['period_log_end'])
             serialize_tracker = StepTrackerSerializer(tracker_status['tracker']).data
             tracker_status['tracker'] = serialize_tracker
             tracker_status['question'] = tracker.get_tquestion()
+            tracker_status['pretty_start'] = tracker_status['period_log_start'].strftime("%d/%m/%y @ %H:%M:%S")
+            tracker_status['pretty_end'] = tracker_status['period_log_end'].strftime("%d/%m/%y @ %H:%M:%S")
             uncomplete_trackers.append(tracker_status)
     return JsonResponse(uncomplete_trackers, safe=False)
 

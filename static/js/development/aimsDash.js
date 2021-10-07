@@ -3,6 +3,10 @@ $(document).ready(function () {
   getUncompleteTrackers() ;
 });
 function getUncompleteTrackers() {
+  $("#displayToday").empty();
+  $("#displayWeek").empty();
+  $("#displayMonth").empty();
+  $("#displayYear").empty();
   $.ajax({
     type: "GET",
     url: "/get_quickfire_trackers/",
@@ -17,20 +21,22 @@ function getUncompleteTrackers() {
         console.log(selectDisplay)
         $(selectDisplay).append(`
           <li class="list-group-item border border-primary my-2">
-            <p>${item.question}<br><small>submission period: ${ item.period_log_start} to ${item.period_log_end}</small></p>
+            <p>${item.question}<br>
+            <small>Period start: ${ item.pretty_start}</small><br>
+            <small>Period end:${item.pretty_end}<br>
 
               <ul class="list-group">
-                <li class="list-group-item border border-white" id="minShow_${index}">
-                </li>
                 <li class="list-group-item border border-white" id="completeShow_${index}">
+                </li>
+                <li class="list-group-item border border-white" id="minShow_${index}">
                 </li>
                 <li class="list-group-item border border-white" id="noShow_${index}">
                 <div class="row">
-                  <div class="col-3 text-center">
-                  <a href="#"><p class="lead"><i class="fas fa-recycle"></i></p></a>
+                  <div class="col-10  text-end">
+                  <p><strong>Submit, incomplete: </strong><small>Try another day (period progress is over written)</small></p>
                   </div>
-                  <div class="col-9">
-                  <p>Not this time, but next</p>
+                  <div class="col-2 my-auto">
+                  <a type="button" class="link link-primary" onClick="submitUncomplete(${item.tracker.id})"><p class="lead"><i class="fas fa-recycle"></i></p></a>
                   </div>
                 </div>
                 </li>
@@ -40,21 +46,22 @@ function getUncompleteTrackers() {
           if (item.count_quantity == null){
           $(`#minShow_${index}`).append(`
           <div class="row">
-            <div class="col-3">
+            <div class="col-10 text-end">
+              <p><strong>Submit show up: </strong><small>${item.tracker.minimum_show_description}</small></p>
             </div>
-            <div class="col-9">
-              <p><strong><a href="#">Submit, I showed up: </a></strong> ${item.tracker.minimum_show_description}</p>
+            <div class="col-2">
+              <a type="button" class="link link-primary" onClick="submitShowup(${item.tracker.id})"><p class="lead"><i class="fas fa-compress"></i></p></a>
             </div>
           </div>
             `);
           } else {
             $(`#minShow_${index}`).append(`
             <div class="row">
-              <div class="col-3 text-center">
-              <p class="lead"><a href="#"><i class="fas fa-compress"></i></a></p>
+              <div class="col-10 text-end">
+                <p><strong>Show up, unavailable: </strong><small>You've logged ${item.count_total} ${item.tracker.metric_unit} this period</small></p>
               </div>
-              <div class="col-9">
-                <p>You've logged ${item.count_quantity} ${item.tracker.metric_unit} already this period.</p>
+              <div class="col-2">
+              <p class="lead"><i class="fas fa-compress"></i></p>
               </div>
             </div>
               `);
@@ -62,11 +69,11 @@ function getUncompleteTrackers() {
         } else {
           $(`#minShow_${index}`).append(`
           <div class="row">
-            <div class="col-3">
-
-            </div>
-            <div class="col-9">
-              <p>No minimum show option available for this tracker</p>
+            <div class="col-10 text-end">
+              <p><strong>Show up, unavailable : </strong><small>No minimum show alternative</small></p>
+              </div>
+              <div class="col-2">
+                <p class="lead"><i class="fas fa-compress"></i></p>
               </div>
             </div>
             `);
@@ -74,21 +81,26 @@ function getUncompleteTrackers() {
         if(item.tracker.metric_tracker_type =="boolean"){
           $(`#completeShow_${index}`).append(`
           <div class="row">
-            <div class="col-3">
+            <div class="col-10 text-end">
+              <p><strong>Submit success: </strong><small>You completed your step successully</small></p>
             </div>
-            <div class="col-9">
-              <p><a href="#"><strong>Submit, yes: </strong></a>was your step a succcess? </p>
+            <div class="col-2">
+              <a type="button" class="link link-primary"  onClick="submitBooleanComplete(${item.tracker.id})"><p class="lead"><i class="fas fa-rocket"></i></p></a>
             </div>
-
             </div>`)
         } else {
           $(`#completeShow_${index}`).append(`
           <div class="row">
-            <div class="col-3 my-auto">
-              <input type="text" class="form-control" id="inputCountValue_${index}">
+            <div class="col-10 text-end">
+              <div class="row form-group">
+                <label class="col-9 col-form-label" for="inputCountValue_${index}"><strong>Submit count: </strong><small>${item.tracker.metric_unit}</small></label>
+                <div class="col-3 my-auto">
+                  <input type="text" class="form-control px-1" id="inputCountValue_${index}">
+                </div>
+              </div>
             </div>
-            <div class="col-9">
-              <p><strong><a href="#">Submit, count: </a></strong> Enter an amount of ${item.tracker.metric_unit} you have ${item.tracker.metric_action} this period</p>
+            <div class="col-2 my-auto">
+                <a type="button" class="link link-primary"  onClick="submitCount(${item.tracker.id}, ${index})"><p class="lead"><i class="fas fa-rocket"></i></p></a>
             </div>
           </div>
               `)
@@ -97,3 +109,90 @@ function getUncompleteTrackers() {
       }
     })
   };
+
+function submitBooleanComplete(tracker_id){
+  console.log(tracker_id);
+  $.ajax({
+    type: "POST",
+    url: "/submit_tracker/",
+    data: {tracker_id: tracker_id,
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          submit_type: "boolean_success",
+          submit_user: $("input[name=user_id]").val(),
+    },
+    success: function(){
+      getUncompleteTrackers();
+    }
+  })
+};
+
+function submitShowup(tracker_id){
+  console.log(tracker_id);
+  $.ajax({
+    type: "POST",
+    url: "/submit_tracker/",
+    data: {tracker_id: tracker_id,
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          submit_type: "min_showup",
+          submit_user: $("input[name=user_id]").val(),
+    },
+    success: function(){
+      getUncompleteTrackers();
+    }
+
+  })
+
+};
+function submitCountShowup(tracker_id){
+  console.log(tracker_id);
+  $.ajax({
+    type: "POST",
+    url: "/submit_tracker/",
+    data: {tracker_id: tracker_id,
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          submit_type: "count_showup",
+          submit_user: $("input[name=user_id]").val(),
+    },
+    success: function(){
+      getUncompleteTrackers();
+    }
+
+  })
+
+};
+function submitUncomplete(tracker_id){
+  console.log(tracker_id);
+  $.ajax({
+    type: "POST",
+    url: "/submit_tracker/",
+    data: {tracker_id: tracker_id,
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          submit_type: "fail_or_no_submit",
+          submit_user: $("input[name=user_id]").val(),
+    },
+    success: function(){
+      getUncompleteTrackers();
+    }
+
+  })
+
+};
+
+function submitCount(tracker_id, index){
+  console.log(tracker_id);
+  $.ajax({
+    type: "POST",
+    url: "/submit_tracker/",
+    data: {tracker_id: tracker_id,
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          submit_type: "count_value",
+          submit_user: $("input[name=user_id]").val(),
+          count_value: $(`#inputCountValue_${index}`).val()
+    },
+    success: function(){
+      getUncompleteTrackers();
+    }
+
+  })
+
+};
