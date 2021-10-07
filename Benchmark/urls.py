@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from .views import (
-                    QuizView,
+                    BenchmarkView,
                     BenchmarkCreatorView,
                     #UserBenchmarksView,
                     UserBenchmarkEditView,
@@ -16,12 +16,12 @@ from .views import (
 )
 
 urlpatterns = [
-    path('benchmark/<int:quiz_id>', QuizView.as_view(), name="benchmark"),
+    path('benchmark/<int:benchmark_id>', BenchmarkView.as_view(), name="benchmark"),
     path('create_benchmark/', BenchmarkCreatorView.as_view(), name="create-benchmark"),
     #path('user_benchmarks/', UserBenchmarksView.as_view(), name="user-benchmarks"),
     path('user_benchmarks/edit/<int:benchmark_id>', UserBenchmarkEditView.as_view(), name="edit-benchmark"),
     path("create-question-answer/", create_qa_pair, name="create-qa-pair"),
-    path("display-quiz-dev/", csrf_exempt(get_benchmark_content), name="display-quiz-dev"),
+    path("display-benchmark-dev/", csrf_exempt(get_benchmark_content), name="display-benchmark-dev"),
     path("answer-info/", csrf_exempt(get_answer_info), name="answer-info"),
     path("answer-edit/", edit_answer, name="answer-edit"),
     path("question-info/", csrf_exempt(get_question_info), name="question-info"),

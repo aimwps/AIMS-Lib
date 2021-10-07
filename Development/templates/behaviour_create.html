@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}AIMS{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
+
+{% block pageInfo_title %}
+CREATING BEHAVIOUR
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+
+If you remember from our pathway article <a href="#">Crafting your future</a>,  behaviours are something you do that align with your aim. They form through repeating actionable steps. We'll get to them soon enough. You're setting this behaviour for.. "{{ aim_for_lever.title }}".
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+{% include "aims_nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="container my-4">
+
+
+  <div class="form-group">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.title }}
+      <br>
+      <div class="text-center">
+
+      <button class="btn btn-primary">Take a step closer</button>
+  </div>
+      </form>
+
+</div>
+</div>
+{% endblock %}

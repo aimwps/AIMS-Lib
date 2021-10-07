@@ -1,20 +1,38 @@
 <br/>
-<div class="accordion accordion-flush" id="aims_accordion">
+<div class="accordion" id="aims_accordion">
   {% for aim_data in sorted_aims %}
   <div class="accordion-item">
-    <h2 class="accordion-header" id="heading_{{aim_data.1}}">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{aim_data.1}}" aria-expanded="false" aria-controls="flush_{{aim_data.1}}">
-        {{aim_data.2}}
+    <h2 class="accordion-header" id="aim_heading_{{aim_data.1}}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aim_acc_{{aim_data.1}}" aria-expanded="false" aria-controls="aim_acc_{{aim_data.1}}">
+        <h4>{{aim_data.2}}</h4>
       </button>
     </h2>
-    <div id="flush_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
+    <div id="aim_acc_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="aim_heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
       <div class="accordion-body">
         {% for aim, behaviours in aim_data.4.items %}
-          <p class="lead">
-          <!-- Button trigger modal -->
-          <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ aim }}">
-          <i class="fas fa-ellipsis-h"></i>
-          </a> {{aim.title}} </p>
+        <div class="text-center">
+            <h4>AIM: {{aim.title}}</h4>
+            <h6>Created {{ aim.create_date}} @ {{ aim.create_time }} by {{ aim.author }}</h6>
+          </div>
+          <div class="text-center">
+            <ul class="nav justify-content-center">
+              {% if user.is_authenticated %}
+                {% if user.id == aim.author.id %}
+                <!-- Button trigger modal -->
+                <li class="nav-item px-2">
+                  <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ aim }}"><i class="fas fa-bars"></i></a>
+                </li>
+                  <li class="nav-item px-2">
+                    <a href="{% url 'aim-edit' aim.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
+                  </li>
+                  <li class="nav-item px-2">
+                      <a href='{% url "behaviour-create" aim.id %}' class="text-primary"><i class="far fa-plus"></i></a>
+                  </li>
+                {% endif %}
+              {% endif %}
+            </ul>
+          </div>
+
 
           <!-- Modal -->
           <div class="modal fade" id="modal_{{ aim }}" tabindex="-1" aria-labelledby="modal_{{ aim }}Label" aria-hidden="true">
@@ -32,9 +50,8 @@
 
                 </div>
                 <div class="modal-footer">
-                  <a href='{% url "lever-new" aim.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                  <a href='{% url "edit-aim" aim.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
-
+                  <a href='{% url "behaviour-create" aim.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                  <a href='{% url "aim-edit" aim.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
                   <form action="." method="POST">
                     {% csrf_token %}
                     <button name="delete_aim" value="{{aim.id}}" class="btn btn-secondary">
@@ -44,26 +61,38 @@
               </div>
             </div>
           </div>
-          <p>{{ aim.why }}</p>
+          <!-- Modal end -------------------------------------------------------------------------------------------------------->
+
+          <p>{{ aim.motivation }}</p>
           <div class="accordion accordion-flush" id="accordionBehaviours">
-          <p class="lead"></a> Behaviours that support my aim</p>
           {% for behaviour, trackers in behaviours.items %}
             <div class="accordion-item">
 
-              <h2 class="accordion-header" id="heading_{{behaviour.id}}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush_{{behaviour.id}}" aria-expanded="false" aria-controls="flush_{{behaviour.id}}">
-                    {{ behaviour.description }}
+              <h2 class="accordion-header" id="beh_heading_{{behaviour.id}}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#beh_acc_{{behaviour.id}}" aria-expanded="false" aria-controls="beh_acc_{{behaviour.id}}">
+                    <h5>{{ behaviour.title }}</h5>
                 </button>
               </h2>
-              <div id="flush_{{behaviour.id}}" class="accordion-collapse collapse" aria-labelledby="heading_{{behaviour.id}}" data-bs-parent="#accordionBehaviours">
-                <div class="accordion-body">
-                <p class="lead">
-                <!-- Button trigger modal -->
-                <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ behaviour.id }}">
-                  <i class="fas fa-ellipsis-h"></i>
-                </a> {{ behaviour.description}}</p>
+              <div id="beh_acc_{{behaviour.id}}" class="accordion-collapse collapse" aria-labelledby="beh_heading_{{behaviour.id}}" data-bs-parent="#accordionBehaviours">
+                <div class="accordion-body px-0">
+                  <div class="text-center">
+                    <h5>BEHAVIOUR: {{behaviour.title}}</h5>
+                    <h6>Created {{ behaviour.create_date}} @ {{ behaviour.create_time }}</h6>
+                    <ul class="nav justify-content-center">
+                        <!-- Button trigger modal -->
+                        <li class="nav-item px-2">
+                          <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ behaviour.id }}"><i class="fas fa-bars"></i></a>
+                        </li>
+                          <li class="nav-item px-2">
+                            <a href="{% url 'behaviour-edit' behaviour.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
+                          </li>
+                          <li class="nav-item px-2">
+                              <a href='{% url "steptracker-create" behaviour_id=behaviour.id %}' class="text-primary"><i class="far fa-plus"></i></a>
+                          </li>
+                    </ul>
+                  </div>
 
-                <!-- Modal -->
+                <!-- Modal -------------------------------------------------------------------------------------------------------->
                 <div class="modal fade" id="modal_{{ behaviour.id }}" tabindex="-1" aria-labelledby="modal_{{ behaviour.id }}Label" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
@@ -72,13 +101,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <p class="lead">{{behaviour.description }}</p>
+                        <p class="lead">{{behaviour.title }}</p>
                         <p>A behaviuour is something you can do that moves you closer towards your aims.</p>
                         <p>You can add a tracker to monitor measurable progress and also edit or delete this behaviour below</p>
                       </div>
                       <div class="modal-footer">
-                        <a href='{% url "tracker-select" behaviour.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                        <a href='{% url "edit-lever" behaviour.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                        <a href='{% url "steptracker-create" behaviour_id=behaviour.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                        <a href='{% url "behaviour-edit" behaviour.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
 
                         <form action="." method="POST">
                           {% csrf_token %}
@@ -89,56 +118,104 @@
                     </div>
                   </div>
                 </div>
-
-                <ul class="list-group list-group-flush">
+                <!-- Modal end -------------------------------------------------------------------------------------------------------->
+                <ul class="list-group list-group-flush px-0">
                   {% for tracker in trackers %}
                   <!-- Button trigger modal -->
-                    <li class="list-group-item">
-                      <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.id}}">
-                        <i class="fas fa-ellipsis-h"></i></a> {{ tracker.get_tsentence}} </li>
-                      <!-- Modal -->
-                      <div class="modal fade" id="modal_{{tracker.id}}" tabindex="-1" aria-labelledby="modal_{{tracker.id}}Label" aria-hidden="true">
+                    <li class="list-group-item px-0">
+                      <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.0.id}}">
+                        <i class="fas fa-bars"></i></a> {{ tracker.0.get_tsentence}}</p>
+                        <ul class="list-group list-group-flush my-1 py-1">
+                          <li class="list-group-item px-0 border-white">
+                            <div class="row text-break">
+                              <div class='col-xs-12 col-md-4 my-2'>
+                                <p class="lead">Tracker & period details</p>
+                                <strong>Frequency: </strong>{{ tracker.0.record_frequency }}<br>
+                                {% for key, value in tracker.1.items %}
+                                <strong>{{key|title}}: </strong> {{value}}<br>
+
+                                {% endfor %}
+                              </div>
+
+
+                              <div class="col-xs-12 col-md-8 my-2">
+                                <p class="lead">Progression history</p>
+                                <small>Progression heatmaps coming soon</small>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </div>
+
+                            </div>
+                          </li>
+                          <li class="list-group-item px-0">
+                            <div class="row text-break">
+                              <div class='col-xs-12 col-md-4 my-2'>
+                                <p class="lead">Milestone details</p>
+                                {{ tracker.0.get_milestone_sentence|title }}
+                              </div>
+                              <div class="col-xs-12 col-md-8 my-auto">
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+
+                        </ul>
+                      </li>
+
+                      <!-- Modal --------------------------------------------------------------------------------------------------------->
+                      <div class="modal fade" id="modal_{{tracker.0.id}}" tabindex="-1" aria-labelledby="modal_{{tracker.0.id}}Label" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="modal_{{tracker.id}}Label">Tracker Selected</h5>
+                              <h5 class="modal-title" id="modal_{{tracker.0.id}}Label">Tracker Selected</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-
-                              <p class="lead">{{tracker.get_tsentence }}</p>
                               <ul>
-                                <li> Type: {{ tracker.get_tclass }} </li>
-                                <li> Start Date: {{ tracker.start_date }} </li>
-                                <li> Track Frequency: {{ tracker.frequency }}</li>
-                                <li> Question: {{ tracker.get_tquestion }} </li>
+                                <li> Type: {{ tracker.0.get_tclass }} </li>
+                                <li> Start Date: {{ tracker.0.record_start_date }} </li>
+                                <li> Track Frequency: {{ tracker.0.record_frequency }}</li>
+
                               </ul>
                               <p>A tracker is a measurable step that supports your behaviour</p>
                               <p>You can record an action and also edit or delete this tracker below.</p>
 
                             </div>
                             <div class="modal-footer">
-                              <a href='{% url "log-any-tracker" tracker.get_tclass tracker.id %}#begin' class="btn btn-primary"><i class="far fa-plus"></i></a>
-
-                              {% if tracker.get_tclass == "TrackerMinAim" %}
-                                <a href='{% url "edit-min-tracker" tracker.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
-                              {% endif %}
-
-                              {% if tracker.get_tclass == "TrackerBoolean" %}
-                                <a href='{% url "edit-bool-tracker" tracker.id %}#begin' class="btn btn-primary"><i class="far fa-edit"></i></a>
-                              {% endif %}
+                              <a href='#' class="btn btn-primary"><i class="far fa-plus"></i></a>
 
                               <form action="." method="POST">
                                 {% csrf_token %}
-                                <input type="hidden" value="{{ tracker.get_tclass }}" name="delete_tclass">
-                                <input type="hidden" value="{{ tracker.id }}" name="delete_tid">
-                                <button name="delete_tracker" value="{{tracker.id}}" class="btn btn-secondary">
+
+                                <button name="delete_tracker" value="{{tracker.0.id}}" class="btn btn-secondary">
                                   <i class="far fa-trash-alt"></i></button>
                               </form>
                             </div>
                           </div>
                         </div>
                       </div>
+                  <!-- Modal end -------------------------------------------------------------------------------------------------------->
 
                   {% endfor %}
                 </ul>

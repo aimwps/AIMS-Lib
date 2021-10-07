@@ -4,6 +4,9 @@
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
 {% block pageInfo_title %}
 EDITING AIM
 {% endblock pageInfo_title %}
@@ -27,10 +30,14 @@ Hey {{ user }}! Just by being here, you're taking a step closer to the future yo
       <br>
       {{ form.title }}
       <br>
-      {{ form.why }}
+      {{ form.motivation }}
       <br>
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button class="btn btn-primary">Update</button>
+      <div class="text-center">
+
+      <button type="submit" class="btn btn-primary">Update aim</button>
+
+      </div>
       </form>
   </div>
 </div>

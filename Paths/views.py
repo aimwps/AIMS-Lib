@@ -1,8 +1,5 @@
-from .models import Pathway, PathwayContentSetting, PathwayContentSetting
-from Benchmark.models import Quiz, QuizQuestion, QuizAnswer
-from QuestionGenerator.models import GeneratedQuestionBank
-from .forms import PathwayObjNewForm, PathwayEditForm, PathwayNewForm
-from Members.models import MemberProfile
+from .models import Pathway, PathwayContent
+from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
@@ -10,10 +7,13 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from ckeditor.fields import RichTextField
 from django.contrib import messages
-import json
-import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
-from ShareContent.models import UserCreatedGroup, UserCreatedGroupContent
+from Organisations.models import Organisation, OrganisationContent
+from WebsiteTools.models import ContentCategory
+from Benchmark.models import Benchmark, Question, Answer
+from QuestionGenerator.models import GeneratedQuestionBank
+from Members.models import MemberProfile
+import json, requests
 
 class PathwayView(DetailView):
     model = Pathway
@@ -31,7 +31,7 @@ class PathwayDevelopView(LoginRequiredMixin, View):
     def get(self, request, pathway_id):
         context = {}
         pathway = Pathway.objects.get(id=pathway_id)
-        pathway_objs = PathwayContentSetting.objects.filter(pathway=pathway).order_by("order_by")
+        pathway_objs = PathwayContent.objects.filter(pathway=pathway).order_by("order_by")
         if request.user in pathway.participants.all():
             context['participation_status'] = True
         else:
@@ -53,19 +53,19 @@ class PathwayDevelopView(LoginRequiredMixin, View):
             pathway.delete()
             return HttpResponseRedirect('/pathway/')
         if "delete_pathwayOBJ" in request.POST:
-            pathway_content = PathwayContentSetting.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
+            pathway_content = PathwayContent.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
             pathway_content.delete()
         return HttpResponseRedirect(request.path)
 
-class PathwayObjNew(LoginRequiredMixin, View):
+class PathwayContentCreate(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
-    form_class = PathwayObjNewForm
+    form_class = PathwayContentCreateForm
     template_name = "pathway_new_obj.html"
     def get(self, request, pathway_id):
         context = {
         "on_pathway": Pathway.objects.get(id=pathway_id),
-        "form": PathwayObjNewForm(user=request.user)}
+        "form": PathwayContentCreateForm(user=request.user)}
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
@@ -76,16 +76,16 @@ class PathwayObjNew(LoginRequiredMixin, View):
         return super().form_valid(form)
 
     def post(self, request, pathway_id):
-        relevant_pathway = PathwayContentSetting.objects.filter(pathway=pathway_id)
+        relevant_pathway = PathwayContent.objects.filter(pathway=pathway_id)
         if relevant_pathway:
             new_order_by =  relevant_pathway.latest().order_by + 1
         else:
             new_order_by = 1
 
-        new_path_obj_form = PathwayObjNewForm(request.user, request.POST)
+        new_path_obj_form = PathwayContentCreateForm(request.user, request.POST)
         if new_path_obj_form.is_valid():
             if "lit-submit" in request.POST:
-                new_path_obj = PathwayContentSetting(
+                new_path_obj = PathwayContent(
                                     pathway = get_object_or_404(Pathway, id=pathway_id),
                                     content_type = "written-lecture",
                                     video_lecture = None,
@@ -97,7 +97,7 @@ class PathwayObjNew(LoginRequiredMixin, View):
                 new_path_obj.save()
 
             elif "vid-submit" in request.POST:
-                new_path_obj = PathwayContentSetting(
+                new_path_obj = PathwayContent(
                                     pathway = get_object_or_404(Pathway, id=pathway_id),
                                     content_type = "video-lecture",
                                     video_lecture = new_path_obj_form.cleaned_data['video_lecture'],
@@ -109,7 +109,7 @@ class PathwayObjNew(LoginRequiredMixin, View):
                 new_path_obj.save()
 
             elif "quiz-submit" in request.POST:
-                new_path_obj = PathwayContentSetting(
+                new_path_obj = PathwayContent(
                                     pathway = get_object_or_404(Pathway, id=pathway_id),
                                     content_type = "benchmark",
                                     video_lecture = None,
@@ -124,18 +124,18 @@ class PathwayObjNew(LoginRequiredMixin, View):
 
         return HttpResponseRedirect('/pathway/')
 
-class EditPathwayView(LoginRequiredMixin, UpdateView):
+class PathwayEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     model= Pathway
     form_class = PathwayEditForm
     template_name = 'pathway_edit.html'
 
-class PathwayNew(LoginRequiredMixin, CreateView):
+class PathwayCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     model = Pathway
-    form_class = PathwayNewForm
+    form_class = PathwayCreateForm
     template_name = "pathway_new.html"
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -163,13 +163,13 @@ class PathsHomeView(LoginRequiredMixin, View):
                 context['has_user_profile'] = False
             user_pathways = Pathway.objects.filter(participants=self.request.user)
             for pathway in user_pathways:
-                content_settings = list(PathwayContentSetting.objects.filter(pathway=pathway).order_by('order_by'))
+                content_settings = list(PathwayContent.objects.filter(pathway=pathway).order_by('order_by'))
                 user_pathway_data[pathway] = content_settings
             context['user_pathways'] = user_pathway_data
             developer_pathway_data = {}
             developer_pathways = Pathway.objects.filter(author=self.request.user)
             for dev_pathway in developer_pathways:
-                pathway_objs = list(PathwayContentSetting.objects.filter(pathway=dev_pathway).order_by('order_by'))
+                pathway_objs = list(PathwayContent.objects.filter(pathway=dev_pathway).order_by('order_by'))
                 developer_pathway_data[dev_pathway] = pathway_objs
             context['developer_pathways'] = developer_pathway_data
 
@@ -184,6 +184,6 @@ class PathsHomeView(LoginRequiredMixin, View):
             Pathway.objects.filter(id=request.POST.get("delete_pathway")).delete()
             messages.success(request, 'the pathway was deleted successfully. BYE!')
         if "delete_pathwayOBJ" in request.POST:
-            PathwayContentSetting.objects.filter(id=request.POST.get("delete_pathwayOBJ")).delete()
+            PathwayContent.objects.filter(id=request.POST.get("delete_pathwayOBJ")).delete()
             messages.success(request, 'the item was deleted successfully. BYE!')
         return HttpResponseRedirect(request.path)

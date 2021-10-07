@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}AIMS{% endblock %}
 
 {% block topcarousel %}
 {% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
 
 {% block pageInfo_title %}
 AIMS DASH
@@ -23,7 +27,7 @@ Set your aims, behaviours & trackers below. Go to quickfire aims to log any outs
 <div class="container">
   <a class="anchor" id="myaims"></a>
 </div>
-<div class="container">
+<div class="my-4">
   {% if user.is_authenticated %}
     {% if has_user_profile %}
       {% include "user_aims.html" %}
@@ -47,20 +51,22 @@ Set your aims, behaviours & trackers below. Go to quickfire aims to log any outs
     {% endblock %}
 
     {% block bottomnav %}
-      {% include "aims_nav.html" %}
     {% endblock bottomnav %}
 
     {% block bottomcontent %}
       {% if user.is_authenticated %}
         {% if has_user_profile %}
-          <div class="container my-4">
 
             {% include "quick_fire_aims.html" %}
 
-          </div>
         {% endif %}
       {% endif %}
     {% endblock %}
 
     {% block bottomcarousel %}
     {% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/development/aimsDash.js' %}"></script>
+{% endblock scripts %}

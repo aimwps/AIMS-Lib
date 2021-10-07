@@ -1,135 +1,82 @@
 from django import forms
-from .models import Aim, Lever, TrackerMinAim, TrackerMinAimRecords, TrackerBoolean, TrackerBooleanRecords, DevelopmentCategory
+from .models import Aim, Behaviour, StepTracker
+from Interactions.models import ContentCategory
 from bootstrap_datepicker_plus import DatePickerInput
 
-class TrackerBooleanNewForm(forms.ModelForm):
+
+class StepTrackerCreateForm(forms.ModelForm):
     class Meta:
-        model = TrackerMinAim
-        fields = ('metric_description', 'frequency', 'frequency_quantity','start_date', 'end_date', 'complete_value', 'complete_criteria')
+        model = StepTracker
+        fields = (
+                "metric_tracker_type",
+                "metric_action",
+                "metric_unit",
+                "metric_int_only",
+                "metric_min",
+                "metric_max",
+                "minimum_show_allowed",
+                "minimum_show_description",
+                "record_start_date",
+                "record_frequency",
+                "record_multiple_per_frequency",
+                "complete_allowed",
+                "complete_criteria",
+                "complete_value",)
         widgets = {
+                "metric_tracker_type": forms.Select(attrs={'class': 'form-control', 'placeholder': 'type of tracker'}),
+                "metric_action": forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The action you are taking, usually a verb e.g. run or perform',}),
+                "metric_unit":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The unit type your recording e.g. hours, miles, grams, repititions',}),
+                "metric_int_only":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+                "metric_min":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The lowest expectation of your unit actions',}),
+                "metric_max":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'The kick-ass expectation of your unit actions',}),
+                "minimum_show_allowed":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+                "minimum_show_description":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'A statement you perform as an aboslutley bare minimum to keep you in the game',}),
+                "record_start_date":DatePickerInput(attrs = {'class': 'form-control','placeholder': 'Tracking will commence on..'}),
+                "record_frequency":forms.Select(attrs={'class': 'form-control'}),
+                "record_multiple_per_frequency":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+                "complete_allowed":forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+                "complete_criteria": forms.Select(attrs={"class": 'form-control'}),
+                "complete_value":forms.TextInput(attrs={'class': 'form-control', 'placeholder':"How many times you'll complete this to know it's engrained",}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(StepTrackerCreateForm, self).__init__(*args, **kwargs)
+        self.initial['metric_tracker_type'] = 'boolean'
+        self.initial['record_frequency'] = 'daily'
 
-                'metric_description': forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Action e.g. "exercise", "smoke", "run", "study" '}),
 
-                'frequency':  forms.Select(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Frequency: How often to track'}),
 
-                'frequency_quantity':  forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Frequency: How often per period'}),
-
-                'complete_criteria':  forms.Select(attrs = {
-                                            'class': 'form-control'}),
-
-                'complete_value': forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': '30'}),
-
-                'start_date': DatePickerInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Tracking will commence on..'}),
-
-                'end_date':DatePickerInput( attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Until the end of time. (or select a date)'}),
-
-                }
-
-class TrackerBooleanRecordsForm(forms.ModelForm):
+class BehaviourCreateForm(forms.ModelForm):
     class Meta:
-        model = TrackerBooleanRecords
-        fields = ("metric_quantity",)
+        model = Behaviour
+        fields = ('title',)
         widgets = {
-            'metric_quantity': forms.Select(attrs = {
-                                        'class': 'form-control',
-                                        }),
-            }
-
-
-
-class TrackerMinAimNewForm(forms.ModelForm):
+            'title': forms.TextInput(attrs = {'class': 'form-control',
+                                                    'placeholder': 'Enter your new behaviour here - e.g. "I go to the gym" or "I do not smoke cigarettes"',
+                                                    }),}
+class BehaviourEditForm(forms.ModelForm):
     class Meta:
-        model = TrackerMinAim
-        fields = ('metric_type', 'metric_min', 'metric_aim','metric_description', 'frequency', 'frequency_quantity','start_date', 'end_date', 'complete_value', 'complete_criteria')
+        model = Behaviour
+        fields = ('title',)
         widgets = {
-                'metric_type': forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Metric type e.g. "miles", "cigarettes", "calories", "minutes", "hours"'},
-                                            ),
-
-                'metric_min': forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Minimum Show e.g. "5" (minutes exercise)'},
-                                            ),
-
-                'metric_aim':forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'On Track e.g. "20" (minutes exercise)'}),
-
-                'metric_description': forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Action e.g. "exercise", "smoke", "run", "study" '}),
-
-                'frequency':  forms.Select(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Frequency: How often to track'}),
-
-                'frequency_quantity':  forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Frequency: How often per period'}),
-
-                'complete_criteria':  forms.Select(attrs = {
-                                            'class': 'form-control'}),
-
-                'complete_value': forms.TextInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': '30'}),
-
-                'start_date': DatePickerInput(attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Tracking will commence on..'}),
-
-                'end_date':DatePickerInput( attrs = {
-                                            'class': 'form-control',
-                                            'placeholder': 'Until the end of time. (or select a date)'}),
-
-                }
-
-
-class TrackerMinAimRecordsForm(forms.ModelForm):
-    class Meta:
-        model = TrackerMinAimRecords
-        fields = ("metric_quantity",)
-        widgets = {
-            'metric_quantity': forms.TextInput(attrs = {'class': 'form-control'}),
-            }
-
-class LeverNewForm(forms.ModelForm):
-    class Meta:
-        model = Lever
-        fields = ('description',)
-        widgets = {
-            'description': forms.TextInput(attrs = {'class': 'form-control',
+            'title': forms.TextInput(attrs = {'class': 'form-control',
                                                     'placeholder': 'Enter your new behaviour here - e.g. "I go to the gym" or "I do not smoke cigarettes"',
                                                     }),}
 
-class AimNewForm(forms.ModelForm):
+class AimCreateForm(forms.ModelForm):
     class Meta:
         model = Aim
-        fields = ('category','title', 'why')
+        fields = ('category','title', 'motivation')
         widgets = {
             'category': forms.Select(attrs = {'class': 'form-control'}),
             'title': forms.Textarea(attrs = {'class': 'form-control',
             'placeholder': 'A description of your aim',
             'rows':3,}),
-            'why': forms.Textarea(attrs = {'class': 'form-control',
+            'motivation': forms.Textarea(attrs = {'class': 'form-control',
             'placeholder': "Why are you aiming for this? You should go into great detail here. You can also add to it later."}),}
     def __init__(self, *args, **kwargs):
-        super(AimNewForm, self).__init__(*args, **kwargs)
+        super(AimCreateForm, self).__init__(*args, **kwargs)
         # this is pseudo code but you should get all variants
         # then get the product related to each variant
-        dev_cats = DevelopmentCategory.objects.all()
+        dev_cats = ContentCategory.objects.all()
         categories = sorted([(cat.id, str(cat)) for cat in dev_cats], key=lambda x: x[1])
         self.fields['category'].choices = categories

@@ -4,6 +4,9 @@
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
 {% block pageInfo_title %}
 CREATING AN AIM
 {% endblock pageInfo_title %}
@@ -23,13 +26,18 @@ Hey {{ user }}! Just by being here, you're taking a step closer to the future yo
   <div class="form-group">
     <form method="post">
       {% csrf_token %}
-
-        <p>{{ form.category }}</p>
-        <p>{{ form.title }}</p>
-        <p>{{ form.why }}</p>
-
+      {{ form.cateogory }}
+      <br>
+      {{ form.title }}
+      <br>
+      {{ form.motivation }}
+      <br>
       <!-- doing as_p decides the element that each will be created for each field -->
-      <button type="submit" class="btn btn-primary me-auto">Take a step forward</button>
+      <div class="text-center">
+
+      <button type="submit" class="btn btn-primary">Take a step forward</button>
+
+      </div>
       </form>
   </div>
 </div>

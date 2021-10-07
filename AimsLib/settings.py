@@ -33,8 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'website',
-    'forum',
+    'Interactions',
+    'Community',
     'Development',
     'Members',
     'ckeditor',
@@ -46,7 +46,9 @@ INSTALLED_APPS = [
     'VideoLecture',
     'WrittenLecture',
     'Paths',
-    'ShareContent'
+    'Organisations',
+    'WebsiteTools',
+    #'ShareContent'
     #'Benchmark'
 
 

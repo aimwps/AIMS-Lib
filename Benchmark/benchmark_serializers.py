@@ -1,26 +1,26 @@
 from rest_framework import serializers
-from .models import Quiz, QuizQuestion, QuizAnswer
+from .models import Benchmark, Question, Answer
 from QuestionGenerator.models import GeneratedQuestionBank
 
-class QuizAnswerSerializer(serializers.ModelSerializer):
+class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
-      model = QuizAnswer
+      model = Answer
       fields = ('id', "to_question", "is_correct", "answer_text")
 
-class QuizQuestionSerializer(serializers.ModelSerializer):
-    answers = QuizAnswerSerializer(many=True)
+class QuestionSerializer(serializers.ModelSerializer):
+    answers = AnswerSerializer(many=True)
     class Meta:
-      model = QuizQuestion
-      fields = ('id', "on_quiz", "question_text", "answer_type", "order_by", 'answers')
+      model = Question
+      fields = ('id', "on_benchmark", "question_text", "answer_type", "order_position", 'answers')
 
-class QuizSerializer(serializers.ModelSerializer):
-  questions = QuizQuestionSerializer(many=True)
+class BenchmarkSerializer(serializers.ModelSerializer):
+  questions = QuestionSerializer(many=True)
   class Meta:
-    model = Quiz
+    model = Benchmark
     fields = ('id', 'title', "questions")
 
 
 class GeneratedQuestionBankSerializer(serializers.ModelSerializer):
   class Meta:
     model = GeneratedQuestionBank
-    fields = ('id',"generated_date", "generated_time", "source_type", "source_id", "question", "answer", "user_proof")
+    fields = ('id',"create_date", "create_time", "source_type", "source_id", "question", "answer", "user_proof")
