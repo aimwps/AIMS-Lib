@@ -4,7 +4,7 @@
   <div class="accordion-item">
     <h2 class="accordion-header" id="aim_heading_{{aim_data.1}}">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aim_acc_{{aim_data.1}}" aria-expanded="false" aria-controls="aim_acc_{{aim_data.1}}">
-        <h5>{% if aim_data.0 %}<strong>@{{aim_data.0}}:</strong>{%endif%} {{aim_data.2}}</h5>
+        <h5>{% if not aim_data.0 %}<strong>@{{aim_data.0}}:</strong>{%endif%} {{aim_data.2}}</h5>
       </button>
     </h2>
     <div id="aim_acc_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="aim_heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
@@ -124,7 +124,14 @@
                   <!-- Button trigger modal -->
                     <li class="list-group-item px-0">
                       <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.0}}">
-                        <i class="fas fa-bars"></i></a> {{ tracker.0.get_tsentence}}</p>
+                        <i class="fas fa-bars"></i></a>
+                        {{ tracker.0.get_tsentence}}
+                        <a class="text-primary" data-bs-toggle="collapse" href="#collapseTracker_{{tracker.0}}" role="button" aria-expanded="false" aria-controls="collapseTracker_{{tracker.0}}">
+                          <small>(show stats)</small>
+                        </a>
+                        </p>
+                        <div class="collapse" id="collapseTracker_{{tracker.0}}">
+                          <div class="card card-body">
                         <ul class="list-group list-group-flush my-1 py-1">
                           <li class="list-group-item px-0 border-white">
                             <div class="row text-break">
@@ -181,6 +188,8 @@
                           </li>
 
                         </ul>
+                      </div>
+                    </div>
                       </li>
 
                       <!-- Modal --------------------------------------------------------------------------------------------------------->
