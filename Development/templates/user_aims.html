@@ -4,7 +4,7 @@
   <div class="accordion-item">
     <h2 class="accordion-header" id="aim_heading_{{aim_data.1}}">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#aim_acc_{{aim_data.1}}" aria-expanded="false" aria-controls="aim_acc_{{aim_data.1}}">
-        <h4>{{aim_data.2}}</h4>
+        <h5>{% if aims_data.0 %}<strong>@{{aim_data.0}}:</strong>{%endif%} {{aim_data.2}}</h5>
       </button>
     </h2>
     <div id="aim_acc_{{aim_data.1}}" class="accordion-collapse collapse" aria-labelledby="aim_heading_{{aim_data.1}}" data-bs-parent="#aims_accordion">
