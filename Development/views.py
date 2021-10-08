@@ -34,12 +34,12 @@ def submit_tracker_log(request):
 def get_tracker_period(start_date, end_date):
     now = datetime.today()
     in_future = 0
-    # print(f"-----> {start_date}")
-    # print(f"---------------------------------")
+    print(f"-----> {start_date}")
+    print(f"---------------------------------")
     while not start_date < now < end_date:
-        # print(f"NOW: {now}")
+        print(f"NOW: {now}")
         now += relativedelta(days=1)
-        # print(f"ADD DAY: {now}")
+        print(f"ADD DAY: {now} -------------> {in_future}")
         in_future += 1
         if in_future > 1000:
             print("big errors")
@@ -53,9 +53,6 @@ def get_tracker_period(start_date, end_date):
         return "displayMonth"
     else:
         return "displayYear"
-
-
-
 
 def get_tracker_status(user_id, tracker):
     member_profile = MemberProfile.objects.get(author=user_id)
@@ -238,12 +235,13 @@ def get_category_path(cat, current_path=""):
         return new_path
 
 def request_uncomplete_trackers(request):
-    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__gte=datetime.today())))
+    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__lte=datetime.today())))
     uncomplete_trackers = []
     for tracker in all_user_trackers:
         tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
 
         if tracker_status['logs_required']:
+            print(tracker.get_tsentence())
             tracker_status['display_section'] = get_tracker_period(tracker_status['period_log_start'], tracker_status['period_log_end'])
             serialize_tracker = StepTrackerSerializer(tracker_status['tracker']).data
             tracker_status['tracker'] = serialize_tracker
@@ -252,14 +250,6 @@ def request_uncomplete_trackers(request):
             tracker_status['pretty_end'] = tracker_status['period_log_end'].strftime("%d/%m/%y @ %H:%M:%S")
             uncomplete_trackers.append(tracker_status)
     return JsonResponse(uncomplete_trackers, safe=False)
-
-
-
-
-
-
-
-
 
 class StepTrackerCreate(LoginRequiredMixin,CreateView):
     login_url = '/login-or-register/'
@@ -300,7 +290,12 @@ class BehaviourEdit(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'redirect_to'
     model= Behaviour
     form_class = BehaviourEditForm
-    template_name = 'lever_edit.html'
+    template_name = 'behaviour_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['aim_for_lever'] = Aim.objects.get(id=self.kwargs['pk'])
+        return context
 
 class BehaviourCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
@@ -386,7 +381,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
 
                 ## For each behaviour find the trackers details
                 for behaviour in behaviours:
-                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active") & Q(record_start_date__gte=datetime.today()))
+                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active") & Q(record_start_date__lte=datetime.today()))
 
                     ## Pass trackers that need logs to uncomplete_trackers for quick fire aims
                     processed_trackers = []

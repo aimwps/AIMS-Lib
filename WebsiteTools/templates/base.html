@@ -104,8 +104,10 @@
 
 <!--MID PAGECAROUSEL
 ################################################################################# -->
+  <div class="container-fluid my-4">
     {% block contentCarousel %}
     {% endblock %}
+  </div>
 <!--END MID CAROUSEL
 ################################################################################# -->
 
@@ -127,10 +129,11 @@
 
     <!-- BOTTOM CAROSEUL
     ################################################################################# -->
+  <div class="container-fluid my-4">
     {% block bottomcarousel %}
     {% include "base_bottom_carousel.html" %}
     {% endblock %}
-
+  </div>
 
     {% block scripts %}
     {% endblock scripts %}
