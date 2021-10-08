@@ -381,7 +381,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
 
                 ## For each behaviour find the trackers details
                 for behaviour in behaviours:
-                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active") & Q(record_start_date >= datetime.today()))
+                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active") & Q(record_start_date__gte=datetime.today()))
 
                     ## Pass trackers that need logs to uncomplete_trackers for quick fire aims
                     processed_trackers = []
