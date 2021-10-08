@@ -157,7 +157,7 @@ class PathsHomeView(LoginRequiredMixin, View):
         user_pathway_data = {}
         if self.request.user.is_authenticated:
             if hasattr(self.request.user, 'profile'):
-                context['user_profile'] = MemberProfile.objects.get(user_profile=self.request.user.id)
+                context['user_profile'] = MemberProfile.objects.get(author=self.request.user.id)
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False

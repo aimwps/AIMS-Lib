@@ -230,7 +230,6 @@ def request_uncomplete_trackers(request):
         tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
 
         if tracker_status['logs_required']:
-            print(tracker.get_tsentence())
             tracker_status['display_section'] = get_tracker_period(tracker_status['period_log_start'], tracker_status['period_log_end'])
             serialize_tracker = StepTrackerSerializer(tracker_status['tracker']).data
             tracker_status['tracker'] = serialize_tracker
