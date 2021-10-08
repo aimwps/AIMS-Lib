@@ -34,15 +34,20 @@ def submit_tracker_log(request):
 def get_tracker_period(start_date, end_date):
     now = datetime.today()
     in_future = 0
-    while start_date < now < end_date:
+    # print(f"-----> {start_date}")
+    # print(f"---------------------------------")
+    while not start_date < now < end_date:
+        # print(f"NOW: {now}")
         now += relativedelta(days=1)
+        # print(f"ADD DAY: {now}")
         in_future += 1
         if in_future > 1000:
+            print("big errors")
             break
 
-    if in_future <= 1:
+    if in_future  <= 0:
         return "displayToday"
-    elif in_future <= 7:
+    elif in_future <= 6:
         return "displayWeek"
     elif in_future <= 31:
         return "displayMonth"
@@ -233,7 +238,7 @@ def get_category_path(cat, current_path=""):
         return new_path
 
 def request_uncomplete_trackers(request):
-    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active")))
+    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__gte=datetime.today())))
     uncomplete_trackers = []
     for tracker in all_user_trackers:
         tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
