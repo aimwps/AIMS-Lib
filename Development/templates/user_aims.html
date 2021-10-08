@@ -81,7 +81,7 @@
                     <ul class="nav justify-content-center">
                         <!-- Button trigger modal -->
                         <li class="nav-item px-2">
-                          <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ behaviour.id }}"><i class="fas fa-bars"></i></a>
+                          <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ behaviour }}"><i class="fas fa-bars"></i></a>
                         </li>
                           <li class="nav-item px-2">
                             <a href="{% url 'behaviour-edit' behaviour.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
@@ -93,11 +93,11 @@
                   </div>
 
                 <!-- Modal -------------------------------------------------------------------------------------------------------->
-                <div class="modal fade" id="modal_{{ behaviour.id }}" tabindex="-1" aria-labelledby="modal_{{ behaviour.id }}Label" aria-hidden="true">
+                <div class="modal fade" id="modal_{{ behaviour }}" tabindex="-1" aria-labelledby="modal_{{ behaviour }}Label" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="modal_{{ behaviour.id }}Label">Behaviour Selected</h5>
+                        <h5 class="modal-title" id="modal_{{ behaviour }}Label">Behaviour Selected</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
@@ -123,7 +123,7 @@
                   {% for tracker in trackers %}
                   <!-- Button trigger modal -->
                     <li class="list-group-item px-0">
-                      <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.0.id}}">
+                      <p><a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{tracker.0}}">
                         <i class="fas fa-bars"></i></a> {{ tracker.0.get_tsentence}}</p>
                         <ul class="list-group list-group-flush my-1 py-1">
                           <li class="list-group-item px-0 border-white">
@@ -184,11 +184,11 @@
                       </li>
 
                       <!-- Modal --------------------------------------------------------------------------------------------------------->
-                      <div class="modal fade" id="modal_{{tracker.0.id}}" tabindex="-1" aria-labelledby="modal_{{tracker.0.id}}Label" aria-hidden="true">
+                      <div class="modal fade" id="modal_{{tracker.0}}" tabindex="-1" aria-labelledby="modal_{{tracker.0}}Label" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="modal_{{tracker.0.id}}Label">Tracker Selected</h5>
+                              <h5 class="modal-title" id="modal_{{tracker.0}}Label">Tracker Selected</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
