@@ -265,7 +265,7 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
 
 
     def get_success_url(self):
-        return reverse("home")
+        return reverse("aims-dash")
 
     def form_valid(self, form):
         form.instance.on_behaviour = get_object_or_404(Behaviour, id=self.kwargs['behaviour_id'])
