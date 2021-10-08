@@ -33,18 +33,7 @@ def submit_tracker_log(request):
 
 def get_tracker_period(start_date, end_date):
     now = datetime.today()
-    in_future = 0
-    print(f"-----> {start_date}")
-    print(f"---------------------------------")
-    while not start_date < now < end_date:
-        print(f"NOW: {now}")
-        now += relativedelta(days=1)
-        print(f"ADD DAY: {now} -------------> {in_future}")
-        in_future += 1
-        if in_future > 1000:
-            print("big errors")
-            break
-
+    in_future = relativedelta(end_date, start_date).days
     if in_future  <= 0:
         return "displayToday"
     elif in_future <= 6:
