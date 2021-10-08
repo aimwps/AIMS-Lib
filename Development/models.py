@@ -179,7 +179,7 @@ class StepTracker(models.Model):
         return  self.get_tsentence() + " How did you get on?"
 
     def get_milestone_sentence(self):
-        period_words = {"daily": "days", "weekly": "weeks", "monthly": "months", "yearly": "years"}
+        period_words = {"daily": "days", "weekly": "weeks", "monthly": "months", "yearly": "years", "custom":"custom"}
         sentence = ""
         if self.complete_allowed:
             value = str(self.complete_value)
