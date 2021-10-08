@@ -163,12 +163,12 @@ class StepTracker(models.Model):
         if self.metric_tracker_type == "boolean":
             tsentence += f"{self.metric_action}. "
         if self.metric_tracker_type == "maximize":
-            period = f"Each {self.record_frequency} period"
+            period = f"Each {self.record_frequency} period.. "
             action_min = f"I {self.metric_action} a minimum {metric_min} {self.metric_unit}. "
             action_max = f"I take steps towards achieving {metric_max} {self.metric_unit}. "
             tsentence += "".join([period, action_min, action_max])
         if self.metric_tracker_type == "minimize":
-            period = f"Each {self.record_frequency} period"
+            period = f"Each {self.record_frequency} period.. "
             action_min = f"I {self.metric_action} a maximum {metric_min} {self.metric_unit}. "
             action_max = f"I take steps towards achieving {metric_max} {self.metric_unit}. "
             tsentence += " ".join([period, action_min, action_max])
