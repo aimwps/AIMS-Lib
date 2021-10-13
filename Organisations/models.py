@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.urls import reverse
 from Paths.models import Pathway
+from django.db.models import Q
 CONTENT_TYPE = (('Pathway', "Pathway"),
                 ('Skillset', "Skill-set"),
                 )
@@ -15,7 +16,6 @@ class Organisation(models.Model):
     create_date = models.DateField(auto_now=False, auto_now_add = True)
     create_time = models.TimeField(auto_now=False, auto_now_add = True)
     parent_organisation = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
-
 
 class OrganisationContent(models.Model):
     assigned_group = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="group_pathways")
