@@ -5,6 +5,7 @@ from datetime import datetime, date
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
+from django.utils.timezone import now
 USER_STATUS =   (('deleted', 'deleted'),
                 ('active', 'active'),
                 ('inactive', 'inactive'),
@@ -199,8 +200,8 @@ class StepTrackerLog(models.Model):
                         )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
-    create_date = models.DateField(auto_now_add=True)
-    create_time = models.TimeField(auto_now_add=True)
+    create_date = models.DateField(default=now)
+    create_time = models.TimeField(default=now)
     submit_type = models.CharField(max_length=100, choices=TRACKER_LOG_TYPE)
     count_value = models.FloatField(blank=True, null=True)
 
