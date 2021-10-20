@@ -16,6 +16,12 @@ from django.contrib.auth.models import User
 from .utils import prettify_tracker_log_dict
 from .development_serializers import StepTrackerSerializer
 
+def test_data_entry(tracker):
+    query = StepTrackerLog.objects.filter(on_tracker=tracker).order_by('create_date')
+    for q in query:
+        print(q.create_date, q.count_value, q.id)
+    return query
+
 def submit_tracker_log(request):
     tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
     submit_user = get_object_or_404(User, id=request.POST.get("submit_user"))
@@ -44,6 +50,7 @@ def get_tracker_period(start_date, end_date):
         return "displayYear"
 
 def get_tracker_status(user_id, tracker):
+    abc = test_data_entry(tracker)
     member_profile = MemberProfile.objects.get(author=user_id)
     tracker_info  = {'tracker':tracker,}
     now = datetime.today()
