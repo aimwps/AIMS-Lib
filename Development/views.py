@@ -15,20 +15,22 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .utils import prettify_tracker_log_dict
 from .development_serializers import StepTrackerSerializer
-import calmap
+import calmap, io, urllib, base64
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def test_data_entry(tracker):
-    query = StepTrackerLog.objects.filter(on_tracker=tracker).order_by('create_date')
-    for q in query:
-        print(q.create_date, q.count_value, q.id)
+def get_tracker_heatmap(df, vmin, vmax):
+    with plt.rc_context({'xtick.color': 'black','ytick.color': 'black'}):
+        fig =plt.figure(figsize=(12,3))
+        ax = fig.add_subplot(111, aspect="equal")
+        fig.set_facecolor('white')
+        ax.set_facecolor('white')
+        cax = calmap.yearplot(df['count_value'], cmap='Oranges',vmin=vmin, vmax=vmax, fillcolor='lightgrey',daylabels=['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],dayticks=[0, 1,2,3,4,5, 6],
+                        linewidth=2, ax=ax)
+        fig.colorbar(cax.get_children()[1], ax=cax, orientation="horizontal")
+        plt.tight_layout()
 
-    df = pd.DataFrame(list(query.values('create_date', 'create_time', 'count_value')))
-    print(df.head())
-    df.to_csv(f'{tracker.id}_data.csv')
-
-
+        return fig
 
 
 def submit_tracker_log(request):
@@ -59,7 +61,13 @@ def get_tracker_period(start_date, end_date):
         return "displayYear"
 
 def get_tracker_status(user_id, tracker):
-    test_data_entry(tracker)
+    tdf, settings = tracker.get_heatmap_dataframe()
+    tracker_fig = get_tracker_heatmap(tdf, settings[0], settings[1])
+    buf = io.BytesIO()
+    tracker_fig.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    uri = urllib.parse.quote(string)
     member_profile = MemberProfile.objects.get(author=user_id)
     tracker_info  = {'tracker':tracker,}
     now = datetime.today()
@@ -198,6 +206,7 @@ def get_tracker_status(user_id, tracker):
             "count_status": None,
             "count_quantity": None,
             "count_total": None,
+            "tracker_graph": uri,
             }
 
     if current_period_logs:
@@ -391,7 +400,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                     processed_trackers = []
                     for tracker in all_behaviour_trackers:
                         tracker_status = get_tracker_status(self.request.user.id, tracker)
-                        processed_trackers.append((tracker, prettify_tracker_log_dict(tracker_status)))
+                        processed_trackers.append((tracker, prettify_tracker_log_dict(tracker_status), tracker_status['tracker_graph']))
 
                     ## Assign the trackers to the behaviours for viewing aims dash.
                     trackers_behaviours[behaviour] = processed_trackers

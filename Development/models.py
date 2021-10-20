@@ -2,10 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
 from django.utils.timezone import now
+import pandas as pd
 USER_STATUS =   (('deleted', 'deleted'),
                 ('active', 'active'),
                 ('inactive', 'inactive'),
@@ -191,6 +193,47 @@ class StepTracker(models.Model):
             sentence += "No milestone set"
         return sentence
 
+    def get_heatmap_dataframe(self):
+        today = datetime.today()
+
+        qs = StepTrackerLog.objects.filter(on_tracker=self)
+        if qs:
+
+
+            df, vmin, vmax = self.daily_heatmap(self)
+            df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
+            df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
+            df = df[['date_time', 'submit_type', 'count_value']]
+            df = df.sort_values('date_time', ascending=True)
+            if self.metric_tracker_type == 'boolean':
+                if self.minimum_show_allowed:
+                    vmin=0
+                    vmax=2
+                else:
+                    vmin=0
+                    vmax=1
+            else:
+                if self.minimum_show_allowed:
+                    if self.metric_tracker_type == 'maximize':
+                        vmin = self.metric_min - 1
+                        vmax = self.metric_max
+                    else:
+                        vmin = self.metric_min + 1
+                        vmax = self.metric_max
+                else:
+                    vmin=self.metric_min
+                    vmax=self.metric_max
+            df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
+            df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
+            for i, r in df.iterrows():
+                print(r['date_time'], r['submit_type'], r['count_value'])
+            df = df[['date_time', 'count_value']]
+            df = df.set_index('date_time')
+        else:
+            df= pd.DataFrame()
+            vmin = 0
+            vmax = 0
+        return (df, (vmin, vmax))
 class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
                         ("min_showup","minimum show"),
