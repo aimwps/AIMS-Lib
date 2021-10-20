@@ -15,12 +15,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .utils import prettify_tracker_log_dict
 from .development_serializers import StepTrackerSerializer
+import calmap
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def test_data_entry(tracker):
     query = StepTrackerLog.objects.filter(on_tracker=tracker).order_by('create_date')
     for q in query:
         print(q.create_date, q.count_value, q.id)
-    return query
+
+    df = pd.DataFrame(list(query.values('create_date', 'create_time', 'count_value')))
+    print(df.head())
+    df.to_csv(f'{tracker.id}_data.csv')
+
+
+
 
 def submit_tracker_log(request):
     tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
@@ -50,7 +59,7 @@ def get_tracker_period(start_date, end_date):
         return "displayYear"
 
 def get_tracker_status(user_id, tracker):
-    abc = test_data_entry(tracker)
+    test_data_entry(tracker)
     member_profile = MemberProfile.objects.get(author=user_id)
     tracker_info  = {'tracker':tracker,}
     now = datetime.today()
