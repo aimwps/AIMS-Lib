@@ -13,11 +13,14 @@ USER_STATUS =   (('deleted', 'deleted'),
                 ('inactive', 'inactive'),
                 ('completed', 'completed'),
                 )
-RECORD_FREQUENCY =(('daily', 'Daily'),
-                ('weekly', 'Weekly'),
-                ('monthly', 'Monthly'),
-                ('yearly', 'Yearly'),
-                ('custom', 'Specific days or months'),
+RECORD_FREQUENCY =(
+                    ('daily', 'Daily'),
+                    ('weekly', 'Weekly'),
+                    ('first_week', 'First week in month'),
+                    ('last_week', 'Last week in month'),
+                    ('monthly', 'Monthly'),
+                    ('yearly', 'Yearly'),
+                    ('custom', 'Specific days or months'),
                 )
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
@@ -73,6 +76,7 @@ CUSTOM_LOG_CODES =[
                             ("29", 29),
                             ("30", 30),
                             ("31", 31),
+                            ("last_day", "Last day in month")
                         )
             ),
             ("Month of year repeat",
@@ -91,7 +95,10 @@ CUSTOM_LOG_CODES =[
                             ("December", "December")
                         )
             )]
-
+LOG_LENGTH = (("day", "day"),
+            ("week", "week"),
+            ("month", "month"),
+            ("year", "year"))
 
 class Aim(models.Model):
     title = models.TextField()
@@ -141,6 +148,7 @@ class StepTracker(models.Model):
     minimum_show_description = models.TextField(blank=True, null=True)
     record_start_date = models.DateField(auto_now_add=False)
     record_frequency = models.CharField(max_length=100,choices=RECORD_FREQUENCY, default="weekly")
+    record_log_length = models.CharField(max_length=100, choices=LOG_LENGTH, default="day")
     record_multiple_per_frequency = models.BooleanField()
     record_verification_date = models.DateTimeField(blank=True, null=True)
     complete_allowed = models.BooleanField(default=False)
@@ -200,18 +208,20 @@ class StepTracker(models.Model):
         if qs:
 
 
-            df, vmin, vmax = self.daily_heatmap(self)
+            #df, vmin, vmax = self.daily_heatmap(self)
             df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
             df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
             df = df[['date_time', 'submit_type', 'count_value']]
             df = df.sort_values('date_time', ascending=True)
             if self.metric_tracker_type == 'boolean':
                 if self.minimum_show_allowed:
-                    vmin=0
-                    vmax=2
+                    vmin=0.0
+                    vmax=2.0
                 else:
-                    vmin=0
-                    vmax=1
+                    vmin=0.0
+                    vmax=1.0
+                df.loc[df['submit_type'] =='fail_or_no_submit', 'count_value'] = vmin
+                df.loc[df['submit_type'] =='boolean_success', 'count_value'] = vmax
             else:
                 if self.minimum_show_allowed:
                     if self.metric_tracker_type == 'maximize':
@@ -224,16 +234,32 @@ class StepTracker(models.Model):
                     vmin=self.metric_min
                     vmax=self.metric_max
             df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
-            df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
             for i, r in df.iterrows():
                 print(r['date_time'], r['submit_type'], r['count_value'])
+                print(type(r['date_time']))
             df = df[['date_time', 'count_value']]
             df = df.set_index('date_time')
         else:
-            df= pd.DataFrame()
+            df = pd.DataFrame()
             vmin = 0
             vmax = 0
+        df['count_value'] = df['count_value'].astype('float64')
         return (df, (vmin, vmax))
+
+    def get_status_dict(self):
+        status_dict = {
+            "tracker": self,
+            "logs_required": None,
+            "total_logs": None,
+            "period_log_start": None,
+            "period_log_end": None,
+            "boolean_status": None,
+            "count_status": None,
+            "count_quantity": None,
+            "count_total": None,
+            "tracker_graph": None,
+        }
+
 class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
                         ("min_showup","minimum show"),

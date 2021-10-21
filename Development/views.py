@@ -20,12 +20,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def get_tracker_heatmap(df, vmin, vmax):
+    print("xXxXXXXXxxxxXxXXXXXxxxx")
+    print(df.head())
+
+    print(df.info())
     with plt.rc_context({'xtick.color': 'black','ytick.color': 'black'}):
         fig =plt.figure(figsize=(12,3))
         ax = fig.add_subplot(111, aspect="equal")
         fig.set_facecolor('white')
         ax.set_facecolor('white')
-        cax = calmap.yearplot(df['count_value'], cmap='Oranges',vmin=vmin, vmax=vmax, fillcolor='lightgrey',daylabels=['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],dayticks=[0, 1,2,3,4,5, 6],
+        cax = calmap.yearplot(df['count_value'], cmap='Oranges',vmin=int(vmin), vmax=int(vmax), fillcolor='lightgrey',daylabels=['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],dayticks=[0, 1,2,3,4,5, 6],
                         linewidth=2, ax=ax)
         fig.colorbar(cax.get_children()[1], ax=cax, orientation="horizontal")
         plt.tight_layout()
