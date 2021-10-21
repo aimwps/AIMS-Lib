@@ -110,6 +110,15 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
 
         <div class="row my-2">
           <div class="col-xs-12 col-md-4 text-end">
+            <p class="lead pt-1">Record Log Length <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MrecordLogLength"><i class="fas fa-info"></i></a></p>
+          </div>
+          <div class="col-md-8">
+            <p class="text-center">{{ form.record_log_length }}</p>
+            {{ form.record_log_length.errors }}
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col-xs-12 col-md-4 text-end">
             <p class="lead pt-1">Record Frequency <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#MrecordFrequency"><i class="fas fa-info"></i></a></p>
           </div>
           <div class="col-md-8">
@@ -117,10 +126,11 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
             {{ form.record_frequency.errors }}
           </div>
         </div>
+
         <div class="container-fluid px-0 mx-0" id="CustomFrequencyEntry" style="display: none;">
           <div class="container-fluid border border-primary mx-0">
             <div class="row my-2">
-            <div class="col-xs-12 col-md-3 ">
+            <div class="col-xs-12 col-md-3" id="CustomWeekDays">
               <p class="lead text-center">Days of the week</p>
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" name="customFreqCode_Monday">
@@ -165,7 +175,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
                 </label>
               </div>
             </div>
-            <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12 col-md-6" id="CustomDayDates">
               <p class="lead text-center">Days of the month</p>
               <div class="row px-0">
                 <div class="col-3">
@@ -364,7 +374,7 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
                 </div>
               </div>
             </div>
-            <div class="col-xs-12 col-md-3 ">
+            <div class="col-xs-12 col-md-3" id="CustomMonths">
               <p class="lead text-center">Months of the year</p>
               <div class="row px-0">
                 <div class="col-6">
@@ -633,6 +643,22 @@ Now we're getting to the nitty gritty. Here's where you create a step that when 
   </div>
 </div>
 
+<div class="modal fade" id="MrecordLogLength" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MrecordLogLength" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="MrecordLogLengthLabel"><i class="fas fa-info"></i> Record Log Length</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class=""><strong>Record log length</strong>: how much time you have to record the action, this will affect your frequency options</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="MrecordFrequency" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="MrecordFrequencyLabel" aria-hidden="true">
   <div class="modal-dialog">

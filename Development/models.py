@@ -14,13 +14,11 @@ USER_STATUS =   (('deleted', 'deleted'),
                 ('completed', 'completed'),
                 )
 RECORD_FREQUENCY =(
-                    ('daily', 'Daily'),
-                    ('weekly', 'Weekly'),
-                    ('first_week', 'First week in month'),
-                    ('last_week', 'Last week in month'),
-                    ('monthly', 'Monthly'),
-                    ('yearly', 'Yearly'),
-                    ('custom', 'Specific days or months'),
+                    ('daily', 'Every day'),
+                    ('weekly', 'Every week'),
+                    ('monthly', 'Every month'),
+                    ('yearly', 'Every year'),
+                    ('custom', 'Specific days, weeks or months'),
                 )
 COMP_CRITERIA = (('consecutive', 'consecutive'),
                 ('total', 'total'))
@@ -95,10 +93,10 @@ CUSTOM_LOG_CODES =[
                             ("December", "December")
                         )
             )]
-LOG_LENGTH = (("day", "day"),
-            ("week", "week"),
-            ("month", "month"),
-            ("year", "year"))
+LOG_LENGTH = (("day", "A day"),
+            ("week", "A week"),
+            ("month", "A month"),
+            ("year", "A year"))
 
 class Aim(models.Model):
     title = models.TextField()
