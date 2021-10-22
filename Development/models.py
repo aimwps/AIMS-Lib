@@ -1,12 +1,14 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.urls import reverse
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
 from django.utils.timezone import now
+from Members.models import MemberProfile
 import pandas as pd
 USER_STATUS =   (('deleted', 'deleted'),
                 ('active', 'active'),
@@ -201,16 +203,33 @@ class StepTracker(models.Model):
 
     def get_heatmap_dataframe(self):
         today = datetime.today()
+        historical_date_ranges = self.get_period_history()
+        df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
+        df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
+        df = df[['date_time', 'submit_type', 'count_value']]
+        df = df.sort_values('date_time', ascending=True)
+        heatmap_df = pd.DataFrame({"date_time":[], "heatmap_value":[]})
+        if self.metric_tracker_type =="boolean":
+            vmin=1.0
+            vmax=3.0
+        else:
+            vmin=self.metric_max
+            vmax=self.metric_max*3
+            count_start = self.metric_max-self.metric_min
+        if self.minimum_show_allowed:
+            vmin += self.
+            vmax += .0
+        if self.record_log_length =="day":
+            for date in historical_date_ranges:
+                found_records = df[df['date_time']>=date[0] & df['date_time']<=date[1]]
+                if len(found_records)==0:
+                    heatmap_df.append({"date_time":date[0]+ relativedelata(hours=12),
+                                        "heatmap_value":0})
+                if len(found_records)==1:
+                    if "submit_type"
 
-        qs = StepTrackerLog.objects.filter(on_tracker=self)
-        if qs:
 
 
-            #df, vmin, vmax = self.daily_heatmap(self)
-            df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
-            df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
-            df = df[['date_time', 'submit_type', 'count_value']]
-            df = df.sort_values('date_time', ascending=True)
             if self.metric_tracker_type == 'boolean':
                 if self.minimum_show_allowed:
                     vmin=0.0
@@ -232,25 +251,337 @@ class StepTracker(models.Model):
                     vmin=self.metric_min
                     vmax=self.metric_max
             df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
-            for i, r in df.iterrows():
-                print(r['date_time'], r['submit_type'], r['count_value'])
-                print(type(r['date_time']))
             df = df[['date_time', 'count_value']]
             df = df.set_index('date_time')
         else:
-            df = pd.DataFrame()
+            df = pd.DataFrame({"create_date":[],
+                                "count_value": []})
             vmin = 0
             vmax = 0
         df['count_value'] = df['count_value'].astype('float64')
         return (df, (vmin, vmax))
 
+
+##########
+    #today = datetime.today()
+        #
+        # qs = StepTrackerLog.objects.filter(on_tracker=self)
+        # if qs:
+        #     df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
+        #     df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
+        #     df = df[['date_time', 'submit_type', 'count_value']]
+        #     df = df.sort_values('date_time', ascending=True)
+        #     if self.metric_tracker_type == 'boolean':
+        #         if self.minimum_show_allowed:
+        #             vmin=0.0
+        #             vmax=2.0
+        #         else:
+        #             vmin=0.0
+        #             vmax=1.0
+        #         df.loc[df['submit_type'] =='fail_or_no_submit', 'count_value'] = vmin
+        #         df.loc[df['submit_type'] =='boolean_success', 'count_value'] = vmax
+        #     else:
+        #         if self.minimum_show_allowed:
+        #             if self.metric_tracker_type == 'maximize':
+        #                 vmin = self.metric_min - 1
+        #                 vmax = self.metric_max
+        #             else:
+        #                 vmin = self.metric_min + 1
+        #                 vmax = self.metric_max
+        #         else:
+        #             vmin=self.metric_min
+        #             vmax=self.metric_max
+        #     df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
+        #     df = df[['date_time', 'count_value']]
+        #     df = df.set_index('date_time')
+        # else:
+        #     df = pd.DataFrame({"create_date":[],
+        #                         "count_value": []})
+        #     vmin = 0
+        #     vmax = 0
+        # df['count_value'] = df['count_value'].astype('float64')
+        # return (df, (vmin, vmax))
+
+    def get_heatmap(self):
+        pass
+    def get_next_period(self):
+        member_profile = MemberProfile.objects.get(author=self.on_behaviour.on_aim.author.id)
+        now = datetime.today()
+        reset_user_time = datetime.combine(now, member_profile.day_reset_time)
+        reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
+        reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
+        if self.record_log_length == "day":
+            if self.record_frequency =="daily":
+                if now > reset_user_time:
+                    start_date = reset_user_time
+                    end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+                else:
+                    start_date = reset_user_time - timedelta(hours=24)
+                    end_date =  reset_user_time - timedelta(seconds=1)
+            else:
+                all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+                soonest_date = None
+                for freq_code in all_custom_freq_code:
+                    temp_reset_user_time = reset_user_time
+                    if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
+                        while temp_reset_user_time.strftime('%A') != freq_code.code:
+                            temp_reset_user_time += relativedelta(days=1)
+                        if soonest_date:
+                            if soonest_date > temp_reset_user_time:
+                                soonest_date = temp_reset_user_time
+                        else:
+                            soonest_date = temp_reset_user_time
+                    if freq_code.code in range(1,32):
+                        while temp_reset_user_time.strftime('%d') != freq_code.code:
+                            temp_reset_user_time += relativedelta(days=1)
+                        if soonest_date:
+                            if soonest_date > temp_reset_user_time:
+                                soonest_date = temp_reset_user_time
+                        else:
+                            soonest_date = temp_reset_user_time
+                if now > soonest_date:
+                    start_date = soonest_date
+                    end_date =  soonest_date+ timedelta(hours=23, minutes=59, seconds=59)
+                else:
+                    start_date = soonest_date - timedelta(hours=24)
+                    end_date =  soonest_date - timedelta(seconds=1)
+
+            return start_date, end_date
+
+        elif self.record_log_length == "week":
+            if self.record_frequency =="weekly":
+                if reset_user_time.strftime('%A') == member_profile.week_reset_day:
+                    if now > reset_user_time:
+                        start_date = reset_user_time
+                        end_date =  reset_user_time + timedelta(days=6, hours = 23, minutes=59, seconds=59)
+                    else:
+                        start_date = reset_user_time - timedelta(days=7)
+                        end_date =  reset_user_time - timedelta(seconds=1)
+                else:
+                    while reset_user_time.strftime('%A') != member_profile.week_reset_day:
+                        reset_user_time += timedelta(days=1)
+                    end_date = reset_user_time - timedelta(seconds=1)
+                    start_date = reset_user_time - timedelta(days=7)
+            else:
+                print("Custom weeks not avalabile yet")
+                all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+            return start_date, end_date
+
+        elif self.record_log_length == "month":
+            if self.record_frequency == "monthly":
+                if reset_user_date_time.strftime('%d') == str(member_profile.month_reset_day).zfill(2):
+                    if now > reset_user_date_time:
+                        start_date = reset_user_date_time
+                        end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
+                    else:
+                        start_date = reset_user_date_time - relativedelta(months=1)
+                        end_date =  reset_user_date_time - timedelta(seconds=1)
+                elif reset_user_date_time.strftime('%d') > str(member_profile.month_reset_day).zfill(2):
+                    start_date = reset_user_date_time - relativedelta(months=1)
+                    end_date =  reset_user_date_time - timedelta(seconds=1)
+                else:
+                    start_date = reset_user_date_time
+                    end_date =  reset_user_date_time + relativedelta(months=1) - timedelta(seconds=1)
+            else:
+                all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+                soonest_date = None
+                for freq_code in all_custom_freq_code:
+                    if freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
+                        temp_reset_user_time = reset_user_date_time
+                        while temp_reset_user_time.strftime('%B') != freq_code.code:
+                            temp_reset_user_time += relativedelta(months=1)
+
+                        if soonest_date:
+                            if soonest_date > temp_reset_user_time:
+                                soonest_date = temp_reset_user_time
+                        else:
+                            soonest_date = temp_reset_user_time
+                start_date = soonest_date
+                end_date =  soonest_date + relativedelta(months=1) - timedelta(seconds=1)
+            return start_date, end_date
+        elif self.record_log_length == "year":
+            if reset_user_year_date_time.strftime('%m') == str(member_profile.year_reset_month).zfill(2):
+                if now > reset_user_year_date_time:
+                    start_date = reset_user_year_date_time
+                    end_date  = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
+                else:
+                    start_date = reset_user_date_time - relativedelta(years=1)
+                    end_date =  reset_user_date_time - timedelta(seconds=1)
+            elif reset_user_year_date_time.strftime('%m') > str(member_profile.year_reset_month).zfill(2):
+                start_date = reset_user_date_time - relativedelta(years=1)
+                end_date =  reset_user_date_time - timedelta(seconds=1)
+            else:
+                start_date = reset_user_date_time
+                end_date =  reset_user_date_time + relativedelta(years=1) - timedelta(seconds=1)
+            return start_date, end_date
+        else:
+            print("big errors 351")
+
+    def get_period_history(self):
+        historical_date_ranges = []
+        start_date, end_date = self.get_first_period()
+        if self.record_frequency == "daily":
+            while start_date <= datetime.now():
+                historical_date_ranges.append((start_date, end_date))
+                start_date += relativedelta(days=1)
+                end_date += relativedelta(days=1)
+        elif self.record_frequency == "weekly":
+            while start_date <= datetime.now():
+                historical_date_ranges.append((start_date, end_date))
+                start_date += relativedelta(days=7)
+                end_date += relativedelta(days=7)
+        elif self.record_frequency == "monthly":
+            while start_date <= datetime.now():
+                historical_date_ranges.append((start_date, end_date))
+                start_date += relativedelta(months=1)
+                end_date += relativedelta(months=1)
+        elif self.record_frequency == "yearly":
+            while start_date <= datetime.now():
+                historical_date_ranges.append((start_date, end_date))
+                start_date += relativedelta(years=1)
+                end_date += relativedelta(years=1)
+        else:
+            all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+            for freq_code in all_custom_freq_code:
+                tmp_start_date = start_date
+                tmp_end_date = end_date
+                if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
+                    while tmp_start_date <= datetime.now():
+                        if tmp_start_date.strftime("%A") == freq_code.code:
+                            historical_date_ranges.append((tmp_start_date,tmp_end_date))
+                        tmp_start_date += relativedelta(days=1)
+                        tmp_end_date += relativedelta(days=1)
+                elif freq_code.code in [str(i) for i in range(1,32)]:
+                    while tmp_start_date <= datetime.now():
+                        if tmp_start_date.strftime("%-d") == freq_code.code:
+                            historical_date_ranges.append((tmp_start_date,tmp_end_date))
+                        tmp_start_date += relativedelta(days=1)
+                        tmp_end_date += relativedelta(days=1)
+                elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
+                    while tmp_start_date <= datetime.now():
+                        if tmp_start_date.strftime("%B") == freq_code.code:
+                            historical_date_ranges.append((tmp_start_date,tmp_end_date))
+                        tmp_start_date += relativedelta(months=1)
+                        tmp_end_date += relativedelta(months=1)
+                else:
+                    print(f"unrecognised freq_code: {freq_code.code}")
+        return historical_date_ranges
+
+    def get_first_period(self):
+        member_profile = MemberProfile.objects.get(author=self.on_behaviour.on_aim.author.id)
+        now = datetime.today()
+        if self.record_log_length == "day":
+            if self.record_frequency =="daily":
+                start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+                end_date = start_date + relativedelta(days=1) - timedelta(seconds=1)
+            else:
+                all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+                soonest_date = None
+                for freq_code in all_custom_freq_code:
+                    temp_reset_user_time = self.record_start_date
+                    if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
+                        while temp_reset_user_time.strftime('%A') != freq_code.code:
+                            temp_reset_user_time += relativedelta(days=1)
+                        if soonest_date:
+                            if soonest_date > temp_reset_user_time:
+                                soonest_date = temp_reset_user_time
+                        else:
+                            soonest_date = temp_reset_user_time
+                    if freq_code.code in range(1,32):
+                        while temp_reset_user_time.strftime('%d') != freq_code.code:
+                            temp_reset_user_time += relativedelta(days=1)
+                        if soonest_date:
+                            if soonest_date > temp_reset_user_time:
+                                soonest_date = temp_reset_user_time
+                        else:
+                            soonest_date = temp_reset_user_time
+                start_date = datetime.combine(soonest_date, member_profile.day_reset_time)
+                end_date = start_date + relativedelta(days=1) - timedelta(seconds=1)
+        elif self.record_log_length == "week":
+            if self.record_frequency == "weekly":
+                start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+
+                while start_date.strftime('%A') != member_profile.week_reset_day:
+                    start_date -= relativedelta(days=1)
+                end_date = start_date + relativedelta(weeks=1) - timedelta(seconds=1)
+            else:
+                print("error 2 custom weekly going here")
+        elif self.record_log_length =="month":
+            if self.record_frequency =="monthly":
+                start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+                while start_date.strftime('%d') != str(member_profile.month_reset_day).zfill(2):
+                    start_date += relativedelata(months=1)
+                end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
+            else:
+                all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+                soonest_date = None
+                for freq_code in all_custom_freq_code:
+                    temp_reset_user_time = self.record_start_date
+                    if freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
+                        while temp_reset_user_time.strftime('%B') != freq_code.code:
+                            temp_reset_user_time += relativedelta(months=1)
+                        if soonest_date:
+                            if soonest_date > temp_reset_user_time:
+                                soonest_date = temp_reset_user_time
+                        else:
+                            soonest_date = temp_reset_user_time
+
+                start_date = datetime.combine(soonest_date, member_profile.day_reset_time)
+                end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
+        else:
+            reset_user_time = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+            reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
+            reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
+            if reset_user_year_date_time > now:
+                start_date = reset_user_year_date_time - relativedelta(years=1)
+                end_date = reset_user_year_date_time - timedelta(seconds=1)
+            else:
+                start_date = reset_user_year_date_time
+                end_date = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
+        return start_date, end_date
+
+
+    def get_current_period_status(self):
+        status= None
+        total_logs = None
+        total_value_count = None
+        start_date, end_date = self.get_next_period()
+
+        if start_date < datetime.now() < end_date:
+            current_period_logs = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
+            period_statuses = list(current_period_logs.values_list('submit_type', flat=True))
+            if "min_showup" in period_statuses or "fail_or_no_submit" in period_statuses or "boolean_success" in period_statuses:
+                status = "period_complete"
+            else:
+                status = "period_progressing"
+                if self.metric_tracker_type != "boolean":
+                    value_counts = list(current_period_logs.values_list('count_value', flat=True))
+                    total_logs = len(value_counts)
+                    total_value_counts = sum([int(i) for i in value_counts if i != None])
+        else:
+            status = "period_not_begun"
+        return (status, total_logs, total_value_count)
+
     def get_status_dict(self):
+        start, end = self.get_next_period()
+        status, total_logs, total_log_values = self.get_current_period_status()
+        s,e = self.get_first_period()
+        print(f"{self}|| Start: {s} End: {e}")
+        period_history = self.get_period_history()
+        for p in period_history:
+            print(p)
         status_dict = {
             "tracker": self,
+            "next_period_start": start,
+            "next_period_end": end,
+            "next_period_status": status,
+            "next_period_log_counts": total_logs,
+            "next_period_log_total_value": total_log_values,
+            "all_periods_to_date":period_history, #progressing #complete
+            "current_period_count": None,
+            "heatmap_dataframe": None,
             "logs_required": None,
             "total_logs": None,
-            "period_log_start": None,
-            "period_log_end": None,
             "boolean_status": None,
             "count_status": None,
             "count_quantity": None,

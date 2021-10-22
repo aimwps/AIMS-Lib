@@ -20,10 +20,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def get_tracker_heatmap(df, vmin, vmax):
-    print("xXxXXXXXxxxxXxXXXXXxxxx")
-    print(df.head())
-
-    print(df.info())
     with plt.rc_context({'xtick.color': 'black','ytick.color': 'black'}):
         fig =plt.figure(figsize=(12,3))
         ax = fig.add_subplot(111, aspect="equal")
@@ -66,12 +62,13 @@ def get_tracker_period(start_date, end_date):
 
 def get_tracker_status(user_id, tracker):
     tdf, settings = tracker.get_heatmap_dataframe()
-    tracker_fig = get_tracker_heatmap(tdf, settings[0], settings[1])
-    buf = io.BytesIO()
-    tracker_fig.savefig(buf, format='png')
-    buf.seek(0)
-    string = base64.b64encode(buf.read())
-    uri = urllib.parse.quote(string)
+    tracker.get_status_dict()
+    #tracker_fig = get_tracker_heatmap(tdf, settings[0], settings[1])
+    # buf = io.BytesIO()
+    # tracker_fig.savefig(buf, format='png')
+    # buf.seek(0)
+    # string = base64.b64encode(buf.read())
+    # uri = urllib.parse.quote(string)
     member_profile = MemberProfile.objects.get(author=user_id)
     tracker_info  = {'tracker':tracker,}
     now = datetime.today()
@@ -210,7 +207,7 @@ def get_tracker_status(user_id, tracker):
             "count_status": None,
             "count_quantity": None,
             "count_total": None,
-            "tracker_graph": uri,
+            "tracker_graph": None,
             }
 
     if current_period_logs:
