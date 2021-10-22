@@ -9,7 +9,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
 from django.utils.timezone import now
 from Members.models import MemberProfile
+from .utils import get_next_sunday
 import pandas as pd
+import numpy as np
+import calmap, io, urllib, base64
+import matplotlib.pyplot as plt
 USER_STATUS =   (('deleted', 'deleted'),
                 ('active', 'active'),
                 ('inactive', 'inactive'),
@@ -133,6 +137,7 @@ class Behaviour(models.Model):
 
     def __str__(self):
         return f"Behaviour_{self.id}"
+
     def get_absolute_url(self):
         return reverse('aims-dash')
 
@@ -204,106 +209,120 @@ class StepTracker(models.Model):
     def get_heatmap_dataframe(self):
         today = datetime.today()
         historical_date_ranges = self.get_period_history()
+        pd_date_ranges = []
+        for ds in historical_date_ranges:
+            pd_date_ranges.append(
+            (ds[0], ds[1])
+            )
         df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
-        df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
-        df = df[['date_time', 'submit_type', 'count_value']]
-        df = df.sort_values('date_time', ascending=True)
+
+
+        if len(df) > 0:
+            df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
+            df = df[['date_time', 'submit_type', 'count_value']]
+            df = df.sort_values('date_time', ascending=True)
+        else:
+
+            df = pd.DataFrame({"date_time":[],
+                            "submit_type":[],
+                            "count_value":[] })
+
         heatmap_df = pd.DataFrame({"date_time":[], "heatmap_value":[]})
-        if self.metric_tracker_type =="boolean":
-            vmin=1.0
-            vmax=3.0
-        else:
-            vmin=self.metric_max
-            vmax=self.metric_max*3
-            count_start = self.metric_max-self.metric_min
-        if self.minimum_show_allowed:
-            vmin += self.
-            vmax += .0
-        if self.record_log_length =="day":
-            for date in historical_date_ranges:
-                found_records = df[df['date_time']>=date[0] & df['date_time']<=date[1]]
-                if len(found_records)==0:
-                    heatmap_df.append({"date_time":date[0]+ relativedelata(hours=12),
-                                        "heatmap_value":0})
-                if len(found_records)==1:
-                    if "submit_type"
-
-
-
-            if self.metric_tracker_type == 'boolean':
-                if self.minimum_show_allowed:
-                    vmin=0.0
-                    vmax=2.0
-                else:
-                    vmin=0.0
-                    vmax=1.0
-                df.loc[df['submit_type'] =='fail_or_no_submit', 'count_value'] = vmin
-                df.loc[df['submit_type'] =='boolean_success', 'count_value'] = vmax
+        if self.record_log_length == "day":
+            if self.metric_tracker_type =="boolean":
+                vmin = 0.0
+                vmax = 100.0
+                count_lower = 50
+                minimum_show = vmax // 4
             else:
-                if self.minimum_show_allowed:
-                    if self.metric_tracker_type == 'maximize':
-                        vmin = self.metric_min - 1
-                        vmax = self.metric_max
+                vrange = np.abs(self.metric_max-self.metric_min)
+                vmin = 0.0
+                vmax = vrange * 2
+                count_lower = vrange // 2
+                count_upper = vmax
+                minimum_show = vrange // 4
+
+            for date in pd_date_ranges:
+                found_records = df[ (df['date_time'] >= date[0]) & (df['date_time']<= date[1])]
+                if len(found_records)==0:
+                    df2 = pd.DataFrame({"date_time":[date[0]+ relativedelta(hours=12)],
+                                        "heatmap_value":[vmin]})
+                    heatmap_df = heatmap_df.append(df2,
+                                        ignore_index=True)
+                elif len(found_records)==1:
+                    if "min_showup" in found_records['submit_type']:
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                                            "heatmap_value":minimum_show},
+                                            ignore_index=True)
+
+                    elif "fail_or_no_submit" in found_records['submit_type']:
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                                            "heatmap_value":vmin},
+                                            ignore_index=True)
+                    elif "boolean_success" in found_records['submit_type']:
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                                            "heatmap_value":vmax},
+                                            ignore_index=True)
                     else:
-                        vmin = self.metric_min + 1
-                        vmax = self.metric_max
+
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                                            "heatmap_value":found_records['count_value'].sum()+count_lower},
+                                            ignore_index=True)
                 else:
-                    vmin=self.metric_min
-                    vmax=self.metric_max
-            df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
-            df = df[['date_time', 'count_value']]
-            df = df.set_index('date_time')
-        else:
-            df = pd.DataFrame({"create_date":[],
-                                "count_value": []})
-            vmin = 0
-            vmax = 0
-        df['count_value'] = df['count_value'].astype('float64')
-        return (df, (vmin, vmax))
+                    if "fail_or_no_submit" not in found_records['submit_type']:
 
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                                            "heatmap_value":found_records['count_value'].dropna().sum()+count_lower},
+                                            ignore_index=True)
 
-##########
-    #today = datetime.today()
-        #
-        # qs = StepTrackerLog.objects.filter(on_tracker=self)
-        # if qs:
-        #     df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
-        #     df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
-        #     df = df[['date_time', 'submit_type', 'count_value']]
-        #     df = df.sort_values('date_time', ascending=True)
-        #     if self.metric_tracker_type == 'boolean':
-        #         if self.minimum_show_allowed:
-        #             vmin=0.0
-        #             vmax=2.0
-        #         else:
-        #             vmin=0.0
-        #             vmax=1.0
-        #         df.loc[df['submit_type'] =='fail_or_no_submit', 'count_value'] = vmin
-        #         df.loc[df['submit_type'] =='boolean_success', 'count_value'] = vmax
-        #     else:
-        #         if self.minimum_show_allowed:
-        #             if self.metric_tracker_type == 'maximize':
-        #                 vmin = self.metric_min - 1
-        #                 vmax = self.metric_max
-        #             else:
-        #                 vmin = self.metric_min + 1
-        #                 vmax = self.metric_max
-        #         else:
-        #             vmin=self.metric_min
-        #             vmax=self.metric_max
-        #     df.loc[df['submit_type'] =='min_showup', 'count_value'] = vmin
-        #     df = df[['date_time', 'count_value']]
-        #     df = df.set_index('date_time')
-        # else:
-        #     df = pd.DataFrame({"create_date":[],
-        #                         "count_value": []})
-        #     vmin = 0
-        #     vmax = 0
-        # df['count_value'] = df['count_value'].astype('float64')
-        # return (df, (vmin, vmax))
+        # print("PAYLOAD FOR GET HEATMAP DATAFRME")
+        # print(df.info())
+        # print(df.head())
+        # print("---------------------------")
+        # print(heatmap_df.info())
+        # print(heatmap_df.head())
+        # print("\n\n\n\n xxxx")
+        # print(f"length heatmap_df {len(heatmap_df)}, length date_ranges =  {len(historical_date_ranges)}")
+        heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
+        heatmap_df = heatmap_df.set_index('date_time')
+        if len(heatmap_df) > 182:
+            heatmap_df = heatmap_df.tail(182)
+
+        return (heatmap_df, (vmin, vmax))
+
 
     def get_heatmap(self):
-        pass
+        heatmap_df, settings = self.get_heatmap_dataframe()
+        vmin, vmax = settings
+
+        fig = plt.figure(figsize=(12,3))
+        ax = fig.add_subplot(111, aspect="equal")
+        date_arr = heatmap_df['heatmap_value'].to_numpy()
+        dates = heatmap_df.index.to_numpy()
+        cal_arr = np.empty(182)
+
+        for i, val in enumerate(date_arr,1):
+            cal_arr[-i]= val
+        print(cal_arr)
+        if self.record_log_length == 'day':
+            with plt.rc_context({'xtick.color': 'black','ytick.color': 'black'}):
+                fig.set_facecolor('white')
+                ax.set_facecolor('white')
+                cax = calmap.yearplot(heatmap_df['heatmap_value'], cmap='Oranges',vmin=int(vmin), vmax=int(vmax), fillcolor='white',daylabels=['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],dayticks=[0, 1,2,3,4,5, 6],
+                                linewidth=2, ax=ax)
+                cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
+                cbar.ax.set_xticklabels(["Incomplete", "Minimum show", "Progressing", "Success"])
+        else:
+            print("Error")
+
+        plt.tight_layout()
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png")
+        buf.seek(0)
+        string = base64.b64encode(buf.read())
+        uri = urllib.parse.quote(string)
+        return uri
+
     def get_next_period(self):
         member_profile = MemberProfile.objects.get(author=self.on_behaviour.on_aim.author.id)
         now = datetime.today()
@@ -420,23 +439,24 @@ class StepTracker(models.Model):
     def get_period_history(self):
         historical_date_ranges = []
         start_date, end_date = self.get_first_period()
+        finish_date = get_next_sunday()
         if self.record_frequency == "daily":
-            while start_date <= datetime.now():
+            while start_date <= finish_date:
                 historical_date_ranges.append((start_date, end_date))
                 start_date += relativedelta(days=1)
                 end_date += relativedelta(days=1)
         elif self.record_frequency == "weekly":
-            while start_date <= datetime.now():
+            while start_date <= finish_date:
                 historical_date_ranges.append((start_date, end_date))
                 start_date += relativedelta(days=7)
                 end_date += relativedelta(days=7)
         elif self.record_frequency == "monthly":
-            while start_date <= datetime.now():
+            while start_date <= finish_date:
                 historical_date_ranges.append((start_date, end_date))
                 start_date += relativedelta(months=1)
                 end_date += relativedelta(months=1)
         elif self.record_frequency == "yearly":
-            while start_date <= datetime.now():
+            while start_date <= finish_date:
                 historical_date_ranges.append((start_date, end_date))
                 start_date += relativedelta(years=1)
                 end_date += relativedelta(years=1)
@@ -446,19 +466,19 @@ class StepTracker(models.Model):
                 tmp_start_date = start_date
                 tmp_end_date = end_date
                 if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
-                    while tmp_start_date <= datetime.now():
+                    while tmp_start_date <= finish_date:
                         if tmp_start_date.strftime("%A") == freq_code.code:
                             historical_date_ranges.append((tmp_start_date,tmp_end_date))
                         tmp_start_date += relativedelta(days=1)
                         tmp_end_date += relativedelta(days=1)
                 elif freq_code.code in [str(i) for i in range(1,32)]:
-                    while tmp_start_date <= datetime.now():
+                    while tmp_start_date <= finish_date:
                         if tmp_start_date.strftime("%-d") == freq_code.code:
                             historical_date_ranges.append((tmp_start_date,tmp_end_date))
                         tmp_start_date += relativedelta(days=1)
                         tmp_end_date += relativedelta(days=1)
                 elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
-                    while tmp_start_date <= datetime.now():
+                    while tmp_start_date <= finish_date:
                         if tmp_start_date.strftime("%B") == freq_code.code:
                             historical_date_ranges.append((tmp_start_date,tmp_end_date))
                         tmp_start_date += relativedelta(months=1)
@@ -566,10 +586,8 @@ class StepTracker(models.Model):
         start, end = self.get_next_period()
         status, total_logs, total_log_values = self.get_current_period_status()
         s,e = self.get_first_period()
-        print(f"{self}|| Start: {s} End: {e}")
         period_history = self.get_period_history()
-        for p in period_history:
-            print(p)
+
         status_dict = {
             "tracker": self,
             "next_period_start": start,

@@ -62,13 +62,6 @@ def get_tracker_period(start_date, end_date):
 
 def get_tracker_status(user_id, tracker):
     tdf, settings = tracker.get_heatmap_dataframe()
-    tracker.get_status_dict()
-    #tracker_fig = get_tracker_heatmap(tdf, settings[0], settings[1])
-    # buf = io.BytesIO()
-    # tracker_fig.savefig(buf, format='png')
-    # buf.seek(0)
-    # string = base64.b64encode(buf.read())
-    # uri = urllib.parse.quote(string)
     member_profile = MemberProfile.objects.get(author=user_id)
     tracker_info  = {'tracker':tracker,}
     now = datetime.today()
@@ -207,7 +200,7 @@ def get_tracker_status(user_id, tracker):
             "count_status": None,
             "count_quantity": None,
             "count_total": None,
-            "tracker_graph": None,
+            "tracker_graph": tracker.get_heatmap(),
             }
 
     if current_period_logs:
