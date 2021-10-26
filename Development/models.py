@@ -12,7 +12,7 @@ from Members.models import MemberProfile
 from .utils import get_next_sunday, generate_heatmap_from_df
 import pandas as pd
 import numpy as np
-import calmap, io, urllib, base64
+import io, urllib, base64
 import matplotlib.pyplot as plt
 USER_STATUS =   (('deleted', 'deleted'),
                 ('active', 'active'),
