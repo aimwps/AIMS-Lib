@@ -491,7 +491,7 @@ class StepTracker(models.Model):
                 for freq_code in all_custom_freq_code:
                     temp_reset_user_time = self.record_start_date
                     if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
-                        print(f"--->A {temp_reset_user_time.strftime('%A')} <---- {freq.code}")
+                        print(f"--->A {temp_reset_user_time.strftime('%A')} <---- {freq_code.code}")
 
                         while temp_reset_user_time.strftime('%A') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
