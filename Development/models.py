@@ -325,7 +325,12 @@ class StepTracker(models.Model):
                         while temp_reset_user_time.strftime('%A') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
                         if soonest_date:
-                            if soonest_date > temp_reset_user_time:
+                            if soonest_date > tem                if soonest_date:
+                                                if now > soonest_date:
+                                                    start_date = soonest_date
+                                                    end_date =  soonest_date+ timedelta(hours=23, minutes=59, seconds=59)
+                                            else:
+                                                soonest_date = temp_reset_user_timep_reset_user_time:
                                 soonest_date = temp_reset_user_time
                         else:
                             soonest_date = temp_reset_user_time
@@ -521,7 +526,7 @@ class StepTracker(models.Model):
             if self.record_frequency =="monthly":
                 start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
                 while start_date.strftime('%d') != str(member_profile.month_reset_day).zfill(2):
-                    start_date += relativedelata(months=1)
+                    start_date += relativedelta(months=1)
                 end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
