@@ -6,17 +6,18 @@ import datetime as dt
 import pandas as pd
 from dateutil import parser
 import io, urllib, base64
+import matplotlib.backends.backend_agg as backend
+from matplotlib.figure import Figure
 def prettify_tracker_log_dict(dict):
 
     pretty_status = {
-                    "count_showup":"You showed up!",
                     "count_value":"Still working on it..",
-                    "boolean_showup": "You showed up!",
+                    "min_showup": "You showed up!",
                     "boolean_success": "Great success!!",
                     "fail_or_no_submit":"Did not complete",}
 
     if dict['tracker'].metric_tracker_type == "boolean":
-        if dict['boolean_status'] != None:
+        if dict['next_period_status'] == "progressing":
             status = pretty_status[dict['boolean_status']]
         else:
             status = "awaiting progress"
@@ -55,13 +56,13 @@ def generate_heatmap_from_df(df, vmin, vmax):
     dates = list(df['date_time'])
     data = list(df['heatmap_value'])
     data = [d if isinstance(d, float) else np.nan for d in data]
-
-    fig, ax = plt.subplots(figsize=(8, 14))
+    fig = Figure(figsize=(7, 10))
+    canvas = backend.FigureCanvas(fig)
+    ax = fig.add_subplot(111)
     calendar_heatmap(ax, dates, data, vmin, vmax)
-    plt.tight_layout()
 
     buf = io.BytesIO()
-    fig.savefig(buf, format="png")
+    fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0)
     buf.seek(0)
 
     string = base64.b64encode(buf.read())
@@ -89,10 +90,13 @@ def calendar_array(dates, data):
 def calendar_heatmap(ax, dates, data, count_lower, count_upper):
     i, j, calendar = calendar_array(dates, data)
     data_max = np.nanmax(data)
-    im = ax.imshow(calendar, interpolation='none', cmap='Oranges')
+    im = ax.imshow(calendar, interpolation='none', cmap='Oranges', aspect="auto")
     label_days(ax, dates, i, j, calendar)
     label_months(ax, dates, i, j, calendar)
-    ax.figure.colorbar(im, ticks=[0, count_upper//4, count_lower, count_upper ])
+    tick_g = [0, count_upper//4, count_lower, count_upper ]
+    print(tick_g)
+    print("hweriowjeoliqwjeoliqwjeoiqwed")
+    ax.figure.colorbar(im, ticks=tick_g)
     # cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
     #cbar.ax.set_xticklabels(["Incomplete", "Minimum show", count_lower//2, count_upper//2])
 
@@ -103,7 +107,7 @@ def label_days(ax, dates, i, j, calendar):
 
     for (i, j), day in np.ndenumerate(day_of_month):
         if np.isfinite(day):
-            ax.text(j, i, int(day), ha='center', va='center', fontsize=7)
+            ax.text(j, i, int(day), ha='center', va='center', fontsize=10)
 
     ax.set(xticks=np.arange(7),
            xticklabels=['M', 'T', 'W', 'R', 'F', 'S', 'S'])
@@ -117,4 +121,4 @@ def label_months(ax, dates, i, j, calendar):
     yticks = [i[months == m].mean() for m in uniq_months]
     labels = [month_labels[m - 1] for m in uniq_months]
     ax.set(yticks=yticks)
-    ax.set_yticklabels(labels, rotation=45, fontsize=7)
+    ax.set_yticklabels(labels, rotation=45, fontsize=10)

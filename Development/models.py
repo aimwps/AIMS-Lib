@@ -286,14 +286,12 @@ class StepTracker(models.Model):
                 heatmap_df = heatmap_df.append({"date_time":start_point- relativedelta(days=i),
                                     "heatmap_value":None},
                                     ignore_index=True)
-                # heatmpap_df = ({"date_time":date[0]- relativedelta(days=i),
-                #                 "heatmap_value":np.NaN},
-                #                 ignore_index=True)
+
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
         heatmap_df.to_csv("testing_data.csv")
 
+        print(f"COUNT LOWER: {count_lower}, VMAX: {vmax}")
         return (heatmap_df, (count_lower, vmax))
-
 
     def get_heatmap(self):
         heatmap_df, settings = self.get_heatmap_dataframe()
@@ -538,7 +536,6 @@ class StepTracker(models.Model):
                 end_date = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
         return start_date, end_date
 
-
     def get_current_period_status(self):
         status= None
         total_logs = None
@@ -560,12 +557,25 @@ class StepTracker(models.Model):
             status = "period_not_begun"
         return (status, total_logs, total_value_count)
 
+    def get_tracker_display_section(self, start_date, end_date):
+        now = datetime.today()
+        in_future = relativedelta(end_date, start_date).days
+        if in_future  <= 0:
+            return "displayToday"
+        elif in_future <= 7:
+            return "displayWeek"
+        elif in_future <= 31:
+            return "displayMonth"
+        else:
+            return "displayYear"
+
     def get_status_dict(self):
         start, end = self.get_next_period()
+        display_section = self.get_tracker_display_section(start, end)
         status, total_logs, total_log_values = self.get_current_period_status()
         s,e = self.get_first_period()
         period_history = self.get_period_history()
-
+        print(f"STATUS: {status}")
         status_dict = {
             "tracker": self,
             "next_period_start": start,
@@ -573,18 +583,10 @@ class StepTracker(models.Model):
             "next_period_status": status,
             "next_period_log_counts": total_logs,
             "next_period_log_total_value": total_log_values,
-            "all_periods_to_date":period_history, #progressing #complete
-            "current_period_count": None,
-            "heatmap_dataframe": None,
-            "logs_required": None,
-            "total_logs": None,
-            "boolean_status": None,
-            "count_status": None,
-            "count_quantity": None,
-            "count_total": None,
-            "tracker_graph": None,
+            "all_periods_to_date":period_history,
+            "display_section": display_section, #progressing #complete
         }
-
+        return status_dict
 class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
                         ("min_showup","minimum show"),

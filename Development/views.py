@@ -34,6 +34,7 @@ def get_tracker_heatmap(df, vmin, vmax):
 
 
 def submit_tracker_log(request):
+    print(r)
     tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
     submit_user = get_object_or_404(User, id=request.POST.get("submit_user"))
     if request.POST.get("submit_value"):
@@ -48,12 +49,12 @@ def submit_tracker_log(request):
     response = json.dumps({"complete":True})
     return HttpResponse(response)
 
-def get_tracker_period(start_date, end_date):
+def get_tracker_display_period(start_date, end_date):
     now = datetime.today()
     in_future = relativedelta(end_date, start_date).days
     if in_future  <= 0:
         return "displayToday"
-    elif in_future <= 6:
+    elif in_future <= 7:
         return "displayWeek"
     elif in_future <= 31:
         return "displayMonth"
@@ -61,9 +62,9 @@ def get_tracker_period(start_date, end_date):
         return "displayYear"
 
 def get_tracker_status(user_id, tracker):
-    tdf, settings = tracker.get_heatmap_dataframe()
+    #tdf, settings = tracker.get_heatmap_dataframe()
     member_profile = MemberProfile.objects.get(author=user_id)
-    tracker_info  = {'tracker':tracker,}
+    #tracker_info  = {'tracker':tracker,}
     now = datetime.today()
     reset_user_time = datetime.combine(now, member_profile.day_reset_time)
     reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
@@ -244,18 +245,19 @@ def get_category_path(cat, current_path=""):
 
 def request_uncomplete_trackers(request):
     all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__lte=datetime.today())))
+    print(all_user_trackers)
     uncomplete_trackers = []
     for tracker in all_user_trackers:
-        tracker_status = get_tracker_status(request.GET.get("user_id"), tracker)
-
-        if tracker_status['logs_required']:
-            tracker_status['display_section'] = get_tracker_period(tracker_status['period_log_start'], tracker_status['period_log_end'])
-            serialize_tracker = StepTrackerSerializer(tracker_status['tracker']).data
-            tracker_status['tracker'] = serialize_tracker
-            tracker_status['question'] = tracker.get_tquestion()
-            tracker_status['pretty_start'] = tracker_status['period_log_start'].strftime("%d/%m/%y @ %H:%M:%S")
-            tracker_status['pretty_end'] = tracker_status['period_log_end'].strftime("%d/%m/%y @ %H:%M:%S")
-            uncomplete_trackers.append(tracker_status)
+        uncomplete_tracker_dict ={}
+        tracker_status = tracker.get_status_dict()#get_tracker_status(request.GET.get("user_id"), tracker)
+        print(tracker_status)
+        if tracker_status['next_period_status']== "period_progressing":
+            uncomplete_tracker_dict = {'display_section': tracker_status['display_section'],
+                                        'tracker': StepTrackerSerializer(tracker_status['tracker']).data,
+                                        'question': tracker.get_tquestion(),
+                                        'pretty_start':tracker_status['next_period_start'].strftime("%d/%m/%y @ %H:%M:%S"),
+                                        'pretty_end': tracker_status['next_period_end'].strftime("%d/%m/%y @ %H:%M:%S")}
+            uncomplete_trackers.append(uncomplete_tracker_dict)
     return JsonResponse(uncomplete_trackers, safe=False)
 
 class StepTrackerCreate(LoginRequiredMixin,CreateView):
@@ -393,8 +395,9 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                     ## Pass trackers that need logs to uncomplete_trackers for quick fire aims
                     processed_trackers = []
                     for tracker in all_behaviour_trackers:
-                        tracker_status = get_tracker_status(self.request.user.id, tracker)
-                        processed_trackers.append((tracker, prettify_tracker_log_dict(tracker_status), tracker_status['tracker_graph']))
+                        tracker_status = tracker.get_status_dict()
+
+                        processed_trackers.append((tracker, prettify_tracker_status_dict(tracker_status), tracker.get_heatmap()))
 
                     ## Assign the trackers to the behaviours for viewing aims dash.
                     trackers_behaviours[behaviour] = processed_trackers

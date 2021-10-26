@@ -28,6 +28,16 @@ class MemberProfile(models.Model):
 
     def __str__(self):
         return str(self.user_profile)
+    def next_user_adjusted_day_period(self):
+        pass
+    def next_user_adjusted_week_period(self):
+        pass
+    def next_user_adjusted_month_period(self):
+        pass
+    def next_user_adjusted_year_period(self):
+        pass
+
+
 
     # def get_reset_periods(self):
     #     now = datetime.today()
