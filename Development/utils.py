@@ -8,8 +8,11 @@ from dateutil import parser
 import io, urllib, base64
 import matplotlib.backends.backend_agg as backend
 from matplotlib.figure import Figure
-def prettify_tracker_status_dict(dict):
 
+
+
+
+def prettify_tracker_status_dict(dict):
     pretty_status = {
                     "period_progressing":"You're still working on it",
                     "period_complete": "You've already submitted this period",
@@ -52,13 +55,6 @@ def generate_heatmap_from_df(df, vmin, vmax):
     uri = urllib.parse.quote(string)
     return uri
 #
-# def generate_data():
-#     df = pd.read_csv("testing_data.csv")
-#     dates = [parser.parse(date) for date in list(df['date_time'])]
-#     data = list(df['heatmap_value'])
-#     return dates, data
-### Create an array of the last 6 months days
-###
 def calendar_array(dates, data):
     i, j = zip(*[d.isocalendar()[1:] for d in dates])
     i = np.array(i) - min(i)

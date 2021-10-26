@@ -218,7 +218,9 @@ class StepTracker(models.Model):
 
 
         if len(df) > 0:
-            df['date_time'] = pd.to_datetime(df['create_date'].astype(str) + df['create_time'].astype(str), format = '%Y-%m-%d%H:%M:%S')
+
+            print("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
+            df['date_time'] = pd.to_datetime(df['create_date'].astype(str) +" " + df['create_time'].astype(str))
             df = df[['date_time', 'submit_type', 'count_value']]
             df = df.sort_values('date_time', ascending=True)
         else:
@@ -290,7 +292,6 @@ class StepTracker(models.Model):
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
         heatmap_df.to_csv("testing_data.csv")
 
-        print(f"COUNT LOWER: {count_lower}, VMAX: {vmax}")
         return (heatmap_df, (count_lower, vmax))
 
     def get_heatmap(self):
@@ -552,7 +553,8 @@ class StepTracker(models.Model):
                 if self.metric_tracker_type != "boolean":
                     value_counts = list(current_period_logs.values_list('count_value', flat=True))
                     total_logs = len(value_counts)
-                    total_value_counts = sum([int(i) for i in value_counts if i != None])
+                    total_value_count = sum([int(i) for i in value_counts if i != None])
+
         else:
             status = "period_not_begun"
         return (status, total_logs, total_value_count)
@@ -575,7 +577,6 @@ class StepTracker(models.Model):
         status, total_logs, total_log_values = self.get_current_period_status()
         s,e = self.get_first_period()
         period_history = self.get_period_history()
-        print(f"STATUS: {status}")
         status_dict = {
             "tracker": self,
             "next_period_start": start,

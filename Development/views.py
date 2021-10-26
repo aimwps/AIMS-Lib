@@ -18,17 +18,15 @@ from .development_serializers import StepTrackerSerializer
 
 
 def submit_tracker_log(request):
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
     print(request.POST)
     tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
     submit_user = get_object_or_404(User, id=request.POST.get("submit_user"))
-    if request.POST.get("submit_value"):
-        submit_value = request.POST.get("submit_value")
-    else:
-        submit_value = None
     new_log = StepTrackerLog(author=submit_user,
                             on_tracker=tracker,
                             submit_type=request.POST.get("submit_type"),
-                            count_value=submit_value)
+                            count_value=request.POST.get("count_value"))
+    print(f"new log {new_log} {new_log.count_value}")
     new_log.save()
     response = json.dumps({"complete":True})
     return HttpResponse(response)
@@ -47,12 +45,10 @@ def get_category_path(cat, current_path=""):
 
 def request_uncomplete_trackers(request):
     all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__lte=datetime.today())))
-    print(all_user_trackers)
     uncomplete_trackers = []
     for tracker in all_user_trackers:
         uncomplete_tracker_dict ={}
         tracker_status = tracker.get_status_dict()#get_tracker_status(request.GET.get("user_id"), tracker)
-        print(tracker_status)
         if tracker_status['next_period_status']== "period_progressing":
             uncomplete_tracker_dict = {'display_section': tracker_status['display_section'],
                                         'tracker': StepTrackerSerializer(tracker_status['tracker']).data,
