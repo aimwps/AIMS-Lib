@@ -327,6 +327,7 @@ class StepTracker(models.Model):
                                 soonest_date = temp_reset_user_time
                         else:
                             soonest_date = temp_reset_user_time
+
                     if freq_code.code in range(1,32):
                         while temp_reset_user_time.strftime('%d') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
@@ -335,6 +336,15 @@ class StepTracker(models.Model):
                                 soonest_date = temp_reset_user_time
                         else:
                             soonest_date = temp_reset_user_time
+
+
+                if soonest_date:
+                    if now > soonest_date:
+                        start_date = soonest_date
+                        end_date =  soonest_date+ timedelta(hours=23, minutes=59, seconds=59)
+                else:
+                    soonest_date = temp_reset_user_time
+
                 if now > soonest_date:
                     start_date = soonest_date
                     end_date =  soonest_date+ timedelta(hours=23, minutes=59, seconds=59)
