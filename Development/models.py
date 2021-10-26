@@ -525,9 +525,9 @@ class StepTracker(models.Model):
         elif self.record_log_length =="month":
             if self.record_frequency =="monthly":
                 start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
-                print(f"{start_date}, {start_date.strftime('%d')}, {member_profile.month_reset_day}")
-                while start_date.strftime('%d') != str(member_profile.month_reset_day):
-                    start_date += relativedelta(months=1)
+                print(f"{start_date}, {start_date.strftime('-%d')}, {member_profile.month_reset_day}")
+                while start_date.strftime('-%d') != str(member_profile.month_reset_day):
+                    start_date += relativedelta(days=1)
                 end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
