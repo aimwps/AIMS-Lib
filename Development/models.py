@@ -492,7 +492,7 @@ class StepTracker(models.Model):
                     temp_reset_user_time = self.record_start_date
                     if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
                         print(f"--->A {temp_reset_user_time.strftime('%A')} <---- {freq.code}")
-                        print(f"--->d {temp_reset_user_time.strftime('%d')} <---- {freq.code}")
+
                         while temp_reset_user_time.strftime('%A') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
                         if soonest_date:
@@ -501,6 +501,7 @@ class StepTracker(models.Model):
                         else:
                             soonest_date = temp_reset_user_time
                     if freq_code.code in range(1,32):
+                        print(f"--->d {temp_reset_user_time.strftime('%d')} <---- {freq.code}")
                         while temp_reset_user_time.strftime('%d') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
                         if soonest_date:
