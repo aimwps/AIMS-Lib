@@ -8,42 +8,25 @@ from dateutil import parser
 import io, urllib, base64
 import matplotlib.backends.backend_agg as backend
 from matplotlib.figure import Figure
-def prettify_tracker_log_dict(dict):
+def prettify_tracker_status_dict(dict):
 
     pretty_status = {
-                    "count_value":"Still working on it..",
-                    "min_showup": "You showed up!",
-                    "boolean_success": "Great success!!",
-                    "fail_or_no_submit":"Did not complete",}
+                    "period_progressing":"You're still working on it",
+                    "period_complete": "You've already submitted this period",
+                    "period_not_begun": "This period is not active yet",}
+    tracker_types = {'maximize':'Count Up',
+                    'minimize': 'Count Down',
+                    'boolean': 'Yes or No',
+                    }
 
-    if dict['tracker'].metric_tracker_type == "boolean":
-        if dict['next_period_status'] == "progressing":
-            status = pretty_status[dict['boolean_status']]
-        else:
-            status = "awaiting progress"
-        dict_status_pretty = {  "tracker type": "Yes or no",
-                                "period starts": dict["period_log_start"],
-                                "period ends": dict['period_log_end'],
-                                "period status": status,
-                                }
-    else:
-        if dict["tracker"].metric_tracker_type == "maximize":
-            tracker_type = "counting up"
-        else:
-            tracker_type = "counting down"
-
-        if dict['count_status'] != None:
-            status = pretty_status[dict['count_status']]
-        else:
-            status = "awaiting progress"
-        dict_status_pretty = {  "tracker type": tracker_type,
-                                "period starts": dict["period_log_start"],
-                                "period ends": dict['period_log_end'],
-                                "period status": status,
-                                "logs in period": dict['count_quantity'],
-                                "total count": dict['count_status'],
-                                }
-
+    dict_status_pretty = {  "tracker type": tracker_types[dict['tracker'].metric_tracker_type],
+                            "period starts": dict["next_period_start"].strftime("%d/%m/%y @ %H:%M:%S"),
+                            "period ends": dict['next_period_end'].strftime("%d/%m/%y @ %H:%M:%S"),
+                            "period status": pretty_status[dict['next_period_status']],
+                            }
+    if dict['tracker'] != "boolean":
+        dict_status_pretty["logs in period"]= dict['next_period_log_counts']
+        dict_status_pretty["total count"] = dict['next_period_log_total_value']
     return dict_status_pretty
 
 def get_next_sunday():
