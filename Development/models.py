@@ -9,7 +9,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
 from django.utils.timezone import now
 from Members.models import MemberProfile
-from .utils import get_next_sunday
+from .utils import get_next_sunday, generate_heatmap_from_df
 import pandas as pd
 import numpy as np
 import calmap, io, urllib, base64
@@ -275,53 +275,31 @@ class StepTracker(models.Model):
                                             "heatmap_value":found_records['count_value'].dropna().sum()+count_lower},
                                             ignore_index=True)
 
-        # print("PAYLOAD FOR GET HEATMAP DATAFRME")
-        # print(df.info())
-        # print(df.head())
-        # print("---------------------------")
-        # print(heatmap_df.info())
-        # print(heatmap_df.head())
-        # print("\n\n\n\n xxxx")
-        # print(f"length heatmap_df {len(heatmap_df)}, length date_ranges =  {len(historical_date_ranges)}")
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-        heatmap_df = heatmap_df.set_index('date_time')
-        if len(heatmap_df) > 182:
+        #heatmap_df = heatmap_df.set_index('date_time')
+        if len(heatmap_df) >= 182:
             heatmap_df = heatmap_df.tail(182)
+        else:
+            start_point = heatmap_df.date_time.min()
+            iterations = 182-len(heatmap_df)
+            for i in range(iterations):
+                heatmap_df = heatmap_df.append({"date_time":start_point- relativedelta(days=i),
+                                    "heatmap_value":None},
+                                    ignore_index=True)
+                # heatmpap_df = ({"date_time":date[0]- relativedelta(days=i),
+                #                 "heatmap_value":np.NaN},
+                #                 ignore_index=True)
+        heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
+        heatmap_df.to_csv("testing_data.csv")
 
-        return (heatmap_df, (vmin, vmax))
+        return (heatmap_df, (count_lower, vmax))
 
 
     def get_heatmap(self):
         heatmap_df, settings = self.get_heatmap_dataframe()
-        vmin, vmax = settings
-
-        fig = plt.figure(figsize=(12,3))
-        ax = fig.add_subplot(111, aspect="equal")
-        date_arr = heatmap_df['heatmap_value'].to_numpy()
-        dates = heatmap_df.index.to_numpy()
-        cal_arr = np.empty(182)
-
-        for i, val in enumerate(date_arr,1):
-            cal_arr[-i]= val
-        print(cal_arr)
-        if self.record_log_length == 'day':
-            with plt.rc_context({'xtick.color': 'black','ytick.color': 'black'}):
-                fig.set_facecolor('white')
-                ax.set_facecolor('white')
-                cax = calmap.yearplot(heatmap_df['heatmap_value'], cmap='Oranges',vmin=int(vmin), vmax=int(vmax), fillcolor='white',daylabels=['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],dayticks=[0, 1,2,3,4,5, 6],
-                                linewidth=2, ax=ax)
-                cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
-                cbar.ax.set_xticklabels(["Incomplete", "Minimum show", "Progressing", "Success"])
-        else:
-            print("Error")
-
-        plt.tight_layout()
-        buf = io.BytesIO()
-        fig.savefig(buf, format="png")
-        buf.seek(0)
-        string = base64.b64encode(buf.read())
-        uri = urllib.parse.quote(string)
-        return uri
+        count_lower, count_upper = settings
+        img_str = generate_heatmap_from_df(heatmap_df, count_lower, count_upper)
+        return img_str
 
     def get_next_period(self):
         member_profile = MemberProfile.objects.get(author=self.on_behaviour.on_aim.author.id)
