@@ -490,12 +490,12 @@ class StepTracker(models.Model):
                 soonest_date = None
                 for freq_code in all_custom_freq_code:
                     temp_reset_user_time = self.record_start_date
-                    print(f"---> {temp_reset_user_time} ----> {temp_reset_user_time.strftime('%A')} <---- {freq_code.code}")
+                    #print(f"---> {temp_reset_user_time} ----> {temp_reset_user_time.strftime('%A')} <---- {freq_code.code}")
                     if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
 
 
                         while temp_reset_user_time.strftime('%A') != freq_code.code:
-                            print(f"{temp_reset_user_time},  {temp_reset_user_time.strftime('%A')},  {freq_code.code}")
+                            #print(f"{temp_reset_user_time},  {temp_reset_user_time.strftime('%A')},  {freq_code.code}")
                             temp_reset_user_time += relativedelta(days=1)
                         if soonest_date:
                             if soonest_date > temp_reset_user_time:
@@ -525,7 +525,7 @@ class StepTracker(models.Model):
         elif self.record_log_length =="month":
             if self.record_frequency =="monthly":
                 start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
-                while start_date.strftime('%d') != str(member_profile.month_reset_day).zfill(2):
+                while start_date.strftime('%d') != str(member_profile.month_reset_day):
                     start_date += relativedelta(months=1)
                 end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
             else:
