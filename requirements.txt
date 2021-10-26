@@ -41,7 +41,7 @@ pytz==2021.1
 PyYAML==5.4.1
 redis==3.5.3
 regex==2021.8.28
-requests==2.26.0gitn
+requests==2.26.0
 sacremoses==0.0.45
 sentencepiece==0.1.96
 six==1.16.0
