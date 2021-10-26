@@ -317,6 +317,7 @@ class StepTracker(models.Model):
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
                 print(all_custom_freq_code)
+                print(f"HERE MOFO: {self.id} // {self.record_frequency} // {self.record_log_length}")
                 soonest_date = None
                 for freq_code in all_custom_freq_code:
                     temp_reset_user_time = reset_user_time
