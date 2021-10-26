@@ -73,8 +73,6 @@ def calendar_heatmap(ax, dates, data, count_lower, count_upper):
     label_days(ax, dates, i, j, calendar)
     label_months(ax, dates, i, j, calendar)
     tick_g = [0, count_upper//4, count_lower, count_upper ]
-    print(tick_g)
-    print("hweriowjeoliqwjeoliqwjeoiqwed")
     ax.figure.colorbar(im, ticks=tick_g)
     # cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
     #cbar.ax.set_xticklabels(["Incomplete", "Minimum show", count_lower//2, count_upper//2])

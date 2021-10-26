@@ -316,6 +316,7 @@ class StepTracker(models.Model):
                     end_date =  reset_user_time - timedelta(seconds=1)
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+                print(all_custom_freq_code)
                 soonest_date = None
                 for freq_code in all_custom_freq_code:
                     temp_reset_user_time = reset_user_time
