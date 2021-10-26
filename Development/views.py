@@ -18,15 +18,13 @@ from .development_serializers import StepTrackerSerializer
 
 
 def submit_tracker_log(request):
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    print(request.POST)
+
     tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
     submit_user = get_object_or_404(User, id=request.POST.get("submit_user"))
     new_log = StepTrackerLog(author=submit_user,
                             on_tracker=tracker,
                             submit_type=request.POST.get("submit_type"),
                             count_value=request.POST.get("count_value"))
-    print(f"new log {new_log} {new_log.count_value}")
     new_log.save()
     response = json.dumps({"complete":True})
     return HttpResponse(response)

@@ -219,7 +219,7 @@ class StepTracker(models.Model):
 
         if len(df) > 0:
 
-            print("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
+
             df['date_time'] = pd.to_datetime(df['create_date'].astype(str) +" " + df['create_time'].astype(str))
             df = df[['date_time', 'submit_type', 'count_value']]
             df = df.sort_values('date_time', ascending=True)
