@@ -215,11 +215,8 @@ class StepTracker(models.Model):
             (ds[0], ds[1])
             )
         df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
-
-
+        pd.set_option("display.max_rows", None, "display.max_columns", None)
         if len(df) > 0:
-
-
             df['date_time'] = pd.to_datetime(df['create_date'].astype(str) +" " + df['create_time'].astype(str))
             df = df[['date_time', 'submit_type', 'count_value']]
             df = df.sort_values('date_time', ascending=True)
@@ -230,62 +227,66 @@ class StepTracker(models.Model):
                             "count_value":[] })
 
         heatmap_df = pd.DataFrame({"date_time":[], "heatmap_value":[]})
-        if self.record_log_length == "day":
-            if self.metric_tracker_type =="boolean":
-                vmin = 0.0
-                vmax = 100.0
-                count_lower = 50
-                minimum_show = vmax // 4
-            else:
-                vrange = np.abs(self.metric_max-self.metric_min)
-                vmin = 0.0
-                vmax = vrange * 2
-                count_lower = vrange // 2
-                count_upper = vmax
-                minimum_show = vrange // 4
+        if self.metric_tracker_type =="boolean":
+            vmin = 0.0
+            vmax = 100.0
+            count_lower = 50
+            minimum_show = vmax // 4
+        else:
+            metric_range = np.abs(self.metric_max-self.metric_min)
+            vmin = 0.0
+            vmax = metric_range*2
+            count_lower = metric_range
+            minimum_show = metric_range //2
+            count_upper = vmax
 
-            for date in pd_date_ranges:
-                found_records = df[ (df['date_time'] >= date[0]) & (df['date_time']<= date[1])]
-                if len(found_records)==0:
-                    df2 = pd.DataFrame({"date_time":[date[0]+ relativedelta(hours=12)],
-                                        "heatmap_value":[vmin]})
-                    heatmap_df = heatmap_df.append(df2,
+        for date in pd_date_ranges:
+            date_range = date[1]-date[0]
+            day_range = date_range.days
+            found_records = df[ (df['date_time'] >= date[0]) & (df['date_time']<= date[1])]
+            if len(found_records)==0:
+                for i in range(day_range+1):
+                    heatmap_df = heatmap_df.append({"date_time":date[0]+relativedelta(days=i),
+                                        "heatmap_value":vmin},
                                         ignore_index=True)
-                elif len(found_records)==1:
-                    if "min_showup" in found_records['submit_type']:
-                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+            else:
+                if "min_showup" in found_records['submit_type'].values:
+                    for i in range(day_range+1):
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+relativedelta(days=i),
                                             "heatmap_value":minimum_show},
                                             ignore_index=True)
 
-                    elif "fail_or_no_submit" in found_records['submit_type']:
-                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                elif "fail_or_no_submit" in found_records['submit_type'].values:
+                    for i in range(day_range+1):
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+relativedelta(days=i),
                                             "heatmap_value":vmin},
                                             ignore_index=True)
-                    elif "boolean_success" in found_records['submit_type']:
-                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
+                elif "boolean_success" in found_records['submit_type'].values:
+                    for i in range(day_range+1):
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+relativedelta(days=i),
                                             "heatmap_value":vmax},
                                             ignore_index=True)
-                    else:
-
-                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
-                                            "heatmap_value":found_records['count_value'].sum()+count_lower},
-                                            ignore_index=True)
                 else:
-                    if "fail_or_no_submit" not in found_records['submit_type']:
-
-                        heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
-                                            "heatmap_value":found_records['count_value'].dropna().sum()+count_lower},
+                    for i in range(day_range+1):
+                        heatmap_df = heatmap_df.append({"date_time":date[0]+relativedelta(days=i),
+                                            "heatmap_value":found_records['count_value'].sum()+count_lower},
                                             ignore_index=True)
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-        #heatmap_df = heatmap_df.set_index('date_time')
+        pd.set_option("display.max_rows", None, "display.max_columns", None)
+
         if len(heatmap_df) >= 182:
             heatmap_df = heatmap_df.tail(182)
-        else:
+        elif len(heatmap_df) > 0:
             start_point = heatmap_df.date_time.min()
             iterations = 182-len(heatmap_df)
-            print(f"Start point: {start_point}")
-            for i in range(iterations):
+            for i in range(1,iterations+1):
+                heatmap_df = heatmap_df.append({"date_time":start_point - relativedelta(days=i),
+                                    "heatmap_value":None},
+                                    ignore_index=True)
+        else:
+            start_point = get_next_sunday()
+            for i in range(182):
                 heatmap_df = heatmap_df.append({"date_time":start_point - relativedelta(days=i),
                                     "heatmap_value":None},
                                     ignore_index=True)
@@ -317,8 +318,6 @@ class StepTracker(models.Model):
                     end_date =  reset_user_time - timedelta(seconds=1)
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
-                print(all_custom_freq_code)
-                print(f"HERE MOFO: {self.id} // {self.record_frequency} // {self.record_log_length}")
                 soonest_date = None
                 for freq_code in all_custom_freq_code:
                     temp_reset_user_time = reset_user_time
@@ -341,15 +340,6 @@ class StepTracker(models.Model):
                             soonest_date = temp_reset_user_time
                     else:
                         print("unrecognised freq code")
-
-                #
-                # if soonest_date:
-                #     if now > soonest_date:
-                #         start_date = soonest_date
-                #         end_date =  soonest_date+ timedelta(hours=23, minutes=59, seconds=59)
-                # else:
-                #     soonest_date = temp_reset_user_time
-
                 if now > soonest_date:
                     start_date = soonest_date
                     end_date =  soonest_date+ timedelta(hours=23, minutes=59, seconds=59)
@@ -376,6 +366,7 @@ class StepTracker(models.Model):
             else:
                 print("Custom weeks not avalabile yet")
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
+
             return start_date, end_date
 
         elif self.record_log_length == "month":

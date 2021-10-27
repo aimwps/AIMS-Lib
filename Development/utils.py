@@ -69,11 +69,11 @@ def calendar_array(dates, data):
 def calendar_heatmap(ax, dates, data, count_lower, count_upper):
     i, j, calendar = calendar_array(dates, data)
     data_max = np.nanmax(data)
-    im = ax.imshow(calendar, interpolation='none', cmap='Oranges', aspect="auto")
+    im = ax.imshow(calendar, interpolation='none', vmin=0, vmax=count_upper, cmap='Oranges', aspect="auto")
     label_days(ax, dates, i, j, calendar)
     label_months(ax, dates, i, j, calendar)
     tick_g = [0, count_upper//4, count_lower, count_upper ]
-    ax.figure.colorbar(im, ticks=tick_g)
+    ax.figure.colorbar(im)
     # cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
     #cbar.ax.set_xticklabels(["Incomplete", "Minimum show", count_lower//2, count_upper//2])
 
