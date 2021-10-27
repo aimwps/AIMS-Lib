@@ -42,13 +42,13 @@ def generate_heatmap_from_df(df, vmin, vmax):
     dates = list(df['date_time'])
     data = list(df['heatmap_value'])
     data = [d if isinstance(d, float) else np.nan for d in data]
-    fig = Figure(figsize=(7, 10))
+    fig = Figure(figsize=(12, 18))
     canvas = backend.FigureCanvas(fig)
     ax = fig.add_subplot(111)
     calendar_heatmap(ax, dates, data, vmin, vmax)
 
     buf = io.BytesIO()
-    fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0)
+    fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0.1)
     buf.seek(0)
 
     string = base64.b64encode(buf.read())

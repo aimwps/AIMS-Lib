@@ -28,14 +28,28 @@ class MemberProfile(models.Model):
 
     def __str__(self):
         return str(self.user_profile)
-    def next_user_adjusted_day_period(self):
-        pass
-    def next_user_adjusted_week_period(self):
-        pass
-    def next_user_adjusted_month_period(self):
-        pass
-    def next_user_adjusted_year_period(self):
-        pass
+    def today_to_user_time(self):
+        now = datetime.today()
+        return datetime.combine(now, self.day_reset_time)
+
+    def today_to_user_weekday_time(self):
+        res = self.today_to_user_time()
+        while res.strftime('%A') != self.week_reset_day:
+            res += relativedelta(days=1)
+        return res
+
+    def today_to_user_monthdate_time(self):
+        res = self.today_to_user_time()
+        while res.strftime('%-d') != str(self.month_reset_day):
+            res += relativedelta(days=1)
+        return res
+
+    # def next_user_adjusted_week_period(self):
+    #     pass
+    # def next_user_adjusted_month_period(self):
+    #     pass
+    # def next_user_adjusted_year_period(self):
+    #     pass
 
 
 
