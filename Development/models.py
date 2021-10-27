@@ -284,8 +284,9 @@ class StepTracker(models.Model):
         else:
             start_point = heatmap_df.date_time.min()
             iterations = 182-len(heatmap_df)
+            print(f"Start point: {start_point}")
             for i in range(iterations):
-                heatmap_df = heatmap_df.append({"date_time":start_point- relativedelta(days=i),
+                heatmap_df = heatmap_df.append({"date_time":start_point - relativedelta(days=i),
                                     "heatmap_value":None},
                                     ignore_index=True)
 
