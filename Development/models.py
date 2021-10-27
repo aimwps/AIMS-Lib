@@ -185,8 +185,6 @@ class StepTracker(models.Model):
                                             ignore_index=True)
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-        pd.set_option("display.max_rows", None, "display.max_columns", None)
-
 
         if len(heatmap_df) >= 182:
             heatmap_df = heatmap_df.tail(182)
@@ -205,7 +203,7 @@ class StepTracker(models.Model):
                                     ignore_index=True)
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-        heatmap_df.to_csv("testing_data.csv")
+        heatmap_df = heatmap_df.set_index('date_time')
 
         return (heatmap_df, (count_lower, vmax))
 

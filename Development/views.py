@@ -16,6 +16,13 @@ from django.contrib.auth.models import User
 from .utils import prettify_tracker_status_dict
 from .development_serializers import StepTrackerSerializer
 
+def get_tracker_heatmap_data(request):
+    tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
+    heatmap_df, settings = tracker.get_heatmap_dataframe()
+    data = {'dataframe': heatmap_df,
+            'count_lower': settings[0],
+            'count_upper': settings[1]}
+    return JsonResponse(data, safe=False)
 
 def submit_tracker_log(request):
 
@@ -193,7 +200,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                     for tracker in all_behaviour_trackers:
                         tracker_status = tracker.get_status_dict()
 
-                        processed_trackers.append((tracker, prettify_tracker_status_dict(tracker_status), tracker.get_heatmap()))
+                        processed_trackers.append((tracker, prettify_tracker_status_dict(tracker_status), tracker.get_heatmap_dataframe()))
 
                     ## Assign the trackers to the behaviours for viewing aims dash.
                     trackers_behaviours[behaviour] = processed_trackers
