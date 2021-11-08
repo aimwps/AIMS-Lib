@@ -128,7 +128,6 @@ class StepTracker(models.Model):
             (ds[0], ds[1])
             )
         df = pd.DataFrame.from_records(StepTrackerLog.objects.filter(on_tracker=self).values("create_date", "create_time","count_value", "submit_type"))
-        pd.set_option("display.max_rows", None, "display.max_columns", None)
         if len(df) > 0:
             df['date_time'] = pd.to_datetime(df['create_date'].astype(str) +" " + df['create_time'].astype(str))
             df = df[['date_time', 'submit_type', 'count_value']]
@@ -184,27 +183,7 @@ class StepTracker(models.Model):
                         heatmap_df = heatmap_df.append({"date_time":date[0]+relativedelta(days=i),
                                             "heatmap_value":found_records['count_value'].sum()+count_lower},
                                             ignore_index=True)
-        else:
-            print("problem lays here \n")
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-<<<<<<< HEAD
-        #heatmap_df = heatmap_df.set_index('date_time')
-        # if len(heatmap_df) >= 182:
-        #     heatmap_df = heatmap_df.tail(182)
-        # elif len(heatmap_df) > 0:
-        #     start_point = heatmap_df.date_time.min()
-        #     print(f"start_point: {start_point}")
-        #     iterations = 182-len(heatmap_df)
-        #     for i in range(iterations):
-        #         heatmap_df = heatmap_df.append({"date_time":start_point- relativedelta(days=i),
-        #                             "heatmap_value":None},
-        #                             ignore_index=True)
-        # else:
-        #
-
-        heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-        #heatmap_df.to_csv("testing_data.csv")
-=======
 
         if len(heatmap_df) >= 182:
             heatmap_df = heatmap_df.tail(182)
@@ -224,7 +203,6 @@ class StepTracker(models.Model):
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
         heatmap_df = heatmap_df.set_index('date_time')
->>>>>>> herokulive
 
         return (heatmap_df, (count_lower, vmax))
 
