@@ -42,13 +42,13 @@ def generate_heatmap_from_df(df, vmin, vmax):
     dates = list(df['date_time'])
     data = list(df['heatmap_value'])
     data = [d if isinstance(d, float) else np.nan for d in data]
-    fig = Figure(figsize=(7, 10))
+    fig = Figure(figsize=(12, 18))
     canvas = backend.FigureCanvas(fig)
     ax = fig.add_subplot(111)
     calendar_heatmap(ax, dates, data, vmin, vmax)
 
     buf = io.BytesIO()
-    fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0)
+    fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0.1)
     buf.seek(0)
 
     string = base64.b64encode(buf.read())
@@ -69,13 +69,11 @@ def calendar_array(dates, data):
 def calendar_heatmap(ax, dates, data, count_lower, count_upper):
     i, j, calendar = calendar_array(dates, data)
     data_max = np.nanmax(data)
-    im = ax.imshow(calendar, interpolation='none', cmap='Oranges', aspect="auto")
+    im = ax.imshow(calendar, interpolation='none', vmin=0, vmax=count_upper, cmap='Oranges', aspect="auto")
     label_days(ax, dates, i, j, calendar)
     label_months(ax, dates, i, j, calendar)
     tick_g = [0, count_upper//4, count_lower, count_upper ]
-    print(tick_g)
-    print("hweriowjeoliqwjeoliqwjeoiqwed")
-    ax.figure.colorbar(im, ticks=tick_g)
+    ax.figure.colorbar(im)
     # cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
     #cbar.ax.set_xticklabels(["Incomplete", "Minimum show", count_lower//2, count_upper//2])
 
