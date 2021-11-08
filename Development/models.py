@@ -12,97 +12,9 @@ from Members.models import MemberProfile
 from .utils import get_next_sunday, generate_heatmap_from_df
 import pandas as pd
 import numpy as np
-import calmap, io, urllib, base64
+import io, urllib, base64
 import matplotlib.pyplot as plt
-USER_STATUS =   (('deleted', 'deleted'),
-                ('active', 'active'),
-                ('inactive', 'inactive'),
-                ('completed', 'completed'),
-                )
-RECORD_FREQUENCY =(
-                    ('daily', 'Every day'),
-                    ('weekly', 'Every week'),
-                    ('monthly', 'Every month'),
-                    ('yearly', 'Every year'),
-                    ('custom', 'Specific days, weeks or months'),
-                )
-COMP_CRITERIA = (('consecutive', 'consecutive'),
-                ('total', 'total'))
-TRACKER_TYPE = (('maximize', 'Count Up'),
-                ('minimize', 'Count Down'),
-                ('boolean', 'Yes or No'),
-                )
-NUMBER_TYPE = (('float', 'Upto 2 decimal places'),
-                ('integer', 'Whole number only'),
-                )
-CUSTOM_LOG_CODES =[
-            ("Day repeat",
-                        (
-                            ("Monday", "Monday"),
-                            ("Tuesday", "Tuesday"),
-                            ("Wednesday", "Wendnesday"),
-                            ("Thursday", "Thursday"),
-                            ("Friday", "Friday"),
-                            ("Saturday", "Saturday"),
-                            ("Sunday", "Sunday")
-                        )
-            ),
-            ("Day of month repeat",
-                        (
-                            ("1", 1),
-                            ("2", 2),
-                            ("3", 3),
-                            ("4", 4),
-                            ("5", 5),
-                            ("6", 6),
-                            ("7", 7),
-                            ("8", 8),
-                            ("9", 9),
-                            ("10", 10),
-                            ("11", 11),
-                            ("12", 12),
-                            ("13", 13),
-                            ("14", 14),
-                            ("15", 15),
-                            ("16", 16),
-                            ("17", 17),
-                            ("18", 18),
-                            ("19", 19),
-                            ("20", 20),
-                            ("21", 21),
-                            ("22", 22),
-                            ("23", 23),
-                            ("24", 24),
-                            ("25", 25),
-                            ("26", 26),
-                            ("27", 27),
-                            ("28", 28),
-                            ("29", 29),
-                            ("30", 30),
-                            ("31", 31),
-                            ("last_day", "Last day in month")
-                        )
-            ),
-            ("Month of year repeat",
-                        (
-                            ("January", "January"),
-                            ("February", "February"),
-                            ("March", "March"),
-                            ("April", "April"),
-                            ("May", "May"),
-                            ("June", "June"),
-                            ("July", "July"),
-                            ("August", "August"),
-                            ("September", "September"),
-                            ("October", "October"),
-                            ("November", "November"),
-                            ("December", "December")
-                        )
-            )]
-LOG_LENGTH = (("day", "A day"),
-            ("week", "A week"),
-            ("month", "A month"),
-            ("year", "A year"))
+from .char_choices import *
 
 class Aim(models.Model):
     title = models.TextField()
@@ -276,21 +188,25 @@ class StepTracker(models.Model):
                         heatmap_df = heatmap_df.append({"date_time":date[0]+ relativedelta(hours=12),
                                             "heatmap_value":found_records['count_value'].dropna().sum()+count_lower},
                                             ignore_index=True)
-
+        else:
+            print("problem lays here \n")
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
         #heatmap_df = heatmap_df.set_index('date_time')
-        if len(heatmap_df) >= 182:
-            heatmap_df = heatmap_df.tail(182)
-        else:
-            start_point = heatmap_df.date_time.min()
-            iterations = 182-len(heatmap_df)
-            for i in range(iterations):
-                heatmap_df = heatmap_df.append({"date_time":start_point- relativedelta(days=i),
-                                    "heatmap_value":None},
-                                    ignore_index=True)
+        # if len(heatmap_df) >= 182:
+        #     heatmap_df = heatmap_df.tail(182)
+        # elif len(heatmap_df) > 0:
+        #     start_point = heatmap_df.date_time.min()
+        #     print(f"start_point: {start_point}")
+        #     iterations = 182-len(heatmap_df)
+        #     for i in range(iterations):
+        #         heatmap_df = heatmap_df.append({"date_time":start_point- relativedelta(days=i),
+        #                             "heatmap_value":None},
+        #                             ignore_index=True)
+        # else:
+        #
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
-        heatmap_df.to_csv("testing_data.csv")
+        #heatmap_df.to_csv("testing_data.csv")
 
         return (heatmap_df, (count_lower, vmax))
 
