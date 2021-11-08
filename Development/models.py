@@ -203,7 +203,7 @@ class StepTracker(models.Model):
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
         heatmap_df = heatmap_df.set_index('date_time')
-
+        print(heatmap_df.head())
         return (heatmap_df, (count_lower, vmax))
 
     def get_heatmap(self):
