@@ -11,7 +11,7 @@
     - - mouse over will display the range.
     - - - therefore the dataframe should look like:
     "Date": datetime
-    "Value": 0 to tracker max
+    "Heatmap Value": 0 to tracker max
     "Log length": "day, week, month, year"
     "Log period": "15/11/21 @ 5am to 22/11/21 @ 4.59am"
 

@@ -16,6 +16,7 @@ import numpy as np
 import io, urllib, base64
 import matplotlib.pyplot as plt
 from .char_choices import *
+from sklearn.preprocessing import MinMaxScaler
 
 class Aim(models.Model):
     title = models.TextField()
@@ -119,6 +120,75 @@ class StepTracker(models.Model):
             sentence += "No milestone set"
         return sentence
 
+
+    def get_calmap_data(self):
+        # 1. get a list of date ranges from when the tracking begins until the current date
+        historical_date_ranges = self.get_period_history()
+        data_dict = {
+                    "cal_date": [],
+                    "period_start": [],
+                    "period_end":[],
+                    "calmap_value":[],
+                    "count_value": [],
+                    }
+
+        # 2. for each date range filter log results
+        for (start_date, end_date) in historical_date_ranges:
+            period_results = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
+            if period_results:
+                result_values = list(period_results.values_list('submit_type', flat=True))
+
+                if "min_showup" in result_values:
+                    calmap_value = 25
+                    count_value = np.nan
+
+                elif "fail_or_no_submit" in result_values:
+                    calmap_value = 0
+                    count_value = np.nan
+
+                elif "boolean_success" in result_values:
+                    calmap_value = 100
+                    count_value = np.nan
+                else:
+                    calmap_value = np.nan
+                    count_value = sum(list(period_results.values_list('count_value', flat=True)))
+                    if self.metric_tracker_type == "minimize":
+                        if count_value <= self.metric_max:
+                            calmap_value = 100
+                    else:
+                        if count_value >= self.metric_max:
+                            calmap_value = 100
+
+            else:
+                calmap_value = 0
+                count_value = np.nan
+
+            #print(f"{self}: calmap_value: {calmap_value}, count_value: {count_value}, start_date: {start_date}")
+
+        # 3. set each date in the date range to the log results
+            cal_date = start_date.date()
+            while cal_date < end_date.date():
+                data_dict['cal_date'].append(cal_date)
+                data_dict['period_start'].append(start_date)
+                data_dict['period_end'].append(end_date)
+                data_dict['count_value'].append(count_value)
+                data_dict['calmap_value'].append(calmap_value)
+                cal_date += relativedelta(days=1)
+
+        # 4. create a dataframe and normalise the count values between 50 & 100
+        df = pd.DataFrame(data_dict)
+        nan_index = df['calmap_value'].isna()
+        print(self)
+
+        scaler = MinMaxScaler(feature_range=(50,100))
+        df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['count_value']])
+        print("yxyxyxyxyxyxy")
+        print(df.head())
+        print(df.tail())
+        print(df.info())
+        print("XXXXXXXXXX")
+
+
     def get_heatmap_dataframe(self):
         today = datetime.today()
         historical_date_ranges = self.get_period_history()
@@ -203,7 +273,6 @@ class StepTracker(models.Model):
 
         heatmap_df = heatmap_df.sort_values('date_time', ascending=True)
         heatmap_df = heatmap_df.set_index('date_time')
-        print(heatmap_df.head())
         return (heatmap_df, (count_lower, vmax))
 
     def get_heatmap(self):
@@ -212,17 +281,16 @@ class StepTracker(models.Model):
         img_str = generate_heatmap_from_df(heatmap_df, count_lower, count_upper)
         return img_str
 
-    def get_next_day(self):
-        today_at_user_time = self.on_behaviour.on_aim.author.profile.today_to_user_time()
-        now = datetime.today()
-        start_date = self.record_start_date
-        days_to_add_on = 0
-        if now > reset_user_time:
-            start_date = reset_user_time
-            end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
-        else:
-            start_date = reset_user_time - timedelta(hours=24)
-            end_date =  reset_user_time - timedelta(seconds=1)
+    # def get_next_day(self):
+    #     today_at_user_time = self.on_behaviour.on_aim.author.profile.today_to_user_time()
+    #     now = datetime.today()
+    #     start_date = self.record_start_date
+    #     if now > reset_user_time:
+    #         start_date = reset_user_time
+    #         end_date =  reset_user_time + timedelta(hours=23, minutes=59, seconds=59)
+    #     else:
+    #         start_date = reset_user_time - timedelta(hours=24)
+    #         end_date =  reset_user_time - timedelta(seconds=1)
 
     def get_soonest_frequency_code(self):
         now = self.on_behaviour.on_aim.author.profile.today_to_user_time()
@@ -500,6 +568,7 @@ class StepTracker(models.Model):
             return "displayYear"
 
     def get_status_dict(self):
+        self.get_calmap_data()
         start, end = self.get_next_period()
         display_section = self.get_tracker_display_section(start, end)
         status, total_logs, total_log_values = self.get_current_period_status()
