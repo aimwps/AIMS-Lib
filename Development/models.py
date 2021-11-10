@@ -181,6 +181,18 @@ class StepTracker(models.Model):
         print(self)
 
         scaler = MinMaxScaler(feature_range=(50,100))
+        df['adjusted_calmap_value'] = df['calmap_value']
+        if self.metric_tracker_type == "minimize":
+            x = df[df['adjusted_calmap_value'] <= self.metric_max]
+            print("xxxxxxxxxxxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+            print(x.head())
+            print(x.tail())
+        if self.metric_tracker_type == "maximize":
+            y = df[ df['adjusted_calmap_value'] >= self.metric_max]
+            print("yyyyyyyyyyyyyyyyyyYYYYYYYYYYYYYYYYYYYYYYYY")
+            print(y.head())
+            print(y.tail())
+        print("ENDENDENDENDNENDNENDN")
         df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['count_value']])
         print("yxyxyxyxyxyxy")
         print(df.head())
