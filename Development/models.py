@@ -163,6 +163,10 @@ class StepTracker(models.Model):
                 calmap_value = 0
                 count_value = np.nan
 
+
+
+                
+
             #print(f"{self}: calmap_value: {calmap_value}, count_value: {count_value}, start_date: {start_date}")
 
         # 3. set each date in the date range to the log results
