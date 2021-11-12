@@ -140,7 +140,7 @@ class StepTracker(models.Model):
                 result_values = list(period_results.values_list('submit_type', flat=True))
 
                 if "min_showup" in result_values:
-                    calmap_value = 25
+                    calmap_value = 250
                     count_value = np.nan
 
                 elif "fail_or_no_submit" in result_values:
@@ -148,7 +148,7 @@ class StepTracker(models.Model):
                     count_value = np.nan
 
                 elif "boolean_success" in result_values:
-                    calmap_value = 100
+                    calmap_value = 1000
                     count_value = np.nan
                 else:
                     calmap_value = np.nan
@@ -160,7 +160,7 @@ class StepTracker(models.Model):
                         else:
                             adjusted_count_value = count_value
                         if count_value >= self.metric_min:
-                            calmap_value = 25
+                            calmap_value = 250
 
                     if self.metric_tracker_type == "maximize":
                         if count_value >= self.metric_max:
@@ -168,7 +168,7 @@ class StepTracker(models.Model):
                         else:
                             adjusted_count_value = count_value
                         if count_value <= self.metric_min:
-                            calmap_value = 25
+                            calmap_value = 250
             else:
                 calmap_value = 0
                 count_value = np.nan
@@ -188,13 +188,13 @@ class StepTracker(models.Model):
         # 4. create a dataframe and scale the adjusted count_value between 50 & 100
         df = pd.DataFrame(data_dict)
         nan_index = df['calmap_value'].isna()
-        scaler = MinMaxScaler(feature_range=(50,100))
+        scaler = MinMaxScaler(feature_range=(500,1000))
         df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['adjusted_count_value']])
         df['calmap_value'] = df['calmap_value'].round(4)
 
         # reverse count values for minimize
         if self.metric_tracker_type == "minimize":
-            df[df['calmap_value'] >= 50] = np.abs(df[df['calmap_value'] >= 50] -50)
+            df[df['calmap_value'] >= 500] = np.abs(df[df['calmap_value'] >= 500] -500)
 
         df = df.drop('adjusted_count_value', axis=1)
         df['cal_date'] = pd.to_datetime(df['cal_date'])

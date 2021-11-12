@@ -216,14 +216,15 @@ function getCalmapData(tracker_id){
                     data: dataInfo.data,
                     previousSelector: "#CalmapModalBody-prev",
                   	nextSelector: "#CalmapModalBody-next",
-                    range:2,
+                    range:4,
                     // verticalOrientation:true,
-                    cellSize: 35,
+                    cellSize: 20,
 
                     // minDate: sd.setMonth(sd.getMonth() - 1),
                     // maxDate: ed.setMonth(ed.getMonth() + 1),
                     weekStartOnMonday: true,
-                    legendCellSize: 35
+                    legendCellSize: 35,
+                    legend:[250,500,750,1000]
 
 
                   });
