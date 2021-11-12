@@ -15,14 +15,32 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from .utils import prettify_tracker_status_dict
 from .development_serializers import StepTrackerSerializer
+import pandas as pd
+def get_tracker_calmap_data(request):
+    tracker = get_object_or_404(StepTracker, id=request.GET.get("tracker_id"))
 
-def get_tracker_heatmap_data(request):
-    tracker = get_object_or_404(StepTracker, id=request.POST.get("tracker_id"))
-    heatmap_df, settings = tracker.get_heatmap_dataframe()
-    data = {'dataframe': heatmap_df,
-            'count_lower': settings[0],
-            'count_upper': settings[1]}
-    return JsonResponse(data, safe=False)
+    df = tracker.get_calmap_data()
+
+
+    info = {
+            "sd" : (pd.to_datetime(df['cal_date'].min()) -  pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'),
+            "ed" : (pd.to_datetime(df['cal_date'].max()) -  pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'),
+            }
+
+    calmap_data = df[["cal_date", "calmap_value"]]
+    calmap_data.columns = ["date", "value"]
+    calmap_data['date'] = (pd.to_datetime(calmap_data['date']) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
+    calmap_data['value'] = calmap_data['value']
+    calmap_data = calmap_data.set_index('date')
+    data =  calmap_data['value'].to_dict()
+
+    data_info = {
+                "data": data,
+                "info": info
+                }
+    json_data_info = json.dumps(data_info)
+
+    return JsonResponse(json_data_info, safe=False)
 
 def submit_tracker_log(request):
 
@@ -200,7 +218,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
                     for tracker in all_behaviour_trackers:
                         tracker_status = tracker.get_status_dict()
 
-                        processed_trackers.append((tracker, prettify_tracker_status_dict(tracker_status), tracker.get_heatmap_dataframe()))
+                        processed_trackers.append((tracker, prettify_tracker_status_dict(tracker_status)))
 
                     ## Assign the trackers to the behaviours for viewing aims dash.
                     trackers_behaviours[behaviour] = processed_trackers

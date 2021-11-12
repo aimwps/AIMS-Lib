@@ -135,9 +135,8 @@
                         <ul class="list-group list-group-flush my-1 py-1">
                           <li class="list-group-item px-0 border-white">
                             <div class="row text-break">
-                              <div class='col-xs-12 col-md-3 my-2 px-2'>
-                                <p class="lead">Tracker & period details</p>
-                                <br><br>
+                              <div class='col-xs-12 col-md-4 my-2 px-2'>
+                                <p class="lead">Current or most recent</p>
                                 <strong>Frequency: </strong>{{ tracker.0.record_frequency }}<br>
                                 {% for key, value in tracker.1.items %}
                                 <strong>{{key|title}}: </strong> {{value}}<br>
@@ -146,30 +145,27 @@
                               </div>
 
 
-                              <div class="col-xs-12 col-md-9 my-2 px-2">
-                                <p class="lead">Progression history</p>
-                                <img src="data:image/png;base64,{{ tracker.2 }}" style="height: 100%; width: 100%; object-fit: contain">
-
-                            </div>
-                          </li>
-                          <li class="list-group-item px-0">
-                            <div class="row text-break">
-                              <div class='col-xs-12 col-md-3 my-2'>
-                                <p class="lead">Milestone details</p>
-                                {{ tracker.0.get_milestone_sentence|title }}
-                              </div>
-                              <div class="col-xs-12 col-md-9 my-auto">
-                                <div class="progress">
-                                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                              <div class="col-xs-12 col-md-8 my-2 px-2">
+                                <p class="lead">Activity & Progression</p>
+                                <button  type="button" onClick="getCalmapData({{ tracker.0.id }})" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CalmapModal">
+                                  Complete history
+                                </button>
+                                <div class='col-xs-12 col-md-3 my-2'>
+                                  <p class="lead">Milestone details</p>
+                                  {{ tracker.0.get_milestone_sentence|title }}
                                 </div>
-                              </div>
+                                <div class="col-xs-12 col-md-9 my-auto">
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                </div>
                             </div>
                           </li>
 
                         </ul>
                       </div>
                     </div>
-                      </li>
+                  </li>
 
                       <!-- Modal --------------------------------------------------------------------------------------------------------->
                       <div class="modal fade" id="modal_{{tracker.0}}" tabindex="-1" aria-labelledby="modal_{{tracker.0}}Label" aria-hidden="true">
@@ -217,4 +213,29 @@
     </div>
   </div>
 {% endfor %}
+</div>
+<!-- Modal -->
+<div class="modal fade" id="CalmapModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="CalmapModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="CalmapModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row px-0 text-center">
+          <button id="CalmapModalBody-prev" type="button" class="btn btn-primary">previous</button>
+        </div>
+        <div class="row px-0 py-4" id="CalmapModalBody">
+        </div>
+        <div class="row px-0 text-center">
+        <button id="CalmapModalBody-next" type="button" class="btn btn-primary">next</button>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
 </div>

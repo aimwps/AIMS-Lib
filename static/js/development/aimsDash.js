@@ -1,3 +1,5 @@
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
 
 $(document).ready(function () {
   getUncompleteTrackers() ;
@@ -177,7 +179,6 @@ function submitUncomplete(tracker_id){
   })
 
 };
-
 function submitCount(tracker_id, index){
   console.log(tracker_id);
   $.ajax({
@@ -196,3 +197,42 @@ function submitCount(tracker_id, index){
   })
 
 };
+function getCalmapData(tracker_id){
+  $.ajax({
+        type : "GET",
+        url : "/get_calmap_data/",
+        data : {tracker_id : tracker_id,},
+        datatype: 'json',
+        success : function(trackerData){
+          const dataInfo = JSON.parse(trackerData);
+          var sd = new Date(dataInfo.info.sd);
+          var ed = new Date(dataInfo.info.ed);
+          var cal = new CalHeatMap();
+
+          cal.init({itemSelector:"#CalmapModalBody",
+                    domain:"month",
+                    subdomain:"x_day",
+                    dataType:"json",
+                    data: dataInfo.data,
+                    previousSelector: "#CalmapModalBody-prev",
+                  	nextSelector: "#CalmapModalBody-next",
+                    range:2,
+                    // verticalOrientation:true,
+                    cellSize: 35,
+
+                    // minDate: sd.setMonth(sd.getMonth() - 1),
+                    // maxDate: ed.setMonth(ed.getMonth() + 1),
+                    weekStartOnMonday: true,
+                    legendCellSize: 35
+
+
+                  });
+      }})
+};
+
+
+// function loadCalmapToModal(trackerData){
+//
+//
+//
+// };
