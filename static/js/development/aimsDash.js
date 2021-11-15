@@ -220,8 +220,8 @@ function getCalmapData(tracker_id){
                     // verticalOrientation:true,
                     cellSize: 20,
 
-                    // minDate: sd.setMonth(sd.getMonth() - 1),
-                    // maxDate: ed.setMonth(ed.getMonth() + 1),
+                    minDate: sd.setMonth(sd.getMonth() - 1),
+                    maxDate: ed.setMonth(ed.getMonth() + 1),
                     weekStartOnMonday: true,
                     legendCellSize: 35,
                     legend:[250,500,750,1000]
