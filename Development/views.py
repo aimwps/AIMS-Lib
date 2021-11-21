@@ -27,17 +27,27 @@ def get_tracker_calmap_data(request):
             "ed" : (pd.to_datetime(df['cal_date'].max()) -  pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'),
             }
 
-    calmap_data = df[["cal_date", "calmap_value"]]
-    calmap_data.columns = ["date", "value"]
-    calmap_data['date'] = (pd.to_datetime(calmap_data['date']) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
-    calmap_data['value'] = calmap_data['value']
+    tracker_data = df[["cal_date", "calmap_value", "count_value"]]
+
+    tracker_data.columns = ["date", "value","count"]
+    tracker_data['date'] = (pd.to_datetime(tracker_data['date']) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
+    # calmap_data['value'] = calmap_data['value']
+    calmap_data = tracker_data[["date", "value"]]
     calmap_data = calmap_data.set_index('date')
-    data =  calmap_data['value'].to_dict()
+    calmap_data = calmap_data['value'].to_dict()
+
+    count_data = tracker_data[["date", "count"]]
+    #count_data = count_data.dropna()
+    count_data = count_data.set_index('date')
+    count_data = count_data['count'].to_dict()
+
 
     data_info = {
-                "data": data,
-                "info": info
+                "calmap_data": calmap_data,
+                "count_data": count_data,
+                "calmap_settings": info,
                 }
+
     json_data_info = json.dumps(data_info)
 
     return JsonResponse(json_data_info, safe=False)

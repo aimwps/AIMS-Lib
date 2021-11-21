@@ -204,27 +204,43 @@ function getCalmapData(tracker_id){
         data : {tracker_id : tracker_id,},
         datatype: 'json',
         success : function(trackerData){
+          console.log("trackerData", trackerData);
           const dataInfo = JSON.parse(trackerData);
-          var sd = new Date(dataInfo.info.sd);
-          var ed = new Date(dataInfo.info.ed);
+          console.log("dataInfo", dataInfo);
+          var sd = new Date(dataInfo.calmap_settings.sd*1000);
+          var ed = new Date(dataInfo.calmap_settings.ed*1000);
+          ed.setMonth( ed.getMonth() + 2 );
+          var now = Date.now();
+          console.log("Start Date", sd);
+          console.log("End Date", ed);
           var cal = new CalHeatMap();
-
+          $('#CalmapModalBody').empty();
           cal.init({itemSelector:"#CalmapModalBody",
                     domain:"month",
                     subdomain:"x_day",
+                    range: 3,
                     dataType:"json",
-                    data: dataInfo.data,
+                    data: dataInfo.calmap_data,
                     previousSelector: "#CalmapModalBody-prev",
                   	nextSelector: "#CalmapModalBody-next",
-                    range:4,
-                    // verticalOrientation:true,
-                    cellSize: 20,
-
-                    minDate: sd.setMonth(sd.getMonth() - 1),
-                    maxDate: ed.setMonth(ed.getMonth() + 1),
+                    itemNamespace: "cal",
+                    cellPadding: 5,
+                  	domainGutter: 20,
+                    domainDynamicDimension: false,
+                    cellSize: 25,
+                    cellRadius: 4,
+                    start: new Date(now),
+                    minDate: sd,
+                    maxDate: ed,
                     weekStartOnMonday: true,
                     legendCellSize: 35,
-                    legend:[250,500,750,1000]
+                    legend:[250,500,750,1000],
+                    onClick: function(date, nb) {
+                  		$("#onClickDisplay").html("You just clicked <br/>on <b>" +
+                  			date + "</b> <br/>with <b>" +
+                  			(nb === null ? "unknown" : nb) + "</b> items"
+                  		);
+                    };
 
 
                   });
