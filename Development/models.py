@@ -140,8 +140,8 @@ class StepTracker(models.Model):
                 result_values = list(period_results.values_list('submit_type', flat=True))
 
                 if "min_showup" in result_values:
-                    calmap_value = 250
-                    count_value = "minShow"
+                    calmap_value = 249
+                    count_value = "You showed up!!"
 
                 elif "fail_or_no_submit" in result_values:
                     calmap_value = 0
@@ -171,7 +171,7 @@ class StepTracker(models.Model):
                             calmap_value = 250
             else:
                 calmap_value = 0
-                count_value = "uncomplete"
+                count_value = "Uncompleted"
                 adjusted_count_value = np.nan
 
         # 3. set each date in the date range to the log results
@@ -185,7 +185,7 @@ class StepTracker(models.Model):
                 data_dict['adjusted_count_value'].append(adjusted_count_value)
                 cal_date += relativedelta(days=1)
 
-        # 4. create a dataframe and scale the adjusted count_value between 50 & 100
+        # 4. create a dataframe and scale the adjusted count_value between 500 & 1000
         df = pd.DataFrame(data_dict)
         nan_index = df['calmap_value'].isna()
         scaler = MinMaxScaler(feature_range=(500,1000))

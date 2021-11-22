@@ -27,19 +27,21 @@ def get_tracker_calmap_data(request):
             "ed" : (pd.to_datetime(df['cal_date'].max()) -  pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'),
             }
 
-    tracker_data = df[["cal_date", "calmap_value", "count_value"]]
+    tracker_data = df[["cal_date", "calmap_value", "count_value", 'period_start', 'period_end']]
 
-    tracker_data.columns = ["date", "value","count"]
+    tracker_data.columns = ["date", "value", "count", 'period_start', 'period_end']
     tracker_data['date'] = (pd.to_datetime(tracker_data['date']) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
+    tracker_data['period_start'] = tracker_data.period_start.dt.strftime('%d-%m-%Y @ %I:%M %p')
+    tracker_data['period_end'] = tracker_data.period_end.dt.strftime('%d-%m-%Y @ %I:%M %p')
+    # tracker_data['period_end'] = (pd.to_datetime(tracker_data['period_end']) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')
     # calmap_data['value'] = calmap_data['value']
     calmap_data = tracker_data[["date", "value"]]
     calmap_data = calmap_data.set_index('date')
     calmap_data = calmap_data['value'].to_dict()
 
-    count_data = tracker_data[["date", "count"]]
-    #count_data = count_data.dropna()
-    count_data = count_data.set_index('date')
-    count_data = count_data['count'].to_dict()
+    count_data = tracker_data[["date", "count", 'period_start', 'period_end']]
+
+    count_data = count_data.set_index('date').T.to_dict('list')
 
 
     data_info = {

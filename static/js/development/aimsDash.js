@@ -204,20 +204,19 @@ function getCalmapData(tracker_id){
         data : {tracker_id : tracker_id,},
         datatype: 'json',
         success : function(trackerData){
-          console.log("trackerData", trackerData);
+          // console.log("trackerData", trackerData);
           const dataInfo = JSON.parse(trackerData);
-          console.log("dataInfo", dataInfo);
+          // console.log("dataInfo", dataInfo);
           var sd = new Date(dataInfo.calmap_settings.sd*1000);
           var ed = new Date(dataInfo.calmap_settings.ed*1000);
           ed.setMonth( ed.getMonth() + 2 );
-          var now = Date.now();
-          console.log("Start Date", sd);
-          console.log("End Date", ed);
+          var now = new Date();
+          now.setMonth(now.getMonth()-1);
           var cal = new CalHeatMap();
-          $('#CalmapModalBody').empty();
+          $("#CalmapModalBody").empty();
           cal.init({itemSelector:"#CalmapModalBody",
                     domain:"month",
-                    subdomain:"x_day",
+                    subdomain:"day",
                     range: 3,
                     dataType:"json",
                     data: dataInfo.calmap_data,
@@ -227,26 +226,60 @@ function getCalmapData(tracker_id){
                     cellPadding: 5,
                   	domainGutter: 20,
                     domainDynamicDimension: false,
-                    cellSize: 25,
-                    cellRadius: 4,
+                    cellSize: 30,
+                    cellRadius: 0,
                     start: new Date(now),
                     minDate: sd,
                     maxDate: ed,
+                    subDomainTextFormat: "%d",
                     weekStartOnMonday: true,
-                    legendCellSize: 35,
-                    legend:[250,500,750,1000],
+                    // label: {
+                    //   height:100,
+                    // },
+                    legendCellSize: 20,
+                    legend:[1,500, 575, 650, 725,800, 875, 950,1000],
+                    displayLegend: false,
+                    // legendColors: {//min:"white",
+                    //               //max:"#c6471b",
+                    //               empty: "grey",
+                    //               base: "grey",
+                    //
+                    //             },
+                    tooltip: false,
                     onClick: function(date, nb) {
-                  		$("#onClickDisplay").html("You just clicked <br/>on <b>" +
-                  			date + "</b> <br/>with <b>" +
-                  			(nb === null ? "unknown" : nb) + "</b> items"
+                      console.log(dataInfo.count_data);
+                      var userTimezoneOffset = date.getTimezoneOffset() * 60000;
+                      var adjDate = new Date(date.getTime() - userTimezoneOffset);
+                      var dateID = Math.floor(adjDate.getTime()/1000);
+                      let count =  dataInfo.count_data[dateID][0];
+                      var startDate = dataInfo.count_data[dateID][1];
+                      var endDate = dataInfo.count_data[dateID][2];
+                      $('#onClickDisplay').empty();
+                  		$("#onClickDisplay").html("<p><strong>Log period start: </strong>" +
+                      startDate +
+                      "</p><p><strong>Log period end: </strong>" +
+                      endDate +
+                      "</p> <p><strong>Result: </strong>" +
+                      count +
+                      "</p>"
                   		);
-                    };
+                    }
 
 
                   });
       }})
 };
 
+function search(source, name) {
+    var results;
+
+    name = name.toUpperCase();
+    results = $.map(source, function(entry) {
+        var match = entry.name.toUpperCase().indexOf(name) !== -1;
+        return match ? entry : null;
+    });
+    return results;
+}
 
 // function loadCalmapToModal(trackerData){
 //
