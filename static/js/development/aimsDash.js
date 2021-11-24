@@ -246,6 +246,7 @@ function getCalmapData(tracker_id){
                     //
                     //             },
                     tooltip: false,
+                    subDomainTitleFormat: {empty: "{date}", filled: "{date}" },
                     onClick: function(date, nb) {
                       console.log(dataInfo.count_data);
                       var userTimezoneOffset = date.getTimezoneOffset() * 60000;

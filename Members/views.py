@@ -65,7 +65,7 @@ class MemberProfileEdit(LoginRequiredMixin, generic.UpdateView):
     def get_context_data(self,*args, **kwargs):
         #users = MemberProfile.objects.all()
         context = super(MemberProfileEdit, self).get_context_data(*args, **kwargs)
-        user_profile = get_object_or_404(MemberProfile, user_profile=self.kwargs['pk'])
+        user_profile = get_object_or_404(MemberProfile, author=self.kwargs['pk'])
         context['user_profile'] = user_profile
         return context
     def form_valid(self,form):
