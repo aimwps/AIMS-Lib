@@ -16,10 +16,11 @@ from django.contrib.contenttypes.models import ContentType
 CONTENT_TYPE = (('Article', "Article"),
                 ('VideoLecture', "Video Lecture"),
                 )
+
+
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
     title = models.CharField(max_length=255)
-    #participants = models.ManyToManyField(User, blank=True, related_name="pathway_users")
     description = models.TextField(blank=True)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
@@ -65,6 +66,18 @@ class PathwayCompletitionRecord(models.Model):
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     pathway_content = models.ForeignKey(PathwayContent, on_delete=models.CASCADE)
+
+
+
+class PathwayParticipant(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)#, related_name='pathway_participant')
+    on_pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="participants")
+    create_date = models.DateField(auto_now=False,auto_now_add=True)
+    create_time = models.TimeField(auto_now=False,auto_now_add=True)
+
+class PathwayProgressionTracker(models.Model):
+    on_participant = models.ForeignKey(PathwayParticipant, on_delete=models.CASCADE, related_name='pathway_tracker')
+
 
 # class VideoLectureCompletionRecord(models.Model):
 #     RECORD_STATUS = (('first_completion', 'first_completion'),
