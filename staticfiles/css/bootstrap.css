@@ -3074,9 +3074,10 @@ fieldset:disabled .btn {
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #e95420;
+  color: #000000;
+  background-color: transparent;
   border-color: #e95420;
+
 }
 
 .btn-primary:hover {
@@ -11464,4 +11465,49 @@ a.anchor {
 .checkbox-xl .custom-control-label {
   padding-top: 23px;
   padding-left: 10px;
+}
+
+.col-bg-q1 {
+	background-color: #e9ecef;
+	fill: #e9ecef
+}
+
+.col-bg-q2 {
+	background-color: #feded4;
+	fill: #feded4
+}
+
+.col-bg-q3 {
+	background-color: #ffcdbd;
+	fill: #ffcdbd
+}
+
+.col-bg-q4 {
+	background-color: #ffbda7;
+	fill: #ffbda7
+}
+
+.col-bg-q5 {
+	background-color: #ffac90;
+	fill: #ffac90
+}
+.col-bg-q6 {
+	background-color: #fc9b7a;
+	fill: #fc9b7a
+}
+.col-bg-q7 {
+	background-color: #f98a64;
+	fill: #f98a64
+}
+.col-bg-q8 {
+	background-color: #f5794e;
+	fill: #f5794e
+}
+.col-bg-q9 {
+	background-color: #ef6738;
+	fill: #ef6738
+}
+.col-bg-q10 {
+	background-color: #e95420;
+	fill: #e95420
 }

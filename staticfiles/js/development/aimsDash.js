@@ -1,3 +1,5 @@
+/*jslint browser: true*/
+/*global $, jQuery, alert*/
 
 $(document).ready(function () {
   getUncompleteTrackers() ;
@@ -177,7 +179,6 @@ function submitUncomplete(tracker_id){
   })
 
 };
-
 function submitCount(tracker_id, index){
   console.log(tracker_id);
   $.ajax({
@@ -196,3 +197,88 @@ function submitCount(tracker_id, index){
   })
 
 };
+function getCalmapData(tracker_id){
+  $.ajax({
+        type : "GET",
+        url : "/get_calmap_data/",
+        data : {tracker_id : tracker_id,},
+        datatype: 'json',
+        success : function(trackerData){
+          // console.log("trackerData", trackerData);
+          const dataInfo = JSON.parse(trackerData);
+          // console.log("dataInfo", dataInfo);
+          var sd = new Date(dataInfo.calmap_settings.sd*1000);
+          var ed = new Date(dataInfo.calmap_settings.ed*1000);
+          ed.setMonth( ed.getMonth() + 2 );
+          var now = new Date();
+          now.setMonth(now.getMonth()-1);
+          var cal = new CalHeatMap();
+          $("#CalmapModalBody").empty();
+          cal.init({itemSelector:"#CalmapModalBody",
+                    domain:"month",
+                    subdomain:"day",
+                    range: 3,
+                    dataType:"json",
+                    data: dataInfo.calmap_data,
+                    previousSelector: "#CalmapModalBody-prev",
+                  	nextSelector: "#CalmapModalBody-next",
+                    itemNamespace: "cal",
+                    cellPadding: 5,
+                  	domainGutter: 20,
+                    domainDynamicDimension: false,
+                    cellSize: 30,
+                    cellRadius: 0,
+                    start: new Date(now),
+                    minDate: sd,
+                    maxDate: ed,
+                    subDomainTextFormat: "%d",
+                    weekStartOnMonday: true,
+                    // label: {
+                    //   height:100,
+                    // },
+                    legendCellSize: 20,
+                    legend:[1,500, 575, 650, 725,800, 875, 950,1000],
+                    displayLegend: false,
+                    // legendColors: {//min:"white",
+                    //               //max:"#c6471b",
+                    //               empty: "grey",
+                    //               base: "grey",
+                    //
+                    //             },
+                    tooltip: false,
+                    onClick: function(date, nb) {
+                      console.log(dataInfo.count_data);
+                      var userTimezoneOffset = date.getTimezoneOffset() * 60000;
+                      var adjDate = new Date(date.getTime() - userTimezoneOffset);
+                      var dateID = Math.floor(adjDate.getTime()/1000);
+                      let count =  dataInfo.count_data[dateID][0];
+                      var startDate = dataInfo.count_data[dateID][1];
+                      var endDate = dataInfo.count_data[dateID][2];
+                      $(".clearme").empty();
+                      $("#onClickDisplayPS").html(startDate);
+                      $("#onClickDisplayPE").html(endDate);
+                      $("#onClickDisplaySM").html(count);
+
+                    }
+
+
+                  });
+      }})
+};
+
+function search(source, name) {
+    var results;
+
+    name = name.toUpperCase();
+    results = $.map(source, function(entry) {
+        var match = entry.name.toUpperCase().indexOf(name) !== -1;
+        return match ? entry : null;
+    });
+    return results;
+}
+
+// function loadCalmapToModal(trackerData){
+//
+//
+//
+// };

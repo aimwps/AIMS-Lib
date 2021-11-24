@@ -10,7 +10,10 @@ import matplotlib.backends.backend_agg as backend
 from matplotlib.figure import Figure
 
 
-
+def reverse_values(val):
+    if val >= 500:
+        val = np.abs(val-500)
+    return val
 
 def prettify_tracker_status_dict(dict):
     pretty_status = {

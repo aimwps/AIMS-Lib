@@ -9,7 +9,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
 from django.utils.timezone import now
 from Members.models import MemberProfile
-from .utils import get_next_sunday, generate_heatmap_from_df
+from .utils import get_next_sunday, generate_heatmap_from_df, reverse_values
 from .char_choices import *
 import pandas as pd
 import numpy as np
@@ -17,6 +17,7 @@ import io, urllib, base64
 import matplotlib.pyplot as plt
 from .char_choices import *
 from sklearn.preprocessing import MinMaxScaler
+
 
 class Aim(models.Model):
     title = models.TextField()
@@ -145,7 +146,7 @@ class StepTracker(models.Model):
 
                 elif "fail_or_no_submit" in result_values:
                     calmap_value = 0
-                    count_value = "uncomplete"
+                    count_value = "Uncompleted"
 
                 elif "boolean_success" in result_values:
                     calmap_value = 1000
@@ -188,13 +189,23 @@ class StepTracker(models.Model):
         # 4. create a dataframe and scale the adjusted count_value between 500 & 1000
         df = pd.DataFrame(data_dict)
         nan_index = df['calmap_value'].isna()
+        print(nan_index[:])
+
         scaler = MinMaxScaler(feature_range=(500,1000))
-        df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['adjusted_count_value']])
-        df['calmap_value'] = df['calmap_value'].round(4)
+        print(self.get_tsentence())
+        print(f"LENGTH::::::::::::::::::: {len(nan_index)}")
+        print(df.info())
+        try:
+            df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['adjusted_count_value']])
+            df['calmap_value'] = df['calmap_value'].round(4)
+        except ValueError:
+            print("no possible")
+
 
         # reverse count values for minimize
         if self.metric_tracker_type == "minimize":
-            df[df['calmap_value'] >= 500] = np.abs(df[df['calmap_value'] >= 500] -500)
+            df['calmap_value'] = df['calmap_value'].apply(reverse_values)
+        print(df[:])
 
         df = df.drop('adjusted_count_value', axis=1)
         df['cal_date'] = pd.to_datetime(df['cal_date'])
@@ -239,7 +250,8 @@ class StepTracker(models.Model):
 
             elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
                 while var_date.strftime('%B') != freq_code.code:
-                    var_date + relative_delta(months=1)
+                    print(f"strftime {var_date.strftime('%B')} vs freq_code {freq_code.code}")
+                    var_date += relativedelta(months=1)
                 if soonest_date:
                     if var_date < soonest_date:
                         soonest_date = var_date

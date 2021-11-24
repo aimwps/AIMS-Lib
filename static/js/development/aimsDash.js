@@ -254,15 +254,11 @@ function getCalmapData(tracker_id){
                       let count =  dataInfo.count_data[dateID][0];
                       var startDate = dataInfo.count_data[dateID][1];
                       var endDate = dataInfo.count_data[dateID][2];
-                      $('#onClickDisplay').empty();
-                  		$("#onClickDisplay").html("<p><strong>Log period start: </strong>" +
-                      startDate +
-                      "</p><p><strong>Log period end: </strong>" +
-                      endDate +
-                      "</p> <p><strong>Result: </strong>" +
-                      count +
-                      "</p>"
-                  		);
+                      $(".clearme").empty();
+                      $("#onClickDisplayPS").html(startDate);
+                      $("#onClickDisplayPE").html(endDate);
+                      $("#onClickDisplaySM").html(count);
+
                     }
 
 
