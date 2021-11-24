@@ -24,3 +24,8 @@ class OrganisationContent(models.Model):
     #skillset = models.ForeignKey(Pathway, on_delete=models.CASCADE)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
+
+class OrganisationContentTracking(models.Model):
+    tracked_by = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name='pathway_trackers')
+    participants = models.ManyToManyField(User, related_name='tracker_participants')
+    on_content = models.ForeignKey(OrganisationContent, on_delete=models.CASCADE, related_name="tracked_content")

@@ -29,13 +29,13 @@ class VerifyGqbView(LoginRequiredMixin, View):
 
 def get_gqb_to_verify(request):
     if request.method=="GET":
-        outstanding_gqb = GeneratedQuestionBank.objects.filter(generated_by=request.user.id, user_proof="unknown")
+        outstanding_gqb = GeneratedQuestionBank.objects.filter(author=request.user.id, user_proof="unknown")
         gqb_serialized = GeneratedQuestionBankSerializer(outstanding_gqb, many=True)
         return JsonResponse(gqb_serialized.data, safe=False)
 
 def check_gqb_status(request):
     if request.method=="GET":
-        outstanding_gqb = GeneratedQuestionBank.objects.filter(generated_by=request.user.id, user_proof="unknown")
+        outstanding_gqb = GeneratedQuestionBank.objects.filter(author=request.user.id, user_proof="unknown")
         data = {"gqb_quantity": len(outstanding_gqb)}
     return JsonResponse(data, safe=False)
 
@@ -45,10 +45,10 @@ def search_questions(request):
         written_lecture = WrittenLecture.objects.filter(title__icontains=search_str, author=request.user.id)
         video_lecture = VideoLecture.objects.filter(title__icontains=search_str, author=request.user.id)
         gqb = GeneratedQuestionBank.objects.filter(
-                source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
-                source_id__in=written_lecture, generated_by = request.user.id) | GeneratedQuestionBank.objects.filter(
-                question__icontains=search_str, generated_by = request.user.id)| GeneratedQuestionBank.objects.filter(
-                answer__icontains=search_str, generated_by = request.user.id)
+                source_id__in=written_lecture, author = request.user.id) | GeneratedQuestionBank.objects.filter(
+                source_id__in=written_lecture, author = request.user.id) | GeneratedQuestionBank.objects.filter(
+                question__icontains=search_str, author = request.user.id)| GeneratedQuestionBank.objects.filter(
+                answer__icontains=search_str, author = request.user.id)
         benchmark_qs = Question.objects.filter(on_quiz=json.loads(request.body).get('on_benchmark'))
 
         new_data = []

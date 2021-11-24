@@ -23,7 +23,7 @@ class OrganisationCreate(LoginRequiredMixin, CreateView):
         form.instance.founder= self.request.user
         return super().form_valid(form)
     def get_success_url(self):
-        return reverse('view-user-group', kwargs={'pk' : self.object.pk})
+        return reverse('organisation-view', kwargs={'pk' : self.object.pk})
 
 class OrganisationEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
@@ -32,7 +32,7 @@ class OrganisationEdit(LoginRequiredMixin, UpdateView):
     model = Organisation
     form_class = OrganisationEditForm
     def get_success_url(self):
-        return reverse('view-my-groups')
+        return reverse('my-organisations')
 ################################################################################
 
 class OrganisationContentView(LoginRequiredMixin, DetailView):
@@ -61,7 +61,7 @@ class OrganisationContentCreate(LoginRequiredMixin, View):
 
 
             new_group_pathway.save()
-            return HttpResponseRedirect("/my-groups/")
+            return HttpResponseRedirect("/my-organisations/")
 
 
 
@@ -98,4 +98,4 @@ class UserOrganisationsView(LoginRequiredMixin,ListView):
         if "remove_pathway_from_group" in request.POST:
             group_content = get_object_or_404(OrganisationContent, id=request.POST.get("remove_pathway_from_group"))
             group_content.delete()
-            return HttpResponseRedirect("/my-groups/")
+            return HttpResponseRedirect("my-organisations/")

@@ -75,9 +75,6 @@ class PathwayParticipant(models.Model):
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
 
-class PathwayProgressionTracker(models.Model):
-    on_participant = models.ForeignKey(PathwayParticipant, on_delete=models.CASCADE, related_name='pathway_tracker')
-
 
 # class VideoLectureCompletionRecord(models.Model):
 #     RECORD_STATUS = (('first_completion', 'first_completion'),

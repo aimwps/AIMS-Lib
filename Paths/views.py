@@ -1,4 +1,4 @@
-from .models import Pathway, PathwayContent
+from .models import Pathway, PathwayContent, PathwayParticipant
 from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView
 from django.http import HttpResponse, HttpResponseRedirect
@@ -65,7 +65,7 @@ class PathwayContentCreate(LoginRequiredMixin, View):
     def get(self, request, pathway_id):
         context = {
         "on_pathway": Pathway.objects.get(id=pathway_id),
-        "form": PathwayContentCreateForm(user=request.user)}
+        "form": PathwayContentCreateForm()}
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
@@ -76,7 +76,7 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         return super().form_valid(form)
 
     def post(self, request, pathway_id):
-        relevant_pathway = PathwayContent.objects.filter(pathway=pathway_id)
+        relevant_pathway = PathwayContent.objects.filter(on_pathway=pathway_id)
         if relevant_pathway:
             new_order_by =  relevant_pathway.latest().order_by + 1
         else:
@@ -145,7 +145,7 @@ class PathwayCreate(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         return context
     def get_success_url(self):
-        return reverse('new-pathway-obj', kwargs={'pathway_id' : self.object.pk})
+        return reverse("pathway-content-create", kwargs={'pathway_id' : self.object.pk})
 
 class PathsHomeView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
@@ -161,21 +161,22 @@ class PathsHomeView(LoginRequiredMixin, View):
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False
-            user_pathways = Pathway.objects.filter(participants=self.request.user)
-            for pathway in user_pathways:
+            user_pathways = PathwayParticipant.objects.filter(author=self.request.user)
+
+            for pathway in user_pathways.values_list("on_pathway", flat=True):
                 content_settings = list(PathwayContent.objects.filter(pathway=pathway).order_by('order_by'))
                 user_pathway_data[pathway] = content_settings
             context['user_pathways'] = user_pathway_data
             developer_pathway_data = {}
             developer_pathways = Pathway.objects.filter(author=self.request.user)
             for dev_pathway in developer_pathways:
-                pathway_objs = list(PathwayContent.objects.filter(pathway=dev_pathway).order_by('order_by'))
+                pathway_objs = list(PathwayContent.objects.filter(on_pathway=dev_pathway).order_by('order_position'))
                 developer_pathway_data[dev_pathway] = pathway_objs
             context['developer_pathways'] = developer_pathway_data
 
-            user_groups = UserCreatedGroup.objects.filter(members=self.request.user.id)
-            context["user_groups"] = user_groups
-
+            # user_groups = UserCreatedGroup.objects.filter(members=self.request.user.id)
+            # context["user_groups"] = user_groups
+            #
 
         return render(request, self.template_name, context)
 

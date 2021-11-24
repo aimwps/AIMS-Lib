@@ -104,15 +104,15 @@ Pathways are learnable content based on video lectures & written articles. User 
 {% for path, path_items in developer_pathways.items %}
 <div class="row my-4">
     <div class="col-6">
-      <a href='{% url "view-dev-pathway" path.id %}'data-bs-toggle="tooltip" title="Go to this pathway"><h5 class="mt-2"> {{ path.title }}</h5></a>
+      <a href='{% url "pathway-develop" path.id %}'data-bs-toggle="tooltip" title="Go to this pathway"><h5 class="mt-2"> {{ path.title }}</h5></a>
     </div>
     <div class="col-6">
       <ul class="nav justify-content-end">
         <li class="nav-item">
-          <a class="nav-link active" href="{% url 'new-pathway-obj' path.pk %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
+          <a class="nav-link active" href="{% url 'pathway-content-create' path.pk %}" data-bs-toggle="tooltip" data-bs-placement="right" title="Add content to this pathway"><i class="fas fa-plus"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'edit-pathway' path.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
+          <a class="nav-link" href="{% url 'pathway-edit' path.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
         </li>
         <li class="nav-item">
             <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_delete_modal">
