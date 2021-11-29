@@ -4,13 +4,15 @@
 {% block topcarousel %}
 {% endblock %}
 
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
 {% block pageInfo_title %}
-MY GROUPS
+Add Organisation Content
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-From here you can see all the groups you have created, add members and assign them pathway content. A groups members will recieve all pathways assigned to the group.
-In the future you will be able to create an organisation rather than selecting from all available users.
+Add a Pathway for your organisation to track. You will be able to see members progression to any pathways you add to this organisation.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -34,7 +36,7 @@ In the future you will be able to create an organisation rather than selecting f
 
 
         <input type="hidden" name="group_id" value="{{group_id}}">
-        <button name="create_group_pathway" class="btn btn-primary">Add Pathway to group</button>
+        <button name="create_group_pathway" class="btn btn-al">Add Pathway to organisation</button>
                 </div>
       </div>
     </form>

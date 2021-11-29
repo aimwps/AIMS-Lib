@@ -37,7 +37,6 @@ class OrganisationContentCreateForm(forms.ModelForm):
         #widgets = {"content_id": forms.Select(attrs={"class": 'form-control'})}
     def __init__(self, user=None, *args,**kwargs):
         super().__init__(*args, **kwargs)
-
         user_pathways = sorted([(pathway.id, str(pathway.title)) for pathway in Pathway.objects.filter(author=user)])
         self.fields['content_id'].choices = ModelChoiceField()
 

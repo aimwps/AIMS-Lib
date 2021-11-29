@@ -82,7 +82,8 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         else:
             new_order_by = 1
 
-        new_path_obj_form = PathwayContentCreateForm(request.user, request.POST)
+        new_path_obj_form = PathwayContentCreateForm()#request.user, request.POST)
+
         if new_path_obj_form.is_valid():
             if "lit-submit" in request.POST:
                 new_path_obj = PathwayContent(
@@ -161,12 +162,16 @@ class PathsHomeView(LoginRequiredMixin, View):
                 context['has_user_profile'] = True
             else:
                 context['has_user_profile'] = False
-            user_pathways = PathwayParticipant.objects.filter(author=self.request.user)
 
-            for pathway in user_pathways.values_list("on_pathway", flat=True):
-                content_settings = list(PathwayContent.objects.filter(pathway=pathway).order_by('order_by'))
-                user_pathway_data[pathway] = content_settings
-            context['user_pathways'] = user_pathway_data
+            user_pathways = PathwayParticipant.objects.filter(author=self.request.user).values_list("on_pathway", flat=True)
+            pathways = [get_object_or_404(Pathway, id=i) for i in user_pathways]
+            print(f"{user_pathways} {user_pathways[0]} {pathways}")
+            # for pathway in user_pathways.values_list("on_pathway", flat=True):
+            #     content_settings = list(PathwayContent.objects.filter(pathway=pathway).order_by('order_by'))
+            #     user_pathway_data[pathway] = content_settings
+            context['user_pathways'] = pathways#.values_list("on_pathway", flat=True)
+
+
             developer_pathway_data = {}
             developer_pathways = Pathway.objects.filter(author=self.request.user)
             for dev_pathway in developer_pathways:

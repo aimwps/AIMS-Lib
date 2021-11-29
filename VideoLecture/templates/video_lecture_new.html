@@ -3,6 +3,8 @@
 
 {% block topcarousel %}
 {% endblock %}
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
 
 {% block pageInfo_title %}
 CREATE VIDEO LECTURE
@@ -17,9 +19,6 @@ Simply submit a url from any popular streaming service where your video is uploa
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <a class="anchor" id="begin"></a>
-</div>
 
 <div class="container my-4">
 
@@ -28,13 +27,14 @@ Simply submit a url from any popular streaming service where your video is uploa
     <form method="post">
       {% csrf_token %}
       {{ form.media }}
-      {{ form.as_p }}
-
+      <p>{{ form.title }}</p>
+      <p>{{ form.video_link }}</p>
+      <p>{{ form.notes}}</p>
       <!-- doing as_p decides the element that each will be created for each field -->
       <div class="text-center">
 
 
-      <button class="btn btn-primary">Create Video Lecture</button>
+      <button class="btn btn-al">Create Video Lecture</button>
           </div>
       </form>
   </div>

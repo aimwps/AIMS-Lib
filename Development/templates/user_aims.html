@@ -50,8 +50,8 @@
 
                 </div>
                 <div class="modal-footer">
-                  <a href='{% url "behaviour-create" aim.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                  <a href='{% url "aim-edit" aim.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                  <a href='{% url "behaviour-create" aim.id %}' class="btn btn-al"><i class="far fa-plus"></i></a>
+                  <a href='{% url "aim-edit" aim.id %}' class="btn btn-al"><i class="far fa-edit"></i></a>
                   <form action="." method="POST">
                     {% csrf_token %}
                     <button name="delete_aim" value="{{aim.id}}" class="btn btn-secondary">
@@ -106,8 +106,8 @@
                         <p>You can add a tracker to monitor measurable progress and also edit or delete this behaviour below</p>
                       </div>
                       <div class="modal-footer">
-                        <a href='{% url "steptracker-create" behaviour_id=behaviour.id %}' class="btn btn-primary"><i class="far fa-plus"></i></a>
-                        <a href='{% url "behaviour-edit" behaviour.id %}' class="btn btn-primary"><i class="far fa-edit"></i></a>
+                        <a href='{% url "steptracker-create" behaviour_id=behaviour.id %}' class="btn btn-al"><i class="far fa-plus"></i></a>
+                        <a href='{% url "behaviour-edit" behaviour.id %}' class="btn btn-al"><i class="far fa-edit"></i></a>
 
                         <form action="." method="POST">
                           {% csrf_token %}
@@ -192,7 +192,7 @@
 
                             </div>
                             <div class="modal-footer">
-                              <a href='#' class="btn btn-primary"><i class="far fa-plus"></i></a>
+                              <a href='#' class="btn btn-al"><i class="far fa-plus"></i></a>
 
                               <form action="." method="POST">
                                 {% csrf_token %}

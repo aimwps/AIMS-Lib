@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, CreateView, UpdateView, View, ListView
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
+
 class OrganisationView(LoginRequiredMixin,DetailView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -20,7 +21,7 @@ class OrganisationCreate(LoginRequiredMixin, CreateView):
     model = Organisation
     form_class = OrganisationCreateForm
     def form_valid(self, form):
-        form.instance.founder= self.request.user
+        form.instance.author = self.request.user
         return super().form_valid(form)
     def get_success_url(self):
         return reverse('organisation-view', kwargs={'pk' : self.object.pk})
@@ -56,8 +57,8 @@ class OrganisationContentCreate(LoginRequiredMixin, View):
             print(request.POST)
             new_group_pathway = OrganisationContent(
                             assigned_group = get_object_or_404(Organisation, id=organisation_id),
-                            content_type=ContentType.objects.get_for_model(Pathway),
-                            content_id= request.POST.get('content_id'))
+                            content_type = ContentType.objects.get_for_model(Pathway),
+                            pathway = get_object_or_404(Pathway, id=request.POST.get('content_id')))
 
 
             new_group_pathway.save()
@@ -90,7 +91,7 @@ class UserOrganisationsView(LoginRequiredMixin,ListView):
         context = super().get_context_data(**kwargs)
         return context
     def get_queryset(self):
-        x = Organisation.objects.filter(founder=self.request.user)
+        x = Organisation.objects.filter(author=self.request.user)
         print(x)
         return x
 

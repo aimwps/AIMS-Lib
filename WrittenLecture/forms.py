@@ -7,8 +7,8 @@ class ArticleEditForm(forms.ModelForm):
         model = Article
         fields = ('title',"body")
         widgets ={
-            'title': forms.TextInput(attrs = {'class': 'form-control text-center',
-                                            "placeholder": "Inset a title here"}),
+            'title': forms.TextInput(attrs = {'class': 'form-conrtrol text-center',
+                                            "placeholder": "Insert an article title here"}),
             'body': forms.Textarea(attrs = {'class': 'form-control',
                                             }),}
 
@@ -19,6 +19,6 @@ class ArticleCreateForm(forms.ModelForm):
         fields = ('title','body')
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control text-center',
-                                            "placeholder": "Inset a title here"}),
+                                            "placeholder": "Insert an article title here"}),
             'body': forms.Textarea(attrs = {'class': 'form-control',}),
                 }

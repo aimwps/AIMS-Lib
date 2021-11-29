@@ -36,7 +36,7 @@ Here you can add content to your pathway. Select the article, video or benchmark
           <form method="post">
             {% csrf_token %}
           <br/>
-            {{ form.written_lecture }}
+            {{ form.article }}
             <br/>
             <div class="container">
               <div class="row">
@@ -52,7 +52,7 @@ Here you can add content to your pathway. Select the article, video or benchmark
             </div>
             <br/>
             <div class="d-flex justify-content-center">
-               <button class="btn btn-primary" name="lit-submit">Add written study to path</button>
+               <button class="btn btn-al" name="lit-submit">Add written study to path</button>
             </div>
 
           </form>
@@ -63,7 +63,7 @@ Here you can add content to your pathway. Select the article, video or benchmark
         <form method="post">
           {% csrf_token %}
           <br/>
-          {{ form.video_lecture }}
+          {{ form.video }}
           <br/>
           <div class="container">
             <div class="row">
@@ -79,7 +79,7 @@ Here you can add content to your pathway. Select the article, video or benchmark
           </div>
           <br/>
           <div class="d-flex justify-content-center">
-          <button class="btn btn-primary"  name="vid-submit">Add video study to path</button>
+          <button class="btn btn-al"  name="vid-submit">Add video study to path</button>
         </div>
         </form>
       </div>
@@ -89,7 +89,7 @@ Here you can add content to your pathway. Select the article, video or benchmark
         <form method="post">
           {% csrf_token %}
           <br/>
-          {{ form.quiz}}
+          {{ form.benchmark }}
           <br/>
           <div class="container">
             <div class="row">
@@ -105,7 +105,7 @@ Here you can add content to your pathway. Select the article, video or benchmark
           </div>
           <br/>
           <div class="d-flex justify-content-center">
-          <button class="btn btn-primary" name="quiz-submit">Add benchmark to path</button>
+          <button class="btn btn-al" name="quiz-submit">Add benchmark to path</button>
         </div>
         </form>
       </div>

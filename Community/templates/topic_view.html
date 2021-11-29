@@ -38,14 +38,14 @@
             {% if user.is_authenticated %}
               {% if user.id == topic.author.id %}
               <span>
-              <p><a href="{% url 'forum-topic-edit' topic.pk %}" class="btn btn-primary btn-sm btn-block"><i class="far fa-edit"></i></a></p>
-              <p><a href="{% url 'forum-topic-delete' topic.pk %}" class="btn btn-primary btn-sm btn-block"><i class="far fa-trash-alt"></i></a></p>
+              <p><a href="{% url 'forum-topic-edit' topic.pk %}" class="btn btn-al btn-sm btn-block"><i class="far fa-edit"></i></a></p>
+              <p><a href="{% url 'forum-topic-delete' topic.pk %}" class="btn btn-al btn-sm btn-block"><i class="far fa-trash-alt"></i></a></p>
               </span>
               {% else %}
-              <a href="{% url 'forum-topic-reply' topic.pk %}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-reply"></i></a>
+              <a href="{% url 'forum-topic-reply' topic.pk %}" class="btn btn-al btn-sm btn-block"><i class="fas fa-reply"></i></a>
               {% endif %}
             {% else %}
-              <a href="{% url 'login' %}"  class="btn btn-primary btn-sm btn-block" role="button"><i class="far fa-user"></i></a>
+              <a href="{% url 'login' %}"  class="btn btn-al btn-sm btn-block" role="button"><i class="far fa-user"></i></a>
 
               {% endif %}
             </div>
@@ -58,9 +58,9 @@
                   <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
                   <p>
                     {% if user.is_authenticated %}
-                      <button type="submit" name="topic_vote_up" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
+                      <button type="submit" name="topic_vote_up" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
                       {% else %}
-                      <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
+                      <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                       {% endif %}
                     {{topic_votes.0}}
                   </p>
@@ -70,13 +70,13 @@
                   <input type="hidden" value="{{ topic.id }}" name="topic_id_to_vote">
                   <p>
                     {% if user.is_authenticated %}
-                      <button type="submit" name="topic_vote_down" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                      <button type="submit" name="topic_vote_down" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                       {% else %}
-                      <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
+                      <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                       {% endif %}
                      {{topic_votes.1}}
                     </p>
-                  <!-- <p><input type="submit" value="Vote -" name="topic_vote_down" class="btn btn-primary btn-sm btn-block"></p> -->
+                  <!-- <p><input type="submit" value="Vote -" name="topic_vote_down" class="btn btn-al btn-sm btn-block"></p> -->
               </form>
             </div>
           </div>
@@ -129,7 +129,7 @@
                             {% csrf_token %}
                             {{ topic_comment_form.as_p }}
 
-                            <input type="submit" value="Post comment" name="commentfortopic" class="btn btn-primary">
+                            <input type="submit" value="Post comment" name="commentfortopic" class="btn btn-al">
                             <!-- doing as_p decides the element that each will be created for each field -->
                             </form>
                         </div>
@@ -159,9 +159,9 @@
                             <input type="hidden" value="{{ comment.0.id }}" name="topic_comment_id_to_vote_up">
                             <p>
                               {% if user.is_authenticated %}
-                                <button type="submit" name="comment_vote_up" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
+                                <button type="submit" name="comment_vote_up" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
                                 {% else %}
-                                <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
+                                <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                                 {% endif %}
 
                             </p>
@@ -171,9 +171,9 @@
                             <input type="hidden" value="{{ comment.0.id }}" name="topic_comment_id_to_vote_down">
                             <p>
                               {% if user.is_authenticated %}
-                                <button type="submit" name="comment_vote_down" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                                <button type="submit" name="comment_vote_down" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                                 {% else %}
-                                <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
+                                <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                                 {% endif %}
 
                               </p>
@@ -220,9 +220,9 @@
                     <input type="hidden" value="{{ reply.0.0.id }}" name="reply_id_to_vote_up">
                     <p>
                       {% if user.is_authenticated %}
-                        <button type="submit" class="btn btn-primary btn-sm btn-block" name="reply_vote_up" ><i class="far fa-thumbs-up"></i></button>
+                        <button type="submit" class="btn btn-al btn-sm btn-block" name="reply_vote_up" ><i class="far fa-thumbs-up"></i></button>
                         {% else %}
-                        <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
+                        <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                         {% endif %}
                     </p>
                 </form>
@@ -234,9 +234,9 @@
                     <input type="hidden" value="{{ reply.0.0.id  }}" name="reply_id_to_vote_down">
                     <p>
                       {% if user.is_authenticated %}
-                        <button type="submit" name="reply_vote_down" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                        <button type="submit" name="reply_vote_down" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                         {% else %}
-                        <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
+                        <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                         {% endif %}
                       </p>
                 </form>
@@ -287,7 +287,7 @@
                           {{ reply_comment_form.as_p }}
 
                           <input type="hidden" value="{{ reply.0.0.id }}" name="object_id">
-                            <input type="submit" value="Post comment" name="commentforreply" class="btn btn-primary">
+                            <input type="submit" value="Post comment" name="commentforreply" class="btn btn-al">
                           <!-- doing as_p decides the element that each will be created for each field -->
                           </form>
                       </div>
@@ -312,9 +312,9 @@
                             <input type="hidden" value="{{ comment.0.id }}" name="reply_comment_id_to_vote_up">
                             <p>
                               {% if user.is_authenticated %}
-                                <button type="submit" name="reply_comment_vote_up" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
+                                <button type="submit" name="reply_comment_vote_up" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-up"></i></button>
                                 {% else %}
-                                <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
+                                <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-up"></i></button>
                                 {% endif %}
                             </p>
                         </form>
@@ -323,9 +323,9 @@
                             <input type="hidden" value="{{ comment.0.id }}" name="reply_comment_id_to_vote_down">
                             <p>
                               {% if user.is_authenticated %}
-                                <button type="submit" name="reply_comment_vote_down" class="btn btn-primary btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
+                                <button type="submit" name="reply_comment_vote_down" class="btn btn-al btn-sm btn-block"><i class="far fa-thumbs-down"></i></button>
                                 {% else %}
-                                <button type="disabled" class="btn btn-primary btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
+                                <button type="disabled" class="btn btn-al btn-sm btn-block disabled"><i class="far fa-thumbs-down"></i></button>
                                 {% endif %}
 
                               </p>

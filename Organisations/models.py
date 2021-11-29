@@ -17,9 +17,10 @@ class Organisation(models.Model):
     create_time = models.TimeField(auto_now=False, auto_now_add = True)
     parent_organisation = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
     force_parent_member = models.BooleanField(default=True)
-    
+
     def __str__(self):
-        return f"{self.title} #{self.id}"
+        return f"{self.title}_#{self.id}"
+
 class OrganisationContent(models.Model):
     assigned_group = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="group_pathways")
     content_type = models.CharField(max_length=100, choices=CONTENT_TYPE)

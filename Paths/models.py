@@ -40,6 +40,7 @@ class PathwayContent(models.Model):
     content_type =  models.CharField(max_length=100, choices=CONTENT_TYPE)
     article = models.ForeignKey(Article, blank=True, null=True, on_delete=models.CASCADE)
     video = models.ForeignKey(VideoLecture, blank=True, null=True, on_delete=models.CASCADE)
+    benchmark = models.ForeignKey(Benchmark, blank=True, null=True, on_delete=models.CASCADE)
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
