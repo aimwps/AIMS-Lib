@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
 {% block title %}Groups{% endblock %}
 
-{% block topcarousel %}d
+{% block topcarousel %}
 {% endblock %}
 
-{% block pageInfo_title %}
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
 
+{% block pageInfo_title %}
+Create an organisation
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-
+Organisations allow you to track the progression of pathways for users who have agreed to be a member.  
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -25,8 +28,10 @@
       {% csrf_token %}
       <div class="text-center">
         {{ form.media }}
-        {{ form.as_p }}
-        <button class="btn btn-primary">Submit</button>
+        <p>{{ form.parent_organisation }}</p>
+        <p>{{ form.title }}</p>
+        <p>{{ form.members }}</p>
+        <button class="btn btn-al">Create Organisation</button>
       </div>
   </div>
 </div>
