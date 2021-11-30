@@ -61,6 +61,11 @@ class PathwayContent(models.Model):
     def get_next_order_by(self):
         max_rated_entry = self.objects.latest()
         return int(max_rated_entry.details) + 1
+    def pretty_content_type(self):
+        pretty_dict = {"written-lecture": "article",
+                        "video-lecture": "video",
+                        "benchmark": "benchmark",}
+        return pretty_dict[self.content_type]
 
 class PathwayCompletitionRecord(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_record")

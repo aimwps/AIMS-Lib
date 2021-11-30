@@ -1,7 +1,7 @@
 from .models import Pathway, PathwayContent, PathwayParticipant
 from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
@@ -16,6 +16,63 @@ from VideoLecture.models import VideoLecture
 from QuestionGenerator.models import GeneratedQuestionBank
 from Members.models import MemberProfile
 import json, requests
+from .pathway_serializers import PathwaySerializer, PathwayContentSerializer
+
+# Get json of all associated content - json must be in order
+# User edits
+def edit_dev_pathway_content(request):
+    print(request.POST)
+    json_data_info = json.dumps("success")
+
+    ## The pathwayContent that we are making changes too
+    pathway_obj = PathwayContent.objects.get(id=request.POST.get("content_id"))
+
+    ## All the pathwayContents from the same pathway
+    all_pathway_obj = PathwayContent.objects.filter(on_pathway=pathway_obj.on_pathway).order_by("order_position")
+
+    for i,p in enumerate(all_pathway_obj,1):
+        p.order_position = i
+        p.save()
+
+    if request.POST.get("action_type") == "move-down":
+        existing_position = pathway_obj.order_position
+        new_position_obj = PathwayContent.objects.get(on_pathway=pathway_obj.on_pathway, order_position=existing_position+1)
+        temp_position = all_pathway_obj.latest().order_position + 1
+        pathway_obj.order_position = temp_position
+        pathway_obj.save()
+        new_position_obj.order_position = existing_position
+        new_position_obj.save()
+        pathway_obj.order_position = existing_position+1
+        pathway_obj.save()
+    elif request.POST.get("action_type") == "move-up":
+        existing_position = pathway_obj.order_position
+        new_position_obj = PathwayContent.objects.get(on_pathway=pathway_obj.on_pathway, order_position=existing_position-1)
+        temp_position = all_pathway_obj.latest().order_position +1
+        pathway_obj.order_position = temp_position
+        pathway_obj.save()
+        new_position_obj.order_position = existing_position
+        new_position_obj.save()
+        pathway_obj.order_position = existing_position-1
+        pathway_obj.save()
+
+    return JsonResponse(json_data_info, safe=False)
+
+def get_dev_pathway_content(request):
+    pathway = Pathway.objects.get(id=request.GET.get("pathway"))
+    pathway_objs = PathwayContent.objects.filter(on_pathway=pathway).order_by("order_position")
+    x = PathwaySerializer(pathway)
+    y = PathwayContentSerializer(pathway_objs,many=True)
+
+
+    data_info = {
+                "pathway": x.data,
+                "pathway_content": y.data,
+                }
+
+    json_data_info = json.dumps(data_info)
+
+    return JsonResponse(json_data_info, safe=False)
+
 
 class PathwayView(View):
     model = Pathway
@@ -24,7 +81,11 @@ class PathwayView(View):
     def get(self, request, pathway_id):
         context = {}
         pathway = Pathway.objects.get(id=pathway_id)
-        is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
+        if request.user.is_authenticated:
+            is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
+        else:
+            is_participant = None
+
         if is_participant:
             context['participation_status'] = True
         else:

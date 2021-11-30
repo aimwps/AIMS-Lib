@@ -1,74 +1,7 @@
-@ Add new topic
-- Display the category (add new custom category)
-- Display author information
-- back button to relevant page
-limb nerve tonight enhance rescue fee unknown reason blush juice injury act
-8adHWm4vTpgYQXAM1leV3xjF7rRDIUkhB9oZNfS5KEyzcq62OuJPiGbwtnCL
-@ Aims Dash
-- split into user aims 'AIMSLib > Health', proffesional organisations 'East Anglia Pub -> Hospitality', community organisation 'Local Litter Pickers-> Purpose
-- - so they are displayed sepearetely
-- change the tracker tools
-
-@ Create new aim
-- Add the example of an aim
-
-@ Add Lever
-- Needs a description of what a lever is
-- post button
-- remove  input sequence for min aim tracker
-- calendar isnt working
-- add boolean not submitting
-
-@ specific category submit
-- Error messages are uggly
-
-@ Forum Home
-- Give an explination  or prompt to read forum rules
-- order the categories better
-
-@ Homepage
-- sort base carousels to look pretty
-
-@ Members profile
-- create edit page
-- Add auto creation of members profile on user creation
-
-@ Messages
-- successful post displays under carousel (put in sticky box)
-- REMOVE line break
+@ Add content to pathway
+- user should see content they have created, or search the library for public content
 
 
-@ Milestones
-
-@ Articles
-- created by anyone
-@ Quiz
-@ Lecture
-
-@ Course
-
-@ Syallabus
-- collection of courses
-- can be shared
-
-@ groups
-- Workplace organisation
-
--- User can create a workplace organisation
--- Can invite others users to join
--- The owner can then share a course or syllabus to all of group or certain members
---- this can have tracking rights e.g. view if completed only, view progress, untrackable (owned)
----- certain users can have access to tracking rights to monitor
-
-- Community organisation
-
-
-@ Share content
-- can share an aim
-
-
-
-
-
-
-@ All
+@ Permissions
+- Assign permissions to content e.g. Article, Video, Pathway, Aim,
+-- of style content_type, content_id, permission

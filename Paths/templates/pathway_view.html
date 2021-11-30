@@ -20,8 +20,6 @@ Pathways are learnable content based on video lectures & written articles. User 
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-  {% if user.id == pathway.author.id %}
     <h4 class="my-4">
 
        {{ pathway.title }}
@@ -32,66 +30,34 @@ Pathways are learnable content based on video lectures & written articles. User 
        {{ pathway_obj.order_position }}
      </div>
      <div class="col-3 mt-2">
-       {{ pathway_obj.on_pathway.title|title }}
+       {{ pathway_obj.pretty_content_type|title }}
      </div>
-     <div class="col-5 mt-2">
+     <div class="col-6 mt-2">
        {% if pathway_obj.article %}<a href="{% url 'written-lecture' pathway_obj.article.id %}#begin">{{ pathway_obj.article.title }}</a>{% endif %}
        {% if pathway_obj.video %}<a href="{% url 'video-lecture' pathway_obj.video.id %}#begin">{{ pathway_obj.video.title }}</a>{% endif %}
        {% if pathway_obj.benchmark %}<a href="{% url 'benchmark' pathway_obj.benchmark.id %}#begin">{{ pathway_obj.benchmark.title }}</a>{% endif %}
      </div>
-     <div class="col-3">
+     <div class="col-2 mt-2">
        {% if user.is_authenticated %}
-         {% if user.id == pathway.author.id %}
-           <ul class="nav justify-content-end">
-             <li class="nav-item">
-               <a class="nav-link active" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move up in order"><i class="fas fa-chevron-up"></i></i></a>
-             </li>
-             <li class="nav-item">
-               <a class="nav-link" href="#" data-bs-toggle="tooltip" data-bs-placement="left" title="Move down in order"><i class="fas fa-chevron-down"></i></a>
-             </li>
-             <li class="nav-item">
-               <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathwayOBJ_delete_modal_{{ forloop.counter0 }}">
-                 <i class="far fa-trash-alt"></i>
-               </a>
-             </li>
-           </ul>
-        {% endif %}
+          {%  if participation_status %}
+           <p><i class="fas fa-lock"></i></p>
+           {% else %}
+           <p><i class="fas fa-sign-in-alt"></i></p>
+           {% endif %}
        {% endif %}
-     </div>
-     <div class="modal fade" id="pathwayOBJ_delete_modal_{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="pathwayOBJ_delete_modal_{{ forloop.counter0 }}Label" aria-hidden="true">
-       <div class="modal-dialog">
-         <div class="modal-content">
-           <div class="modal-header">
-             <h5 class="modal-title" id="pathwayOBJ_delete_modal_{{ forloop.counter0 }}Label">Delete a {{ pathway.content_type }} from pathway</h5>
-             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-           </div>
-           <div class="modal-body">
-             Do you want to delete
-             {% if pathway_obj.article %}{{ pathway_obj.article.title }}{% endif %}
-             {% if pathway_obj.video %}{{ pathway_obj.video.title }}{% endif %}
-             {% if pathway_obj.benchmark %}{{ pathway_obj.benchmark.title }}{% endif %}
-              from this pathway?
-           </div>
-           <div class="modal-footer">
-             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-             <form action="." method="POST">
-               {% csrf_token %}
-             <button name="delete_pathwayOBJ" value="{{ pathway_obj.id }}" class="btn btn-al">Delete</button>
-           </form>
-           </div>
-         </div>
-       </div>
      </div>
    </div>
 
 
     {% endfor %}
 
+
+       {% if user.is_authenticated %}
+       <hr>
         {% if participation_status %}
-              <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Leave this pathway</a></p>
+              <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Leave Pathway</a></p>
         {% else %}
-        <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Join this pathway</a></p>
-          {% endif %}
+        <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Join Pathway</a></p>
 
           <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -136,15 +102,10 @@ Pathways are learnable content based on video lectures & written articles. User 
               </div>
             </div>
           </div>
-      <hr>
-  {% else %}
-    {% include 'persmission_not_granted.html' %}
-  {% endif %}
-{% else%}
-  {% include 'persmission_not_granted.html' %}
 
-{% endif %}
-
+      {% endif %}
+    <hr>
+      {% endif %}
 
 
 {% endblock %}

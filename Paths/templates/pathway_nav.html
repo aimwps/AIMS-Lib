@@ -52,7 +52,7 @@
 <script type="text/javascript">
 $(document).ready(function (){
   checkGQBstatus();
-  setInterval(checkGQBstatus, 500);
+  setInterval(checkGQBstatus, 500000);
 });
 function checkGQBstatus(){
   $.ajax({url: "/check-gqb-status/",
