@@ -11,16 +11,45 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from Organisations.models import Organisation, OrganisationContent
 from WebsiteTools.models import ContentCategory
 from Benchmark.models import Benchmark, Question, Answer
+from WrittenLecture.models import Article
+from VideoLecture.models import VideoLecture
 from QuestionGenerator.models import GeneratedQuestionBank
 from Members.models import MemberProfile
 import json, requests
 
-class PathwayView(DetailView):
+class PathwayView(View):
     model = Pathway
     template_name = "pathway_view.html"
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+
+    def get(self, request, pathway_id):
+        context = {}
+        pathway = Pathway.objects.get(id=pathway_id)
+        is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
+        if is_participant:
+            context['participation_status'] = True
+        else:
+            context['participation_status'] = False
+        context['pathway'] = pathway
+        return render(request, self.template_name, context)
+
+    def post(self, request, pathway_id):
+        print(request.POST)
+        if "join_pathway" in request.POST:
+            pathway = Pathway.objects.get(id=request.POST.get("join_pathway"))
+            new_participant = PathwayParticipant(author=request.user, on_pathway=pathway)
+            new_participant.save()
+        if "leave_pathway" in request.POST:
+            pathway = Pathway.objects.get(id=request.POST.get("leave_pathway"))
+            participant = PathwayParticipant.objects.get(author=request.user, on_pathway=pathway)
+            participant.delete()
+        if "delete_pathway" in request.POST:
+            pathway = Pathway.objects.get(id=request.POST.get("delete_pathway"))
+            pathway.delete()
+            return HttpResponseRedirect('/pathways/')
+        if "delete_pathwayOBJ" in request.POST:
+            pathway_content = PathwayContent.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
+            pathway_content.delete()
+        return HttpResponseRedirect(request.path)
 
 
 class PathwayDevelopView(LoginRequiredMixin, View):
@@ -31,27 +60,27 @@ class PathwayDevelopView(LoginRequiredMixin, View):
     def get(self, request, pathway_id):
         context = {}
         pathway = Pathway.objects.get(id=pathway_id)
-        pathway_objs = PathwayContent.objects.filter(pathway=pathway).order_by("order_by")
-        if request.user in pathway.participants.all():
+        is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
+        if is_participant:
             context['participation_status'] = True
         else:
             context['participation_status'] = False
-        context['pathway'] = {pathway:pathway_objs}
+        context['pathway'] = pathway
         return render(request, self.template_name, context)
 
     def post(self, request, pathway_id):
         if "join_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("join_pathway"))
-            pathway.participants.add(request.user)
-            pathway.save()
+            new_participant = PathwayParticipant(author=request.user, on_pathway=pathway)
+            new_participant.save()
         if "leave_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("leave_pathway"))
-            pathway.participants.remove(request.user)
-            pathway.save()
+            participant = PathwayParticipant.objects.get(author=request.user, on_pathway=pathway)
+            participant.delete()
         if "delete_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("delete_pathway"))
             pathway.delete()
-            return HttpResponseRedirect('/pathway/')
+            return HttpResponseRedirect('/pathways/')
         if "delete_pathwayOBJ" in request.POST:
             pathway_content = PathwayContent.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
             pathway_content.delete()
@@ -72,58 +101,64 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         context = super().get_context_data(**kwargs)
         return context
     def form_valid(self, form):
-        form.instance.pathway = Pathway.objects.get(id=self.kwargs['pathway_id'])
+        form.instance.on_pathway = Pathway.objects.get(id=self.kwargs['pathway_id'])
         return super().form_valid(form)
 
     def post(self, request, pathway_id):
         relevant_pathway = PathwayContent.objects.filter(on_pathway=pathway_id)
         if relevant_pathway:
-            new_order_by =  relevant_pathway.latest().order_by + 1
+            new_order_position=  relevant_pathway.latest().order_position+ 1
         else:
-            new_order_by = 1
+            new_order_position= 1
+        print(request.POST)
+        if "complete_previous" in request.POST:
+            cp = True
+        else:
+            cp = False
+        if "revise_continuous" in request.POST:
+            rc = True
+        else:
+            rc = False
 
-        new_path_obj_form = PathwayContentCreateForm()#request.user, request.POST)
+        if "lit-submit" in request.POST:
+            new_path_obj = PathwayContent(
+                                on_pathway = get_object_or_404(Pathway, id=pathway_id),
+                                content_type = "written-lecture",
+                                video = None,
+                                article = Article.objects.get(id=request.POST.get("article")),
+                                benchmark = None,
+                                order_position= new_order_position,
+                                complete_previous = cp,
+                                revise_continuous = rc)
+            new_path_obj.save()
 
-        if new_path_obj_form.is_valid():
-            if "lit-submit" in request.POST:
-                new_path_obj = PathwayContent(
-                                    pathway = get_object_or_404(Pathway, id=pathway_id),
-                                    content_type = "written-lecture",
-                                    video_lecture = None,
-                                    written_lecture = new_path_obj_form.cleaned_data['written_lecture'],
-                                    quiz = None,
-                                    order_by = new_order_by ,
-                                    must_complete_previous = new_path_obj_form.cleaned_data['must_complete_previous'],
-                                    must_revise_continous = new_path_obj_form.cleaned_data['must_revise_continous'])
-                new_path_obj.save()
+        elif "vid-submit" in request.POST:
+            new_path_obj = PathwayContent(
+                                on_pathway = get_object_or_404(Pathway, id=pathway_id),
+                                content_type = "video-lecture",
+                                video = VideoLecture.objects.get(id=request.POST.get("video")),
+                                article = None,
+                                benchmark = None,
+                                order_position= new_order_position,
+                                complete_previous = cp,
+                                revise_continuous = rc)
+            new_path_obj.save()
 
-            elif "vid-submit" in request.POST:
-                new_path_obj = PathwayContent(
-                                    pathway = get_object_or_404(Pathway, id=pathway_id),
-                                    content_type = "video-lecture",
-                                    video_lecture = new_path_obj_form.cleaned_data['video_lecture'],
-                                    written_lecture = None,
-                                    quiz = None,
-                                    order_by = new_order_by ,
-                                    must_complete_previous = new_path_obj_form.cleaned_data['must_complete_previous'],
-                                    must_revise_continous = new_path_obj_form.cleaned_data['must_revise_continous'])
-                new_path_obj.save()
+        elif "benchmark-submit" in request.POST:
+            new_path_obj = PathwayContent(
+                                on_pathway = get_object_or_404(Pathway, id=pathway_id),
+                                content_type = "benchmark",
+                                video = None,
+                                article = None,
+                                benchmark = Benchmark.objects.get(id=request.POST.get('benchmark')),
+                                order_position= new_order_position,
+                                complete_previous = cp,
+                                revise_continuous = rc)
+            new_path_obj.save()
+        else:
+            print("FORM TYPE NOT RECOGNISED")
 
-            elif "quiz-submit" in request.POST:
-                new_path_obj = PathwayContent(
-                                    pathway = get_object_or_404(Pathway, id=pathway_id),
-                                    content_type = "benchmark",
-                                    video_lecture = None,
-                                    written_lecture = None,
-                                    quiz = new_path_obj_form.cleaned_data['quiz'],
-                                    order_by = new_order_by,
-                                    must_complete_previous = new_path_obj_form.cleaned_data['must_complete_previous'],
-                                    must_revise_continous = new_path_obj_form.cleaned_data['must_revise_continous'])
-                new_path_obj.save()
-            else:
-                print("FORM TYPE NOT RECOGNISED")
-
-        return HttpResponseRedirect('/pathway/')
+        return HttpResponseRedirect(f'/pathways/')
 
 class PathwayEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
@@ -165,13 +200,7 @@ class PathsHomeView(LoginRequiredMixin, View):
 
             user_pathways = PathwayParticipant.objects.filter(author=self.request.user).values_list("on_pathway", flat=True)
             pathways = [get_object_or_404(Pathway, id=i) for i in user_pathways]
-            print(f"{user_pathways} {user_pathways[0]} {pathways}")
-            # for pathway in user_pathways.values_list("on_pathway", flat=True):
-            #     content_settings = list(PathwayContent.objects.filter(pathway=pathway).order_by('order_by'))
-            #     user_pathway_data[pathway] = content_settings
-            context['user_pathways'] = pathways#.values_list("on_pathway", flat=True)
-
-
+            context['user_pathways'] = pathways
             developer_pathway_data = {}
             developer_pathways = Pathway.objects.filter(author=self.request.user)
             for dev_pathway in developer_pathways:

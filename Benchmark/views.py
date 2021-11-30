@@ -141,13 +141,13 @@ class BenchmarkCreatorView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("skill-paths")
+        return reverse("pathways")
 
 class BenchmarkView(View):
     template_name = "benchmark_view.html"
-    def get(self, request, quiz_id):
+    def get(self, request, benchmark_id):
         context = {}
-        benchmark_data = get_object_or_404(Benchmark, id=quiz_id)
+        benchmark_data = get_object_or_404(Benchmark, id=benchmark_id)
         pure_data = BenchmarkSerializer(benchmark_data).data
 
         print(pure_data)

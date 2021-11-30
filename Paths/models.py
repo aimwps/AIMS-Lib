@@ -56,7 +56,7 @@ class PathwayContent(models.Model):
                 name='pathway_order_by'
             )
         ]
-        get_latest_by ='order_by'
+        get_latest_by ='order_position'
 
     def get_next_order_by(self):
         max_rated_entry = self.objects.latest()
@@ -75,6 +75,9 @@ class PathwayParticipant(models.Model):
     on_pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="participants")
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['on_pathway','author'], name="duplicate_pathway_participant")]
 
 
 # class VideoLectureCompletionRecord(models.Model):

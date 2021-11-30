@@ -91,15 +91,15 @@ Pathways are learnable content based on video lectures & written articles. User 
 
    <div class="row">
     <div class="col-1 mt-2">
-      {{ path_content.order_by }}
+      {{ path_content.order_position }}
     </div>
     <div class="col-3 mt-2">
       {{ path_content.content_type|title }}
     </div>
     <div class="col-4 mt-2">
-      {% if path_content.written_lecture %}<a href="{% url 'written-lecture' path_content.written_lecture.id %}">{{ path_content.written_lecture.title }}</a>{% endif %}
-      {% if path_content.video_lecture %}<a href="{% url 'video-lecture' path_content.video_lecture.id %}">{{ path_content.video_lecture.title }}</a>{% endif %}
-      {% if path_content.quiz %}<a href="{% url 'benchmark' path_content.quiz.id %}">{{ path_content.quiz.title }}</a>{% endif %}
+      {% if path_content.article %}<a href="{% url 'written-lecture' path_content.article.id %}">{{ path_content.article.title }}</a>{% endif %}
+      {% if path_content.video %}<a href="{% url 'video-lecture' path_content.video.id %}">{{ path_content.video.title }}</a>{% endif %}
+      {% if path_content.benchmark %}<a href="{% url 'benchmark' path_content.benchmark.id %}">{{ path_content.benchmark.title }}</a>{% endif %}
     </div>
     <div class="col-4">
       <ul class="nav justify-content-end">
@@ -111,11 +111,13 @@ Pathways are learnable content based on video lectures & written articles. User 
         </li>
         <li class="nav-item">
           {% if path_content.content_type == "benchmark"  %}
-          <a class="nav-link" href="{% url 'edit-benchmark' path_content.quiz.id %}"><i class="far fa-edit"></i></a>
+          <a class="nav-link" href="{% url 'edit-benchmark' path_content.benchmark.id %}"><i class="far fa-edit"></i></a>
           {% elif path_content.content_type == "written-lecture"   %}
-          <a class="nav-link" href="{% url 'edit-literature' path_content.written_lecture.id %}"><i class="far fa-edit"></i></a>
+          <a class="nav-link" href="{% url 'edit-literature' path_content.article.id %}"><i class="far fa-edit"></i></a>
+          {% elif path_content.content_type == "video-lecture" %}
+          <a class="nav-link" href="{% url 'edit-video-lecture' path_content.video.id %}"><i class="far fa-edit"></i></a>
           {% else %}
-          <a class="nav-link" href="{% url 'edit-video-lecture' path_content.video_lecture.id %}"><i class="far fa-edit"></i></a>
+          <a class="nav-link" href="{% url 'edit-benchmark' path_content.benchmark.id %}"><i class="far fa-edit"></i></a>
           {% endif %}
         </li>
         <li class="nav-item">
@@ -137,9 +139,9 @@ Pathways are learnable content based on video lectures & written articles. User 
             </div>
             <div class="modal-body">
               Do you want to delete
-              {% if path_content.written_lecture %}{{ path_content.written_lecture.title }}{% endif %}
-              {% if path_content.video_lecture %}{{ path_content.video_lecture.title }}{% endif %}
-              {% if path_content.quiz %}{{ path_content.quiz.title }}{% endif %}
+              {% if path_content.article %}{{ path_content.article.title }}{% endif %}
+              {% if path_content.video %}{{ path_content.video.title }}{% endif %}
+              {% if path_content.benchmark %}{{ path_content.benchmark.title }}{% endif %}
                from this pathway?
             </div>
             <div class="modal-footer">
