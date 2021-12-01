@@ -6,7 +6,7 @@ from .models import PathwayContent, Pathway
 class PathwayContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PathwayContent
-        fields = ("id","content_type", "article", "video", "benchmark", "order_position", "complete_previous", "revise_continuous")
+        fields = ("id","content_type", "article", "video", "benchmark", "order_position", "complete_to_move_on", "revise_continuous")
 
     def get_queryset(self):
         queryset = PathwayContent.objects.all().order_by('order_position')

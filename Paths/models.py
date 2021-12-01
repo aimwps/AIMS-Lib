@@ -16,7 +16,12 @@ from django.contrib.contenttypes.models import ContentType
 CONTENT_TYPE = (('Article', "Article"),
                 ('VideoLecture', "Video Lecture"),
                 )
-
+REVISE_FREQ = ( ('Never', 'Never'),
+                ('Daily', 'Daily'),
+                ('Weekly', 'Weekly'),
+                ('Monthly', 'Monthly'),
+                ('Yearly', 'Yearly')
+                )
 
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
@@ -46,8 +51,10 @@ class PathwayContent(models.Model):
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
     modify_date = models.DateField(auto_now=True,auto_now_add=False)
     modify_time = models.TimeField(auto_now=True,auto_now_add=False)
-    complete_previous = models.BooleanField()
-    revise_continuous = models.BooleanField(default=True)
+    complete_to_move_on = models.BooleanField(default=True) #complete_previous
+    complete_anytime_overide = models.BooleanField(default=False) #complete_anytime_overide
+    revise_frequency = models.CharField(max_length=100, default="Never", choices=REVISE_FREQ)
+
 
     class Meta:
         constraints = [

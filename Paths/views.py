@@ -172,11 +172,11 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         else:
             new_order_position= 1
         print(request.POST)
-        if "complete_previous" in request.POST:
+        if "complete_to_move_on" in request.POST:
             cp = True
         else:
             cp = False
-        if "revise_continuous" in request.POST:
+        if "complete_anytime_overide" in request.POST:
             rc = True
         else:
             rc = False
@@ -189,8 +189,8 @@ class PathwayContentCreate(LoginRequiredMixin, View):
                                 article = Article.objects.get(id=request.POST.get("article")),
                                 benchmark = None,
                                 order_position= new_order_position,
-                                complete_previous = cp,
-                                revise_continuous = rc)
+                                complete_to_move_on = cp,
+                                complete_anytime_overide = rc)
             new_path_obj.save()
 
         elif "vid-submit" in request.POST:
@@ -201,8 +201,8 @@ class PathwayContentCreate(LoginRequiredMixin, View):
                                 article = None,
                                 benchmark = None,
                                 order_position= new_order_position,
-                                complete_previous = cp,
-                                revise_continuous = rc)
+                                complete_to_move_on = cp,
+                                complete_anytime_overide = rc)
             new_path_obj.save()
 
         elif "benchmark-submit" in request.POST:
@@ -213,8 +213,8 @@ class PathwayContentCreate(LoginRequiredMixin, View):
                                 article = None,
                                 benchmark = Benchmark.objects.get(id=request.POST.get('benchmark')),
                                 order_position= new_order_position,
-                                complete_previous = cp,
-                                revise_continuous = rc)
+                                complete_to_move_on = cp,
+                                complete_anytime_overide = rc)
             new_path_obj.save()
         else:
             print("FORM TYPE NOT RECOGNISED")
