@@ -8,6 +8,9 @@ from .views import (PathsHomeView,
                     PathwayEdit,
                     get_dev_pathway_content,
                     edit_dev_pathway_content,
+                    get_pathway_content_obj,
+                    submit_content_setting_changes,
+                    submit_cotent_delete,
 )
 
 urlpatterns = [
@@ -18,7 +21,10 @@ urlpatterns = [
     path('pathway/develop/<int:pathway_id>/', PathwayDevelopView.as_view(), name="pathway-develop"),
     path('edit_pathway/<int:pk>/', PathwayEdit.as_view(), name="pathway-edit"),
     path('get_dev_pathway_content/', get_dev_pathway_content, name="pathway-dev-content-get"),
-    path('dev_pathway_edit/', edit_dev_pathway_content, name="pathway-dev-content-edit")
+    path('dev_pathway_edit/', edit_dev_pathway_content, name="pathway-dev-content-edit"),
+    path('ajax_get_pathway_content_obj/', get_pathway_content_obj, name="pathway-dev-content-modal-edit"),
+    path('ajax_submit_content_setting_changes/', submit_content_setting_changes, name="content-setting-changes-submit"),
+    path('ajax_submit_delete_pathway_content/', submit_cotent_delete, name="submit-content-delete")
 
 
 ]

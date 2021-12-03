@@ -26,6 +26,7 @@ You're developing a pathway, add or change the content, set the order of complet
    {{ pathway.title }}
 
 </h4>
+<p><a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a></p>
   <input type="hidden" name="pathway_id" value="{{pathway.id}}">
   {% csrf_token %}
 <div class="container" id="pathwayContent">
@@ -33,7 +34,7 @@ You're developing a pathway, add or change the content, set the order of complet
 
 
 </div>
-
+<input id="contentObjId" type="hidden" name="contentObjId" value="">
 
    <!-- Modal -->
    <div class="modal fade" id="contentSettingModal" tabindex="-1" aria-labelledby="contentSettingModalLabel" aria-hidden="true">
@@ -45,11 +46,10 @@ You're developing a pathway, add or change the content, set the order of complet
          </div>
          <div class="modal-body">
            <div class="form-group">
-             
-             <input name="contentId" type="text">
+
              <form method="POST">
                {% csrf_token %}
-               <input type="hidden" name="contentObjId" value="">
+
                <div class="container">
                  <div class="row">
                    <div class="col-8">
@@ -84,12 +84,31 @@ You're developing a pathway, add or change the content, set the order of complet
          </div>
          <div class="modal-footer">
            <button type="button" class="btn btn-al" data-bs-dismiss="modal">Close</button>
-           <button type="button" class="btn btn-al">Save changes</button>
+           <button onclick="postUpdateContentSetting()" id="updateContentSetting" type="button" class="btn btn-al">Update</button>
          </div>
        </div>
      </div>
    </div>
-
+   <!-- Modal -->
+   <div class="modal fade" id="contentDeleteModal" tabindex="-1" aria-labelledby="contentDeleteModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title" id="contentDeleteModalLabel">Delete content from pathway</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+           <div class="form-group">
+             Are you sure you want to remove this content from the pathway?
+           </div>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-al" data-bs-dismiss="modal">Close</button>
+           <button id='#deleteModalSubmit' onclick="ajax_submit_delete_pathway_content()" id="updateContentSetting" type="button" class="btn btn-al">Yes I want to remove it</button>
+         </div>
+       </div>
+     </div>
+   </div>
 
 
 {% endblock %}

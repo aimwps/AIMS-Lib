@@ -18,11 +18,51 @@ from Members.models import MemberProfile
 import json, requests
 from .pathway_serializers import PathwaySerializer, PathwayContentSerializer
 
+def submit_cotent_delete(request):
+    print(request.POST)
+    pathway_obj = PathwayContent.objects.get(id=request.POST.get("content_id"))
+    if request.POST.get("type") == "delete":
+        pathway_obj.delete()
+    data_info = {"message": "Success"}
+    json_data_info = json.dumps(data_info)
+    return JsonResponse(json_data_info, safe=False)
 
+def submit_content_setting_changes(request):
+    data_info = {
+                "result": "success",
+                }
+
+    if request.POST.get("complete_to_move_on") == 'false':
+        complete_to_move_on = False
+    else:
+        complete_to_move_on = True
+    if request.POST.get("complete_anytime_overide") == 'false':
+        complete_anytime_overide = False
+    else:
+        complete_anytime_overide = True
+
+    json_data_info = json.dumps(data_info)
+    pathway_obj = PathwayContent.objects.get(id=request.POST.get("content_id"))
+    pathway_obj.complete_anytime_overide = complete_anytime_overide
+    pathway_obj.complete_to_move_on = complete_to_move_on
+    pathway_obj.revise_frequency = request.POST.get("revise_frequency")
+    pathway_obj.save()
+    return JsonResponse(json_data_info, safe=False)
+
+def get_pathway_content_obj(request):
+    pathway_obj = PathwayContent.objects.get(id=request.GET.get("content_id"))
+    res = PathwayContentSerializer(pathway_obj)
+    data_info = {
+                "pathway_obj": res.data,
+                }
+
+    json_data_info = json.dumps(data_info)
+
+    return JsonResponse(json_data_info, safe=False)
 # Get json of all associated content - json must be in order
 # User edits
 def edit_dev_pathway_content(request):
-    print(request.POST)
+
     json_data_info = json.dumps("success")
 
     ## The pathwayContent that we are making changes too
@@ -61,6 +101,10 @@ def edit_dev_pathway_content(request):
 def get_dev_pathway_content(request):
     pathway = Pathway.objects.get(id=request.GET.get("pathway"))
     pathway_objs = PathwayContent.objects.filter(on_pathway=pathway).order_by("order_position")
+    for i,p in enumerate(pathway_objs,1):
+        p.order_position = i
+        p.save()
+
     x = PathwaySerializer(pathway)
     y = PathwayContentSerializer(pathway_objs,many=True)
 
@@ -222,7 +266,7 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         else:
             print("FORM TYPE NOT RECOGNISED")
 
-        return HttpResponseRedirect(f'/pathways/')
+        return HttpResponseRedirect(reverse('pathway-develop', args=(pathway_id,)))
 
 class PathwayEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'

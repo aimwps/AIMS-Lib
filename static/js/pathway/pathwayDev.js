@@ -1,16 +1,16 @@
 $(document).ready(function () {
   getPathwayData() ;
-  $('#contentSettingModal').on('show.bs.modal', function(e) {
 
-      //get data-id attribute of the clicked element
-      var contentId = $(e.relatedTarget).data('content-id');
-      var contentData = $.getValues("/get_dev_pathway_content/");
-      //populate the textbox
-      $(e.currentTarget).find('input[name="contentId"]').val(contentId);
+  // $('#contentSettingModal').on('show.bs.modal', function(e) {
+  //
+  //     //get data-id attribute of the clicked element
+  //     var contentId = $(e.relatedTarget).data('content-id');
+  //     var contentData = $.getValues("/get_dev_pathway_content/");
+  //     //populate the textbox
+  //     $(e.currentTarget).find('input[name="contentId"]').val(contentId);
   });
-});
 
-$(document).on("click", "")
+// $(document).on("click", "")
 
 function getPathwayData(){
   $.ajax({type: "GET",
@@ -45,17 +45,24 @@ function getPathwayData(){
                   <div class="collapse" id="contentControls${index}">
                     <div class="card card-body border-0">
                       <div class="container" id="contentControlsBody${index}">
-                      <div class="row">
+                      <div class="row my-2">
                         <div class="col-3 ms-auto">
-                        <button data-content-id="${item.id}" class="btn btn-sm btn-al" data-bs-toggle="modal" data-bs-target="#contentSettingModal"><i class="fas fa-gavel"></i></button>
+                        <button onClick="editContentInModal(${item.id})" class="btn btn-sm btn-al" data-bs-toggle="modal" data-bs-target="#contentSettingModal"><i class="fas fa-list-ul"></i></button>
                         </div>
                         <div class="col-9 me-auto">
                           Completion rules
                         </div>
                       </div>
+                      <div class="row my-2">
+                        <div class="col-3 ms-auto">
+                        <button onClick="deletePathwayContent(${item.id})" class="btn btn-sm btn-al" data-bs-toggle="modal" data-bs-target="#contentDeleteModal"><i class="far fa-trash-alt"></i></button>
+                        </div>
+                        <div class="col-9 me-auto">
+                          Remove content from pathway
+                        </div>
+                      </div>
                       </div>
                     </div>
-                  </div>
                 </div>`);
               if (index != 0){
                 $("#contentControlsBody"+ index).append(`
@@ -95,10 +102,10 @@ function getPathwayData(){
           }})
 };
 
-function editContent(contentID, actionType){
+function editContent(contentId, actionType){
   $.ajax({type:"POST",
           url:"/dev_pathway_edit/",
-          data:{content_id: contentID,
+          data:{content_id: contentId,
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                 action_type: actionType},
               success: function(){
@@ -106,18 +113,56 @@ function editContent(contentID, actionType){
               }})
 };
 
-$.extend({
-    getValues: function(url) {
-        var result = null;
-        $.ajax({
-            url: url,
-            type: 'get',
-            dataType: 'xml',
-            async: false,
-            success: function(data) {
-                result = data;
-            }
-        });
-       return result;
-    }
-});
+function editContentInModal(contentId){
+  $.ajax({type:"GET",
+          url:"/ajax_get_pathway_content_obj/",
+          data: {content_id:contentId},
+        success: function(data){
+          var json = JSON.parse(data);
+          console.log("json", json);
+          console.log("anytime", json.pathway_obj.complete_anytime_overide);
+          console.log("move on", json.pathway_obj.complete_to_move_on)
+          // populate the form with data
+          $('#id_complete_anytime_overide').prop('checked', json.pathway_obj.complete_anytime_overide);
+          $('#id_complete_to_move_on').prop('checked', json.pathway_obj.complete_to_move_on);
+          $('#id_revise_frequency').val(json.pathway_obj.revise_frequency);
+          $('#contentObjId').val(json.pathway_obj.id);
+          // getPathwayData();
+        }})
+};
+
+
+function postUpdateContentSetting(){
+    $.ajax({type:"POST",
+            url: "/ajax_submit_content_setting_changes/",
+            data: {content_id: $('#contentObjId').val(),
+                  complete_anytime_overide: $('#id_complete_anytime_overide').is(':checked'),
+                  complete_to_move_on: $('#id_complete_to_move_on').is(':checked'),
+                  revise_frequency: $('#id_revise_frequency').val(),
+                  csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+
+                },
+              success:function(){
+                    $('#contentSettingModal').modal('toggle');
+                    getPathwayData();
+                  },
+
+           })
+};
+function deletePathwayContent(contentId){
+  $("#contentObjId").val(contentId);
+
+
+}
+function ajax_submit_delete_pathway_content(){
+  $.ajax({type:"POST",
+          url:"/ajax_submit_delete_pathway_content/",
+          data: {csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                content_id: $("#contentObjId").val(),
+                type: 'delete',},
+          success: function(){
+            $('#contentDeleteModal').modal('toggle');
+            getPathwayData();
+          }
+              })
+}
