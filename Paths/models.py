@@ -9,12 +9,13 @@ from rest_framework import serializers
 from VideoLecture.models import VideoLecture
 from WrittenLecture.models import Article
 from Benchmark.models import Benchmark
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.fields import GenericForeignKey
+# from django.contrib.contenttypes.models import ContentType
 
 
-CONTENT_TYPE = (('Article', "Article"),
-                ('VideoLecture', "Video Lecture"),
+CONTENT_TYPE = (('article', "Article"),
+                ('video', "Video"),
+                ('benchmark', "Benchmark"),
                 )
 REVISE_FREQ = ( ('Never', 'Never'),
                 ('Daily', 'Daily'),

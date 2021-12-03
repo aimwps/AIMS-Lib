@@ -1,5 +1,5 @@
 from .models import Pathway, PathwayContent, PathwayParticipant
-from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm
+from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm, PathwayContentEditForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
@@ -17,6 +17,7 @@ from QuestionGenerator.models import GeneratedQuestionBank
 from Members.models import MemberProfile
 import json, requests
 from .pathway_serializers import PathwaySerializer, PathwayContentSerializer
+
 
 # Get json of all associated content - json must be in order
 # User edits
@@ -91,6 +92,7 @@ class PathwayView(View):
         else:
             context['participation_status'] = False
         context['pathway'] = pathway
+
         return render(request, self.template_name, context)
 
     def post(self, request, pathway_id):
@@ -117,7 +119,7 @@ class PathwayDevelopView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     template_name = "pathway_dev_view.html"
-
+    form_class = PathwayContentEditForm()
     def get(self, request, pathway_id):
         context = {}
         pathway = Pathway.objects.get(id=pathway_id)
@@ -127,6 +129,7 @@ class PathwayDevelopView(LoginRequiredMixin, View):
         else:
             context['participation_status'] = False
         context['pathway'] = pathway
+        context['form'] = self.form_class
         return render(request, self.template_name, context)
 
     def post(self, request, pathway_id):
@@ -184,7 +187,7 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         if "lit-submit" in request.POST:
             new_path_obj = PathwayContent(
                                 on_pathway = get_object_or_404(Pathway, id=pathway_id),
-                                content_type = "written-lecture",
+                                content_type = "article",
                                 video = None,
                                 article = Article.objects.get(id=request.POST.get("article")),
                                 benchmark = None,
@@ -196,7 +199,7 @@ class PathwayContentCreate(LoginRequiredMixin, View):
         elif "vid-submit" in request.POST:
             new_path_obj = PathwayContent(
                                 on_pathway = get_object_or_404(Pathway, id=pathway_id),
-                                content_type = "video-lecture",
+                                content_type = "video",
                                 video = VideoLecture.objects.get(id=request.POST.get("video")),
                                 article = None,
                                 benchmark = None,

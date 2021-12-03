@@ -34,8 +34,61 @@ You're developing a pathway, add or change the content, set the order of complet
 
 </div>
 
-   </div>
 
+   <!-- Modal -->
+   <div class="modal fade" id="contentSettingModal" tabindex="-1" aria-labelledby="contentSettingModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title" id="contentSettingModalLabel">Content settings</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+           <div class="form-group">
+             
+             <input name="contentId" type="text">
+             <form method="POST">
+               {% csrf_token %}
+               <input type="hidden" name="contentObjId" value="">
+               <div class="container">
+                 <div class="row">
+                   <div class="col-8">
+                     <p>The user can complete this at any stage in the pathway</p>
+                   </div>
+                   <div class="col-4 me-auto">
+                     <p>{{ form.complete_anytime_overide }}</p>
+                   </div>
+                 </div>
+                 <div class="row">
+                   <div class="col-8">
+                     <p>Subsequent content is locked until this is completed</p>
+                   </div>
+                   <div class="col-4 me-auto">
+                     <p>{{ form.complete_to_move_on }}</p>
+                   </div>
+                 </div>
+                 <div class="row">
+                   <div class="col-8">
+                     <p>The user is prompted to recap this content</p>
+                   </div>
+                   <div class="col-4 me-auto">
+                     <p>{{ form.revise_frequency }}</p>
+                   </div>
+                 </div>
+               </div>
+
+
+
+               </form>
+           </div>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-al" data-bs-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-al">Save changes</button>
+         </div>
+       </div>
+     </div>
+   </div>
 
 
 

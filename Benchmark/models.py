@@ -11,7 +11,7 @@ class Benchmark(models.Model):
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     def __str__(self):
-        return f"Benchmark_{self.id}"
+        return f"Benchmark_{self.title}"
     def get_success_url(self):
         return reverse('edit-benchmark', kwargs={'benchmark_id' : self.object.pk})
 
