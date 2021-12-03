@@ -23,10 +23,16 @@ You're developing a pathway, add or change the content, set the order of complet
 {% block content %}
 <h4 class="my-4">
 
-   {{ pathway.title }}
+  {{ pathway.title }}
 
 </h4>
-<p><a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a></p>
+<p>
+  <a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a>
+  <a href="{% url 'pathway-edit' pathway.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
+</p>
+<p class="lead">
+  {{ pathway.description }}
+  </p>
   <input type="hidden" name="pathway_id" value="{{pathway.id}}">
   {% csrf_token %}
 <div class="container" id="pathwayContent">

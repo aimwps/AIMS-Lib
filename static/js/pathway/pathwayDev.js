@@ -37,12 +37,12 @@ function getPathwayData(){
                   <div class="col-6" id="contentTitle${index}">
                   </div>
                   <div class="col-1">
-                    <a class="btn btn-sm btn-al" data-bs-toggle="collapse" href="#contentControls${index}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <a class="btn btn-sm btn-al" data-bs-toggle="collapse" href="#contentControls${item.id}" role="button" aria-expanded="false" aria-controls="contentControls${item.id}">
                       <i class="fas fa-cogs"></i>
                     </a>
                   </div>
                   </div>
-                  <div class="collapse" id="contentControls${index}">
+                  <div class="collapse" id="contentControls${item.id}">
                     <div class="card card-body border-0">
                       <div class="container" id="contentControlsBody${index}">
                       <div class="row my-2">
@@ -108,8 +108,12 @@ function editContent(contentId, actionType){
           data:{content_id: contentId,
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                 action_type: actionType},
-              success: function(){
+              success: function(data){
+                var json = JSON.parse(data);
                 getPathwayData();
+                $('#contentControls'+json.pathway_obj).collapse("show");
+
+
               }})
 };
 

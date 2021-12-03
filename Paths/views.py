@@ -53,7 +53,7 @@ def get_pathway_content_obj(request):
     pathway_obj = PathwayContent.objects.get(id=request.GET.get("content_id"))
     res = PathwayContentSerializer(pathway_obj)
     data_info = {
-                "pathway_obj": res.data,
+                "pathway_obj": request.GET.get("content_id"),
                 }
 
     json_data_info = json.dumps(data_info)
@@ -63,8 +63,11 @@ def get_pathway_content_obj(request):
 # User edits
 def edit_dev_pathway_content(request):
 
-    json_data_info = json.dumps("success")
+    data_info = {
+                "pathway_obj": request.POST.get("content_id"),
+                }
 
+    json_data_info = json.dumps(data_info)
     ## The pathwayContent that we are making changes too
     pathway_obj = PathwayContent.objects.get(id=request.POST.get("content_id"))
 
@@ -274,6 +277,8 @@ class PathwayEdit(LoginRequiredMixin, UpdateView):
     model= Pathway
     form_class = PathwayEditForm
     template_name = 'pathway_edit.html'
+    def get_success_url(self):
+        return reverse("pathway-develop", kwargs={'pathway_id' : self.object.pk})
 
 class PathwayCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
