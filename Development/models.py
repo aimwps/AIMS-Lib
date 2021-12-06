@@ -127,6 +127,7 @@ class StepTracker(models.Model):
         print(self.id)
         # 1. get a list of date ranges from when the tracking begins until the current date
         historical_date_ranges = self.get_period_history()
+        print(f"length of historical_date_ranges {len(historical_date_ranges)}")
         data_dict = {
                     "cal_date": [],
                     "period_start": [],
@@ -141,11 +142,11 @@ class StepTracker(models.Model):
 
             period_results = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
 
-            # If there are results,
+            # Assign the result to the count value
             if period_results:
                 result_values = list(period_results.values_list('submit_type', flat=True))
                 for i in result_values:
-                    print(i)
+                    print(f"--->{i}")
 
                 if "min_showup" in result_values:
                     calmap_value = 249
@@ -162,6 +163,7 @@ class StepTracker(models.Model):
                     calmap_value = np.nan
                     count_value = sum(list(period_results.values_list('count_value', flat=True)))
                     adjusted_count_value = np.nan
+
                     if self.metric_tracker_type == "minimize":
                         if count_value <= self.metric_max:
                             adjusted_count_value = self.metric_max
