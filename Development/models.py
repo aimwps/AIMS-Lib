@@ -144,7 +144,7 @@ class StepTracker(models.Model):
             # If there are results,
             if period_results:
                 result_values = list(period_results.values_list('submit_type', flat=True))
-                for i in results_values:
+                for i in result_values:
                     print(i)
 
                 if "min_showup" in result_values:
@@ -170,13 +170,15 @@ class StepTracker(models.Model):
                         if count_value >= self.metric_min:
                             calmap_value = 250
 
-                    if self.metric_tracker_type == "maximize":
+                    elif self.metric_tracker_type == "maximize":
                         if count_value >= self.metric_max:
                             adjusted_count_value = self.metric_max
                         else:
                             adjusted_count_value = count_value
                         if count_value <= self.metric_min:
                             calmap_value = 250
+                    else:
+                        print("THE PROBLEM LIES HERE 181 ")
             else:
                 calmap_value = 0
                 count_value = "Uncompleted"
@@ -190,18 +192,19 @@ class StepTracker(models.Model):
                 data_dict['period_end'].append(end_date)                                # The date and time the logs period ended
                 data_dict['count_value'].append(count_value)                            # The actual total of the logs for the period
                 data_dict['calmap_value'].append(calmap_value)                          # The value the calendar heatmap will run off
-                data_dict['adjusted_count_value'].append(adjusted_count_value)          # The interim value for ad
+                data_dict['adjusted_count_value'].append(adjusted_count_value)          # The interim value to be scaled to the heatmap range once all values have been found
                 cal_date += relativedelta(days=1)
 
         # 4. create a dataframe and scale the adjusted count_value between 500 & 1000
         df = pd.DataFrame(data_dict)
-        nan_index = df['calmap_value'].isna()
-        # print(nan_index[:])
 
+        # Find all the places where a finalised calmap value has not been assigned
+        nan_index = df['calmap_value'].isna()
+
+        # Create a scaler to change those figuers into the range of 500-1000
         scaler = MinMaxScaler(feature_range=(500,1000))
-        # print(self.get_tsentence())
-        # print(f"LENGTH::::::::::::::::::: {len(nan_index)}")
-        # print(df.info())
+
+
         try:
             df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['adjusted_count_value']])
             df['calmap_value'] = df['calmap_value'].round(4)
@@ -212,7 +215,7 @@ class StepTracker(models.Model):
         # reverse count values for minimize
         if self.metric_tracker_type == "minimize":
             df['calmap_value'] = df['calmap_value'].apply(reverse_values)
-        # print(df[:])
+
 
         df = df.drop('adjusted_count_value', axis=1)
         df['cal_date'] = pd.to_datetime(df['cal_date'])
@@ -257,7 +260,6 @@ class StepTracker(models.Model):
 
             elif freq_code.code in ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]:
                 while var_date.strftime('%B') != freq_code.code:
-                    print(f"strftime {var_date.strftime('%B')} vs freq_code {freq_code.code}")
                     var_date += relativedelta(months=1)
                 if soonest_date:
                     if var_date < soonest_date:
