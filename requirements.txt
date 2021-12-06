@@ -50,7 +50,6 @@ threadpoolctl==3.0.0
 tokenizers==0.10.3
 torch==1.10.0
 tqdm==4.62.3
-transformers @ file:///media/aimwps/F/AimsLib/AimsLib/NLP/transformers
 typing_extensions==4.0.1
 urllib3==1.26.7
 vine==5.0.0
