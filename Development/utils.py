@@ -1,13 +1,13 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import datetime as dt
 import pandas as pd
 from dateutil import parser
 import io, urllib, base64
-import matplotlib.backends.backend_agg as backend
-from matplotlib.figure import Figure
+# import matplotlib.backends.backend_agg as backend
+# from matplotlib.figure import Figure
 
 
 def reverse_values(val):
@@ -41,49 +41,49 @@ def get_next_sunday():
         dt += relativedelta(days=1)
     return dt
 
-def generate_heatmap_from_df(df, vmin, vmax):
-    dates = list(df['date_time'])
-    data = list(df['heatmap_value'])
-    data = [d if isinstance(d, float) else np.nan for d in data]
-    fig = Figure(figsize=(12, 18))
-    canvas = backend.FigureCanvas(fig)
-    ax = fig.add_subplot(111)
-    calendar_heatmap(ax, dates, data, vmin, vmax)
-
-    buf = io.BytesIO()
-    fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0.1)
-    buf.seek(0)
-
-    string = base64.b64encode(buf.read())
-    uri = urllib.parse.quote(string)
-    return uri
+# def generate_heatmap_from_df(df, vmin, vmax):
+#     dates = list(df['date_time'])
+#     data = list(df['heatmap_value'])
+#     data = [d if isinstance(d, float) else np.nan for d in data]
+#     fig = Figure(figsize=(12, 18))
+#     canvas = backend.FigureCanvas(fig)
+#     ax = fig.add_subplot(111)
+#     calendar_heatmap(ax, dates, data, vmin, vmax)
 #
-def calendar_array(dates, data):
-    i, j = zip(*[d.isocalendar()[1:] for d in dates])
-    i = np.array(i) - min(i)
-    j = np.array(j) - 1
-    ni = max(i) + 1
-    calendar = np.nan * np.zeros((ni, 7))
-    calendar[i, j] = data
-
-    return i, j, calendar
-
-
-def calendar_heatmap(ax, dates, data, count_lower, count_upper):
-    i, j, calendar = calendar_array(dates, data)
-    data_max = np.nanmax(data)
-    im = ax.imshow(calendar, interpolation='none', vmin=0, vmax=count_upper, cmap='Oranges', aspect="auto")
-    label_days(ax, dates, i, j, calendar)
-    label_months(ax, dates, i, j, calendar)
-    tick_g = [0, count_upper//4, count_lower, count_upper ]
-    ax.figure.colorbar(im)
-    # cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
-    #cbar.ax.set_xticklabels(["Incomplete", "Minimum show", count_lower//2, count_upper//2])
-
-def label_days(ax, dates, i, j, calendar):
-    ni, nj = calendar.shape
-    day_of_month = np.nan * np.zeros((ni, 7))
-    day_of_month[i, j] = [d.day for d in dates]
+#     buf = io.BytesIO()
+#     fig.savefig(buf, bbox_inches='tight',format="png", pad_inches = 0.1)
+#     buf.seek(0)
+#
+#     string = base64.b64encode(buf.read())
+#     uri = urllib.parse.quote(string)
+#     return uri
+#
+# def calendar_array(dates, data):
+#     i, j = zip(*[d.isocalendar()[1:] for d in dates])
+#     i = np.array(i) - min(i)
+#     j = np.array(j) - 1
+#     ni = max(i) + 1
+#     calendar = np.nan * np.zeros((ni, 7))
+#     calendar[i, j] = data
+#
+#     return i, j, calendar
+#
+#
+# def calendar_heatmap(ax, dates, data, count_lower, count_upper):
+#     i, j, calendar = calendar_array(dates, data)
+#     data_max = np.nanmax(data)
+#     im = ax.imshow(calendar, interpolation='none', vmin=0, vmax=count_upper, cmap='Oranges', aspect="auto")
+#     label_days(ax, dates, i, j, calendar)
+#     label_months(ax, dates, i, j, calendar)
+#     tick_g = [0, count_upper//4, count_lower, count_upper ]
+#     ax.figure.colorbar(im)
+#     # cbar = fig.colorbar(cax.get_children()[1],ticks=[vmin, vmax*0.25, vmax*0.5, vmax], ax=cax, orientation="horizontal")
+#     #cbar.ax.set_xticklabels(["Incomplete", "Minimum show", count_lower//2, count_upper//2])
+#
+# def label_days(ax, dates, i, j, calendar):
+#     ni, nj = calendar.shape
+#     day_of_month = np.nan * np.zeros((ni, 7))
+#     day_of_month[i, j] = [d.day for d in dates]
 
     for (i, j), day in np.ndenumerate(day_of_month):
         if np.isfinite(day):

@@ -9,12 +9,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
 from django.utils.timezone import now
 from Members.models import MemberProfile
-from .utils import get_next_sunday, generate_heatmap_from_df, reverse_values
+from .utils import get_next_sunday, reverse_values #generate_heatmap_from_df
 from .char_choices import *
 import pandas as pd
 import numpy as np
 import io, urllib, base64
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from .char_choices import *
 from sklearn.preprocessing import MinMaxScaler
 

@@ -42,7 +42,7 @@ def check_gqb_status(request):
 def search_questions(request):
     if request.method=="POST":
         search_str = json.loads(request.body).get('searchText')
-        written_lecture = WrittenLecture.objects.filter(title__icontains=search_str, author=request.user.id)
+        written_lecture = Article.objects.filter(title__icontains=search_str, author=request.user.id)
         video_lecture = VideoLecture.objects.filter(title__icontains=search_str, author=request.user.id)
         gqb = GeneratedQuestionBank.objects.filter(
                 source_id__in=written_lecture, author = request.user.id) | GeneratedQuestionBank.objects.filter(
@@ -64,7 +64,7 @@ class QuestionGenerator(LoginRequiredMixin, View):
     redirect_field_name = 'redirect_to'
     def get(self, request, source_type, source_id):
         if source_type == 'literature':
-            source_doc = get_object_or_404(WrittenLecture, id=source_id).body
+            source_doc = get_object_or_404(Article, id=source_id).body
         elif source_type == 'transcript':
             source_doc = get_object_or_404(VideoLecture, id=source_id).transcript
         else:
@@ -85,7 +85,7 @@ class QuestionGeneratorPending(View):
         context['source_type'] = source_type
         context['source_id'] = source_id
         if source_type == "literature":
-            object = get_object_or_404(WrittenLecture, id=source_id)
+            object = get_object_or_404(Article, id=source_id)
         else:
             object = get_object_or_404(VideoLecture, id=source_id)
         context['source_object'] = object
