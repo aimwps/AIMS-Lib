@@ -123,6 +123,8 @@ class StepTracker(models.Model):
 
 
     def get_calmap_data(self):
+        print("Here--------------------------->")
+        print(self.title, self.id)
         # 1. get a list of date ranges from when the tracking begins until the current date
         historical_date_ranges = self.get_period_history()
         data_dict = {
@@ -136,6 +138,7 @@ class StepTracker(models.Model):
 
         # 2. for each date range filter log results
         for (start_date, end_date) in historical_date_ranges:
+
             period_results = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
             if period_results:
                 result_values = list(period_results.values_list('submit_type', flat=True))
