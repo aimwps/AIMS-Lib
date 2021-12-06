@@ -140,8 +140,12 @@ class StepTracker(models.Model):
         for (start_date, end_date) in historical_date_ranges:
 
             period_results = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
+
+            # If there are results,
             if period_results:
                 result_values = list(period_results.values_list('submit_type', flat=True))
+                for i in results_values:
+                    print(i)
 
                 if "min_showup" in result_values:
                     calmap_value = 249
@@ -181,23 +185,23 @@ class StepTracker(models.Model):
         # 3. set each date in the date range to the log results
             cal_date = start_date.date()
             while cal_date < end_date.date():
-                data_dict['cal_date'].append(cal_date)
-                data_dict['period_start'].append(start_date)
-                data_dict['period_end'].append(end_date)
-                data_dict['count_value'].append(count_value)
-                data_dict['calmap_value'].append(calmap_value)
-                data_dict['adjusted_count_value'].append(adjusted_count_value)
+                data_dict['cal_date'].append(cal_date)                                  # The date that will used on the calender
+                data_dict['period_start'].append(start_date)                            # The date and time the logs period started
+                data_dict['period_end'].append(end_date)                                # The date and time the logs period ended
+                data_dict['count_value'].append(count_value)                            # The actual total of the logs for the period
+                data_dict['calmap_value'].append(calmap_value)                          # The value the calendar heatmap will run off
+                data_dict['adjusted_count_value'].append(adjusted_count_value)          # The interim value for ad
                 cal_date += relativedelta(days=1)
 
         # 4. create a dataframe and scale the adjusted count_value between 500 & 1000
         df = pd.DataFrame(data_dict)
         nan_index = df['calmap_value'].isna()
-        print(nan_index[:])
+        # print(nan_index[:])
 
         scaler = MinMaxScaler(feature_range=(500,1000))
-        print(self.get_tsentence())
-        print(f"LENGTH::::::::::::::::::: {len(nan_index)}")
-        print(df.info())
+        # print(self.get_tsentence())
+        # print(f"LENGTH::::::::::::::::::: {len(nan_index)}")
+        # print(df.info())
         try:
             df.loc[nan_index, ['calmap_value']] = scaler.fit_transform(df.loc[nan_index, ['adjusted_count_value']])
             df['calmap_value'] = df['calmap_value'].round(4)
@@ -208,7 +212,7 @@ class StepTracker(models.Model):
         # reverse count values for minimize
         if self.metric_tracker_type == "minimize":
             df['calmap_value'] = df['calmap_value'].apply(reverse_values)
-        print(df[:])
+        # print(df[:])
 
         df = df.drop('adjusted_count_value', axis=1)
         df['cal_date'] = pd.to_datetime(df['cal_date'])
