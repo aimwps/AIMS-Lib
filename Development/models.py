@@ -139,14 +139,15 @@ class StepTracker(models.Model):
 
         # 2. for each date range filter log results
         for (start_date, end_date) in historical_date_ranges:
-
-            period_results = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
-
+            print(start_date.time())
+            period_results = StepTrackerLog.objects.filter(on_tracker=self, create_datetime__range=[start_date, end_date])
+            print(f"from {start_date} to {end_date}--->len results {len(period_results)}")
+            for i in period_results:
+                print(f"{i.id}----> length {len(period_results)}")
             # Assign the result to the count value
             if period_results:
                 result_values = list(period_results.values_list('submit_type', flat=True))
-                for i in result_values:
-                    print(f"--->{i}")
+
 
                 if "min_showup" in result_values:
                     calmap_value = 249
@@ -187,6 +188,7 @@ class StepTracker(models.Model):
                 adjusted_count_value = np.nan
 
         # 3. set each date in the date range to the log results
+
             cal_date = start_date.date()
             while cal_date < end_date.date():
                 data_dict['cal_date'].append(cal_date)                                  # The date that will used on the calender
@@ -529,6 +531,7 @@ class StepTrackerLog(models.Model):
                         )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
+    create_datetime = models.DateTimeField(default=now)
     create_date = models.DateField(default=now)
     create_time = models.TimeField(default=now)
     submit_type = models.CharField(max_length=100, choices=TRACKER_LOG_TYPE)
