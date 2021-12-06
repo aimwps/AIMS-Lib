@@ -532,8 +532,8 @@ class StepTrackerLog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
     create_datetime = models.DateTimeField(default=now)
-    create_date = models.DateField(default=now)
-    create_time = models.TimeField(default=now)
+    # create_date = models.DateField(default=now)
+    # create_time = models.TimeField(default=now)
     submit_type = models.CharField(max_length=100, choices=TRACKER_LOG_TYPE)
     count_value = models.FloatField(blank=True, null=True)
 
