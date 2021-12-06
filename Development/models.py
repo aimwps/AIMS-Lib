@@ -161,7 +161,7 @@ class StepTracker(models.Model):
                 else:
                     calmap_value = np.nan
                     count_value = sum(list(period_results.values_list('count_value', flat=True)))
-
+                    adjusted_count_value = np.nan
                     if self.metric_tracker_type == "minimize":
                         if count_value <= self.metric_max:
                             adjusted_count_value = self.metric_max
