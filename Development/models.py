@@ -124,7 +124,7 @@ class StepTracker(models.Model):
 
     def get_calmap_data(self):
         print("Here--------------------------->")
-        print(self.title, self.id)
+        print(self.id)
         # 1. get a list of date ranges from when the tracking begins until the current date
         historical_date_ranges = self.get_period_history()
         data_dict = {
