@@ -476,7 +476,7 @@ class StepTracker(models.Model):
         start_date, end_date = self.get_next_period()
 
         if start_date < datetime.now() < end_date:
-            current_period_logs = StepTrackerLog.objects.filter(on_tracker=self, create_date__range=[start_date, end_date])
+            current_period_logs = StepTrackerLog.objects.filter(on_tracker=self, create_datetime__range=[start_date, end_date])
             period_statuses = list(current_period_logs.values_list('submit_type', flat=True))
             if "min_showup" in period_statuses or "fail_or_no_submit" in period_statuses or "boolean_success" in period_statuses:
                 status = "period_complete"
