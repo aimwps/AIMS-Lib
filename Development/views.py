@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from .utils import prettify_tracker_status_dict
 from .development_serializers import StepTrackerSerializer
 import pandas as pd
+from django.utils import timezone
 def get_tracker_calmap_data(request):
     tracker = get_object_or_404(StepTracker, id=request.GET.get("tracker_id"))
 
@@ -61,7 +62,8 @@ def submit_tracker_log(request):
     new_log = StepTrackerLog(author=submit_user,
                             on_tracker=tracker,
                             submit_type=request.POST.get("submit_type"),
-                            count_value=request.POST.get("count_value"))
+                            count_value=request.POST.get("count_value"),
+                            create_date = timezone.now())
     new_log.save()
     response = json.dumps({"complete":True})
     return HttpResponse(response)

@@ -7,7 +7,6 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
 from WebsiteTools.models import ContentCategory
-from django.utils.timezone import now
 from Members.models import MemberProfile
 from .utils import get_next_sunday, reverse_values #generate_heatmap_from_df
 from .char_choices import *
@@ -17,7 +16,7 @@ import io, urllib, base64
 # import matplotlib.pyplot as plt
 from .char_choices import *
 from sklearn.preprocessing import MinMaxScaler
-
+from django.utils import timezone
 
 class Aim(models.Model):
     title = models.TextField()
@@ -91,7 +90,7 @@ class StepTracker(models.Model):
                 "weekly": "week",
                 "monthly": "month",
                 "yearly": "year"}
-        related_epoch = { "day": "week",
+        related_epoch = {"day": "week",
                         "week": "month",
                         "month": "year",
 
@@ -100,16 +99,16 @@ class StepTracker(models.Model):
             return f"Every {vocab[self.record_frequency]} I track"
         else:
             freq_codes = StepTrackerCustomFrequency.objects.filter(on_tracker=self)
-            code_list = ", ".join(freq_code.values_list('code', flatten=True))
+            code_list = ", ".join(freq_codes.values_list('code', flat=True))
 
             plural = ""
-            if len(freq_code) > 1:
+            if len(freq_codes) > 1:
                 plural = "'s"
-            return f"For the {self.record_frequency}{plural} {code_list} of {related_epoch[self.record_frequency]} I track"
+            return f"For the {self.record_log_length}{plural} {code_list} of the {related_epoch[self.record_log_length]} I track"
 
 
     def get_tsentence(self):
-        print(self.get_frequency_sentence)
+        print(self.get_frequency_sentence())
         tsentence = ""
         if self.metric_int_only:
             metric_min = int(round(self.metric_min, 0))
@@ -117,12 +116,12 @@ class StepTracker(models.Model):
         if self.metric_tracker_type == "boolean":
             tsentence += f"{self.metric_action}. "
         if self.metric_tracker_type == "maximize":
-            period = f"Each {self.record_frequency} period.. "
+            period = self.get_frequency_sentence()
             action_min = f"I {self.metric_action} a minimum {self.metric_min} {self.metric_unit}. "
             action_max = f"I take steps towards achieving {self.metric_max} {self.metric_unit}. "
             tsentence += "".join([period, action_min, action_max])
         if self.metric_tracker_type == "minimize":
-            period = f"Each {self.record_frequency} period.. "
+            period = self.get_frequency_sentence()
             action_min = f"I {self.metric_action} a maximum {metric_min} {self.metric_unit}. "
             action_max = f"I take steps towards achieving {metric_max} {self.metric_unit}. "
             tsentence += " ".join([period, action_min, action_max])
@@ -243,8 +242,6 @@ class StepTracker(models.Model):
         df['cal_date'] = pd.to_datetime(df['cal_date'])
 
         return df
-
-
 
     def get_soonest_frequency_code(self):
         now = self.on_behaviour.on_aim.author.profile.today_to_user_time()
@@ -493,7 +490,7 @@ class StepTracker(models.Model):
         total_value_count = None
         start_date, end_date = self.get_next_period()
 
-        if start_date < datetime.now() < end_date:
+        if start_date < timezone.now() < end_date:
             current_period_logs = StepTrackerLog.objects.filter(on_tracker=self, create_datetime__range=[start_date, end_date])
             period_statuses = list(current_period_logs.values_list('submit_type', flat=True))
             if "min_showup" in period_statuses or "fail_or_no_submit" in period_statuses or "boolean_success" in period_statuses:
@@ -550,8 +547,6 @@ class StepTrackerLog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
     create_datetime = models.DateTimeField(auto_now_add=True)
-    # create_date = models.DateField(default=now)
-    # create_time = models.TimeField(default=now)
     submit_type = models.CharField(max_length=100, choices=TRACKER_LOG_TYPE)
     count_value = models.FloatField(blank=True, null=True)
 
