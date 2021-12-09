@@ -86,7 +86,30 @@ class StepTracker(models.Model):
     def __str__(self):
         return f"StepTracker_{self.id}"
 
+    def get_frequency_sentence(self):
+        vocab = {"daily": "day",
+                "weekly": "week",
+                "monthly": "month",
+                "yearly": "year"}
+        related_epoch = { "day": "week",
+                        "week": "month",
+                        "month": "year",
+
+        }
+        if self.record_frequency != "custom":
+            return f"Every {vocab[self.record_frequency]} I track"
+        else:
+            freq_codes = StepTrackerCustomFrequency.objects.filter(on_tracker=self)
+            code_list = ", ".join(freq_code.values_list('code', flatten=True))
+
+            plural = ""
+            if len(freq_code) > 1:
+                plural = "'s"
+            return f"For the {self.record_frequency}{plural} {code_list} of {related_epoch[self.record_frequency]} I track"
+
+
     def get_tsentence(self):
+        print(self.get_frequency_sentence)
         tsentence = ""
         if self.metric_int_only:
             metric_min = int(round(self.metric_min, 0))
@@ -123,11 +146,9 @@ class StepTracker(models.Model):
 
 
     def get_calmap_data(self):
-        print("Here--------------------------->")
-        print(self.id)
         # 1. get a list of date ranges from when the tracking begins until the current date
         historical_date_ranges = self.get_period_history()
-        print(f"length of historical_date_ranges {len(historical_date_ranges)}")
+
         data_dict = {
                     "cal_date": [],
                     "period_start": [],
@@ -139,11 +160,8 @@ class StepTracker(models.Model):
 
         # 2. for each date range filter log results
         for (start_date, end_date) in historical_date_ranges:
-            print(start_date.time())
             period_results = StepTrackerLog.objects.filter(on_tracker=self, create_datetime__range=[start_date, end_date])
-            print(f"from {start_date} to {end_date}--->len results {len(period_results)}")
-            for i in period_results:
-                print(f"{i.id}----> length {len(period_results)}")
+
             # Assign the result to the count value
             if period_results:
                 result_values = list(period_results.values_list('submit_type', flat=True))
@@ -531,7 +549,7 @@ class StepTrackerLog(models.Model):
                         )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
-    create_datetime = models.DateTimeField(default=now)
+    create_datetime = models.DateTimeField(auto_now_add=True)
     # create_date = models.DateField(default=now)
     # create_time = models.TimeField(default=now)
     submit_type = models.CharField(max_length=100, choices=TRACKER_LOG_TYPE)
