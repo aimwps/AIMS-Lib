@@ -7,6 +7,7 @@ from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 DAY_CHOICES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 DAY_CHOICES = ((d,d) for d in DAY_CHOICES)
 # Create your models here.
@@ -28,8 +29,9 @@ class MemberProfile(models.Model):
 
     def __str__(self):
         return str(self.user_profile)
+
     def today_to_user_time(self):
-        now = datetime.today()
+        now = timezone.now()
         return datetime.combine(now, self.day_reset_time)
 
     def today_to_user_weekday_time(self):
@@ -54,7 +56,7 @@ class MemberProfile(models.Model):
 
 
     # def get_reset_periods(self):
-    #     now = datetime.today()
+    #     now = timezone.now()
     #     reset_user_time = datetime.combine(now, self.day_reset_time)
     #     # The current_date e.g. 29/09/21 @ 14:30 set to users reset periods Time
     #                       # --> 29/09/21 @ 05:00

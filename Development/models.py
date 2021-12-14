@@ -305,7 +305,10 @@ class StepTracker(models.Model):
         """
         period_length_conversion = {}
         member_profile = self.on_behaviour.on_aim.author.profile
-        now = datetime.today()
+        now = timezone.now()
+        print("--------------------------------------------")
+        print(type(now))
+        print("--------------------------------------------")
         if self.record_frequency =="daily":
             user_time = member_profile.today_to_user_time()
             if now > user_time:
@@ -411,7 +414,7 @@ class StepTracker(models.Model):
 
     def get_first_period(self):
         member_profile = MemberProfile.objects.get(author=self.on_behaviour.on_aim.author.id)
-        now = datetime.today()
+        now = timezone.now()
         if self.record_log_length == "day":
             if self.record_frequency =="daily":
                 start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
@@ -507,7 +510,7 @@ class StepTracker(models.Model):
         return (status, total_logs, total_value_count)
 
     def get_tracker_display_section(self, start_date, end_date):
-        now = datetime.today()
+        now = timezone.now()
         in_future = relativedelta(end_date, start_date).days
         if in_future  <= 0:
             return "displayToday"
