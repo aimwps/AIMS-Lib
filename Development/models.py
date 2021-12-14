@@ -2,7 +2,7 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.urls import reverse
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -106,7 +106,6 @@ class StepTracker(models.Model):
                 plural = "'s"
             return f"For the {self.record_log_length}{plural} {code_list} of the {related_epoch[self.record_log_length]} I track"
 
-
     def get_tsentence(self):
         print(self.get_frequency_sentence())
         tsentence = ""
@@ -142,7 +141,6 @@ class StepTracker(models.Model):
         else:
             sentence += "No milestone set"
         return sentence
-
 
     def get_calmap_data(self):
         # 1. get a list of date ranges from when the tracking begins until the current date
@@ -419,7 +417,8 @@ class StepTracker(models.Model):
         now = timezone.now()
         if self.record_log_length == "day":
             if self.record_frequency =="daily":
-                start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+                print(f"----------------------> {member_profile.day_reset_time}, {type(member_profile.day_reset_time)}, {self.record_start_date.tzinfo}")
+                start_date = datetime.combine(self.record_start_date, time(member_profile.day_reset_time, 0,0,0))
                 end_date = start_date + relativedelta(days=1) - timedelta(seconds=1)
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))

@@ -63,7 +63,7 @@ def submit_tracker_log(request):
                             on_tracker=tracker,
                             submit_type=request.POST.get("submit_type"),
                             count_value=request.POST.get("count_value"),
-                            create_date = timezone.now())
+                            create_datetime = timezone.now)
     new_log.save()
     response = json.dumps({"complete":True})
     return HttpResponse(response)
@@ -81,7 +81,7 @@ def get_category_path(cat, current_path=""):
         return new_path
 
 def request_uncomplete_trackers(request):
-    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__lte=datetime.today())))
+    all_user_trackers = list(StepTracker.objects.filter(Q(on_behaviour__on_aim__author=request.GET.get("user_id")) & Q(user_status="active") & Q(record_start_date__lte=timezone.now())))
     uncomplete_trackers = []
     for tracker in all_user_trackers:
         uncomplete_tracker_dict ={}
@@ -225,7 +225,7 @@ class AimsDash(LoginRequiredMixin, TemplateView):
 
                 ## For each behaviour find the trackers details
                 for behaviour in behaviours:
-                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active") & Q(record_start_date__lte=datetime.today()))
+                    all_behaviour_trackers = StepTracker.objects.filter(Q(on_behaviour=behaviour.id) & Q(user_status="active") & Q(record_start_date__lte=timezone.now()))
 
                     ## Pass trackers that need logs to uncomplete_trackers for quick fire aims
                     processed_trackers = []
