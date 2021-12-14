@@ -306,11 +306,13 @@ class StepTracker(models.Model):
         period_length_conversion = {}
         member_profile = self.on_behaviour.on_aim.author.profile
         now = timezone.now()
-        print("--------------------------------------------")
-        print(type(now))
-        print("--------------------------------------------")
+
         if self.record_frequency =="daily":
             user_time = member_profile.today_to_user_time()
+            print("--------------------------------------------")
+            print(type(now), now, now.tzinfo )
+            print(type(user_time), user_time, user_time.tzinfo)
+            print("--------------------------------------------")
             if now > user_time:
                 start_date = user_time
                 end_date = user_time + timedelta(hours=23, minutes=59, seconds=59)
@@ -549,7 +551,7 @@ class StepTrackerLog(models.Model):
                         )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE, related_name="tracker_logs")
-    create_datetime = models.DateTimeField(auto_now_add=True)
+    create_datetime = models.DateTimeField(default=timezone.now)
     submit_type = models.CharField(max_length=100, choices=TRACKER_LOG_TYPE)
     count_value = models.FloatField(blank=True, null=True)
 

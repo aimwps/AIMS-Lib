@@ -8,6 +8,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+import pytz
 DAY_CHOICES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 DAY_CHOICES = ((d,d) for d in DAY_CHOICES)
 # Create your models here.
@@ -18,7 +19,7 @@ class MemberProfile(models.Model):
     biography = RichTextField(config_name="article_editor", blank=True, null=True)
     personal_website = models.CharField(max_length=255, null=True, blank=True)
     linked_in = models.CharField(max_length=255, null=True, blank=True)
-    day_reset_time = models.TimeField(default=datetime.time(datetime(1800, 12, 25, 5, 0,0,0)))
+    day_reset_time = models.TimeField(default=timezone.datetime.time(datetime(1800, 12, 25, 5, 0,0,0)))
     week_reset_day = models.CharField(max_length=100, choices=DAY_CHOICES, default="Monday")
     month_reset_day = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(31)])
     year_reset_month = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(12)])
@@ -28,11 +29,12 @@ class MemberProfile(models.Model):
     modify_time = models.TimeField(auto_now=True,auto_now_add=False)
 
     def __str__(self):
-        return str(self.user_profile)
+        return str(f"profile: {self.author}")
 
     def today_to_user_time(self):
         now = timezone.now()
-        return datetime.combine(now, self.day_reset_time)
+        x = timezone.datetime.combine(now, self.day_reset_time.replace(tzinfo=pytz.UTC))
+        return x
 
     def today_to_user_weekday_time(self):
         res = self.today_to_user_time()
