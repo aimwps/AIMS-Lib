@@ -19,7 +19,7 @@ class MemberProfile(models.Model):
     biography = RichTextField(config_name="article_editor", blank=True, null=True)
     personal_website = models.CharField(max_length=255, null=True, blank=True)
     linked_in = models.CharField(max_length=255, null=True, blank=True)
-    day_reset_time = models.PositiveIntegerField(default=5,validators=[MinValueValidator(0), MaxValueValidator(23)])
+    day_reset_hour = models.PositiveIntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(23)])
     week_reset_day = models.CharField(max_length=100, choices=DAY_CHOICES, default="Monday")
     month_reset_day = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(31)])
     year_reset_month = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(12)])
@@ -29,15 +29,11 @@ class MemberProfile(models.Model):
     modify_time = models.TimeField(auto_now=True,auto_now_add=False)
 
     def __str__(self):
-        return str(f"profile: {self.author}")
+        return str(self.user_profile)
 
     def today_to_user_time(self):
         now = timezone.now()
-
-        x = now.replace(hour=self.day_reset_time, minute=0)
-
-        print(f"----------------> {x.tzinfo}")
-        return x
+        return datetime.combine(now, self.day_reset_time)
 
     def today_to_user_weekday_time(self):
         res = self.today_to_user_time()
