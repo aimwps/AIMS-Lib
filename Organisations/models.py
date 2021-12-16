@@ -11,6 +11,7 @@ CONTENT_TYPE = (('Pathway', "Pathway"),
 
 class Organisation(models.Model):
     title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="founder")
     members = models.ManyToManyField(User,related_name="group_members")
     create_date = models.DateField(auto_now=False, auto_now_add = True)
@@ -20,6 +21,7 @@ class Organisation(models.Model):
 
     def __str__(self):
         return f"{self.title}_#{self.id}"
+
 
 class OrganisationContent(models.Model):
     assigned_group = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="group_pathways")

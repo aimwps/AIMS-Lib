@@ -1,4 +1,32 @@
 
+
+Organisations
+
+
+- My-organisations page
+- - Display ROOT organisations
+- - - ALl root organisations have a sub organisation section
+- - - From root organisations you can see members
+      - Members in the root can be tick box allocated to sub organisations
+      - Pathways are associated to organisations
+      - The more organisations assigned the more pathways assigned.
+  - - Organisation members can only see what is being
+
+  - -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  1. Create a AJAX request to retrieve the data for a tracker
     - The data should be a list of dates from when the records began until the present week end.
     - No logs required then there should be no dates in the dataframe.

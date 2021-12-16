@@ -171,7 +171,6 @@ class AimCreate(LoginRequiredMixin, CreateView):
     form_class = AimCreateForm
     template_name = "aim_new.html"
     def form_valid(self, form):
-        #self.in_category = get_object_or_404(ContentCategory, id=SkillArea.objects.filter(skill_area_name=self.kwargs['dev_area_name'])[0].id)
         form.instance.author = self.request.user
         all_user_aims = Aim.objects.filter(author=self.request.user).order_by("order_position")
         for i, aim in enumerate(all_user_aims):

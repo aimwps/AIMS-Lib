@@ -6,10 +6,12 @@ from Paths.models import Pathway
 class OrganisationCreateForm(forms.ModelForm):
     class Meta:
         model =  Organisation
-        fields = ("title", "parent_organisation","members")
+        fields = ("title", "parent_organisation","members", "description")
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control',
-                                            'placeholder': 'The name of your group..'}),
+                                            'placeholder': 'The name of your organisation..'}),
+            'description': forms.Textarea(attrs = {'class': 'form-control',
+                                            'placeholder': 'The purpose of the organisation..'}),
             'parent_organisation': forms.Select(attrs = {'class': 'form-control',
                                             }),
             'members': forms.SelectMultiple(attrs = {'class': 'form-control',
@@ -20,10 +22,12 @@ class OrganisationCreateForm(forms.ModelForm):
 class OrganisationEditForm(forms.ModelForm):
     class Meta:
         model =  Organisation
-        fields = ("title","parent_organisation", "members")
+        fields = ("title","parent_organisation", "members", "description")
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control',
                                             'placeholder': 'The name of your group..'}),
+            'description': forms.Textarea(attrs = {'class': 'form-control',
+                                            'placeholder': 'The purpose of the organisation..'}),
             'members': forms.SelectMultiple(attrs = {'class': 'form-control',
                                             }),
         }

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-from datetime import datetime, date
+from datetime import datetime, date, time
 from ckeditor.fields import RichTextField
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -19,7 +19,7 @@ class MemberProfile(models.Model):
     biography = RichTextField(config_name="article_editor", blank=True, null=True)
     personal_website = models.CharField(max_length=255, null=True, blank=True)
     linked_in = models.CharField(max_length=255, null=True, blank=True)
-    day_reset_hour = models.PositiveIntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(23)])
+    day_reset_hour = models.PositiveIntegerField(default=5,validators=[MinValueValidator(0), MaxValueValidator(23)])
     week_reset_day = models.CharField(max_length=100, choices=DAY_CHOICES, default="Monday")
     month_reset_day = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(31)])
     year_reset_month = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(12)])
@@ -31,9 +31,12 @@ class MemberProfile(models.Model):
     def __str__(self):
         return str(self.user_profile)
 
+    def reset_hour_as_time(self):
+        return time(self.day_reset_hour, 0,0)
+
     def today_to_user_time(self):
         now = timezone.now()
-        return datetime.combine(now, self.day_reset_time)
+        return datetime.combine(now,self.reset_hour_as_time()).replace(tzinfo=pytz.UTC)
 
     def today_to_user_weekday_time(self):
         res = self.today_to_user_time()

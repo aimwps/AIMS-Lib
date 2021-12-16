@@ -8,11 +8,31 @@ from django.views.generic import DetailView, CreateView, UpdateView, View, ListV
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 
-class OrganisationView(LoginRequiredMixin,DetailView):
+def get_organisation_tree(organisation):
+    children = organisation.children.all()
+    if not children:
+            return {"organisation": organisation, "suborganisation": []}
+    else:
+        return {"organisation": organisation, "suborganisation": [get_organisation_tree(child) for child in children]}
+
+
+class OrganisationView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     template_name = "organisation_view.html"
-    model = Organisation
+    def get(self, request, organisation_id):
+        organisation = get_object_or_404(Organisation, id=organisation_id)
+        organisation_tree = get_organisation_tree(organisation)
+
+
+        if request.user.id == organisation.author.id:
+            context = {"data": organisation_tree}
+            print(context)
+
+        else:
+            context = {}
+        return render(request, self.template_name, context)
+
 
 class OrganisationCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
@@ -24,7 +44,7 @@ class OrganisationCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
     def get_success_url(self):
-        return reverse('organisation-view', kwargs={'pk' : self.object.pk})
+        return reverse('organisation-view', kwargs={'organisation_id' : self.object.pk})
 
 class OrganisationEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
@@ -33,7 +53,7 @@ class OrganisationEdit(LoginRequiredMixin, UpdateView):
     model = Organisation
     form_class = OrganisationEditForm
     def get_success_url(self):
-        return reverse('my-organisations')
+        return reverse('user-organisations-view')
 ################################################################################
 
 class OrganisationContentView(LoginRequiredMixin, DetailView):
@@ -92,11 +112,13 @@ class UserOrganisationsView(LoginRequiredMixin,ListView):
         return context
     def get_queryset(self):
         x = Organisation.objects.filter(author=self.request.user)
-        print(x)
         return x
 
     def post(self, request):
-        if "remove_pathway_from_group" in request.POST:
-            group_content = get_object_or_404(OrganisationContent, id=request.POST.get("remove_pathway_from_group"))
-            group_content.delete()
-            return HttpResponseRedirect("my-organisations/")
+
+        if "delete_organisation" in request.POST:
+            organisation = get_object_or_404(Organisation, id=request.POST.get("delete_organisation"))
+            organisation.delete()
+        else:
+            print("fail")
+        return HttpResponseRedirect("/my-organisations/")

@@ -9,7 +9,7 @@ from .views import (OrganisationView,
 # from .views import
 
 urlpatterns = [
-    path('view-organisation/<int:pk>/', OrganisationView.as_view(), name="organisation-view"),
+    path('view-organisation/<int:organisation_id>/', OrganisationView.as_view(), name="organisation-view"),
     path('create-organisation/', OrganisationCreate.as_view(), name="organisation-create"),
     path('edit-organisation/<int:pk>/', OrganisationEdit.as_view(), name="organisation-edit"),
     path('view-organisation-content/<int:pk>', OrganisationContentView.as_view(), name="organisation-content-view"),

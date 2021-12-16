@@ -6,6 +6,7 @@ import datetime as dt
 import pandas as pd
 from dateutil import parser
 import io, urllib, base64
+from django.utils import timezone
 # import matplotlib.backends.backend_agg as backend
 # from matplotlib.figure import Figure
 
@@ -36,7 +37,7 @@ def prettify_tracker_status_dict(dict):
     return dict_status_pretty
 
 def get_next_sunday():
-    dt = datetime.today()
+    dt = timezone.now()
     while dt.strftime('%A') != "Sunday":
         dt += relativedelta(days=1)
     return dt

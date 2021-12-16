@@ -17,6 +17,7 @@ import io, urllib, base64
 from .char_choices import *
 from sklearn.preprocessing import MinMaxScaler
 from django.utils import timezone
+import pytz
 
 class Aim(models.Model):
     title = models.TextField()
@@ -107,7 +108,6 @@ class StepTracker(models.Model):
             return f"For the {self.record_log_length}{plural} {code_list} of the {related_epoch[self.record_log_length]} I track"
 
     def get_tsentence(self):
-        print(self.get_frequency_sentence())
         tsentence = ""
         if self.metric_int_only:
             metric_min = int(round(self.metric_min, 0))
@@ -121,8 +121,8 @@ class StepTracker(models.Model):
             tsentence += "".join([period, action_min, action_max])
         if self.metric_tracker_type == "minimize":
             period = self.get_frequency_sentence()
-            action_min = f"I {self.metric_action} a maximum {metric_min} {self.metric_unit}. "
-            action_max = f"I take steps towards achieving {metric_max} {self.metric_unit}. "
+            action_min = f"I {self.metric_action} a maximum {self.metric_min} {self.metric_unit}. "
+            action_max = f"I take steps towards achieving {self.metric_max} {self.metric_unit}. "
             tsentence += " ".join([period, action_min, action_max])
 
         return tsentence
@@ -307,10 +307,6 @@ class StepTracker(models.Model):
 
         if self.record_frequency =="daily":
             user_time = member_profile.today_to_user_time()
-            print("--------------------------------------------")
-            print(type(now), now, now.tzinfo )
-            print(type(user_time), user_time, user_time.tzinfo)
-            print("--------------------------------------------")
             if now > user_time:
                 start_date = user_time
                 end_date = user_time + timedelta(hours=23, minutes=59, seconds=59)
@@ -417,8 +413,7 @@ class StepTracker(models.Model):
         now = timezone.now()
         if self.record_log_length == "day":
             if self.record_frequency =="daily":
-                print(f"----------------------> {member_profile.day_reset_time}, {type(member_profile.day_reset_time)}, {self.record_start_date.tzinfo}")
-                start_date = datetime.combine(self.record_start_date, time(member_profile.day_reset_time, 0,0,0))
+                start_date = datetime.combine(self.record_start_date,member_profile.reset_hour_as_time())
                 end_date = start_date + relativedelta(days=1) - timedelta(seconds=1)
             else:
                 all_custom_freq_code = list(StepTrackerCustomFrequency.objects.filter(on_tracker=self))
@@ -442,11 +437,12 @@ class StepTracker(models.Model):
                                 soonest_date = temp_reset_user_time
                         else:
                             soonest_date = temp_reset_user_time
-                start_date = datetime.combine(soonest_date, member_profile.day_reset_time)
+                start_date = datetime.combine(soonest_date, member_profile.reset_hour_as_time())
                 end_date = start_date + relativedelta(days=1) - timedelta(seconds=1)
+
         elif self.record_log_length == "week":
             if self.record_frequency == "weekly":
-                start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+                start_date = datetime.combine(self.record_start_date, member_profile.reset_hour_as_time())
 
                 while start_date.strftime('%A') != member_profile.week_reset_day:
                     start_date -= relativedelta(days=1)
@@ -455,7 +451,7 @@ class StepTracker(models.Model):
                 print("error 2 custom weekly going here")
         elif self.record_log_length =="month":
             if self.record_frequency =="monthly":
-                start_date = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+                start_date = datetime.combine(self.record_start_date, member_profile.reset_hour_as_time())
                 while start_date.strftime('%-d') != str(member_profile.month_reset_day):
                     start_date += relativedelta(days=1)
 
@@ -474,10 +470,10 @@ class StepTracker(models.Model):
                         else:
                             soonest_date = temp_reset_user_time
 
-                start_date = datetime.combine(soonest_date, member_profile.day_reset_time)
+                start_date = datetime.combine(soonest_date, member_profile.reset_hour_as_time())
                 end_date = start_date + relativedelta(months=1) - timedelta(seconds=1)
         else:
-            reset_user_time = datetime.combine(self.record_start_date, member_profile.day_reset_time)
+            reset_user_time = datetime.combine(self.record_start_date, member_profile.reset_hour_as_time())
             reset_user_date_time = reset_user_time + relativedelta(day=member_profile.month_reset_day)
             reset_user_year_date_time = reset_user_date_time + relativedelta(month=member_profile.year_reset_month)
             if reset_user_year_date_time > now:
@@ -486,7 +482,7 @@ class StepTracker(models.Model):
             else:
                 start_date = reset_user_year_date_time
                 end_date = reset_user_year_date_time + relativedelta(years=1) - timedelta(seconds=1)
-        return start_date, end_date
+        return start_date.replace(tzinfo=pytz.UTC), end_date.replace(tzinfo=pytz.UTC)
 
     def get_current_period_status(self):
         status= None
