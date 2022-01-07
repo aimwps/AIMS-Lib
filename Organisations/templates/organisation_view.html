@@ -20,5 +20,20 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-4">
+    <p>Sub Organisations </p>
+    {% include "suborganisations.html" %}
+
+  </div>
+  <div class="col-xs-12 col-md-4">
+    <p>Members</p>
+  </div>
+  <div class="col-xs-12 col-md-4">
+    <p>Pathways</p>
+  </div>
+
+</div>
 {{data}}
 {% endblock %}

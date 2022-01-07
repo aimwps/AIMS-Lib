@@ -1,0 +1,14 @@
+{% for organisation in organisation_data %}
+    <li>
+        {{ organisation_data.organisation.title }} {{ organisation.suborganisation|length }}
+        {% if organisation.suborganisation|length %}
+            <ul>
+              <h1> XXXX {{organisation_data.suborganisation}}</h1>
+                {% include "suborganisation.html" with organisation_data=organisation_data.suborganisation %}
+
+            </ul>
+            {% else %}
+            <h1> here</h1>
+        {% endif %}
+    </li>
+{% endfor %}

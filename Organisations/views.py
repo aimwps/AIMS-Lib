@@ -26,7 +26,7 @@ class OrganisationView(LoginRequiredMixin, View):
 
 
         if request.user.id == organisation.author.id:
-            context = {"data": organisation_tree}
+            context = {"organisation_data": organisation_tree}
             print(context)
 
         else:
