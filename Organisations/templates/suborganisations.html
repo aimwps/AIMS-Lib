@@ -1,14 +1,13 @@
-{% for organisation in organisation_data %}
-    <li>
-        {{ organisation_data.organisation.title }} {{ organisation.suborganisation|length }}
-        {% if organisation.suborganisation|length %}
-            <ul>
-              <h1> XXXX {{organisation_data.suborganisation}}</h1>
-                {% include "suborganisation.html" with organisation_data=organisation_data.suborganisation %}
 
-            </ul>
-            {% else %}
-            <h1> here</h1>
+{% for organisation, suborg in organisation_data.items %}
+<li style="list-style: none;">
+      <button class="w-100 btn btn-al my-2">{{ organisation.title }}</button>
+
+        {% if suborg|length > 0 %}
+        <ul style="list-style: none;">
+                {% include "suborganisations.html" with organisation_data=suborg%}
+              </ul>
+          {% else %}
         {% endif %}
-    </li>
+</li>
 {% endfor %}

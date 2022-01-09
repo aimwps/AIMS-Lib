@@ -8,13 +8,19 @@ from django.views.generic import DetailView, CreateView, UpdateView, View, ListV
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 
-def get_organisation_tree(organisation):
-    children = organisation.children.all()
-    if not children:
-            return {"organisation": organisation, "suborganisation": []}
-    else:
-        return {"organisation": organisation, "suborganisation": [get_organisation_tree(child) for child in children]}
+def get_suborganisation_tree(organisation):
+    #1 Singularity cafe is passed in
+    print(f"CHECKING THIS ORGANISATION: {organisation}")
 
+    #  Find all the childrenn of Singularity cafe
+    children = organisation.children.all()
+    print(f"IT HAS THESE CHILDREN: {organisation.children.all()}")
+
+    # If there are no children
+    if not children:
+            return {}
+    else:
+        return {child: get_suborganisation_tree(child) for child in children}
 
 class OrganisationView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
@@ -22,12 +28,13 @@ class OrganisationView(LoginRequiredMixin, View):
     template_name = "organisation_view.html"
     def get(self, request, organisation_id):
         organisation = get_object_or_404(Organisation, id=organisation_id)
-        organisation_tree = get_organisation_tree(organisation)
-
-
+        organisation_tree = get_suborganisation_tree(organisation)
+        print("----------------------------------------------------------------------------")
+        print(organisation_tree)
+        print("----------------------------------------------------------------------------")
         if request.user.id == organisation.author.id:
-            context = {"organisation_data": organisation_tree}
-            print(context)
+            context = {"organisation_data": organisation_tree,
+                        "root_organisation": organisation}
 
         else:
             context = {}
