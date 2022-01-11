@@ -18,9 +18,7 @@ function getUncompleteTrackers() {
     datatype: 'json',
     success: function(trackerLogPeriod) {
       $.each(trackerLogPeriod, function(index, item){
-        console.log(item);
         var selectDisplay = `#${item.display_section}`;
-        console.log(selectDisplay)
         $(selectDisplay).append(`
           <li class="list-group-item border border-primary my-2">
             <p>${item.question}<br>

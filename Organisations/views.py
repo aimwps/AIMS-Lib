@@ -6,20 +6,27 @@ from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, CreateView, UpdateView, View, ListView
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,JsonResponse
+from .organisation_serializers import OrganisationSerializer
+import json
+
+def getOrganisationData(request):
+    
+    if request.method == "GET":
+        organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
+        serialize = OrganisationSerializer(organisation)
+
+    return JsonResponse(serialize.data, safe=False)
 
 def get_suborganisation_tree(organisation):
-    #1 Singularity cafe is passed in
-    print(f"CHECKING THIS ORGANISATION: {organisation}")
-
-    #  Find all the childrenn of Singularity cafe
+    #  Find all the childrenn of the oganisation
     children = organisation.children.all()
-    print(f"IT HAS THESE CHILDREN: {organisation.children.all()}")
 
     # If there are no children
     if not children:
             return {}
     else:
+    # for each of their children repeat the process until all children are found
         return {child: get_suborganisation_tree(child) for child in children}
 
 class OrganisationView(LoginRequiredMixin, View):
@@ -29,9 +36,6 @@ class OrganisationView(LoginRequiredMixin, View):
     def get(self, request, organisation_id):
         organisation = get_object_or_404(Organisation, id=organisation_id)
         organisation_tree = get_suborganisation_tree(organisation)
-        print("----------------------------------------------------------------------------")
-        print(organisation_tree)
-        print("----------------------------------------------------------------------------")
         if request.user.id == organisation.author.id:
             context = {"organisation_data": organisation_tree,
                         "root_organisation": organisation}

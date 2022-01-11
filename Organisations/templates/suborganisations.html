@@ -1,7 +1,7 @@
 
 {% for organisation, suborg in organisation_data.items %}
 <li style="list-style: none;">
-      <button class="w-100 btn btn-al my-2">{{ organisation.title }}</button>
+      <button class="w-100 btn btn-al my-2" name="suborganisationSelect" value="{{ organisation.id }}">{{ organisation.title }}</button>
 
         {% if suborg|length > 0 %}
         <ul style="list-style: none;">

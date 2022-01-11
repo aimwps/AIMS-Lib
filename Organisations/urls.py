@@ -5,7 +5,8 @@ from .views import (OrganisationView,
                     OrganisationContentView,
                     OrganisationContentCreate,
                     OrganisationContentEdit,
-                    UserOrganisationsView)
+                    UserOrganisationsView,
+                    getOrganisationData)
 # from .views import
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path('create-organisation-content/<int:organisation_id>/', OrganisationContentCreate.as_view(), name="organisation-content-create"),
     path('edit-organisation-content/<int:organisation_id>/', OrganisationContentEdit.as_view(), name="organisation-content-edit"),
     path('my-organisations/', UserOrganisationsView.as_view(), name="user-organisations-view"),
+    path("get_organisation_data/", getOrganisationData, name="get-org-data"),
 ]

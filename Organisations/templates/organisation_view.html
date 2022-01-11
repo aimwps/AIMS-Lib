@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Groups{% endblock %}
 
 {% block topcarousel %}
@@ -8,11 +9,11 @@
 {% endblock pageInfoCaro %}
 
 {% block pageInfo_title %}
-
+{{ root_organisation.title }}
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-
+{{ root_organisation.description }}
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -24,19 +25,91 @@
 <div class="row my-4">
   <div class="col-xs-12 col-md-4">
     <h4 class="text-center my-2">Organisation</h4>
-    <button class="btn btn-al w-100">{{root_organisation.title}}</button>
+      <div class="text-center">
+        <ul class="nav justify-content-center">
+            <!-- Button trigger modal -->
+
+              <li class="nav-item px-2">
+                  <a href='' class="text-primary"><i class="far fa-plus"></i></a>
+              </li>
+        </ul>
+      </div>
+
+    <button name="suborganisationSelect" value="{{root_organisation.id}}"class="btn btn-al w-100 my-2">{{root_organisation.title}}</button>
     <ul>
     {% include "suborganisations.html" %}
   </ul>
   </div>
-  <div class="col-xs-12 col-md-4">
+  <div class="col-xs-6 col-md-4">
     <h4 class="text-center my-2">Members</h4>
+
+    <div class="text-center">
+      <ul class="nav justify-content-center">
+          <!-- Button trigger modal -->
+            <li class="nav-item px-2">
+                <a href='' class="text-primary"><i class="far fa-plus"></i></a>
+            </li>
+      </ul>
+    </div>
+
+    <ul id="membersList" class="list-group list-group-flush">
+    </ul>
   </div>
-  <div class="col-xs-12 col-md-4">
+  <div class="col-xs-6 col-md-4">
     <h4 class="text-center my-2">Pathways</h4>
+    <div class="text-center">
+      <ul class="nav justify-content-center">
+          <!-- Button trigger modal -->
+            <li class="nav-item px-2">
+                <a href='' class="text-primary"><i class="far fa-plus"></i></a>
+            </li>
+      </ul>
+    </div>
+    <ul id="pathwayList" class="list-group list-group-flush">
+    </ul>
   </div>
 
 </div>
 
+</div>
+
+<div class="modal fade" id="memberModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="memberModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pathwayModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="pathwayModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pathwayModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/organisations/organisationView.js' %}"></script>
+{% endblock scripts%}
