@@ -37,7 +37,7 @@ class OrganisationContent(models.Model):
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
 
 class OrganisationMembers(models.Model):
-    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="org_memberss")
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="org_members")
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=100, choices=MEMBERSHIP_STATUS)
     create_date = models.DateField(auto_now=False,auto_now_add=True)

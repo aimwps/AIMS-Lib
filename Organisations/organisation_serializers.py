@@ -16,11 +16,25 @@ class OrganisationContentSerializer(serializers.ModelSerializer):
         fields = ("pathway",)
 
 
-class OrganisationSerializer(serializers.ModelSerializer):
+class singleOrganisationSerializer(serializers.ModelSerializer):
     org_members = OrganisationMembersSerializer(many=True)
     group_pathways = OrganisationContentSerializer(many=True)
     class Meta:
       model = Organisation
       fields = ("org_members",
                 "group_pathways",
+
+                  )
+
+class OrganisationSerializer(serializers.ModelSerializer):
+    org_members = OrganisationMembersSerializer(many=True)
+    group_pathways = OrganisationContentSerializer(many=True)
+    parent_organisation = singleOrganisationSerializer()
+
+    class Meta:
+      model = Organisation
+      fields = ("id",
+                "org_members",
+                "group_pathways",
+                "parent_organisation"
                   )

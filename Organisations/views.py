@@ -28,7 +28,6 @@ def getOrganisationData(request):
     if request.method == "GET":
         organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
         serialize = OrganisationSerializer(organisation)
-        print(serialize)
 
     return JsonResponse(serialize.data, safe=False)
 
@@ -93,6 +92,17 @@ class OrganisationView(LoginRequiredMixin, View):
             new_members = User.objects.filter(pk__in=request.POST.getlist("members"))
             for user in new_members:
                 new_member = OrganisationMembers(organisation=new_organisation, member=user, status="pending")
+                new_member.save()
+
+        if "add_members_to_org_by_id" in request.POST:
+
+            new_members = User.objects.filter(pk__in=request.POST.getlist("updatemembers"))
+            for user in new_members:
+                new_member = OrganisationMembers(
+                                    organisation = Organisation.objects.get(id=request.POST.get("add_members_to_org_by_id")),
+                                    member=user,
+                                    status="active")
+
                 new_member.save()
 
 

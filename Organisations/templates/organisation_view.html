@@ -50,7 +50,7 @@
                 <ul class="list-group list-group-flush" id="parentMembers">
                 </ul>
                 <button name="create_sub_organisation" val="" class="btn btn-al w-100 my-2">Create Organisation</button>
-                <button class="btn btn-al w-100 my-2">Cancel</button>
+                <button class="btn btn-al w-100 my-2">Cancel & close</button>
 
             </form>
 
@@ -76,13 +76,23 @@
     </div>
     <div class="collapse py-2" id="addMember">
       <div class="card card-body border-primary">
+        <p class="mb-0">Invite to root organisation</p>
         <input class="form-control" placeholder="Search exact username or email">
-        <div class="form-group">
+        <hr class="my-2">
+        <div class="form-group my-2">
           <form method="POST">
             {% csrf_token %}
-          </form>
+
+          <p class="mb-0">From Parent Organisation</p>
+          <ul id="addMemberFromParent" class="list-group list-group-flush">
+          </ul>
+        </form>
 
         </div>
+
+
+
+        </ul>
       </div>
     </div>
 
