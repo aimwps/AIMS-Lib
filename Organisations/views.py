@@ -8,10 +8,21 @@ from django.views.generic import DetailView, CreateView, UpdateView, View, ListV
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect,JsonResponse
 from .organisation_serializers import OrganisationSerializer
+from Members.members_serializers import UserSerializer
 import json
 
+
+def getOrganisationMembers(request):
+    print(f"-------->{request}")
+    if request.method =="GET":
+        organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
+        members = organisation.members.all()
+        serialize = UserSerializer(members, many=True)
+
+    return JsonResponse(serialize.data, safe=False)
+
 def getOrganisationData(request):
-    
+
     if request.method == "GET":
         organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
         serialize = OrganisationSerializer(organisation)
@@ -21,13 +32,21 @@ def getOrganisationData(request):
 def get_suborganisation_tree(organisation):
     #  Find all the childrenn of the oganisation
     children = organisation.children.all()
-
     # If there are no children
     if not children:
             return {}
     else:
     # for each of their children repeat the process until all children are found
         return {child: get_suborganisation_tree(child) for child in children}
+
+def get_suborganisation_list(organisation, organisation_list=[]):
+    if not organisation_list:
+        organisation_list = [organisation]
+    for child in organisation.children.all():
+        organisation_list.append(child)
+        get_suborganisation_list(organisation=child, organisation_list=organisation_list)
+    return organisation_list
+
 
 class OrganisationView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
@@ -36,14 +55,26 @@ class OrganisationView(LoginRequiredMixin, View):
     def get(self, request, organisation_id):
         organisation = get_object_or_404(Organisation, id=organisation_id)
         organisation_tree = get_suborganisation_tree(organisation)
+        organisation_list = get_suborganisation_list(organisation)
+        parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
+        add_org_form = OrganisationCreateForm()
+        add_org_form.fields['parent_organisation'].choices = parent_org_choices
+
         if request.user.id == organisation.author.id:
             context = {"organisation_data": organisation_tree,
-                        "root_organisation": organisation}
+                        "root_organisation": organisation,
+                        "addOrganisationForm": add_org_form,
 
+                        }
         else:
             context = {}
         return render(request, self.template_name, context)
 
+    # def post(self,request, organisation_id):
+    #     print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+    #     print(request.POST)
+    #     print("________________________________")
+    #     pass
 
 class OrganisationCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'

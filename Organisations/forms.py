@@ -14,9 +14,6 @@ class OrganisationCreateForm(forms.ModelForm):
                                             'placeholder': 'The purpose of the organisation..'}),
             'parent_organisation': forms.Select(attrs = {'class': 'form-control',
                                             }),
-            'members': forms.SelectMultiple(attrs = {'class': 'form-control',
-                                            }),
-
         }
 
 class OrganisationEditForm(forms.ModelForm):
@@ -28,7 +25,7 @@ class OrganisationEditForm(forms.ModelForm):
                                             'placeholder': 'The name of your group..'}),
             'description': forms.Textarea(attrs = {'class': 'form-control',
                                             'placeholder': 'The purpose of the organisation..'}),
-            'members': forms.SelectMultiple(attrs = {'class': 'form-control',
+            'members': forms.CheckboxSelectMultiple(attrs = {'class': 'form-check-inline',
                                             }),
         }
 

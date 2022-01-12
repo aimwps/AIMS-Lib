@@ -30,11 +30,32 @@
             <!-- Button trigger modal -->
 
               <li class="nav-item px-2">
-                  <a href='' class="text-primary"><i class="far fa-plus"></i></a>
+                <a class="text-primary" href="#addOrganisation" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addOrganisation">
+                  <i class="far fa-plus"></i>
+                </a>
               </li>
         </ul>
       </div>
+      <div class="collapse py-2" id="addOrganisation">
+        <div class="card card-body border-0 px-0">
+          <div class="form-group">
+            <form method="POST">
+              {% csrf_token %}
 
+                <p class="mb-0">Creating sub-organisation</p>
+                <p>{{ addOrganisationForm.title }}</p>
+                <p class="mb-0">Parent organisation</p>
+                <p>{{ addOrganisationForm.parent_organisation }}</p>
+                <p class="mb-0">Select members from parent</p>
+                <ul class="list-group list-group-flush" id="parentMembers">
+                </ul>
+                <button class="btn btn-al w-100">Create Organisation</button>
+
+            </form>
+          </div>
+
+        </div>
+      </div>
     <button name="suborganisationSelect" value="{{root_organisation.id}}"class="btn btn-al w-100 my-2">{{root_organisation.title}}</button>
     <ul>
     {% include "suborganisations.html" %}
@@ -61,9 +82,16 @@
       <ul class="nav justify-content-center">
           <!-- Button trigger modal -->
             <li class="nav-item px-2">
-                <a href='' class="text-primary"><i class="far fa-plus"></i></a>
+              <a class="text-primary" href="#addPathway" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addPathway">
+                <i class="far fa-plus"></i>
+              </a>
             </li>
       </ul>
+    </div>
+    <div class="collapse" id="addPathway">
+      <div class="card card-body">
+        Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+      </div>
     </div>
     <ul id="pathwayList" class="list-group list-group-flush">
     </ul>

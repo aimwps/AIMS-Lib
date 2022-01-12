@@ -29,3 +29,34 @@ $("button[name='suborganisationSelect']").click(function(){
       });
     }});
 });
+
+$("#id_parent_organisation").on('change', function(){
+  $("#parentMembers").empty();
+  $("#parentMembers").append(`<div class="spinner-border text-primary text-center" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div`)
+  let parentId = this.value;
+  console.log(parentId);
+  $.ajax({
+    type: "GET",
+    url: "/get_organisation_members/",
+    data: {"organisation_id": parentId,},
+    datatype:"json",
+    success: function(json){
+      console.log(json);
+      console.log("------------------------------")
+      $("#parentMembers").empty();
+      $.each(json, function(index,member){
+        $("#parentMembers").append(`
+          <li class="list-group-item">
+          <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="${member.id}" id="newMemberCheck_${member.id}">
+          <label class="form-check-label" for="flexCheckDefault">
+            ${member.username}: ${member.first_name} ${member.last_name}
+          </label>
+        </div>
+      </li>`)
+      });
+
+}}
+)});

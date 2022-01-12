@@ -123,9 +123,6 @@ function editContentInModal(contentId){
           data: {content_id:contentId},
         success: function(data){
           var json = JSON.parse(data);
-          console.log("json", json);
-          console.log("anytime", json.pathway_obj.complete_anytime_overide);
-          console.log("move on", json.pathway_obj.complete_to_move_on)
           // populate the form with data
           $('#id_complete_anytime_overide').prop('checked', json.pathway_obj.complete_anytime_overide);
           $('#id_complete_to_move_on').prop('checked', json.pathway_obj.complete_to_move_on);
