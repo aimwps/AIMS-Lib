@@ -14,6 +14,8 @@ class OrganisationCreateForm(forms.ModelForm):
                                             'placeholder': 'The purpose of the organisation..'}),
             'parent_organisation': forms.Select(attrs = {'class': 'form-control',
                                             }),
+            'members':forms.CheckboxSelectMultiple(attrs = {'class': 'form-check-inline',
+                                                        }),
         }
 
 class OrganisationEditForm(forms.ModelForm):

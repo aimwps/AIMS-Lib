@@ -1,3 +1,10 @@
+$(document).ready(function(){
+  loadMembersList();
+});
+$("#id_parent_organisation").on('change', function(){
+  loadMembersList();
+});
+
 $("button[name='suborganisationSelect']").click(function(){
   let orgId = $(this).val();
   $.ajax({
@@ -30,12 +37,13 @@ $("button[name='suborganisationSelect']").click(function(){
     }});
 });
 
-$("#id_parent_organisation").on('change', function(){
+
+function loadMembersList() {
   $("#parentMembers").empty();
   $("#parentMembers").append(`<div class="spinner-border text-primary text-center" role="status">
   <span class="visually-hidden">Loading...</span>
 </div`)
-  let parentId = this.value;
+  let parentId = $("#id_parent_organisation").val();
   console.log(parentId);
   $.ajax({
     type: "GET",
@@ -50,8 +58,8 @@ $("#id_parent_organisation").on('change', function(){
         $("#parentMembers").append(`
           <li class="list-group-item">
           <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="${member.id}" id="newMemberCheck_${member.id}">
-          <label class="form-check-label" for="flexCheckDefault">
+          <input class="form-check-input" name="members" type="checkbox" value="${member.id}" id="newMemberCheck_${member.id}">
+          <label class="form-check-label" for="newMemberCheck_${member.id}">
             ${member.username}: ${member.first_name} ${member.last_name}
           </label>
         </div>
@@ -59,4 +67,4 @@ $("#id_parent_organisation").on('change', function(){
       });
 
 }}
-)});
+)};

@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Organisation, OrganisationContent
 from .forms import OrganisationCreateForm, OrganisationEditForm, OrganisationContentCreateForm, OrganisationContentEditForm
 from Paths.models import Pathway
@@ -9,11 +9,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect,JsonResponse
 from .organisation_serializers import OrganisationSerializer
 from Members.members_serializers import UserSerializer
+from django.contrib.auth.models import User
 import json
 
 
 def getOrganisationMembers(request):
-    print(f"-------->{request}")
     if request.method =="GET":
         organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
         members = organisation.members.all()
@@ -69,12 +69,22 @@ class OrganisationView(LoginRequiredMixin, View):
         else:
             context = {}
         return render(request, self.template_name, context)
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
-    # def post(self,request, organisation_id):
-    #     print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-    #     print(request.POST)
-    #     print("________________________________")
-    #     pass
+    def post(self,request, organisation_id):
+        if "create_sub_organisation" in request.POST:
+            new_organisation = Organisation(
+                                author=request.user,
+                                title=request.POST.get("title"),
+                                parent_organisation = Organisation.objects.get(id=request.POST.get("parent_organisation")),
+                                )
+            new_organisation.save()
+            new_organisation.members.add(*User.objects.filter(id=request.POST.get("members")))
+
+
+        return redirect("organisation-view", organisation_id=organisation_id)
 
 class OrganisationCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
