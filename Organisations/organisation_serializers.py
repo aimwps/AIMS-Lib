@@ -1,8 +1,13 @@
 from rest_framework import serializers
-from .models import Organisation, OrganisationContent
+from .models import Organisation, OrganisationContent, OrganisationMembers
 from Members.members_serializers import UserSerializer
 from Paths.pathway_serializers import PathwaySerializer
 
+class OrganisationMembersSerializer(serializers.ModelSerializer):
+    member = UserSerializer(many=True)
+    class Meta:
+        model = OrganisationMembers
+        fields = ("member",)
 
 class OrganisationContentSerializer(serializers.ModelSerializer):
     pathway = PathwaySerializer()
@@ -12,10 +17,10 @@ class OrganisationContentSerializer(serializers.ModelSerializer):
 
 
 class OrganisationSerializer(serializers.ModelSerializer):
-    members = UserSerializer(many=True)
+    org_members = OrganisationMembersSerializer(many=True)
     group_pathways = OrganisationContentSerializer(many=True)
     class Meta:
       model = Organisation
-      fields = ("members",
+      fields = ("org_members",
                 "group_pathways",
                   )

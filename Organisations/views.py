@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Organisation, OrganisationContent
+from .models import Organisation, OrganisationContent, OrganisationMembers
 from .forms import OrganisationCreateForm, OrganisationEditForm, OrganisationContentCreateForm, OrganisationContentEditForm
 from Paths.models import Pathway
 from django.urls import reverse
@@ -16,8 +16,10 @@ import json
 def getOrganisationMembers(request):
     if request.method =="GET":
         organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
-        members = organisation.members.all()
-        serialize = UserSerializer(members, many=True)
+        members = OrganisationMembers.objects.filter(organisation=organisation)
+        member_ids = members.values_list('member', flat=True)
+        members_only = User.objects.filter(pk__in=member_ids)
+        serialize = UserSerializer(members_only, many=True)
 
     return JsonResponse(serialize.data, safe=False)
 
@@ -48,6 +50,8 @@ def get_suborganisation_list(organisation, organisation_list=[]):
     return organisation_list
 
 
+
+
 class OrganisationView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -73,7 +77,8 @@ class OrganisationView(LoginRequiredMixin, View):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-    def post(self,request, organisation_id):
+    def post(self, request, organisation_id):
+        print(request.POST)
         if "create_sub_organisation" in request.POST:
             new_organisation = Organisation(
                                 author=request.user,
@@ -81,7 +86,10 @@ class OrganisationView(LoginRequiredMixin, View):
                                 parent_organisation = Organisation.objects.get(id=request.POST.get("parent_organisation")),
                                 )
             new_organisation.save()
-            new_organisation.members.add(*User.objects.filter(id=request.POST.get("members")))
+            new_members = User.objects.filter(pk__in=request.POST.getlist("members"))
+            for user in new_members:
+                new_member = OrganisationMembers(organisation=new_organisation, member=user, status="pending")
+                new_member.save()
 
 
         return redirect("organisation-view", organisation_id=organisation_id)

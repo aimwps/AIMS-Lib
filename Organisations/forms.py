@@ -6,7 +6,7 @@ from Paths.models import Pathway
 class OrganisationCreateForm(forms.ModelForm):
     class Meta:
         model =  Organisation
-        fields = ("title", "parent_organisation","members", "description")
+        fields = ("title", "parent_organisation","description")
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control',
                                             'placeholder': 'The name of your organisation..'}),
@@ -14,21 +14,19 @@ class OrganisationCreateForm(forms.ModelForm):
                                             'placeholder': 'The purpose of the organisation..'}),
             'parent_organisation': forms.Select(attrs = {'class': 'form-control',
                                             }),
-            'members':forms.CheckboxSelectMultiple(attrs = {'class': 'form-check-inline',
-                                                        }),
+
         }
 
 class OrganisationEditForm(forms.ModelForm):
     class Meta:
         model =  Organisation
-        fields = ("title","parent_organisation", "members", "description")
+        fields = ("title","parent_organisation", "description")
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control',
                                             'placeholder': 'The name of your group..'}),
             'description': forms.Textarea(attrs = {'class': 'form-control',
                                             'placeholder': 'The purpose of the organisation..'}),
-            'members': forms.CheckboxSelectMultiple(attrs = {'class': 'form-check-inline',
-                                            }),
+
         }
 
 
