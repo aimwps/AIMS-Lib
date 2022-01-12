@@ -13,6 +13,7 @@ $("button[name='suborganisationSelect']").click(function(){
     data: { organisation_id: orgId, },
     datatype: 'json',
     success: function(json){
+      console.log(json)
       let members = json.members;
       let pathways = json.group_pathways;
       $("#membersList").empty();

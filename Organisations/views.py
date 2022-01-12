@@ -28,6 +28,7 @@ def getOrganisationData(request):
     if request.method == "GET":
         organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
         serialize = OrganisationSerializer(organisation)
+        print(serialize)
 
     return JsonResponse(serialize.data, safe=False)
 
@@ -73,6 +74,9 @@ class OrganisationView(LoginRequiredMixin, View):
         else:
             context = {}
         return render(request, self.template_name, context)
+
+
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)

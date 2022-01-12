@@ -4,10 +4,10 @@ from Members.members_serializers import UserSerializer
 from Paths.pathway_serializers import PathwaySerializer
 
 class OrganisationMembersSerializer(serializers.ModelSerializer):
-    member = UserSerializer(many=True)
+    member = UserSerializer()
     class Meta:
         model = OrganisationMembers
-        fields = ("member",)
+        fields = ("member", "status")
 
 class OrganisationContentSerializer(serializers.ModelSerializer):
     pathway = PathwaySerializer()

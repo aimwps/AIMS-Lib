@@ -19,7 +19,6 @@ class Organisation(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="founder")
-    #members = models.ManyToManyField(User,related_name="group_members", blank=True)
     create_date = models.DateField(auto_now=False, auto_now_add = True)
     create_time = models.TimeField(auto_now=False, auto_now_add = True)
     parent_organisation = models.ForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.SET_NULL)
@@ -38,7 +37,7 @@ class OrganisationContent(models.Model):
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
 
 class OrganisationMembers(models.Model):
-    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="org_members")
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="org_memberss")
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=100, choices=MEMBERSHIP_STATUS)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
