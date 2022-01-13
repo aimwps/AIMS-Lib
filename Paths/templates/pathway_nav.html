@@ -13,9 +13,9 @@
               Browse
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
-              <li><a class="dropdown-item" href="{% url 'user-dev-articles' %}">My Articles</a></li>
-              <li><a class="dropdown-item" href="{% url 'user-dev-videos' %}">My Videos</a></li>
-              <li><a class="dropdown-item" href="{% url 'user-dev-benchmarks' %}">My Benchmarks</a></li>
+              <li><a class="dropdown-item" href="{% url 'user-dev-articles' %}">Articles</a></li>
+              <li><a class="dropdown-item" href="{% url 'user-dev-videos' %}">Videos</a></li>
+              <li><a class="dropdown-item" href="{% url 'user-dev-benchmarks' %}">Benchmarks</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -23,20 +23,21 @@
                 Develop
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                <li><a class="dropdown-item" href="{% url 'new-written-lecture' %}">Create Article</a></li>
-                <li><a class="dropdown-item" href="{% url 'new-video-lecture' %}">Create Video</a></li>
-                <li><a class="dropdown-item" href="{% url 'create-benchmark' %}">Create Benchmark</a></li>
+                <li><a class="dropdown-item" href="{% url 'new-written-lecture' %}">Article</a></li>
+                <li><a class="dropdown-item" href="{% url 'new-video-lecture' %}">Video Lecture</a></li>
+                <li><a class="dropdown-item" href="{% url 'create-benchmark' %}">Benchmark</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'pathway-create' %}">New Pathway</a></li>
               </ul>
           </li>
           <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Share
+                Organisations
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown3">
-                <li><a class="dropdown-item" href="{% url 'organisation-create' %}">New organisation</a></li>
                 <li><a class="dropdown-item" href="{% url 'user-organisations-view' %}">View  organisations</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'organisation-create' %}">Create organisation</a></li>
               </ul>
           </li>
       </ul>

@@ -7,7 +7,8 @@ from .views import (OrganisationView,
                     OrganisationContentEdit,
                     UserOrganisationsView,
                     getOrganisationData,
-                    getOrganisationMembers)
+                    getOrganisationMembers,
+                    searchExactUser,)
 # from .views import
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path('my-organisations/', UserOrganisationsView.as_view(), name="user-organisations-view"),
     path("get_organisation_data/", getOrganisationData, name="get-org-data"),
     path("get_organisation_members/", getOrganisationMembers, name="get-org-members"),
+    path("ajax_search_exact_user/", searchExactUser, name="search-exact-user"),
 ]

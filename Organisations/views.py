@@ -13,6 +13,49 @@ from django.contrib.auth.models import User
 import json
 
 
+def searchExactUser(request):
+    if request.method=="GET":
+        print(request.GET)
+        search_phrase = request.GET.get("search_phrase")
+        user = User.objects.filter(email__iexact=search_phrase) | User.objects.filter(username__iexact=search_phrase)
+        if user:
+            user=user[0]
+            user_data = UserSerializer(user)
+            user_data_complete = {
+                                "status" :  {
+                                                "selected": None,
+                                                "root" : None,
+                                            },
+                                "user" : user_data.data
+                                }
+            selected_organisation_id = request.GET.get("selected_organisation")
+            selected_organisation = Organisation.objects.get(id=selected_organisation_id)
+            root_organisation = selected_organisation.find_root_organisation()
+
+            # for the found user, check there status in the selected organisation and
+            # the rooot organisation
+            selected_organisation_member = OrganisationMembers.objects.filter(organisation=selected_organisation,
+                                                                            member=user)
+            root_organisation_member = OrganisationMembers.objects.filter(organisation=root_organisation,
+                                                                        member=user)
+
+
+
+            if selected_organisation_member:
+                user_data_complete['status']['selected'] = selected_organisation_member[0].status
+            if root_organisation_member:
+                user_data_complete['status']['root'] = root_organisation_member[0].status
+
+            return JsonResponse(user_data_complete, safe=False)
+
+
+
+        else:
+            return JsonResponse(json.dumps({
+                                "status": None,
+                                "user": None
+                                }), safe=False)
+
 def getOrganisationMembers(request):
     if request.method =="GET":
         organisation = get_object_or_404(Organisation, id=request.GET.get("organisation_id"))
@@ -67,6 +110,7 @@ class OrganisationView(LoginRequiredMixin, View):
         if request.user.id == organisation.author.id:
             context = {"organisation_data": organisation_tree,
                         "root_organisation": organisation,
+                        "organisation_list": organisation_list,
                         "addOrganisationForm": add_org_form,
 
                         }

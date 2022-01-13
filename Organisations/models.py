@@ -27,6 +27,13 @@ class Organisation(models.Model):
     def __str__(self):
         return f"{self.title}_#{self.id}"
 
+    def find_root_organisation(self):
+        node = self
+        while node.parent_organisation:
+            node = node.parent_organisation
+        return node
+
+
 
 class OrganisationContent(models.Model):
     assigned_group = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="group_pathways")
