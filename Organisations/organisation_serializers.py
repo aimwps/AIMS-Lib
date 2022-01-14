@@ -21,7 +21,11 @@ class singleOrganisationSerializer(serializers.ModelSerializer):
     group_pathways = OrganisationContentSerializer(many=True)
     class Meta:
       model = Organisation
-      fields = ("org_members",
+      fields = (
+                "id",
+                "title",
+                "description",
+                "org_members",
                 "group_pathways",
 
                   )
@@ -34,6 +38,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:
       model = Organisation
       fields = ("id",
+                "title",
+                "description",
                 "org_members",
                 "group_pathways",
                 "parent_organisation"

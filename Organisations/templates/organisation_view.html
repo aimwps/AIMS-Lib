@@ -56,11 +56,12 @@ Viewing an organisation
                 <ul class="list-group list-group-flush" id="parentMembers">
                 </ul>
                 <button name="create_sub_organisation" val="" class="btn btn-al w-100 my-2">Create Organisation</button>
-                <button class="btn btn-al w-100 my-2">Cancel & close</button>
 
             </form>
 
           </div>
+          <button class="btn btn-al w-100 my-2" name="cancelCloseOrgs">Cancel & close</button>
+
         </div>
       </div>
         <button id="selectRootOrgnaisation" name="suborganisationSelect" value="{{root_organisation.id}}" class="btn btn-al w-100 my-2">{{root_organisation.title}}</button>
@@ -100,21 +101,19 @@ Viewing an organisation
           <form method="POST">
             {% csrf_token %}
 
-          <p class="mb-0">From Parent Organisation</p>
+          <p class="mb-0"><span id="parentOrgTitle"></span></p>
           <ul id="addMemberFromParent" class="list-group list-group-flush">
           </ul>
         </form>
+      </div>
 
-        </div>
-
-
-
-        </ul>
+      <button class="btn btn-al w-100 my-2" name="cancelCloseMember">Cancel & close</button>
       </div>
     </div>
 
     <ul id="membersList" class="list-group list-group-flush">
     </ul>
+
   </div>
   <div class="col-xs-6 col-md-4">
     <h4 class="text-center my-2">Pathways</h4>
@@ -128,9 +127,25 @@ Viewing an organisation
             </li>
       </ul>
     </div>
-    <div class="collapse" id="addPathway">
-      <div class="card card-body">
-        Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+    <div class="collapse py-2" id="addPathway">
+      <div class="card card-body border-primary">
+
+        <div class="form-group">
+          <form method="POST">
+            {% csrf_token %}
+            <p class="mb-0">Created</p>
+            <ul class="list-group list-group-flush my-2 border-0" id="myPathways">
+            </ul>
+          <p class="mb-0">Bookmarked</p>
+          <ul class="list-group list-group-flush my-2 border-0" id="bookMarkedPathways">
+          </ul>
+
+          <ul class="list-group list-group-flush" id="parentMembers">
+          </ul>
+          <button name="add_pathways_to_organisation" value="{{ root_organisation.id }}" class="btn btn-al w-100 my-2">Add selected to organsation</button>
+          </form>
+        </div>
+          <button class="btn btn-al w-100 my-2" name="cancelClosePathways">Cancel & close</button>
       </div>
     </div>
     <ul id="pathwayList" class="list-group list-group-flush">

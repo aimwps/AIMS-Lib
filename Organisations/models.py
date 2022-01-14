@@ -33,6 +33,12 @@ class Organisation(models.Model):
             node = node.parent_organisation
         return node
 
+    def is_root(self):
+        if self.parent_organisation:
+            return False
+        else:
+            return True
+
 
 
 class OrganisationContent(models.Model):

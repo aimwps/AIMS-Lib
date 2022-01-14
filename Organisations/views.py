@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Organisation, OrganisationContent, OrganisationMembers
 from .forms import OrganisationCreateForm, OrganisationEditForm, OrganisationContentCreateForm, OrganisationContentEditForm
 from Paths.models import Pathway
+from Paths.pathway_serializers import PathwaySerializer
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, CreateView, UpdateView, View, ListView
@@ -12,6 +13,27 @@ from Members.members_serializers import UserSerializer
 from django.contrib.auth.models import User
 import json
 
+def getUserBookmarkedPathways(request):
+    if request.method=="GET":
+        user_pathways = Pathway.objects.filter(author=request.user)
+        data_info = {"created": None,
+                    "user_bookmarked": None,
+                    "organisation_bookmarked": None}
+
+        if user_pathways:
+            data_info['created'] = PathwaySerializer(user_pathways, many=True).data
+        return JsonResponse(data_info, safe=False)
+
+def submitNewMember(request):
+    if request.method=="POST":
+        print(request.POST)
+        user = get_object_or_404(User, id=request.POST.get("user_id"))
+        organisation = get_object_or_404(Organisation, id=request.POST.get("organisation_id"))
+        new_membership = OrganisationMembers(organisation=organisation, member=user, status="pending")
+        new_membership.save()
+        data_info = {"message": "Success"}
+        json_data_info = json.dumps(data_info)
+        return JsonResponse(json_data_info, safe=False)
 
 def searchExactUser(request):
     if request.method=="GET":
@@ -22,10 +44,7 @@ def searchExactUser(request):
             user=user[0]
             user_data = UserSerializer(user)
             user_data_complete = {
-                                "status" :  {
-                                                "selected": None,
-                                                "root" : None,
-                                            },
+                                "status" : None,
                                 "user" : user_data.data
                                 }
             selected_organisation_id = request.GET.get("selected_organisation")
@@ -34,17 +53,17 @@ def searchExactUser(request):
 
             # for the found user, check there status in the selected organisation and
             # the rooot organisation
-            selected_organisation_member = OrganisationMembers.objects.filter(organisation=selected_organisation,
-                                                                            member=user)
+            # selected_organisation_member = OrganisationMembers.objects.filter(organisation=selected_organisation,
+            #                                                                 member=user)
             root_organisation_member = OrganisationMembers.objects.filter(organisation=root_organisation,
                                                                         member=user)
+            root_organisation_data = OrganisationSerializer(root_organisation)
 
-
-
-            if selected_organisation_member:
-                user_data_complete['status']['selected'] = selected_organisation_member[0].status
             if root_organisation_member:
-                user_data_complete['status']['root'] = root_organisation_member[0].status
+                user_data_complete['status'] = {"organisation":root_organisation_data.data, "status":root_organisation_member[0].status}
+            else:
+                user_data_complete['status'] = {"organisation":root_organisation_data.data, "status": "no membership"}
+
 
             return JsonResponse(user_data_complete, safe=False)
 
@@ -101,23 +120,26 @@ class OrganisationView(LoginRequiredMixin, View):
     template_name = "organisation_view.html"
     def get(self, request, organisation_id):
         organisation = get_object_or_404(Organisation, id=organisation_id)
-        organisation_tree = get_suborganisation_tree(organisation)
-        organisation_list = get_suborganisation_list(organisation)
-        parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
-        add_org_form = OrganisationCreateForm()
-        add_org_form.fields['parent_organisation'].choices = parent_org_choices
+        if organisation.is_root():
+            organisation_tree = get_suborganisation_tree(organisation)
+            organisation_list = get_suborganisation_list(organisation)
+            parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
+            add_org_form = OrganisationCreateForm()
+            add_org_form.fields['parent_organisation'].choices = parent_org_choices
 
-        if request.user.id == organisation.author.id:
-            context = {"organisation_data": organisation_tree,
-                        "root_organisation": organisation,
-                        "organisation_list": organisation_list,
-                        "addOrganisationForm": add_org_form,
+            if request.user.id == organisation.author.id:
+                context = {"organisation_data": organisation_tree,
+                            "root_organisation": organisation,
+                            "organisation_list": organisation_list,
+                            "addOrganisationForm": add_org_form,
 
-                        }
+                            }
+            else:
+                context = {}
+            return render(request, self.template_name, context)
         else:
-            context = {}
-        return render(request, self.template_name, context)
-
+            root = organisation.find_root_organisation()
+            return redirect("organisation-view", organisation_id=root.id)
 
 
     def form_valid(self, form):
@@ -148,6 +170,19 @@ class OrganisationView(LoginRequiredMixin, View):
                                     status="active")
 
                 new_member.save()
+
+        if "add_pathways_to_organisation" in request.POST:
+            new_pathway_ids = request.POST.getlist("addPathways")
+            organisation = Organisation.objects.get(id=request.POST.get("add_pathways_to_organisation"))
+            for new_pathway_id in new_pathway_ids:
+                organisation_content = OrganisationContent.objects.filter(assigned_group=organisation, pathway=new_pathway_id)
+                if not organisation_content:
+                    pathway = Pathway.objects.get(id=new_pathway_id)
+                    new_content_for_organisation = OrganisationContent(assigned_group=organisation, content_type="pathway", pathway=pathway)
+                    new_content_for_organisation.save()
+
+
+
 
 
         return redirect("organisation-view", organisation_id=organisation_id)

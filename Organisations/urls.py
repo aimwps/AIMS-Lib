@@ -8,7 +8,9 @@ from .views import (OrganisationView,
                     UserOrganisationsView,
                     getOrganisationData,
                     getOrganisationMembers,
-                    searchExactUser,)
+                    searchExactUser,
+                    submitNewMember,
+                    getUserBookmarkedPathways,)
 # from .views import
 
 urlpatterns = [
@@ -22,4 +24,6 @@ urlpatterns = [
     path("get_organisation_data/", getOrganisationData, name="get-org-data"),
     path("get_organisation_members/", getOrganisationMembers, name="get-org-members"),
     path("ajax_search_exact_user/", searchExactUser, name="search-exact-user"),
+    path("ajax_submit_new_membership/", submitNewMember, name="submit-new-member"),
+    path("ajax_get_user_and_bookmarked_pathway_data/", getUserBookmarkedPathways, name="get-user-pathway")
 ]

@@ -7,7 +7,15 @@ $("#id_parent_organisation").on('change', function(){
 });
 // Upon selecting an organisation request all the details of it.
 $("button[name='suborganisationSelect']").click(function(){
+  $("button[name='suborganisationSelect']").css("background-color", "white")
+  $(this).css("background-color", "#f9944b");
+
   let orgId = $(this).val();
+
+  // Function used to display user created and bookmarked pathways in add pathway area
+  getUserPathwayData(orgId);
+
+
   $("#selectedSubOrg").val(orgId);
   $.ajax({
     type : "GET",
@@ -19,6 +27,14 @@ $("button[name='suborganisationSelect']").click(function(){
       let members = json.org_members;
       let pathways = json.group_pathways;
       let membersIds = [];
+// display parent group in span
+      $("#parentOrgTitle").empty()
+      if (json.parent_organisation){
+        $("#parentOrgTitle").append(`Add from: ${json.parent_organisation.title}`)
+      }else {
+        $("#parentOrgTitle").append(`Invite only`)
+      }
+
 
 // Add members data to column
       if(members.length === 0){
@@ -31,13 +47,13 @@ $("button[name='suborganisationSelect']").click(function(){
       $("#membersList").empty();
       $.each(members, function(index, member){
         membersIds.push(member.member.id);
-
+        if(member.status==="active"){
         $("#membersList").append(
           `<li class="list-group-item">
-            <a type="button" name="memberInfoTrigger" value="${member.id}">
+            <a type="button" name="memberInfoTrigger" value="${member.member.id}">
             ${member.member.username}: ${member.member.first_name} ${member.member.last_name}
             </a>
-          </li>`)
+          </li>`)};
       });
     };
 // add pathways data to pathway column
@@ -74,7 +90,7 @@ $("button[name='suborganisationSelect']").click(function(){
         });
         $("#addMemberFromParent").append(`
           <button name="add_members_to_org_by_id" value="${orgId}" class="btn btn-al w-100 my-2">Add selected</button>
-          <button class="btn btn-al w-100 my-2">Cancel & close</button>`);
+          `);
       } else{
 // If a root organisation display invite information
         $("#addMemberFromParent").empty();
@@ -109,7 +125,7 @@ function loadMembersList() {
           <li class="list-group-item">
           <div class="form-check">
           <input class="form-check-input" name="members" type="checkbox" value="${member.id}" id="newMemberCheck_${member.id}">
-          <label class="form-check-label" for="newMemberCheck_${member.id}">
+          <label class="fo0rm-check-label" for="newMemberCheck_${member.id}">
             ${member.username}: ${member.first_name} ${member.last_name}
           </label>
         </div>
@@ -128,8 +144,8 @@ $("#userSearchInput").keyup(function(){
   $.ajax({
       method: "GET",
       url: "/ajax_search_exact_user/",
-      data: {"search_phrase": searchPhrase,
-            "selected_organisation":subOrgId },
+      data: {search_phrase: searchPhrase,
+            selected_organisation:subOrgId },
       datatype:"json",
       success: function(data){
         console.log(data);
@@ -138,18 +154,16 @@ $("#userSearchInput").keyup(function(){
           $("#userSearchResults").append(`
             <li class="list-group-item">
             ${data.user.username}: ${data.user.first_name} ${data.user.last_name}
-            <p><small>Selected: <span id="selectedStatus">${data.status.selected}</span><br>
-            <span id="rootStatus">${data.status.root}</span></small></p>
+            <p><small>
+            <span id="rootStatus">${data.status.organisation.title}: ${data.status.status}</span>
+            </small></p>
             </li>`);
-            if(data.status.root === null){
-              $('#rootStatus').empty();
-              $('#rootStatus').append('<a href="#">Invite to root organisation</a>')
-            } else {
-              if(data.status.selected === null){
-                $('#selectedStatus').empty();
-                $('#selectedStatus').append('<a href="#">Add to suborganisation</a>')
-              }
-            };
+            if (data.status.status === "no membership"){
+              $("#userSearchResults").append(`
+                  <input type="hidden" name="inviteUserById" value="${data.user.id}">
+                  <button type="button" name="submitInvite" onclick="submitNewMember(${data.status.organisation.id}, ${data.user.id})" class="btn btn-al w-100"> Send Invite</button>
+  `);
+            }
         } else {
           $("#userSearchResults").append(`
             <li class="list-group-item">
@@ -158,4 +172,64 @@ $("#userSearchInput").keyup(function(){
         };
 
       }});
+});
+
+
+function submitNewMember(orgId, userId){
+    $.ajax({
+      method: "POST",
+      url: "/ajax_submit_new_membership/",
+      data: { organisation_id: orgId,
+              user_id: userId,
+              csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()},
+      success: function(){
+        $("#userSearchInput").val("");
+        $("#addMember").collapse('toggle');
+        $("#userSearchResults").empty();
+        console.log("success")
+      }
+    });
+};
+
+function getUserPathwayData(orgId){
+  $.ajax({
+    method:"GET",
+    url:"/ajax_get_user_and_bookmarked_pathway_data/",
+    data: { organisation_id: orgId},
+    success: function(data){
+      console.log("pathway info",data);
+      $("#myPathways").empty();
+      $.each(data.created, function(index, userPathway){
+        $("#myPathways").append(`
+          <li class="list-group-item">
+          <div class="form-check">
+          <input class="form-check-input" name="addPathways" type="checkbox" value="${userPathway.id}" id="userPathwayCheck_${userPathway.id}">
+          <label class="form-check-label" for="userPathwayCheck_${userPathway.id}">
+            ${userPathway.title}
+          </label>
+          </div>
+
+          </li>`)
+      })
+
+    }
+  })
+};
+
+
+$("button[name='cancelCloseMember']").click(function(){
+  $("#userSearchInput").val("");
+  $("#addMember").collapse('toggle');
+  $("#userSearchResults").empty();
+});
+
+
+$("button[name='cancelCloseOrgs']").click(function(){
+  $("input[name='title']").val("");
+  $("#addOrganisation").collapse('toggle');
+});
+$("button[name='cancelClosePathways']").click(function(){
+  $("#userSearchInput").val("");
+  $("#addPathway").collapse('toggle');
+
 });
