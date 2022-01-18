@@ -15,8 +15,13 @@ $("button[name='suborganisationSelect']").click(function(){
   // Function used to display user created and bookmarked pathways in add pathway area
   getUserPathwayData(orgId);
 
+// set the organisation ID for adding a pathway to it
+  $("button[name='add_pathways_to_organisation']").val(orgId)
 
+// Set the organisation id for  global access
   $("#selectedSubOrg").val(orgId);
+
+// retrieve details of the selected organisation section
   $.ajax({
     type : "GET",
     url : "/get_organisation_data/",
