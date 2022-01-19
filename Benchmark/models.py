@@ -64,11 +64,6 @@ class Answer(models.Model):
                 fields=['on_question', 'order_position'],
                 name='answer_order_position'
             ),
-            models.UniqueConstraint(
-                fields=['on_question'],
-                condition=Q(is_default=True),
-                name='default_correct_answer'
-            )
         ]
 
     def __str__(self):

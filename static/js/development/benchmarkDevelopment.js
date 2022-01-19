@@ -76,9 +76,9 @@ function searchQABank(){
                       </li>
 
                       <li class="nav-item px-2">
-                          <button name="quickAddGQB" value="${gqb.id}" class="btn btn-al" data-bs-toggle="tooltip" title="quick add">
+                          <a type="button" onclick="quickAddGQB(${gqb.id})" value="${gqb.id}" class="text-primary">
                             <i class="fas fa-plus"></i>
-                          </button>
+                          </a>
                       </li>
                   </ul>
                   </li>
@@ -88,7 +88,30 @@ function searchQABank(){
 
           }
         });
-}
+};
+
+// $("button[name='quickAddGQB']").click(function(e){
+//   e.preventDefault();
+function quickAddGQB(gqbId){
+  console.log("BUM")
+  console.log(gqbId)
+  $.ajax({method:"POST",
+          url:"/ajax_add_gqb_to_benchmark/",
+          datatype:"json",
+          data:{
+            benchmark_id:$("#benchmarkId").val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            gqb_id:gqbId,
+          },
+          success: function(json){
+            console.log(json);
+            getBenchmarkQaData();
+            $("input[name='searchModalInput']").dispatchEvent(new Event("keyup"));
+
+          }});
+
+};
+
 $("#submitQAform").on('submit', function(e){
   e.preventDefault();
   $.ajax({
@@ -112,20 +135,20 @@ $("#submitQAform").on('submit', function(e){
 // SUBMIT THE gqb AND BENCHMARK id, CREATE NEW q&a IN VIE
 // respond, refresh the search, refresh the QA list
 
-  function getGQB(gqb_id){
+  // function getGQB(gqb_id){
+  //
+  //   $.ajax({
+  //     method: "GET",
+  //     url: "/ajax_get_gqb/",
+  //     data : {gqb_id: gqb_id},
+  //     datatype : json,
+  //     success : function(json){
+  //       console.log(json);
+  //     }
+  //   })};
 
-    $.ajax({
-      method: "GET",
-      url: "/ajax_get_gqb/",
-      data : {gqb_id: gqb_id},
-      datatype : json,
-      success : function(json){
-        console.log(json);
-      }
-    })};
 
-
-$("[name='quickAddGQB']").click(function(){
+$("button[name='quickAddGQB']").on('click', function(){
   console.log("BUM")
   let gqbId = $(this).val();
   console.log(gqbId)
@@ -144,4 +167,4 @@ $("[name='quickAddGQB']").click(function(){
 
           }});
 
-})
+});

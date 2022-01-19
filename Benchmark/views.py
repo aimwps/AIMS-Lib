@@ -21,20 +21,22 @@ def getGQB(request):
 def quickAddGQB(request):
     if request.method == "POST":
         gqb = get_object_or_404(GeneratedQuestionBank, id=request.POST.get("gqb_id"))
-        on_benchmark = get_object_or_404(Bencmark, id=request.POST.get("benchmark_id"))
+        on_benchmark = get_object_or_404(Benchmark, id=request.POST.get("benchmark_id"))
         new_question = Question(on_benchmark=on_benchmark,
                                 generator_source =  gqb,
                                 source_was_modified=False,
                                 question_text=gqb.question,
-                                order_position = len(on_benchmark.questions))
+                                order_position = len(on_benchmark.questions.all()))
         new_question.save()
         new_answer = Answer(on_question=new_question,
                             generator_source = gqb,
                             source_was_modified=False,
-                            answer_text=gqb.anser,
-                            order_position=len(new_question.answers))
+                            answer_text=gqb.answer,
+                            is_correct=True,
+                            is_default=True,
+                            order_position=len(new_question.answers.all()))
         new_answer.save()
-        return JsonRespone(json.dumps({"success":"success"}), safe=False)
+        return JsonResponse(json.dumps({"success":"success"}), safe=False)
 
 
 def getQaBankData(request):
