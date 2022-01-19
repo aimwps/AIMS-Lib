@@ -55,7 +55,7 @@ $(document).ready(function(){
           $.each(question.answers, function(answerIdx, answer){
             $(`#answerList${question.id}`).append(`
               <li class="list-group-item border-0 px-0">
-                <button name="answerSelect" class="btn btn-al w-100 py-2">
+                <button name="answerSelect" class="btn btn-al w-100 py-2 text-start">
                 <span id="answerCorrect${answer.id}"></span> ${answer.answer_text}
                 </button>
               </li>`);
@@ -132,13 +132,43 @@ $(document).ready(function(){
   getBenchmarkQaData();
 
 
-  $(document).on('click', "button[name=addAnswer]", function(event){
+  $(document).on('click', "button[name='addAnswer']", function(event){
     let QuestionId = $(this).val();
-
+    $('#id_on_question').val(QuestionId);
     $('#addAnswerModal').modal("toggle");
 
-    console.log(event)
   });
+
+  $(document).on('click', "button[id='submitNewAnswer']", function(event){
+    $.ajax({
+        method:"POST",
+        url: "/ajax_add_answer/",
+        data: {
+              on_question : $("#id_on_question").val(),
+              csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+              source_was_modified: $("#id_source_was_modified").val(),
+              generator_source:$("#id_generator_source").val(),
+              answer_text: $("#id_answer_text").val(),
+              is_correct: $("#id_is_correct").val(),
+              is_default: $("#id_is_default").val(),
+            },
+        datatype: "json",
+        success: function(json){
+          console.log(json);
+          getBenchmarkQaData();
+          $('#addAnswerModal').modal("toggle");
+          $("#id_on_question").val("")
+          $('input[name=csrfmiddlewaretoken]').val("")
+          $("#id_source_was_modified").val("")
+          $("#id_generator_source").val("")
+          $("#id_answer_text").val("")
+          $("#id_is_correct").val("")
+          $("#id_is_default").val("")
+
+        }
+    })
+  });
+
 
   $("input[name='searchModalInput']").keyup(function(){
     if ($("input[name='searchModalInput']").val().length > 0){

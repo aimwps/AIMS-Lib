@@ -14,16 +14,20 @@
             {{ new_answer_form.on_question.as_hidden }}
             {{ new_answer_form.generator_source.as_hidden }}
             {{ new_answer_form.source_was_modified.as_hidden }}
-            {{ new_answer_form.answer_text }}
-            {{ new_answer_form.is_correct }}
-            {{ new_answer_form.is_default }}
+            <p class="mb-0"><small>Enter the answer text..</small></p>
+            <p>{{ new_answer_form.answer_text }}</p>
+            <p class="mb-0"><small>Is it a correct answer?</small></p>
+            <p>{{ new_answer_form.is_correct }}</p>
+            <p class="mb-0"><small>Do you want this to be the default answer?</small></p>
+            <p>{{ new_answer_form.is_default }}</p>
             <div class="text-center pt-2">
-              <button type="submit" class="btn btn-al" id="submitQA">Add answer</button>
             </div>
           </form>
         </div>
+
       </div>
       <div class="modal-footer">
+                    <button type="submit" name="submitNewAnswer" class="btn btn-al w-100" id="submitNewAnswer">Add answer</button>
       </div>
       </div>
     </div>

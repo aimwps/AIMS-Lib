@@ -14,6 +14,28 @@ import requests
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+def addAnswer(request):
+    print(request.POST)
+    if request.POST.get("generator_source") == "":
+        generator_source = None
+    else:
+        generator_source = get_object_or_404(GeneratedQuestionBank, id=request.POST.get("generator_source"))
+    if request.POST.get("source_was_modified") == "":
+        source_was_modified = False
+    else:
+        source_was_modified = True
+    question = get_object_or_404(Question, id=request.POST.get("on_question"))
+    new_answer = Answer(
+                    on_question = question,
+                    generator_source = generator_source,
+                    source_was_modified = source_was_modified,
+                    answer_text = request.POST.get("answer_text"),
+                    is_correct = request.POST.get("is_correct"),
+                    is_default = request.POST.get("is_default"),
+                    order_position = len(question.answers.all()),
+                    )
+    new_answer.save()
+    return JsonResponse(json.dumps({"success":"success"}), safe=False)
 
 def getGQB(request):
     pass

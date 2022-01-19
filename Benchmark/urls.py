@@ -15,7 +15,8 @@ from .views import (
                     BenchmarkUserView,
                     getQaBankData,
                     quickAddGQB,
-                    getGQB
+                    getGQB,
+                    addAnswer
 )
 
 urlpatterns = [
@@ -27,6 +28,7 @@ urlpatterns = [
     path("ajax_search_qa_bank/", getQaBankData, name="display-qa-bank-data"),
     path("ajax_add_gqb_to_benchmark/", quickAddGQB, name="quick-add-gqb"),
     path("ajax_get_gqb/", getGQB, name="get-gqb"),
+    path("ajax_add_answer/", addAnswer, name="add-answer"),
     # path("answer-info/", csrf_exempt(get_answer_info), name="answer-info"),
     # path("answer-edit/", edit_answer, name="answer-edit"),
     # path("question-info/", csrf_exempt(get_question_info), name="question-info"),
