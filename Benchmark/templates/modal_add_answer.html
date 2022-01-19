@@ -1,0 +1,31 @@
+{% load static %}
+
+<div class="modal fade" id="addAnswerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addAnswerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addAnswerModalLabel">Add an answer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form my-2">
+          <form id="addAnswerForm" method="post">
+            {% csrf_token %}
+            {{ new_answer_form.on_question.as_hidden }}
+            {{ new_answer_form.generator_source.as_hidden }}
+            {{ new_answer_form.source_was_modified.as_hidden }}
+            {{ new_answer_form.answer_text }}
+            {{ new_answer_form.is_correct }}
+            {{ new_answer_form.is_default }}
+            <div class="text-center pt-2">
+              <button type="submit" class="btn btn-al" id="submitQA">Add answer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
