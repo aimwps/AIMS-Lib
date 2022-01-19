@@ -49,7 +49,7 @@ def search_questions(request):
                 source_id__in=written_lecture, author = request.user.id) | GeneratedQuestionBank.objects.filter(
                 question__icontains=search_str, author = request.user.id)| GeneratedQuestionBank.objects.filter(
                 answer__icontains=search_str, author = request.user.id)
-        benchmark_qs = Question.objects.filter(on_quiz=json.loads(request.body).get('on_benchmark'))
+        benchmark_qs = Question.objects.filter(on_benchmark=json.loads(request.body).get('on_benchmark'))
 
         new_data = []
         for q in gqb:

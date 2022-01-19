@@ -3,7 +3,8 @@
 
 {% block topcarousel %}
 {% endblock %}
-
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
 {% block pageInfo_title %}
 MY BENCHMARKS
 {% endblock pageInfo_title %}
@@ -18,18 +19,47 @@ This is an overview of the benchmarks you have created. You'll see how they are 
 
 {% block content %}
 <div class="container my-4">
-
+<div class="row justify-content-center px-0">
   {% for obj in object_list %}
-  <div class="row">
-    <div class="col-10">
-      <p class="lead"><a href='{% url "benchmark" obj.id %}'>{{ obj.title }}</a></p>
-    </div>
-    <div class="col-2">
-          <a class="nav-link" href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit benchmark"><i class="far fa-edit"></i></a>
-    </div>
-  </div>
-    {% endfor %}
 
+    <div class="col-xs-12 col-md-3 p-2">
+      <div class="container px-2 py-2 border border-primary rounded">
+
+
+      <h4 class="text-center">{{ obj.title }}</h4>
+      <h6 class="text-center">{{ obj.description }}</h6>
+
+
+      <div class="text-center">
+        <ul class="nav justify-content-center">
+          {% if user.is_authenticated %}
+            {% if user.id == obj.author.id %}
+            <!-- Button trigger modal -->
+            <li class="nav-item px-2">
+              <a href="#" data-bs-toggle="tooltip" title="details">
+                <i class="fas fa-bars"></i>
+              </a>
+            </li>
+
+            <li class="nav-item px-2">
+              <a href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit">
+                <i class="far fa-edit"></i>
+              </a>
+            </li>
+
+            <li class="nav-item px-2">
+              <a href="{% url 'benchmark' obj.id %}" data-bs-toggle="tooltip" title="test">
+                <i class="fas fa-vial"></i>
+              </a>
+            </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    </div>
+    {% endfor %}
+</div>
 </div>
 
 {% endblock %}

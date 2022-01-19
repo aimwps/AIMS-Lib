@@ -31,7 +31,7 @@ def getqag(clean_text, source_type, source_id, user_id):
         q_clean = "".join(q.strip())
         a_clean = "".join(a.replace("<pad>", "").strip())
         new_gq = GeneratedQuestionBank(
-            generated_by = user,
+            author = user,
             source_type = source_type,
             source_id = int(source_id),
             question = q_clean,

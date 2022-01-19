@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pathways{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+{% block pageInfo_title %}
+<a id="begin">EDITNG BENCHMARK</a>
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+You can add new questions to your benchmark manually or by searching for questions you previously generated. Once added, click a question for other settings. You can set the answer style, supply incorrect answers for multiple-choice questions and set time constraints for answering.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
+
+
+
+{% block content %}
+{% if user.is_authenticated %}
+  {% if user.id == benchmark.author.id %}
+  <div class="container my-4">
+    <h4 class="text-center">{{ benchmark.title }}</h4>
+    <div class="container">
+      <div class="row my-2">
+          <div class="form my-2">
+            <form id="submitQAform" method="post">
+              {% csrf_token %}
+              <textarea type="text" class="form-control" id="questionField" placeholder="Manually enter a question" rows=2></textarea>
+              <input type="text" class="form-control my-2" id="answerField" placeholder="Manually enter an answer">
+              <input type="hidden" id="onBenchmark" value="{{ benchmark.id }}">
+              <input type="hidden" id="generatedFromGqbId" value="">
+              <input type="hidden" id="hasBeenModified" value="">
+              <div class="text-center">
+                <button type="submit" class="btn btn-al" id="submitQA">Add Question & answer to benchmark</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="form-group">
+            <input type="text" class="form-control" id="searchField" placeholder="Search questions you've generated">
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row my-4" id="gqbOutput">
+        <h4 class=text-cente>Search results..</h4>
+
+          <ul class="list-group list-group-flush" id="gqbList">
+
+          </ul>
+      </div>
+      <div class="row my-4" id="benchmarkDev">
+        <ul class="list-group list-group-flush" id="benchmarkQaList">
+
+        </ul>
+      </div>
+
+      </div>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="updateAnswerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateAnswerModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateAnswerModalLabel">Answer Settings</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="lead">
+              An answer to the question:
+            </p>
+            <p id="answerModalQuestion"></p>
+            <hr>
+            <form method="post" id="answerUpdateForm">
+              {% csrf_token %}
+              <input type="hidden" value="" name="answerIdInput">
+              <p class="lead"> Edit this Answer: </p>
+              <label> Answer text</label>
+            <textarea class="form-control" id="answerModalAnswerTextInput" rows=3></textarea>
+            <br>
+            <label>Correct answer</label>
+            <select class="form-select" id="answerModalCorrectInput" aria-label="Is Correct Answer Select">
+              <option value="false">False</option>
+              <option value="true">True</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-al">Update</button>
+          </form>
+            <button type="button" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="updateQuestionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateQuestionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateQuestionModalLabel">Question Settings</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="questionModalQuestion"></p>
+            <hr>
+            <form method="POST" id="questionUpdateForm">
+              {% csrf_token %}
+              <input type="hidden" value="" name="questionIdInput">
+              <p class="lead"> Edit this question: </p>
+              <label> Question text</label>
+            <textarea class="form-control" id="questionModalQuestionTextInput" rows=3></textarea>
+            <br>
+            <label>Answer type</label>
+            <select class="form-select" id="questionModalAnswerType" aria-label="Is Correct Answer Select">
+              <option value="multiple-choice">Multiple choice</option>
+              <option value="multiple-correct-choice">Multiple correct choices</option>
+              <option value="text-entry-exact">Text entry (Exact)</option>
+              <option value="text-entry-nearest">Text entry (Close enough)</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-al">Update</button>
+          </form>
+            <button type="button" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  {% endif %}
+{% endif %}
+
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/development/benchmarkDevelopment.js' %}"></script>
+
+{% endblock scripts%}

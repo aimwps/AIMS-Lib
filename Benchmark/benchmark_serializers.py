@@ -17,7 +17,7 @@ class BenchmarkSerializer(serializers.ModelSerializer):
   questions = QuestionSerializer(many=True)
   class Meta:
     model = Benchmark
-    fields = ('id', 'title', "questions")
+    fields = ('id', 'title','description', 'questions')
 
 
 class GeneratedQuestionBankSerializer(serializers.ModelSerializer):

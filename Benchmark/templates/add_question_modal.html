@@ -1,0 +1,42 @@
+<div class="modal fade" id="addQuestionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addQuestionModalLabel">Add a question</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form my-2">
+          <form id="submitQAform" method="post">
+            {% csrf_token %}
+            <textarea type="text" class="form-control" id="questionField" placeholder="Enter a question" rows=2></textarea>
+            <input type="text" class="form-control my-2" id="answerField" placeholder="Enter a correct answer">
+            <input type="hidden" id="onBenchmark" value="{{ benchmark.id }}">
+            <input type="hidden" id="generatedFromGqbId" value="">
+            <input type="hidden" id="hasBeenModified" value="">
+            <div class="text-center pt-2">
+              <button type="submit" class="btn btn-al" id="submitQA">Add question and answer</button>
+            </div>
+          </form>
+        </div>
+        <div class="collapse" id="searchCollapse">
+          <div class="card card-body w-100 px-0 border-0">
+            <input class="form-control w-100" name="searchModalInput" type="text" placeholder="Search document title..">
+            </div>
+            <ul class="list-group list-group-flush" id="addQuestionSearchDisplay">
+            </ul>
+          </div>
+      </div>
+      <div class="modal-footer">
+
+        <a class="btn btn-al" data-bs-toggle="collapse" title="search generated questions" href="#searchCollapse" role="button" aria-expanded="false" aria-controls="searchCollapse">
+          <i class="fas fa-search"></i>
+
+        </a>
+
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
