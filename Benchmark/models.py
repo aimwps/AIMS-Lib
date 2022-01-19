@@ -53,7 +53,7 @@ class Answer(models.Model):
     source_was_modified = models.BooleanField(blank=True, null=True)
     answer_text = models.TextField()
     is_correct = models.BooleanField()
-    is_default = models.BooleanField(unique=True)
+    is_default = models.BooleanField()
     order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
@@ -64,6 +64,11 @@ class Answer(models.Model):
                 fields=['on_question', 'order_position'],
                 name='answer_order_position'
             ),
+            models.UniqueConstraint(
+                fields=['on_question'],
+                condition=Q(is_default=True),
+                name='default_correct_answer'
+            )
         ]
 
     def __str__(self):
