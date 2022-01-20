@@ -20,8 +20,10 @@ This is an overview of the benchmarks you have created. You'll see how they are 
 {% block content %}
 <div class="container my-4">
 <div class="row justify-content-center px-0">
-  {% for obj in object_list %}
 
+  {% for obj in object_list %}
+  {% if user.is_authenticated %}
+    {% if user.id == obj.author.id %}
     <div class="col-xs-12 col-md-3 p-2">
       <div class="container px-2 py-2 border border-primary rounded">
 
@@ -31,14 +33,13 @@ This is an overview of the benchmarks you have created. You'll see how they are 
 
 
       <div class="text-center">
-        <ul class="nav justify-content-center">
-          {% if user.is_authenticated %}
-            {% if user.id == obj.author.id %}
+        <ul class="nav justify-content-center my-2 pt-2">
+
             <!-- Button trigger modal -->
             <li class="nav-item px-2">
-              <a href="#" data-bs-toggle="tooltip" title="details">
+              <button class="btn btn-link" data-bs-toggle="tooltip" title="details">
                 <i class="fas fa-bars"></i>
-              </a>
+              </button>
             </li>
 
             <li class="nav-item px-2">
@@ -52,13 +53,14 @@ This is an overview of the benchmarks you have created. You'll see how they are 
                 <i class="fas fa-vial"></i>
               </a>
             </li>
-            {% endif %}
-          {% endif %}
         </ul>
       </div>
     </div>
     </div>
+    {% endif %}
+      {% endif %}
     {% endfor %}
+
 </div>
 </div>
 

@@ -1,0 +1,36 @@
+{% load static %}
+
+<div class="modal fade" id="AnswerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="AnswerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AnswerModalLabel">Answer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form my-2">
+          <form id="editAnswerForm" method="post">
+            {% csrf_token %}
+            <input  type="hidden" id="answerId">
+            {{ answer_form.on_question.as_hidden }}
+            {{ answer_form.generator_source.as_hidden }}
+            {{ answer_form.source_was_modified.as_hidden }}
+            <p class="mb-0"><small>Enter the answer text..</small></p>
+            <p>{{ answer_form.answer_text }}</p>
+            <p class="mb-0"><small>Is it a correct answer?</small></p>
+            <p>{{ answer_form.is_correct }}</p>
+            <p class="mb-0"><small>Do you want this to be the default answer?</small></p>
+            <p>{{ answer_form.is_default }}</p>
+            <div class="text-center pt-2">
+            </div>
+          </form>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+      <button type="submit" class="btn btn-al w-100" id="submitAnswer"><span id="answerBtnText"> Update answer</span></button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>

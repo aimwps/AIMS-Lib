@@ -69,12 +69,20 @@ You can add new questions to your benchmark manually or by searching for questio
   </div>
 
   <!-- Modal for adding questions, data is populated by ajax request -->
-  {% include 'add_question_modal.html' %}
 
   <!-- Modal for editing a benchmarks options-->
   {% include 'modal_benchmark_options.html' %}
 
-  {% include 'modal_add_answer.html' %}
+  <!-- Modals for answers-->
+  {% include 'modal_answer.html' %}
+
+
+  <!-- Modals for questions-->
+  {% include 'add_question_modal.html' %}
+
+  {% include 'modal_edit_question.html' %}
+
+
 {% endif %}
 {% endif %}
 

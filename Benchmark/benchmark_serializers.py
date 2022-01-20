@@ -5,7 +5,7 @@ from QuestionGenerator.models import GeneratedQuestionBank
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
       model = Answer
-      fields = ('id', "on_question", "is_correct", "answer_text")
+      fields = ('id', "on_question", "is_correct", "answer_text", "is_default")
 
 class QuestionSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
@@ -13,11 +13,13 @@ class QuestionSerializer(serializers.ModelSerializer):
       model = Question
       fields = ('id', "on_benchmark", "question_text", "answer_type", "order_position", 'answers')
 
+
 class BenchmarkSerializer(serializers.ModelSerializer):
   questions = QuestionSerializer(many=True)
   class Meta:
     model = Benchmark
     fields = ('id', 'title','description', 'questions')
+
 
 
 class GeneratedQuestionBankSerializer(serializers.ModelSerializer):

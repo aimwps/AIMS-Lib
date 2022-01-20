@@ -5,7 +5,7 @@ from django.urls import reverse
 from .models import Benchmark, Question, Answer
 from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
-from .forms import BenchmarkNewForm,BenchmarkNewAnswerForm
+from .forms import BenchmarkNewForm, BenchmarkNewAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
 from .benchmark_serializers import QuestionSerializer, BenchmarkSerializer, AnswerSerializer,GeneratedQuestionBankSerializer
 from QuestionGenerator.views import search_questions
 from QuestionGenerator.models import GeneratedQuestionBank
@@ -14,28 +14,106 @@ import requests
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-def addAnswer(request):
+
+def getAnswerData(request):
+    if request.method =="GET":
+        answer = get_object_or_404(Answer, id=request.GET.get("answer_id"))
+        data = AnswerSerializer(answer)
+        return JsonResponse(data.data, safe=False)
+
+def submitAnswer(request):
     print(request.POST)
-    if request.POST.get("generator_source") == "":
-        generator_source = None
-    else:
-        generator_source = get_object_or_404(GeneratedQuestionBank, id=request.POST.get("generator_source"))
-    if request.POST.get("source_was_modified") == "":
-        source_was_modified = False
-    else:
-        source_was_modified = True
-    question = get_object_or_404(Question, id=request.POST.get("on_question"))
-    new_answer = Answer(
-                    on_question = question,
-                    generator_source = generator_source,
-                    source_was_modified = source_was_modified,
-                    answer_text = request.POST.get("answer_text"),
-                    is_correct = request.POST.get("is_correct"),
-                    is_default = request.POST.get("is_default"),
-                    order_position = len(question.answers.all()),
-                    )
-    new_answer.save()
-    return JsonResponse(json.dumps({"success":"success"}), safe=False)
+    if request.method == "POST":
+
+        # If there is an answer id we are editing.
+        if request.POST.get("answer_id"):
+            print("We are editing")
+
+        # Else we are addding a new answer
+        else:
+            print("we are adding")
+            if request.POST.get("generator_source") == "":
+                generator_source = None
+            else:
+                generator_source = get_object_or_404(GeneratedQuestionBank, id=request.POST.get("generator_source"))
+            if request.POST.get("source_was_modified") == "":
+                source_was_modified = False
+            else:
+                source_was_modified = True
+            question = get_object_or_404(Question, id=request.POST.get("on_question"))
+            new_answer = Answer(
+                            on_question = question,
+                            generator_source = generator_source,
+                            source_was_modified = source_was_modified,
+                            answer_text = request.POST.get("answer_text"),
+                            is_correct = request.POST.get("is_correct"),
+                            is_default = request.POST.get("is_default"),
+                            order_position = len(question.answers.all()),
+                            )
+            new_answer.save()
+            return JsonResponse(json.dumps({"success":"success"}), safe=False)
+
+def submitQuestionEdit(request):
+    print(request.POST)
+    if request.method =="POST":
+        question = get_object_or_404(Question, id=request.POST.get("question_id"))
+
+        #Check if updating order position is necessary
+        requested_order_position = int(request.POST.get("order_position"))
+
+        if question.order_position != requested_order_position:
+            all_questions = question.on_benchmark.questions.all().order_by("order_position")
+            for i,q in enumerate(all_questions):
+                q.order_position = i
+                q.save()
+            #Check the requested position is viable
+            if requested_order_position in range(0, len(all_questions)):
+
+                # reverse through questions adding 1 to there positon allowing place for new position.
+                for i in range(len(all_questions)-1, requested_order_position-1,-1) :
+                    all_questions[i].order_position += 1
+                    all_questions[i].save()
+
+                # Update the question to its new order position
+                question.order_position = requested_order_position
+                question.save()
+
+                # re-order all questions to close empty positions
+                all_questions = question.on_benchmark.questions.all().order_by("order_position")
+                for i, q in enumerate(all_questions):
+                    q.order_position = i
+                    q.save()
+            else:
+                print("tHIS IS WHWERE A FORM ERROR SHOULD BE GENERATED")
+
+        else:
+            print("we came here")
+
+        # Check is updating text is necessary
+        edited_text = request.POST.get("question_text")
+        if question.question_text != edited_text:
+            if len(edited_text) > 0:
+                question.question_text = edited_text
+                question.save()
+            else:
+                print("THIS IS A FORM ERROR")
+
+        # Check if question type change is necessary
+        answer_type = request.POST.get("answer_type")
+        if question.answer_type != answer_type:
+            question.answer_type = answer_type
+            question.save()
+
+    data = json.dumps({"success": "success"})
+    return JsonResponse(data, safe=False)
+
+def getQuestionData(request):
+    if request.method == "GET":
+        question = get_object_or_404(Question, id=request.GET.get("question_id"))
+        data = QuestionSerializer(question)
+
+        return JsonResponse(data.data, safe=False)
+
 
 def getGQB(request):
     pass
@@ -97,48 +175,47 @@ class BenchmarkUserView(LoginRequiredMixin, ListView):
 
 
 # Create your views here.
-def quick_add_gqb_info(request):
-    gqb_id = json.loads(request.body).get("gqb_id")
-    gqb = get_object_or_404(GeneratedQuestionBank, id=gqb_id)
-    gqb = GeneratedQuestionBankSerializer(gqb)
-    return JsonResponse(gqb.data, safe=False)
+# def quick_add_gqb_info(request):
+#     gqb_id = json.loads(request.body).get("gqb_id")
+#     gqb = get_object_or_404(GeneratedQuestionBank, id=gqb_id)
+#     gqb = GeneratedQuestionBankSerializer(gqb)
+#     return JsonResponse(gqb.data, safe=False)
 
-def get_question_info(request):
-    question_id = json.loads(request.body).get("question_id")
-    question = get_object_or_404(Question, id=question_id)
-    question = QuestionSerializer(question)
-    return JsonResponse(question.data, safe=False)
+# def get_question_info(request):
+#     question_id = json.loads(request.body).get("question_id")
+#     question = get_object_or_404(Question, id=question_id)
+#     question = QuestionSerializer(question)
+#     return JsonResponse(question.data, safe=False)
 
-def edit_question(request):
-    if request.method=="POST":
-        question = get_object_or_404(Question, id=request.POST.get("question_id"))
-        question.answer_type = request.POST.get("answer_type")
-        question.question_text = request.POST.get("question_text")
-        question.save()
-        response = json.dumps({"complete":True})
+# def edit_question(request):
+#     if request.method=="POST":
+#         question = get_object_or_404(Question, id=request.POST.get("question_id"))
+#         question.answer_type = request.POST.get("answer_type")
+#         question.question_text = request.POST.get("question_text")
+#         question.save()
+#         response = json.dumps({"complete":True})
+#
+#         return HttpResponse(response)
 
-        return HttpResponse(response)
+# def get_answer_info(request):
+#     answer_id = json.loads(request.body).get("answer_id")
+#     answer = get_object_or_404(Answer, id=answer_id)
+#     question = Question.objects.get(answers=answer_id)
+#     answer = AnswerSerializer(answer)
+#     data = {"answer": answer.data, "question": question.question_text}
+#     return JsonResponse(data, safe=False)
 
-def get_answer_info(request):
-    answer_id = json.loads(request.body).get("answer_id")
-    answer = get_object_or_404(Answer, id=answer_id)
-    question = Question.objects.get(answers=answer_id)
-    answer = AnswerSerializer(answer)
-    data = {"answer": answer.data, "question": question.question_text}
-    return JsonResponse(data, safe=False)
-
-def edit_answer(request):
-    if request.method=="POST":
-        answer = get_object_or_404(Answer, id=request.POST.get("answer_id"))
-        answer.answer_text = request.POST.get("answer_text")
-        answer_is_correct = eval(request.POST.get("is_correct").capitalize())
-        answer.is_correct = answer_is_correct
-        answer.save()
-        response = json.dumps({"complete":True})
-        return HttpResponse(response)
+# def edit_answer(request):
+#     if request.method=="POST":
+#         answer = get_object_or_404(Answer, id=request.POST.get("answer_id"))
+#         answer.answer_text = request.POST.get("answer_text")
+#         answer_is_correct = eval(request.POST.get("is_correct").capitalize())
+#         answer.is_correct = answer_is_correct
+#         answer.save()
+#         response = json.dumps({"complete":True})
+#         return HttpResponse(response)
 
 def getBenchmarkData(request):
-
     if request.method=="GET":
         benchmark_id = request.GET.get('benchmark_id')
         benchmark = get_object_or_404(Benchmark, id=benchmark_id)
@@ -146,7 +223,6 @@ def getBenchmarkData(request):
         return JsonResponse(data.data, safe=False)
 
 def create_qa_pair(request):
-    print(request.POST)
     if request.method=="POST":
         question = request.POST['question']
         answer = request.POST['answer']
@@ -188,21 +264,16 @@ def create_qa_pair(request):
 
         return HttpResponse(response)
 
-class UserBenchmarkEditView(LoginRequiredMixin,View):
+class BenchmarkEditView(LoginRequiredMixin,View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
-    template_name = "user_benchmark_edit.html"
+    template_name = "benchmark_edit.html"
     def get(self, request, benchmark_id):
-        abc = search_questions(request)
         context = {}
         benchmark = get_object_or_404(Benchmark, id=benchmark_id)
-        gqb_json = json.dumps(list(GeneratedQuestionBank.objects.filter(author=request.user.id).values()),
-                            sort_keys=True,
-                            indent=1,
-                            cls=DjangoJSONEncoder)
         context['benchmark'] = benchmark
-        context["gqb_json"] = gqb_json
-        context["new_answer_form"] = BenchmarkNewAnswerForm()
+        context["answer_form"] = BenchmarkEditAnswerForm()
+        context["edit_question_form"] = BenchmarkEditQuestionForm()
         return render(request, self.template_name, context)
 
 class BenchmarkCreatorView(LoginRequiredMixin, CreateView):

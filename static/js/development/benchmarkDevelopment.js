@@ -21,9 +21,9 @@ $(document).ready(function(){
           console.log(question);
           $("#questionAnswerDisplayRow").append(`
             <div class="col-xs-12 col-md-3 py-2 px-2">
-              <div class="container py-2 border border-primary rounded">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item px-0">
+              <div class="container py-2 border border-primary rounded px-0">
+                <ul class="list-group list-group-flush px-2">
+                  <li class="list-group-item px-0 py-0">
                       <strong class="text-primary">Q${question.order_position + 1}</strong> ${question.question_text}?
                       <ul id="answerList${question.id}" class="list-group list-group-flush">
                       </ul>
@@ -38,7 +38,7 @@ $(document).ready(function(){
                       </li>
 
                       <li class="nav-item">
-                        <button class="btn btn-link" data-bs-toggle="tooltip" title="edit question settings">
+                        <button class="btn btn-link" data-bs-toggle="tooltip" name="editQuestion" value="${question.id}" title="edit question settings">
                           <i class="far fa-edit"></i>
                         </button>
                       </li>
@@ -54,15 +54,15 @@ $(document).ready(function(){
             </div>`);
           $.each(question.answers, function(answerIdx, answer){
             $(`#answerList${question.id}`).append(`
-              <li class="list-group-item border-0 px-0">
-                <button name="answerSelect" class="btn btn-al w-100 py-2 text-start">
+              <li class="list-group-item border-0 px-0 py-1">
+                <button name="answerEditSelect" value="${answer.id}" class="btn btn-al w-100 text-start">
                 <span id="answerCorrect${answer.id}"></span> ${answer.answer_text}
                 </button>
               </li>`);
               if (answer.is_correct){
                 $(`#answerCorrect${answer.id}`).append(`<i class="fas fa-check text-primary"></i>`)
               } else {
-                $(`#answerCorrect${answer.id}`).append(`<i class="fas fa-times text-primary"></i>`)
+                $(`#answerCorrect${answer.id}`).append(`<i class="fas fa-times text-black"></i>`)
               }
           })
 
@@ -128,22 +128,122 @@ $(document).ready(function(){
             }});
 
   };
+  function clearAllFormInputs(){
+    $("[name='answer_text']").val("");
+    $("[name='question_text']").val("");
+  }
 
   getBenchmarkQaData();
 
-
   $(document).on('click', "button[name='addAnswer']", function(event){
-    let QuestionId = $(this).val();
-    $('#id_on_question').val(QuestionId);
-    $('#addAnswerModal').modal("toggle");
+    let questionId = $(this).val();
+    $("#id_on_question").val(questionId)
+    $("#id_source_was_modified").val("")
+    $("#id_generator_source").val("")
+    $("#id_answer_text").val("")
+    $("#id_is_correct").val("")
+    $("#id_is_default").val("")
+
+    $("#AnswerModalLabel").empty().append("Adding new answer");
+    $("#answerBtnText").empty().append("Add new answer");
+
+    $("#answerId").val("")
+    $('#AnswerModal').modal("toggle");
 
   });
 
-  $(document).on('click', "button[id='submitNewAnswer']", function(event){
+
+  $(document).on('click', "button[name='editQuestion']", function(event){
+    clearAllFormInputs()
+    let questionId = $(this).val();
+    $('#editQuestionModal').modal("toggle");
+    $.ajax({method:"GET",
+            url: "/ajax_get_question_data/",
+            data:{question_id:questionId,},
+            datatype: "json",
+            success: function(json){
+              console.log(json);
+              $("#editQuestionId").val(json.id)
+              $("#id_question_text").val(json.question_text)
+              $("#id_answer_type").val(json.answer_type)
+              $("#id_order_position").val(json.order_position +1)
+            }
+          })
+  });
+
+  $(document).on('click', "button[name='submitEditQuestion']", function(event){
+    event.preventDefault();
+    $.ajax({method:"POST",
+            url: "/ajax_submit_question_update/",
+            data:{  question_id: $("#editQuestionId").val(),
+                    question_text: $("#id_question_text").val(),
+                    answer_type:$("#id_answer_type").val() ,
+                    order_position :$("#id_order_position").val()-1,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
+            datatype: "json",
+            success: function(json){
+              console.log(json);
+              $('#editQuestionModal').modal("toggle");
+              getBenchmarkQaData();
+            }
+          })
+  });
+
+
+$(document).on('click', "button[name='answerEditSelect']", function(event){
+  event.preventDefault();
+  let answerId = $(this).val();
+  console.log(answerId)
+  $.ajax({method:"GET",
+          url: "/ajax_get_answer_data/",
+          data:{answer_id: answerId,},
+          datatype: "json",
+          success: function(json){
+            console.log(json);
+            $("#AnswerModal").modal("toggle");
+            $("#AnswerModalLabel").empty().append("Editing an answer");
+            $("#answerBtnText").empty().append("Update answer")
+            $("#answerId").val(json.id);
+            $("[name='answer_text']").val(json.answer_text);
+
+            if (json.is_correct === true){
+                $("#id_is_correct").val("True");
+            } else {
+              $("#id_is_correct'").val("False");
+            };
+            if (json.is_default === true){
+                $("#id_is_default").val("True");
+            } else {
+              $("#id_is_default").val("False");
+            };
+          }
+        })
+})
+
+// $(document).on('click', "button[id='submitEditAnswer']", function(event){
+//
+//   $.ajax({
+//     method:"POST",
+//     url: "/ajax_edit_answer/",
+//     data: {   answer_id : $("[name='answer_id']").val(),
+//               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+//               answer_text: $("#id_answer_text").val(),
+//               is_correct: $("#id_is_correct").val(),
+//               is_default: $("#id_is_default").val(),
+//             },
+//     datatype: "json",
+//     success: function(json){
+//       console.log(json)
+//     }
+//   })
+// })
+
+  $(document).on('click', "button[id='submitAnswer']", function(event){
     $.ajax({
         method:"POST",
-        url: "/ajax_add_answer/",
+        url: "/ajax_submit_answer/",
         data: {
+              answer_id: $("#answerId").val(),
               on_question : $("#id_on_question").val(),
               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
               source_was_modified: $("#id_source_was_modified").val(),
@@ -158,7 +258,6 @@ $(document).ready(function(){
           getBenchmarkQaData();
           $('#addAnswerModal').modal("toggle");
           $("#id_on_question").val("")
-          $('input[name=csrfmiddlewaretoken]').val("")
           $("#id_source_was_modified").val("")
           $("#id_generator_source").val("")
           $("#id_answer_text").val("")

@@ -1,8 +1,43 @@
 from django import forms
-from .models import Benchmark, Answer
+from .models import Benchmark, Answer, Question
 from bootstrap_datepicker_plus import DatePickerInput
 
+class BenchmarkEditAnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = (  "answer_text",
+                    "is_correct",
+                    "is_default",
+                )
+        widgets = {
+            "answer_text":forms.TextInput(attrs = {'class': 'form-control',}),
+            "is_correct":forms.Select(attrs = {'class': 'form-control',
+                                            }),
+            "is_default":forms.Select(attrs = {'class': 'form-control',
+                                            }),
 
+            }
+
+
+
+class BenchmarkEditQuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = (
+                "id",
+                "question_text",
+                "answer_type",
+                "order_position",
+                )
+        widgets = {
+                    "id":forms.TextInput(attrs = {'class': 'form-control',
+                                                    }),
+            "question_text":forms.Textarea(attrs = {'class': 'form-control','rows':3}),
+            "answer_type":forms.Select(attrs = {'class': 'form-control',
+                                            }),
+            "order_position":forms.TextInput(attrs = {'class': 'form-control',
+                                            }),
+            }
 class BenchmarkNewAnswerForm(forms.ModelForm):
     class Meta:
         model = Answer

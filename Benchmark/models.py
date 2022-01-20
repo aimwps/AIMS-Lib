@@ -38,6 +38,7 @@ class Question(models.Model):
     create_time = models.TimeField(auto_now_add=True)
 
     class Meta:
+        ordering = ["order_position"]
         constraints = [
             models.UniqueConstraint(
                 fields=['on_benchmark', 'order_position'],

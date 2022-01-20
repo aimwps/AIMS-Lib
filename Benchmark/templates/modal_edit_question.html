@@ -1,0 +1,34 @@
+{% load static %}
+
+<div class="modal fade" id="editQuestionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editQuestionModalLabel">Question settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form my-2">
+          <form id="editQuestionForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="question_id" id="editQuestionId">
+            <p class="mb-0"><small>Enter the question text..</small></p>
+            <p>{{ edit_question_form.question_text }}</p>
+            <p class="mb-0"><small>How will people answer this question?</small></p>
+            <p>{{ edit_question_form.answer_type }}</p>
+            <p class="mb-0"><small>What number question should this be?</small></p>
+            <p>{{ edit_question_form.order_position }}</p>
+            <div class="text-center pt-2">
+            </div>
+                  <button type="submit" name="submitEditQuestion" class="btn btn-al" id="submitEditQuestion">Update question</button>
+          </form>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
