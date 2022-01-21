@@ -12,6 +12,20 @@
           <form id="editBenchmarkForm" method="post">
             {% csrf_token %}
 
+            <p class="mb-0"><small>Title of benchmark</small></p>
+            <p>{{ benchmark_form.title }}</p>
+
+            <p class="mb-0"><small>Description of the content</small></p>
+            <p>{{ benchmark_form.description }}</p>
+
+            <p class="mb-0"><small>The maximum number of questions issued</small></p>
+            <p>{{ benchmark_form.max_num_questions }}</p>
+
+            <p class="mb-0"><small>Select questions randomly</small></p>
+            <p>{{ benchmark_form.randomize_questions }}</p>
+
+            <p class="mb-0"><small>Default time for questions without a setting</small></p>
+            <p>{{ benchmark_form.default_answer_seconds }}</p>
             </div>
           </form>
         </div>

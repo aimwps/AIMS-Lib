@@ -5,7 +5,7 @@ from django.urls import reverse
 from .models import Benchmark, Question, Answer
 from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
-from .forms import BenchmarkNewForm, BenchmarkAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
+from .forms import BenchmarkForm, BenchmarkNewForm, BenchmarkAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
 from .benchmark_serializers import QuestionSerializer, BenchmarkSerializer, AnswerSerializer,GeneratedQuestionBankSerializer
 from QuestionGenerator.views import search_questions
 from QuestionGenerator.models import GeneratedQuestionBank
@@ -306,6 +306,7 @@ class BenchmarkEditView(LoginRequiredMixin,View):
         context = {}
         benchmark = get_object_or_404(Benchmark, id=benchmark_id)
         context['benchmark'] = benchmark
+        context['benchmark_form'] = BenchmarkForm()
         context["answer_form"] = BenchmarkAnswerForm()
         context["edit_question_form"] = BenchmarkEditQuestionForm()
         return render(request, self.template_name, context)

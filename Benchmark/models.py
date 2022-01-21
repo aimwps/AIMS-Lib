@@ -11,6 +11,7 @@ class Benchmark(models.Model):
     max_num_questions = models.PositiveIntegerField(default=20)
     randomize_questions = models.BooleanField(default=True, choices=((True, 'Yes'), (False, 'No')))
     default_answer_seconds = models.PositiveIntegerField(default=180)
+    override_time_with_default = models.BooleanField(default=True, choices=((True, 'Yes'), (False, 'No')))
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     def __str__(self):

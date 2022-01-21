@@ -78,8 +78,21 @@ class BenchmarkNewForm(forms.ModelForm):
 class BenchmarkForm(forms.ModelForm):
     class Meta:
         model = Benchmark
-        fields = ('title',)
+        fields = (
+            'title',
+            'description',
+            "max_num_questions",
+            "randomize_questions",
+            "default_answer_seconds",
+            )
         widgets ={
             'title': forms.TextInput(attrs = {'class': 'form-control',
-                                            'placeholder': 'Enter the title of your new benchmark'}),
+                                            'placeholder': 'A title for your benchmark'}),
+            'description': forms.Textarea(attrs = {'class': 'form-control', 'rows':3,
+                                        'placeholder': 'a description of the benchmark content'}),
+            "max_num_questions": forms.TextInput(attrs = {'class': 'form-control'}),
+            "randomize_questions":forms.Select(attrs = {'class': 'form-control',
+                                            }),
+            "default_answer_seconds":forms.TextInput(attrs = {'class': 'form-control'}),
+
             }
