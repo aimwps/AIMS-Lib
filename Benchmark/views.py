@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, CreateView, View, ListView
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -14,6 +14,40 @@ import requests
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+def submitCrudBenchmark(request):
+    print(request.POST)
+    if request.method =="POST":
+        benchmark = get_object_or_404(Benchmark, id=request.POST.get("benchmark_id"))
+        crud_type = request.POST.get("crud_type")
+        if crud_type == "update":
+            benchmark.title =  request.POST.get("title")
+            benchmark.description = request.POST.get("description")
+            if request.POST.get("max_num_questions"):
+                benchmark.max_num_questions = request.POST.get("max_num_questions")
+            if request.POST.get("randomize_questions"):
+                benchmark.randomize_questions =  request.POST.get("randomize_questions")
+            if request.POST.get("default_answer_seconds"):
+                benchmark.default_answer_seconds = request.POST.get("default_answer_seconds")
+            if request.POST.get("override_time_with_default"):
+                benchmark.override_time_with_default = request.POST.get("override_time_with_default")
+            benchmark.save()
+            forward = f"/user_benchmarks/edit/{benchmark.id}"
+
+
+        elif crud_type == "delete":
+            forward = f"benchmarks/"
+            benchmark.delete()
+            return redirect("user-benchmarks")
+        else:
+            print("crud type error")
+
+        return JsonResponse(json.dumps({"success":"success"}), safe=False)
+
+def getBenchmarkSettings(request):
+    if request.method =="GET":
+        benchmark = get_object_or_404(Benchmark, id=request.GET.get("benchmark_id"))
+        data = BenchmarkSerializer(benchmark)
+        return JsonResponse(data.data, safe=False)
 
 def getAnswerData(request):
     if request.method =="GET":
@@ -315,7 +349,7 @@ class BenchmarkCreatorView(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     model = Benchmark
-    form_class = BenchmarkNewForm
+    form_class = BenchmarkForm
     template_name = "create_benchmark.html"
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -326,7 +360,7 @@ class BenchmarkCreatorView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse("pathways")
+        return reverse("user-benchmarks")
 
 class BenchmarkView(View):
     template_name = "benchmark_view.html"

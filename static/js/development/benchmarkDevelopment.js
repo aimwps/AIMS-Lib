@@ -60,7 +60,8 @@ $(document).ready(function(){
       data: {benchmark_id: $("#benchmarkId").val()},
       datatype: "json",
       success: function(json){
-        console.log(json);
+        $("#benchmarkTitle").text(json.title)
+        $("#benchmarkDescription").text(json.description)
         $("#questionAnswerDisplayRow").empty();
         $.each(json.questions, function(questionIdx, question){
           console.log(question);
@@ -69,7 +70,7 @@ $(document).ready(function(){
               <div class="container py-2 border border-primary rounded px-0">
                 <ul class="list-group list-group-flush px-2">
                   <li class="list-group-item px-0 py-0">
-                      <strong class="text-primary">Q${question.order_position + 1}</strong> ${question.question_text}?
+                      <strong class="text-primary">Q${question.order_position + 1}</strong> <p>${question.question_text}?</p>
                       <ul id="answerList${question.id}" class="list-group list-group-flush">
                       </ul>
                   </li>
@@ -101,7 +102,7 @@ $(document).ready(function(){
             $(`#answerList${question.id}`).append(`
               <li class="list-group-item border-0 px-0 py-1">
                 <button name="answerEditSelect" value="${answer.id}" class="btn btn-al w-100 text-start">
-                <span id="answerCorrect${answer.id}"></span> ${answer.answer_text}
+                <small><span id="answerCorrect${answer.id}"></span> ${answer.answer_text}</small>
                 </button>
               </li>`);
               if (answer.is_correct){
@@ -177,7 +178,37 @@ $(document).ready(function(){
     $("[name='answer_text']").val("");
     $("[name='question_text']").val("");
   }
+  function crudModalPost_Benchmark(){
+    $.ajax({
+      method:"POST",
+      url: "/ajax_submit_benchmark_crud/",
+      datatype: "json",
+      data: {
+          benchmark_id : $("#benchmarkId").val(),
+          crud_type :   $("#crudModalPostType_Benchmark").val(),
+          title: $("#id_title").val(),
+          description: $("#id_description").val(),
+          max_num_questions : $("#id_max_num_questions").val(),
+          randomize_questions : $("#id_randomize_questions").val(),
+          default_answer_seconds : $("#id_default_answer_seconds").val(),
+          override_time_with_default : $("#id_override_time_with_default").val(),
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+      success: function(json){
+        $("#crudModal_Benchmark").modal("toggle");
+        $("#crudModalPostType_Benchmark").val("");
+        $("#id_title").val("");
+        $("#id_description").val("");
+        $("#id_max_num_questions").val("");
+        $("#id_randomize_questions").val("");
+        $("#id_default_answer_seconds").val("");
+        $("id_override_time_with_default").val("");
+        getBenchmarkQaData();
 
+      }
+
+    })
+  }
   getBenchmarkQaData();
 
   $(document).on('click', "[name='quickAddGQB']", function(event){
@@ -281,6 +312,20 @@ $(document).ready(function(){
       $("#crudModalDeleteCheckSubmit").html("type 'delete' to activate");
     }
   })
+  $(document).on('keyup',"#crudModalDeleteCheckInput_Benchmark", function(){
+    if ($("#crudModalDeleteCheckInput_Benchmark").val() === "delete" ){
+      $("#crudModalDeleteCheckSubmit_Benchmark").removeClass();
+      $("#crudModalDeleteCheckSubmit_Benchmark").addClass("btn");
+      $("#crudModalDeleteCheckSubmit_Benchmark").addClass("btn-al");
+      $("#crudModalDeleteCheckSubmit_Benchmark").html("Delete");
+    } else {
+      $("#crudModalDeleteCheckSubmit_Benchmark").removeClass();
+      $("#crudModalDeleteCheckSubmit_Benchmark").addClass("btn");
+      $("#crudModalDeleteCheckSubmit_Benchmark").addClass("btn-secondary");
+      $("#crudModalDeleteCheckSubmit_Benchmark").addClass("disabled");
+      $("#crudModalDeleteCheckSubmit_Benchmark").html("type 'delete' to activate");
+    }
+  })
 // When submitting the answer modal perform these functions
   $(document).on('click', "button[id='submitAnswerCrud']", function(event){
       crudModalPost()
@@ -288,7 +333,41 @@ $(document).ready(function(){
   });
   $(document).on('click', "button[id='selectModal_Benchmark']", function(event){
     $("#crudModal_Benchmark").modal("toggle");
-  })
+    $("#crudModalDeleteCheckInput_Benchmark").val("");
+    $("#crudModalDeleteCollapse_Benchmark").collapse("hide");
+    let benchmarkId = $(this).val();
+    $.ajax({method:"GET",
+            url: "/ajax_get_benchmark_settings/",
+            data: {"benchmark_id": benchmarkId},
+            datatype:"json",
+            success: function(json){
+              console.log(json)
+              $("#id_title").val(json.title)
+              $("#id_description").val(json.description)
+              $("#id_max_num_questions").val(json.max_num_questions)
+              $("#id_default_answer_seconds").val(json.default_answer_seconds)
+              $("#id_override_time_with_default").val(json.override_time_with_default)
+              if (json.randomize_questions === true){
+                  $("#id_randomize_questions").val("True");
+              } else {
+                $("#id_randomize_questions").val("False");
+              };
+              if (json.override_time_with_default === true){
+                  $("#id_override_time_with_default").val("True");
+              } else {
+                $("#id_override_time_with_default").val("False");
+              };
+            }})
+  });
+  $(document).on('click', "button[id='submitCrud_Benchmark']", function(event){
+    $("#crudModalPostType_Benchmark").val("update")
+    crudModalPost_Benchmark()
+  });
+  $(document).on('click', "button[id='crudModalDeleteCheckSubmit_Benchmark']", function(event){
+    $("#crudModalPostType_Benchmark").val("delete")
+    crudModalPost_Benchmark()
+  });
+
   $("input[name='searchModalInput']").keyup(function(){
     if ($("input[name='searchModalInput']").val().length > 0){
     searchQABank();

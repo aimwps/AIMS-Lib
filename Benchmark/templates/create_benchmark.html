@@ -26,14 +26,31 @@ You're creating a new benchmark, firstly set the title and then we'll begin addi
     <form method="post">
       {% csrf_token %}
 
-      {{ form.title }}
-      <!-- doing as_p decides the element that each will be created for each field -->
+      <input  type="hidden" id="crudModalPostType_Benchmark">
+      <p class="mb-0"><small>Title of benchmark</small></p>
+      <p>{{ form.title }}</p>
+
+      <p class="mb-0"><small>Description of the content</small></p>
+      <p>{{ form.description }}</p>
+
+      <p class="mb-0"><small>The maximum number of questions issued</small></p>
+      <p>{{ form.max_num_questions }}</p>
+
+      <p class="mb-0"><small>Select questions randomly</small></p>
+      <p>{{ form.randomize_questions }}</p>
+
+      <p class="mb-0"><small>Default time for each question without a setting</small></p>
+      <p>{{ form.default_answer_seconds }}</p>
+      <p class="mb-0"><small>Always use default question time</small></p>
+      <p>{{ form.override_time_with_default }}</p>
       <br>
       <div class="text-center">
 
         <button class="btn btn-al">Create Benchmark</button>
 
       </div>
+      <br>
+
       </form>
   </div>
 </div>

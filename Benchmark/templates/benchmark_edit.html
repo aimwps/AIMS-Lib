@@ -23,15 +23,25 @@ You can add new questions to your benchmark manually or by searching for questio
   {% if user.id == benchmark.author.id %}
 
   <input type="hidden" id="benchmarkId" value="{{benchmark.id}}">
-  <div class="container py-2">
-    <div class="row text-center">
-      <h4>{{benchmark.title}}</h4>
+  <div class="container px-0 py-2 my-4">
+    <div class="row text-center px-2">
+      <h4 id="benchmarkTitle">{{benchmark.title}}</h4>
       <h6>Created {{ benchmark.create_date}} @ {{ benchmark.create_time }} by {{ benchmark.author }}</h6>
+      {% if benchmark.description %}
+      <p id="benchmarkDescription">{{benchmark.description}}</p>
+
+      {% endif %}
       <ul class="nav justify-content-center">
           <!-- Button trigger modal -->
-
           <li class="nav-item">
-            <button id="selectModal_Benchmark" data-bs-toggle="tooltip" title="edit global benchmark settings" class="btn btn-link">
+          <!-- Button trigger modal -->
+            <button type="button" data-bs-toggle="modal" data-bs-target="#addQuestionModal" class="btn btn-link">
+              <i class="fas fa-plus"></i>
+            </button>
+
+        </li>
+          <li class="nav-item">
+            <button id="selectModal_Benchmark" value="{{ benchmark.id}}" data-bs-toggle="tooltip" title="edit global benchmark settings" class="btn btn-link">
               <i class="far fa-edit"></i>
             </button>
           </li>
@@ -41,19 +51,12 @@ You can add new questions to your benchmark manually or by searching for questio
               <i class="fas fa-vial"></i>
             </button>
           </li>
-          <li class="nav-item">
-          <!-- Button trigger modal -->
-            <button type="button" data-bs-toggle="modal" data-bs-target="#addQuestionModal" class="btn btn-link">
-              <i class="fas fa-plus"></i>
-            </button>
 
-        </li>
 
       </ul>
-      {% if benchmark.description %}
-      <p>{{benchmark.description}}</p>
-      {% endif %}
+
     </div>
+        <hr>
     <div class="row px-0" id="questionAnswerDisplayRow">
 
     </div>

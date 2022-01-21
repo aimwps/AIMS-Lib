@@ -18,8 +18,16 @@ class BenchmarkSerializer(serializers.ModelSerializer):
   questions = QuestionSerializer(many=True)
   class Meta:
     model = Benchmark
-    fields = ('id', 'title','description', 'questions')
-
+    fields = (
+        'id',
+        'title',
+        'description',
+        'questions',
+        "max_num_questions",
+        "randomize_questions",
+        "default_answer_seconds",
+        "override_time_with_default",
+        )
 
 
 class GeneratedQuestionBankSerializer(serializers.ModelSerializer):

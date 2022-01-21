@@ -84,6 +84,7 @@ class BenchmarkForm(forms.ModelForm):
             "max_num_questions",
             "randomize_questions",
             "default_answer_seconds",
+            "override_time_with_default",
             )
         widgets ={
             'title': forms.TextInput(attrs = {'class': 'form-control',
@@ -94,5 +95,7 @@ class BenchmarkForm(forms.ModelForm):
             "randomize_questions":forms.Select(attrs = {'class': 'form-control',
                                             }),
             "default_answer_seconds":forms.TextInput(attrs = {'class': 'form-control'}),
+            "override_time_with_default":forms.Select(attrs = {'class': 'form-control',
+                                            }),
 
             }

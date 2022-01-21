@@ -20,6 +20,8 @@ from .views import (
                     getQuestionData,
                     submitQuestionEdit,
                     getAnswerData,
+                    getBenchmarkSettings,
+                    submitCrudBenchmark
 
 )
 
@@ -36,7 +38,9 @@ urlpatterns = [
     path("ajax_get_question_data/", getQuestionData, name="get-question"),
     path("ajax_submit_question_update/", submitQuestionEdit, name="edit-question"),
     path("ajax_get_answer_data/", getAnswerData, name="get-answer"),
-    path('developer/benchmarks/', BenchmarkUserView.as_view(), name="user-dev-benchmarks"),
+    path("ajax_get_benchmark_settings/", getBenchmarkSettings, name="get-benchmark-settings"),
+    path("ajax_submit_benchmark_crud/", submitCrudBenchmark, name="submit-crud-benchmark"),
+    path('benchmarks/', BenchmarkUserView.as_view(), name="user-benchmarks"),
     # path("ajax_edit_answer/", editAnswer, name="edit-answer"),
     # path("answer-info/", csrf_exempt(get_answer_info), name="answer-info"),
     # path("answer-edit/", edit_answer, name="answer-edit"),

@@ -24,7 +24,6 @@ class Benchmark(models.Model):
             *args, **kwargs)
         return kwargs
 
-
 class Question(models.Model):
 
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
@@ -78,3 +77,26 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"Answer_{self.id}"
+
+
+class BenchmarkSession(models.Model):
+    COMPLETION_TYPES = (("testing", "testing"),
+                        ("submission", "submission"))
+    for_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="benchmark_sessions")
+    on_benchmark = models.ForeignKey(Benchmark, on_delete=models.SET_NULL, null=True)
+    completion_type = models.CharField(max_length=255, choices=COMPLETION_TYPES, default="testing")
+    completed = models.BooleanField(default=False)
+    result = models.PositiveIntegerField(blank=True, null=True)
+    create_date = models.DateField(auto_now_add=True)
+    create_time = models.TimeField(auto_now_add=True)
+    completion_date = models.DateField(blank=True, null=True)
+    completion_time = models.TimeField(blank=True, null=True)
+
+
+class BenchmarkSessionQuestion(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
+    answered_correctly = models.BooleanField()
+    given_answer = models.TextField(blank=True, null=True)
+    create_date = models.DateField(auto_now_add=True)
+    create_time = models.TimeField(auto_now_add=True)
+    time_to_answer = models.PositiveIntegerField()
