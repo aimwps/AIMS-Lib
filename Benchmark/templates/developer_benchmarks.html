@@ -35,21 +35,15 @@ This is an overview of the benchmarks you have created. You'll see how they are 
       <div class="text-center">
         <ul class="nav justify-content-center my-2 pt-2">
 
-            <!-- Button trigger modal -->
-            <li class="nav-item px-2">
-              <button class="btn btn-link" data-bs-toggle="tooltip" title="details">
-                <i class="fas fa-bars"></i>
-              </button>
-            </li>
 
             <li class="nav-item px-2">
-              <a href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit">
+              <a href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit benchmark" >
                 <i class="far fa-edit"></i>
               </a>
             </li>
 
             <li class="nav-item px-2">
-              <a href="{% url 'benchmark' obj.id %}" data-bs-toggle="tooltip" title="test">
+              <a data-bs-toggle="tooltip" title="test this benchmark">
                 <i class="fas fa-vial"></i>
               </a>
             </li>

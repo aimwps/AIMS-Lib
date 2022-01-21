@@ -49,9 +49,6 @@ $(document).ready(function(){
         }
     });
   }
-  // function createAnswer(questionId){
-  // $("#createAnswerModal").toggle();
-  // }
   function getBenchmarkQaData(){
     $("#questionField").val("");
     $("#answerField").val("");
@@ -187,8 +184,7 @@ $(document).ready(function(){
       let gqbId = $(this).val();
       console.log(gqbId);
       quickAddGQB(gqbId);
-  })
-
+  });
   $(document).on('click', "#crudModalDeleteCheckSubmit", function(event){
   event.preventDefault();
     $("#crudModalPostType").val("delete");
@@ -285,17 +281,14 @@ $(document).ready(function(){
       $("#crudModalDeleteCheckSubmit").html("type 'delete' to activate");
     }
   })
-
-
-
-
 // When submitting the answer modal perform these functions
   $(document).on('click', "button[id='submitAnswerCrud']", function(event){
       crudModalPost()
 
   });
-
-
+  $(document).on('click', "button[id='selectModal_Benchmark']", function(event){
+    $("#crudModal_Benchmark").modal("toggle");
+  })
   $("input[name='searchModalInput']").keyup(function(){
     if ($("input[name='searchModalInput']").val().length > 0){
     searchQABank();
@@ -303,7 +296,6 @@ $(document).ready(function(){
     $("#addQuestionSearchDisplay").empty();
   };
   });
-
   $("#submitQAform").on('submit', function(e){
     e.preventDefault();
     $.ajax({
@@ -323,7 +315,6 @@ $(document).ready(function(){
       }
     });
   });
-
   $("button[name='quickAddGQB']").on('click', function(){
     console.log("BUM")
     let gqbId = $(this).val();
@@ -344,5 +335,4 @@ $(document).ready(function(){
             }});
 
   });
-
 })

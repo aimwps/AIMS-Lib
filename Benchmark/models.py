@@ -8,6 +8,9 @@ class Benchmark(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    max_num_questions = models.PositiveIntegerField(default=20)
+    randomize_questions = models.BooleanField(default=True)
+    default_answer_seconds = models.PositiveIntegerField(default=180)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     def __str__(self):

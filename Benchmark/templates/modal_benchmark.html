@@ -1,0 +1,37 @@
+{% load static %}
+
+<div class="modal fade" id="crudModal_Benchmark" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="crudModal_BenchmarkLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crudModal_BenchmarkLabel">Benchmark</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form my-2">
+          <form id="editBenchmarkForm" method="post">
+            {% csrf_token %}
+
+            </div>
+          </form>
+        </div>
+
+
+      <div class="modal-footer">
+      <button type="submit" class="btn btn-al" id="submitCrud_Benchmark"><span id="benchmarkModalBtnText"> Update answer</span></button>
+      <a class="btn btn-secondary" data-bs-toggle="collapse" href="#crudModalDeleteCollapse_Benchmark" role="button" aria-expanded="false" aria-controls="crudModalDeleteCollapse_Benchmark" id="crudModalDeleteCollapse_BenchmarkBtn">
+        <i class="far fa-trash-alt"></i>
+      </a>
+      <diqv class="collapse" id="crudModalDeleteCollapse_Benchmark">
+        <div class="card card-body">
+          <p> Are you sure you want to delete this answer? there will be no coming back from this.. </p>
+
+            <p><input id="crudModalDeleteCheckInput_Benchmark" type="text" class="form-control text-center w-100"></p>
+            <button id="crudModalDeleteCheckSubmit_Benchmark" class="btn btn-secondary disabled">
+              type 'delete' to activate
+              </button>
+        </div>
+      </div>
+      </div>
+      </div>
+    </div>

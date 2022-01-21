@@ -29,34 +29,25 @@ You can add new questions to your benchmark manually or by searching for questio
       <h6>Created {{ benchmark.create_date}} @ {{ benchmark.create_time }} by {{ benchmark.author }}</h6>
       <ul class="nav justify-content-center">
           <!-- Button trigger modal -->
-          <li class="nav-item px-2">
-            <a type="button"class="text-primary" data-bs-toggle="modal" data-bs-target="#benchmarkSettingModal">
-                <i class="fas fa-bars"></i>
-            </a>
-          </li>
 
-          <li class="nav-item px-2">
-            <a href="#" data-bs-toggle="tooltip" title="edit">
+          <li class="nav-item">
+            <button id="selectModal_Benchmark" data-bs-toggle="tooltip" title="edit global benchmark settings" class="btn btn-link">
               <i class="far fa-edit"></i>
-            </a>
+            </button>
           </li>
 
-          <li class="nav-item px-2">
-            <a href='#' data-bs-toggle="tooltip" title="test">
+          <li class="nav-item">
+            <button href='#' data-bs-toggle="tooltip" title="test this benchmark" class="btn btn-link">
               <i class="fas fa-vial"></i>
-            </a>
+            </button>
           </li>
-          <li class="nav-item px-2">
+          <li class="nav-item">
+          <!-- Button trigger modal -->
+            <button type="button" data-bs-toggle="modal" data-bs-target="#addQuestionModal" class="btn btn-link">
+              <i class="fas fa-plus"></i>
+            </button>
 
-              <!-- Button trigger modal -->
-              <a type="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
-                <i class="fas fa-plus"></i>
-              </a>
-
-              <!-- Modal -->
-
-
-          </li>
+        </li>
 
       </ul>
       {% if benchmark.description %}
@@ -82,6 +73,7 @@ You can add new questions to your benchmark manually or by searching for questio
 
   {% include 'modal_edit_question.html' %}
 
+  {% include 'modal_benchmark.html' %}
 
 {% endif %}
 {% endif %}
