@@ -9,7 +9,7 @@ class Benchmark(models.Model):
     description = models.TextField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     max_num_questions = models.PositiveIntegerField(default=20)
-    randomize_questions = models.BooleanField(default=True)
+    randomize_questions = models.BooleanField(default=True, choices=((True, 'Yes'), (False, 'No')))
     default_answer_seconds = models.PositiveIntegerField(default=180)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
