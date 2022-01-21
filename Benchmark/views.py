@@ -5,7 +5,7 @@ from django.urls import reverse
 from .models import Benchmark, Question, Answer
 from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
-from .forms import BenchmarkNewForm, BenchmarkNewAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
+from .forms import BenchmarkNewForm, BenchmarkAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
 from .benchmark_serializers import QuestionSerializer, BenchmarkSerializer, AnswerSerializer,GeneratedQuestionBankSerializer
 from QuestionGenerator.views import search_questions
 from QuestionGenerator.models import GeneratedQuestionBank
@@ -23,24 +23,36 @@ def getAnswerData(request):
 
 def submitAnswer(request):
     print(request.POST)
+    response_messages = {
+                        "success" : [],
+                        "failure" : [],
+                        }
     if request.method == "POST":
+        crud_type = request.POST.get("crud_type")
 
-        # If there is an answer id we are editing.
-        if request.POST.get("answer_id"):
-            print("We are editing")
+        # Process form data and create a new answer
+        if crud_type == "create":
 
-        # Else we are addding a new answer
-        else:
-            print("we are adding")
+            # Find the question we are creating an aswer for
+            question = get_object_or_404(Question, id=request.POST.get("on_question"))
+
+
             if request.POST.get("generator_source") == "":
                 generator_source = None
             else:
                 generator_source = get_object_or_404(GeneratedQuestionBank, id=request.POST.get("generator_source"))
+
             if request.POST.get("source_was_modified") == "":
                 source_was_modified = False
             else:
                 source_was_modified = True
-            question = get_object_or_404(Question, id=request.POST.get("on_question"))
+
+            if request.POST.get("is_default"):
+                all_answers = question.answers.all()
+                for answer in all_answers:
+                    answer.is_default = False
+                    answer.save()
+
             new_answer = Answer(
                             on_question = question,
                             generator_source = generator_source,
@@ -51,7 +63,29 @@ def submitAnswer(request):
                             order_position = len(question.answers.all()),
                             )
             new_answer.save()
-            return JsonResponse(json.dumps({"success":"success"}), safe=False)
+
+        # Else we are addding a new answer
+        elif crud_type == "update":
+            edit_answer = get_object_or_404(Answer, id=request.POST.get("answer_id"))
+
+            if request.POST.get("is_default"):
+                all_answers = edit_answer.on_question.answers.all()
+                for answer in all_answers:
+                    answer.is_default = False
+                    answer.save()
+
+            edit_answer.answer_text = request.POST.get("answer_text")
+            edit_answer.is_correct = request.POST.get("is_correct")
+            edit_answer.is_default = request.POST.get("is_default")
+            edit_answer.save()
+
+        elif crud_type == "delete":
+            answer = get_object_or_404(Answer, id=request.POST.get("answer_id"))
+            answer.delete()
+
+        else:
+            print("crud type error")
+        return JsonResponse(json.dumps({"success":"success"}), safe=False)
 
 def submitQuestionEdit(request):
     print(request.POST)
@@ -272,7 +306,7 @@ class BenchmarkEditView(LoginRequiredMixin,View):
         context = {}
         benchmark = get_object_or_404(Benchmark, id=benchmark_id)
         context['benchmark'] = benchmark
-        context["answer_form"] = BenchmarkEditAnswerForm()
+        context["answer_form"] = BenchmarkAnswerForm()
         context["edit_question_form"] = BenchmarkEditQuestionForm()
         return render(request, self.template_name, context)
 

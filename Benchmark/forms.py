@@ -38,7 +38,7 @@ class BenchmarkEditQuestionForm(forms.ModelForm):
             "order_position":forms.TextInput(attrs = {'class': 'form-control',
                                             }),
             }
-class BenchmarkNewAnswerForm(forms.ModelForm):
+class BenchmarkAnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
         fields = (  "on_question",

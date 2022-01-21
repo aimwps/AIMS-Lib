@@ -11,6 +11,7 @@
         <div class="form my-2">
           <form id="editAnswerForm" method="post">
             {% csrf_token %}
+            <input  type="hidden" id="crudModalPostType">
             <input  type="hidden" id="answerId">
             {{ answer_form.on_question.as_hidden }}
             {{ answer_form.generator_source.as_hidden }}
@@ -28,7 +29,20 @@
 
       </div>
       <div class="modal-footer">
-      <button type="submit" class="btn btn-al w-100" id="submitAnswer"><span id="answerBtnText"> Update answer</span></button>
+      <button type="submit" class="btn btn-al" id="submitAnswerCrud"><span id="answerBtnText"> Update answer</span></button>
+      <a class="btn btn-secondary" data-bs-toggle="collapse" href="#crudModalDeleteCollapse" role="button" aria-expanded="false" aria-controls="crudModalDeleteCollapse" id="crudModalDeleteCollapseBtn">
+        <i class="far fa-trash-alt"></i>
+      </a>
+      <diqv class="collapse" id="crudModalDeleteCollapse">
+        <div class="card card-body">
+          <p> Are you sure you want to delete this answer? there will be no coming back from this.. </p>
+
+            <p><input id="crudModalDeleteCheckInput" type="text" class="form-control text-center w-100"></p>
+            <button id="crudModalDeleteCheckSubmit" class="btn btn-secondary disabled">
+              type 'delete' to activate
+              </button>
+        </div>
+      </div>
       </div>
       </div>
     </div>

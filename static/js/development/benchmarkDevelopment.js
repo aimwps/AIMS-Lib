@@ -1,9 +1,57 @@
 
 // Retrieves a benchmarks data including question and answers
 $(document).ready(function(){
-  function addAnswer(questionId){
-  $("#addAnswerModal").toggle();
+  function setCrudModalUpdate(){
+    console.log("called update");
+    $("#crudModalPostType").val("update");
+    $("#crudModalDeleteCollapseBtn").show();
+    $("#crudModalDeleteCollapse").collapse("hide");
+  };
+  function setCrudModalCreate(){
+    console.log("called create");
+    $("#crudModalPostType").val("create");
+    $("#crudModalDeleteCollapseBtn").hide();
+    $("#crudModalDeleteCollapse").collapse("hide");
+    $("#AnswerModalLabel").empty().append("Adding new answer");
+    $("#answerBtnText").empty().append("Add new answer");
+    $("#answerId").val("")
+    $('#AnswerModal').modal("toggle");
+  };
+  function crudModalPost(){
+    $.ajax({
+        method:"POST",
+        url: "/ajax_submit_answer_crud/",
+        data: {
+              crud_type: $("#crudModalPostType").val(),
+              answer_id: $("#answerId").val(),
+              on_question : $("#id_on_question").val(),
+              csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+              source_was_modified: $("#id_source_was_modified").val(),
+              generator_source:$("#id_generator_source").val(),
+              answer_text: $("#id_answer_text").val(),
+              is_correct: $("#id_is_correct").val(),
+              is_default: $("#id_is_default").val(),
+            },
+        datatype: "json",
+        success: function(json){
+          console.log(json);
+          getBenchmarkQaData();
+          $('#createAnswerModal').modal("toggle");
+          $("#id_on_question").val("")
+          $("#id_source_was_modified").val("")
+          $("#id_generator_source").val("")
+          $("#id_answer_text").val("")
+          $("#id_is_correct").val("")
+          $("#id_is_default").val("")
+          $("#crudModalDeleteCheckInput").val("");
+          $('#AnswerModal').modal("toggle");
+
+        }
+    });
   }
+  // function createAnswer(questionId){
+  // $("#createAnswerModal").toggle();
+  // }
   function getBenchmarkQaData(){
     $("#questionField").val("");
     $("#answerField").val("");
@@ -32,7 +80,7 @@ $(document).ready(function(){
                 <div class="text-center">
                   <ul class="nav justify-content-center">
                       <li class="nav-item">
-                        <button class="btn btn-link" type="button" name="addAnswer" value="${question.id}" data-bs-toggle="tooltip" title="add an answer">
+                        <button class="btn btn-link" type="button" name="createAnswer" value="${question.id}" data-bs-toggle="tooltip" title="add an answer">
                           <i class="fas fa-plus text-primary"></i>
                         </button>
                       </li>
@@ -96,9 +144,9 @@ $(document).ready(function(){
                         </li>
 
                         <li class="nav-item px-2">
-                            <a type="button" onclick="quickAddGQB(${gqb.id})" value="${gqb.id}" class="text-primary">
+                            <button type="button" name="quickAddGQB" value="${gqb.id}" class="btn btn-link">
                               <i class="fas fa-plus"></i>
-                            </a>
+                            </button>
                         </li>
                     </ul>
                     </li>
@@ -123,7 +171,7 @@ $(document).ready(function(){
             success: function(json){
               console.log(json);
               getBenchmarkQaData();
-              $("input[name='searchModalInput']").dispatchEvent(new Event("keyup"));
+              // $("input[name='searchModalInput']").dispatchEvent(new Event("keyup"));
 
             }});
 
@@ -135,24 +183,30 @@ $(document).ready(function(){
 
   getBenchmarkQaData();
 
-  $(document).on('click', "button[name='addAnswer']", function(event){
+  $(document).on('click', "[name='quickAddGQB']", function(event){
+      let gqbId = $(this).val();
+      console.log(gqbId);
+      quickAddGQB(gqbId);
+  })
+
+  $(document).on('click', "#crudModalDeleteCheckSubmit", function(event){
+  event.preventDefault();
+    $("#crudModalPostType").val("delete");
+    crudModalPost()
+
+});
+  $(document).on('click', "button[name='createAnswer']", function(event){
     let questionId = $(this).val();
+    console.log(`question id = ${questionId}`)
     $("#id_on_question").val(questionId)
     $("#id_source_was_modified").val("")
     $("#id_generator_source").val("")
     $("#id_answer_text").val("")
-    $("#id_is_correct").val("")
-    $("#id_is_default").val("")
-
-    $("#AnswerModalLabel").empty().append("Adding new answer");
-    $("#answerBtnText").empty().append("Add new answer");
-
-    $("#answerId").val("")
-    $('#AnswerModal').modal("toggle");
+    $("#id_is_correct").val("True")
+    $("#id_is_default").val("False")
+    setCrudModalCreate();
 
   });
-
-
   $(document).on('click', "button[name='editQuestion']", function(event){
     clearAllFormInputs()
     let questionId = $(this).val();
@@ -170,7 +224,6 @@ $(document).ready(function(){
             }
           })
   });
-
   $(document).on('click', "button[name='submitEditQuestion']", function(event){
     event.preventDefault();
     $.ajax({method:"POST",
@@ -188,84 +241,58 @@ $(document).ready(function(){
             }
           })
   });
+  $(document).on('click', "button[name='answerEditSelect']", function(event){
+    event.preventDefault();
+    setCrudModalUpdate()
+    let answerId = $(this).val();
+    console.log(answerId)
+    $.ajax({method:"GET",
+            url: "/ajax_get_answer_data/",
+            data:{answer_id: answerId,},
+            datatype: "json",
+            success: function(json){
+              console.log(json);
+              $("#AnswerModal").modal("toggle");
+              $("#AnswerModalLabel").empty().append("Editing an answer");
+              $("#answerBtnText").empty().append("Update answer")
+              $("#answerId").val(json.id);
+              $("[name='answer_text']").val(json.answer_text);
+
+              if (json.is_correct === true){
+                  $("#id_is_correct").val("True");
+              } else {
+                $("#id_is_correct'").val("False");
+              };
+              if (json.is_default === true){
+                  $("#id_is_default").val("True");
+              } else {
+                $("#id_is_default").val("False");
+              };
+            }
+          })
+  })
+  $(document).on('keyup',"#crudModalDeleteCheckInput", function(){
+    if ($("#crudModalDeleteCheckInput").val() === "delete" ){
+      $("#crudModalDeleteCheckSubmit").removeClass();
+      $("#crudModalDeleteCheckSubmit").addClass("btn");
+      $("#crudModalDeleteCheckSubmit").addClass("btn-al");
+      $("#crudModalDeleteCheckSubmit").html("Delete");
+    } else {
+      $("#crudModalDeleteCheckSubmit").removeClass();
+      $("#crudModalDeleteCheckSubmit").addClass("btn");
+      $("#crudModalDeleteCheckSubmit").addClass("btn-secondary");
+      $("#crudModalDeleteCheckSubmit").addClass("disabled");
+      $("#crudModalDeleteCheckSubmit").html("type 'delete' to activate");
+    }
+  })
 
 
-$(document).on('click', "button[name='answerEditSelect']", function(event){
-  event.preventDefault();
-  let answerId = $(this).val();
-  console.log(answerId)
-  $.ajax({method:"GET",
-          url: "/ajax_get_answer_data/",
-          data:{answer_id: answerId,},
-          datatype: "json",
-          success: function(json){
-            console.log(json);
-            $("#AnswerModal").modal("toggle");
-            $("#AnswerModalLabel").empty().append("Editing an answer");
-            $("#answerBtnText").empty().append("Update answer")
-            $("#answerId").val(json.id);
-            $("[name='answer_text']").val(json.answer_text);
 
-            if (json.is_correct === true){
-                $("#id_is_correct").val("True");
-            } else {
-              $("#id_is_correct'").val("False");
-            };
-            if (json.is_default === true){
-                $("#id_is_default").val("True");
-            } else {
-              $("#id_is_default").val("False");
-            };
-          }
-        })
-})
 
-// $(document).on('click', "button[id='submitEditAnswer']", function(event){
-//
-//   $.ajax({
-//     method:"POST",
-//     url: "/ajax_edit_answer/",
-//     data: {   answer_id : $("[name='answer_id']").val(),
-//               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-//               answer_text: $("#id_answer_text").val(),
-//               is_correct: $("#id_is_correct").val(),
-//               is_default: $("#id_is_default").val(),
-//             },
-//     datatype: "json",
-//     success: function(json){
-//       console.log(json)
-//     }
-//   })
-// })
+// When submitting the answer modal perform these functions
+  $(document).on('click', "button[id='submitAnswerCrud']", function(event){
+      crudModalPost()
 
-  $(document).on('click', "button[id='submitAnswer']", function(event){
-    $.ajax({
-        method:"POST",
-        url: "/ajax_submit_answer/",
-        data: {
-              answer_id: $("#answerId").val(),
-              on_question : $("#id_on_question").val(),
-              csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-              source_was_modified: $("#id_source_was_modified").val(),
-              generator_source:$("#id_generator_source").val(),
-              answer_text: $("#id_answer_text").val(),
-              is_correct: $("#id_is_correct").val(),
-              is_default: $("#id_is_default").val(),
-            },
-        datatype: "json",
-        success: function(json){
-          console.log(json);
-          getBenchmarkQaData();
-          $('#addAnswerModal').modal("toggle");
-          $("#id_on_question").val("")
-          $("#id_source_was_modified").val("")
-          $("#id_generator_source").val("")
-          $("#id_answer_text").val("")
-          $("#id_is_correct").val("")
-          $("#id_is_default").val("")
-
-        }
-    })
   });
 
 
