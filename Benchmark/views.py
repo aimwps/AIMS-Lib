@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, CreateView, View, ListView
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from .models import Benchmark, Question, Answer
+from .models import Benchmark, Question, Answer, BenchmarkSession
 from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
 from .forms import BenchmarkForm, BenchmarkNewForm, BenchmarkAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
@@ -182,10 +182,6 @@ def getQuestionData(request):
 
         return JsonResponse(data.data, safe=False)
 
-
-def getGQB(request):
-    pass
-
 def quickAddGQB(request):
     if request.method == "POST":
         gqb = get_object_or_404(GeneratedQuestionBank, id=request.POST.get("gqb_id"))
@@ -206,7 +202,6 @@ def quickAddGQB(request):
         new_answer.save()
         return JsonResponse(json.dumps({"success":"success"}), safe=False)
 
-
 def getQaBankData(request):
     search_phrase = request.GET.get("search_phrase")
     benchmark = get_object_or_404(Benchmark,id=request.GET.get("benchmark_id"))
@@ -226,62 +221,17 @@ def getQaBankData(request):
 
     return JsonResponse(gqb_data.data, safe=False)
 
-
-
-class BenchmarkUserView(LoginRequiredMixin, ListView):
+class UserBenchmarksView(LoginRequiredMixin, ListView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     model = Benchmark
     paginate_by = 100  # if pagination is desired
-    template_name = "developer_benchmarks.html"
+    template_name = "user_benchmarks_view.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
     def get_queryset(self):
         return Benchmark.objects.filter(author=self.request.user).order_by('-create_date', '-create_time')
-
-
-
-# Create your views here.
-# def quick_add_gqb_info(request):
-#     gqb_id = json.loads(request.body).get("gqb_id")
-#     gqb = get_object_or_404(GeneratedQuestionBank, id=gqb_id)
-#     gqb = GeneratedQuestionBankSerializer(gqb)
-#     return JsonResponse(gqb.data, safe=False)
-
-# def get_question_info(request):
-#     question_id = json.loads(request.body).get("question_id")
-#     question = get_object_or_404(Question, id=question_id)
-#     question = QuestionSerializer(question)
-#     return JsonResponse(question.data, safe=False)
-
-# def edit_question(request):
-#     if request.method=="POST":
-#         question = get_object_or_404(Question, id=request.POST.get("question_id"))
-#         question.answer_type = request.POST.get("answer_type")
-#         question.question_text = request.POST.get("question_text")
-#         question.save()
-#         response = json.dumps({"complete":True})
-#
-#         return HttpResponse(response)
-
-# def get_answer_info(request):
-#     answer_id = json.loads(request.body).get("answer_id")
-#     answer = get_object_or_404(Answer, id=answer_id)
-#     question = Question.objects.get(answers=answer_id)
-#     answer = AnswerSerializer(answer)
-#     data = {"answer": answer.data, "question": question.question_text}
-#     return JsonResponse(data, safe=False)
-
-# def edit_answer(request):
-#     if request.method=="POST":
-#         answer = get_object_or_404(Answer, id=request.POST.get("answer_id"))
-#         answer.answer_text = request.POST.get("answer_text")
-#         answer_is_correct = eval(request.POST.get("is_correct").capitalize())
-#         answer.is_correct = answer_is_correct
-#         answer.save()
-#         response = json.dumps({"complete":True})
-#         return HttpResponse(response)
 
 def getBenchmarkData(request):
     if request.method=="GET":
@@ -290,7 +240,7 @@ def getBenchmarkData(request):
         data = BenchmarkSerializer(benchmark)
         return JsonResponse(data.data, safe=False)
 
-def create_qa_pair(request):
+def benchmarkCreateQApair(request):
     if request.method=="POST":
         question = request.POST['question']
         answer = request.POST['answer']
@@ -345,7 +295,7 @@ class BenchmarkEditView(LoginRequiredMixin,View):
         context["edit_question_form"] = BenchmarkEditQuestionForm()
         return render(request, self.template_name, context)
 
-class BenchmarkCreatorView(LoginRequiredMixin, CreateView):
+class BenchmarkCreateView(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     model = Benchmark
@@ -366,9 +316,20 @@ class BenchmarkView(View):
     template_name = "benchmark_view.html"
     def get(self, request, benchmark_id):
         context = {}
-        benchmark_data = get_object_or_404(Benchmark, id=benchmark_id)
-        pure_data = BenchmarkSerializer(benchmark_data).data
-
-        print(pure_data)
-        context['benchmark_data'] = pure_data
         return render(request, self.template_name, context)
+
+def BenchmarkView_ajax_get_benchmark_data(request):
+    if request.method == "GET":
+        benchmark_id = request.GET.get("benchmark_id")
+        benchmark = get_object_or_404(Benchmark, id=benchmark_id)
+        bencmark_data = BenchmarkSerializer(benchmark)
+        user_sessions = BenchmarkSessions.objects.filter(for_user=request.user, on_benchmark=benchmark)
+
+        uncomplete_sessions = user_sessions.objects.filter(completed=False)
+
+        if uncomplete_sessions:
+            context["uncomplete_session_id"] = uncomplete_sessions[0].id
+        context["benchmark"] = benchmark_data.data
+        
+
+        return JsonResponse(context, safe=False)
