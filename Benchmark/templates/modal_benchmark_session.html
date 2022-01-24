@@ -1,0 +1,102 @@
+<!-- Full screen modal -->
+<div class="modal fade" id="benchmarkSessionModal" tabindex="-1" aria-labelledby="benchmarkSessionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title h4" id="benchmarkSessionModalLabel">Benchmark session: {{ benchmark.title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container px-xs-0 mx-xs-0">
+          <div class="row text-center my-4">
+
+              <h5 class="my-4"><span id="questionShow"></span>?</h5>
+
+          </div>
+
+        <hr>
+
+        <div class="row">
+
+              <div class="container">
+                <div class="row px-0">
+
+
+                <div class="col-xs-12 col-md-2">
+
+                </div>
+                <div class="col-xs-12 col-md-8 text-center">
+                  <h6 class="my-4"><span id="questionType"></span>Multiple Choice - select a single answer</h6>
+                    <ul class="list-group" id="multiChoice">
+
+                    </ul>
+                    <ul class="list-group w-100" id="singleChoice">
+
+                    </ul>
+                    <input type="text" id="textEntryInput" class="form-control w-100" placeholder="enter your answer here"></input>
+                </div>
+                <div class="col-xs-12 col-md-2">
+
+                </div>
+
+
+                </div>
+                </div>
+
+
+        </div>
+
+        <div class="row">
+
+
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="sessionQuestionId" value=""></input>
+          </form>
+        </div>
+      </div>
+
+</div>
+      <div class="modal-footer">
+<div class="container">
+
+
+        <div class="row me-auto px-0">
+          <div class="col-4 px-0">
+
+          <p class="lead pt-4">Q <span id="currentSessionQuestion">1<span> / <span id="currenSessionTotalQuestions">20</span></p>
+        </div>
+        <div class="col-8 ms-auto me-auto px-0">
+
+
+        <ul class="nav justify-content-center">
+            <!-- Button trigger modal -->
+            <li class="nav-item px-xs-0 px-md-2">
+            <!-- Button trigger modal -->
+              <button type="button" data-bs-toggle="tooltip" title="I don't know the answer" class="btn btn-link">
+                <h1 class="pt-2"><i class="far fa-times-circle"></i></h1>
+              </button>
+
+          </li>
+            <li class="nav-item px-xs-0 px-md-2">
+              <button  data-bs-toggle="tooltip" title="Skip this for now" class="btn btn-lg btn-link">
+                <h1 class="pt-2"><i class="fas fa-forward"></i></h1>
+              </button>
+            </li>
+
+            <li class="nav-item px-xs-0 px-md-2">
+
+              <button data-bs-toggle="tooltip" name="submitSessionAnswer" id="submitSessionAnswer" title="Lock in this answer" class="btn btn-link">
+
+                <h1 class="pt-2"><i class="fas fa-check-double"></i></h1>
+              </button>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+      </div>
+      </div>
+    </div>
+</div>
+  </div>

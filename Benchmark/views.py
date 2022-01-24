@@ -2,17 +2,80 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, CreateView, View, ListView
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from .models import Benchmark, Question, Answer, BenchmarkSession
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
+from .models import Benchmark, Question, Answer, BenchmarkSession, BenchmarkSessionQuestion
 from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
 from .forms import BenchmarkForm, BenchmarkNewForm, BenchmarkAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
-from .benchmark_serializers import QuestionSerializer, BenchmarkSerializer, AnswerSerializer,GeneratedQuestionBankSerializer
+from .benchmark_serializers import QuestionSerializer, BenchmarkSerializer, AnswerSerializer,GeneratedQuestionBankSerializer, BenchmarkSessionSerializer, BenchmarkSessionQuestionSerializer
 from QuestionGenerator.views import search_questions
 from QuestionGenerator.models import GeneratedQuestionBank
 import json
 import requests
+import random
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+def BenchmarkView_ajax_submit_answer(request):
+    print(request.POST)
+    if request.method =="POST":
+        return JsonResponse(json.dumps({"success":"success"}), safe=False)
+
+
+
+def BenchmarkView_ajax_get_session_question(request):
+    print(request.GET)
+    if request.method =="GET":
+        benchmark_session = get_object_or_404(BenchmarkSession, id=request.GET.get("session_id"))
+        next_question = benchmark_session.session_questions.filter(~Q(given_answer="")).order_by("id")
+        if len(next_question) > 0:
+            data = BenchmarkSessionQuestionSerializer(next_question[0])
+            return JsonResponse(data.data, safe=False)
+        else:
+            print("Benchmark looks like it has ended")
+
+def BenchmarkView_ajax_get_new_session(request):
+    benchmark = get_object_or_404(Benchmark, id=request.GET.get("benchmark_id"))
+    new_session = BenchmarkSession(
+                                    for_user = request.user,
+                                    on_benchmark = benchmark,
+                                    completion_type = "submission",
+                                    completed = False,
+                                    )
+    new_session.save()
+    total_available_questions = len(benchmark.questions.all())
+
+    # Shorten the length of available questions to the total in benchmark, randomize or select
+    # the first x amount based on benchmark settings
+    if benchmark.max_num_questions < total_available_questions:
+        if benchmark.randomize_questions:
+            random_sample = random.sample(range(0, total_available_questions), benchmark.max_num_questions)
+            question_set = [benchmark.questions.all()[i] for i in random_sample]
+        else:
+            question_set = benchmark.questions.all().order_by("order_position")[:benchmark.max_num_questions]
+    else:
+        question_set = benchmark.questions.all()
+
+    #Add question set to new session
+
+    for question in question_set:
+        new_session_question = BenchmarkSessionQuestion(
+                                benchmark_session = new_session,
+                                question=question,
+                                answered_correctly=None,
+                                given_answer= None,
+                                )
+        new_session_question.save()
+
+
+    data = {"session_id": new_session.id}
+
+    return JsonResponse(data, safe=False)
+
+
+
+
 
 def submitCrudBenchmark(request):
     print(request.POST)
@@ -316,6 +379,8 @@ class BenchmarkView(View):
     template_name = "benchmark_view.html"
     def get(self, request, benchmark_id):
         context = {}
+        benchmark = get_object_or_404(Benchmark, id=benchmark_id)
+        context["benchmark"] = benchmark
         return render(request, self.template_name, context)
 
 def BenchmarkView_ajax_get_benchmark_data(request):
@@ -330,6 +395,6 @@ def BenchmarkView_ajax_get_benchmark_data(request):
         if uncomplete_sessions:
             context["uncomplete_session_id"] = uncomplete_sessions[0].id
         context["benchmark"] = benchmark_data.data
-        
+
 
         return JsonResponse(context, safe=False)

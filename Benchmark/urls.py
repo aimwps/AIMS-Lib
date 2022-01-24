@@ -5,6 +5,9 @@ from .views import (
                     BenchmarkCreateView,
                     BenchmarkEditView,
                     BenchmarkView,
+                    BenchmarkView_ajax_get_new_session,
+                    BenchmarkView_ajax_get_session_question,
+                    BenchmarkView_ajax_submit_answer,
                     benchmarkCreateQApair,
                     getBenchmarkData,
                     getQaBankData,
@@ -19,7 +22,9 @@ from .views import (
 
 urlpatterns = [
     path('benchmark/<int:benchmark_id>', BenchmarkView.as_view(), name="benchmark"),
-    path("ajax_get_benchmark_data/", BenchmarkView_ajax_get_benchmark_data, name="gbmd"),
+    path("BenchmarkView_ajax_get_new_session/", BenchmarkView_ajax_get_new_session, name="gbmd"),
+    path("BenchmarkView_ajax_get_session_question/", BenchmarkView_ajax_get_session_question,name="get-session-question"),
+    path("BenchmarkView_ajax_submit_answer/", BenchmarkView_ajax_submit_answer, name="post-session-answer"),
     path('create_benchmark/', BenchmarkCreateView.as_view(), name="create-benchmark"),
     path('user_benchmarks/edit/<int:benchmark_id>', BenchmarkEditView.as_view(), name="edit-benchmark"),
     path("ajax_create_question_answer/", benchmarkCreateQApair, name="create-qa-pair"),

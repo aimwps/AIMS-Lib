@@ -94,9 +94,11 @@ class BenchmarkSession(models.Model):
 
 
 class BenchmarkSessionQuestion(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
-    answered_correctly = models.BooleanField()
+    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, )
+    benchmark_session = models.ForeignKey(BenchmarkSession, on_delete=models.CASCADE, related_name="session_questions")
+    answered_correctly = models.BooleanField(blank=True, null=True)
     given_answer = models.TextField(blank=True, null=True)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
-    time_to_answer = models.PositiveIntegerField()
+    time_to_answer = models.PositiveIntegerField(blank=True, null=True)
+    

@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Pathways{% endblock %}
 
 {% block topcarousel %}
@@ -22,8 +24,52 @@ This content is still under development.<br> In the future, this is where you wi
 {% block content %}
 <div class="container my-4">
 
+  <input type="hidden" id="benchmarkId" value="{{benchmark.id}}">
+  <div class="container px-0 py-2 my-4">
+    <div class="row text-center">
+      <h4 id="benchmarkTitle">{{benchmark.title}}</h4>
+      <h6>Created {{ benchmark.create_date}} @ {{ benchmark.create_time }} by {{ benchmark.author }}</h6>
+      {% if benchmark.description %}
+      <p id="benchmarkDescription">{{benchmark.description}}</p>
+
+      {% endif %}
+      <ul class="nav justify-content-center">
+          <!-- Button trigger modal -->
+          <li class="nav-item">
+          <!-- Button trigger modal -->
+            <button type="button" data-bs-toggle="modal" data-bs-target="#addQuestionModal" class="btn btn-link">
+              <i class="fas fa-plus"></i>
+            </button>
+
+        </li>
+          <li class="nav-item">
+            <button id="selectModal_Benchmark" value="{{ benchmark.id}}" data-bs-toggle="tooltip" title="edit global benchmark settings" class="btn btn-link">
+              <i class="far fa-edit"></i>
+            </button>
+          </li>
+
+          <li class="nav-item">
+            <button href='#' data-bs-toggle="tooltip" title="test this benchmark" class="btn btn-link">
+              <i class="fas fa-vial"></i>
+            </button>
+          </li>
+      </ul>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <button type="button" name="newSession" id="newSessionBtn" class="btn btn-al">New session</button>
+        </div>
+
+      </div>
 
 </div>
 </div>
 
+
+{% include "modal_benchmark_session.html" %}
 {% endblock %}
+
+{% block scripts%}
+<script src="{% static 'js/benchmarks/benchmarkSession.js' %}"></script>
+{% endblock scripts%}
