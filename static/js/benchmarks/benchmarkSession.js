@@ -53,9 +53,10 @@ $(document).ready(function(){
           datatype:"json",
           data: {session_id : sessionId },
           success: function(json){
-            console.log("session",json.id)
+            console.log("session",json)
             let question = json.question;
             $("#questionShow").text(question.question_text)
+            $("#currenSessionTotalQuestions").text(question.total_session_answers)
 
             if (question.answer_type === "text-entry-exact"){
               loadTextEntry(json);

@@ -55,6 +55,11 @@ class Question(models.Model):
     def num_correct_answers(self):
         return self.answers.filter(is_correct=True).count()
 
+    @property
+    def total_session_answers(self):
+        return min(self.on_benchmark.questions.count(), self.on_benchmark.max_num_questions)
+
+
 class Answer(models.Model):
     on_question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
     generator_source = models.ForeignKey(GeneratedQuestionBank, on_delete=models.SET_NULL, blank=True, null=True, related_name="answer_source")
@@ -96,7 +101,7 @@ class BenchmarkSession(models.Model):
     completion_time = models.TimeField(blank=True, null=True)
 
 class BenchmarkSessionQuestion(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, )
+    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
     benchmark_session = models.ForeignKey(BenchmarkSession, on_delete=models.CASCADE, related_name="session_questions")
     answered_correctly = models.BooleanField(blank=True, null=True)
     given_answer = models.TextField(blank=True, null=True)

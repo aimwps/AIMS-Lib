@@ -18,7 +18,7 @@ class QuestionSafeSerializer(serializers.ModelSerializer):
     answers = AnswerSafeSerializer(many=True)
     class Meta:
       model = Question
-      fields = ('id', "on_benchmark", "question_text", "answer_type", "order_position", 'answers', 'num_correct_answers')
+      fields = ('id', "on_benchmark", "question_text", "answer_type", "order_position", 'answers', 'num_correct_answers', "total_session_answers")
 
 class QuestionSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
