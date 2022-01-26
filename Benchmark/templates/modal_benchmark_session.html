@@ -26,13 +26,14 @@
 
                 </div>
                 <div class="col-xs-12 col-md-8 text-center">
-                  <h6 class="my-4"><span id="questionType"></span>Multiple Choice - select a single answer</h6>
+                  <h6 class="my-4"><span id="questionType"></span></h6>
                     <ul class="list-group" id="multiChoice">
 
                     </ul>
                     <ul class="list-group w-100" id="singleChoice">
 
                     </ul>
+                    <input type="hidden" id="numCorrectAnswers"></input>
                     <input type="text" id="textEntryInput" class="form-control w-100" placeholder="enter your answer here"></input>
                 </div>
                 <div class="col-xs-12 col-md-2">
@@ -86,7 +87,7 @@
 
             <li class="nav-item px-xs-0 px-md-2">
 
-              <button data-bs-toggle="tooltip" name="submitSessionAnswer" id="submitSessionAnswer" title="Lock in this answer" class="btn btn-link">
+              <button data-bs-toggle="tooltip" name="submitSessionAnswer" id="submitSessionAnswer" title="Lock in this answer" class="btn btn-link disabled">
 
                 <h1 class="pt-2"><i class="fas fa-check-double"></i></h1>
               </button>

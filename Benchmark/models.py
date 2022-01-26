@@ -20,9 +20,10 @@ class Benchmark(models.Model):
         return reverse('edit-benchmark', kwargs={'benchmark_id' : self.object.pk})
 
     def get_form_kwargs(self, *args, **kwargs):
-        kwargs = super(Benchmark, self).get_form_kwargs(
-            *args, **kwargs)
+        kwargs = super(Benchmark, self).get_form_kwargs(*args, **kwargs)
         return kwargs
+
+
 
 class Question(models.Model):
 
@@ -50,6 +51,9 @@ class Question(models.Model):
         ]
     def __str__(self):
         return f"Question_{self.id}"
+    @property
+    def num_correct_answers(self):
+        return self.answers.filter(is_correct=True).count()
 
 class Answer(models.Model):
     on_question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
@@ -78,7 +82,6 @@ class Answer(models.Model):
     def __str__(self):
         return f"Answer_{self.id}"
 
-
 class BenchmarkSession(models.Model):
     COMPLETION_TYPES = (("testing", "testing"),
                         ("submission", "submission"))
@@ -92,7 +95,6 @@ class BenchmarkSession(models.Model):
     completion_date = models.DateField(blank=True, null=True)
     completion_time = models.TimeField(blank=True, null=True)
 
-
 class BenchmarkSessionQuestion(models.Model):
     question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, )
     benchmark_session = models.ForeignKey(BenchmarkSession, on_delete=models.CASCADE, related_name="session_questions")
@@ -101,4 +103,3 @@ class BenchmarkSessionQuestion(models.Model):
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     time_to_answer = models.PositiveIntegerField(blank=True, null=True)
-    

@@ -2,10 +2,23 @@ from rest_framework import serializers
 from .models import Benchmark, Question, Answer, BenchmarkSession, BenchmarkSessionQuestion
 from QuestionGenerator.models import GeneratedQuestionBank
 
+
+class AnswerSafeSerializer(serializers.ModelSerializer):
+    class Meta:
+      model = Answer
+      fields = ('id', "answer_text",)
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
       model = Answer
       fields = ('id', "on_question", "is_correct", "answer_text", "is_default")
+
+class QuestionSafeSerializer(serializers.ModelSerializer):
+    answers = AnswerSafeSerializer(many=True)
+    class Meta:
+      model = Question
+      fields = ('id', "on_benchmark", "question_text", "answer_type", "order_position", 'answers', 'num_correct_answers')
 
 class QuestionSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
@@ -37,10 +50,11 @@ class GeneratedQuestionBankSerializer(serializers.ModelSerializer):
 
 
 class BenchmarkSessionQuestionSerializer(serializers.ModelSerializer):
-    question = QuestionSerializer()
+    question = QuestionSafeSerializer()
     class Meta:
         model = BenchmarkSessionQuestion
         fields = (
+            "id",
             "question",
             "answered_correctly",
             "given_answer",

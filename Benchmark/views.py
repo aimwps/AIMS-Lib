@@ -20,20 +20,81 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 def BenchmarkView_ajax_submit_answer(request):
     print(request.POST)
     if request.method =="POST":
-        return JsonResponse(json.dumps({"success":"success"}), safe=False)
+        session_question = get_object_or_404(BenchmarkSessionQuestion, id=request.POST.get("session_question_id"))
+
+        possible_answers = session_question.question.answers.all()
+        default_answer = session_question.question.answers.filter(is_default=True)
+        if default_answer:
+            default_answer = default_answer[0]
+        else:
+            next_default = session_question.question.answers.filter(is_correct=True)
+            if next_default:
+                default_answer = next_default[0]
+            else:
+                print("errors")
+
+        if session_question.question.answer_type == "text-entry-exact":
+            session_question.given_answer = request.POST.get("text_entry_value")
+
+            for possible_answer in possible_answers:
+                if possible_answer == session_question.given_answer:
+                    print("This ones correct")
+                    session_question.answered_correctly = True
+                else:
+                    print("You got this one wrong")
+                    session_question.answered_correctly = False
+
+        elif session_question.question.answer_type == "text-entry-nearest":
+            session_question.given_answer = request.POST.get("text_entry_value")
+
+            for possible_answer in possible_answers:
+                if possible_answer.strip().lower() == session_question.given_answer.strip().lower():
+                    print("This ones correct")
+                    session_question.answered_correctly = True
+                else:
+                    print("You got this one wrong")
+                    session_question.answered_correctly = False
+
+
+        elif session_question.question.answer_type == "multiple-choice":
+            print(f"Comparing answers default_answer_id {default_answer.id} / Submit {request.POST.get('multiple_choice_value[]')}")
+            if default_answer.id == request.POST.get("multiple_choice_value"):
+                print("This ones correct")
+                session_question.answered_correctly = True
+            else:
+                print("You got this one wrong")
+                session_question.answered_correctly = False
+
+        elif session_question.question.answer_type == "multiple-correct-choice":
+            answer_ids = request.POST.getlist("multiple_correct_choice_values[]")
+            all_correct = True
+            correct_answers = session_question.question.answers.filter(is_correct=True)
+            for answer_id in answer_ids:
+                if answer_id in correct_answers.values_list("id", flat=True):
+                    print("This ones correct")
+                else:
+                    all_correct = False
+            session_question.answered_correctly = all_correct
+        else:
+            print("question type error")
+        session_question.save()
+        data = {"session_id": session_question.benchmark_session.id}
+        return JsonResponse(data, safe=False)
 
 
 
 def BenchmarkView_ajax_get_session_question(request):
-    print(request.GET)
     if request.method =="GET":
         benchmark_session = get_object_or_404(BenchmarkSession, id=request.GET.get("session_id"))
-        next_question = benchmark_session.session_questions.filter(~Q(given_answer="")).order_by("id")
+        next_question = benchmark_session.session_questions.filter(Q(answered_correctly=None)).order_by("id")
         if len(next_question) > 0:
             data = BenchmarkSessionQuestionSerializer(next_question[0])
             return JsonResponse(data.data, safe=False)
         else:
-            print("Benchmark looks like it has ended")
+            benchmark_session.complete = True
+            benchmark_session.save()
+            data = {"success":"success"}
+            return JsonResponse(data, safe=False)
 
 def BenchmarkView_ajax_get_new_session(request):
     benchmark = get_object_or_404(Benchmark, id=request.GET.get("benchmark_id"))
@@ -78,7 +139,7 @@ def BenchmarkView_ajax_get_new_session(request):
 
 
 def submitCrudBenchmark(request):
-    print(request.POST)
+
     if request.method =="POST":
         benchmark = get_object_or_404(Benchmark, id=request.POST.get("benchmark_id"))
         crud_type = request.POST.get("crud_type")
@@ -119,7 +180,7 @@ def getAnswerData(request):
         return JsonResponse(data.data, safe=False)
 
 def submitAnswer(request):
-    print(request.POST)
+
     response_messages = {
                         "success" : [],
                         "failure" : [],
@@ -185,7 +246,7 @@ def submitAnswer(request):
         return JsonResponse(json.dumps({"success":"success"}), safe=False)
 
 def submitQuestionEdit(request):
-    print(request.POST)
+
     if request.method =="POST":
         question = get_object_or_404(Question, id=request.POST.get("question_id"))
 
