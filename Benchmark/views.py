@@ -16,15 +16,26 @@ import requests
 import random
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import datetime
 
 def BenchmarkView_ajax_get_session_status(request):
     if request.method == "GET":
         benchmark = get_object_or_404(Benchmark, id=request.GET.get("benchmark_id"))
+        session_history = BenchmarkSession.objects.filter(Q(for_user=request.user), Q(completed=True))
+        session_history_data = BenchmarkSessionSerializer(session_history, many=True).data
+
         sessions = BenchmarkSession.objects.filter(Q(for_user=request.user), Q(on_benchmark= benchmark), Q(completed=False))
+
         if sessions:
-            data = {"uncomplete_session": sessions[0].id}
+            data = {
+                "uncomplete_session": sessions[0].id,
+                "complete_session": session_history_data
+                }
         else:
-            data = {"uncomplete_session": None}
+            data = {
+                "uncomplete_session": None,
+                "complete_session": session_history_data
+                }
         return JsonResponse(data, safe=False)
 
 
@@ -57,42 +68,62 @@ def BenchmarkView_ajax_submit_answer(request):
                 session_question.given_answer = request.POST.get("text_entry_value")
 
                 for possible_answer in possible_answers:
-                    if possible_answer == session_question.given_answer:
+                    if possible_answer.answer_text == session_question.given_answer:
                         print("This ones correct")
                         session_question.answered_correctly = True
                     else:
                         print("You got this one wrong")
+                        print(possible_answer.answer_text, session_question.given_answer)
                         session_question.answered_correctly = False
+
 
             elif session_question.question.answer_type == "text-entry-nearest":
                 session_question.given_answer = request.POST.get("text_entry_value")
 
                 for possible_answer in possible_answers:
-                    if possible_answer.strip().lower() == session_question.given_answer.strip().lower():
+
+                    if possible_answer.answer_text.strip().lower() == session_question.given_answer.strip().lower():
                         print("This ones correct")
                         session_question.answered_correctly = True
+                        # print(f"proposed_answer: {possible_answer.answer_text.strip().lower()}, selected_value: {session_question.given_answer.strip().lower()}")
                     else:
                         print("You got this one wrong")
+                        # print(session_question.given_answer)
                         session_question.answered_correctly = False
+
+
             elif session_question.question.answer_type == "multiple-choice":
-                if default_answer.id == request.POST.get("multiple_choice_value"):
+                mcv =   request.POST.getlist('multiple_choice_value[]')
+                print(f"DFA: {default_answer.id } |||| MCV {mcv[0]}")
+                if default_answer.id == int(mcv[0]):
                     session_question.answered_correctly = True
+                    print("This ones correct")
+
                 else:
                     session_question.answered_correctly = False
+                    print("You got this one wrong")
+
+
             elif session_question.question.answer_type == "multiple-correct-choice":
                 answer_ids = request.POST.getlist("multiple_correct_choice_values[]")
-                all_correct = True
                 correct_answers = session_question.question.answers.filter(is_correct=True)
+                all_correct = True
                 for answer_id in answer_ids:
-                    if answer_id in correct_answers.values_list("id", flat=True):
-                        print("This ones correct")
-                    else:
+                    if int(answer_id) not in list(correct_answers.values_list("id", flat=True)):
                         all_correct = False
                 session_question.answered_correctly = all_correct
+
+                if all_correct:
+                    print("This ones correct")
+
+                else:
+                    session_question.answered_correctly = False
+                    print("You got this one wrong")
+
             else:
                 print("question type error")
         else:
-            print("question status error")
+            session_question.remaining_time_to_answer = request.POST.get("remaining_time")
         session_question.save()
         data = {"session_id": session_question.benchmark_session.id}
         return JsonResponse(data, safe=False)
@@ -103,8 +134,6 @@ def BenchmarkView_ajax_get_session_question(request):
         next_question_set = benchmark_session.session_questions.filter(
                                                                     Q(answered_correctly=None),
                                                                     ).order_by("question_status","id")
-        for question in next_question_set:
-            print(question.question_status, question.question.question_text)
 
         if next_question_set.count() > 0:
             data = {
@@ -116,6 +145,8 @@ def BenchmarkView_ajax_get_session_question(request):
 
         else:
             benchmark_session.completed = True
+            benchmark_session.completion_date = datetime.now()
+            benchmark_session.completion_time = datetime.now()
             benchmark_session.save()
             data = {"completion_status": True }
             return JsonResponse(data, safe=False)

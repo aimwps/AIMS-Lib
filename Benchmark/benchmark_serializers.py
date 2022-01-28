@@ -73,9 +73,9 @@ class BenchmarkSessionSerializer(serializers.ModelSerializer):
                 "session_questions",
                 "completion_type",
                 "completed",
-                "result",
                 "create_date",
                 "create_time",
                 "completion_date",
                 "completion_time",
+                "session_result",
                 )

@@ -1,19 +1,39 @@
 $(document).ready(function(){
 
   var questionTimeCounter = setInterval(checkQuestionTime, 1000);
+  function earlyExitTimeReduction(){
+    $.ajax({
+          method:"POST",
+          url: "/BenchmarkView_ajax_submit_answer/",
+          data: {
+                question_status: "pending",
+                session_question_id: $("#sessionQuestionId").val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                remaining_time: parseInt($("#questionTimeLeft").text()),
 
+              },
+          datatype:"json",
+          success: function(json){
+            console.log(json);
+            loadSessionQuestion(json.session_id)
+          }
+    })
+  };
   function checkQuestionTime(){
     let clockTime = $("#questionTimeLeft").text();
-    if (parseInt(clockTime) > 0){
-      clockTime = clockTime - 1
-      $("#questionTimeLeft").text(clockTime)
-    } else {
-      $("#abandonQuestion").click()
-    }
-  }
+    if ( parseInt($("#sessionInProgress").val()) === 1){
+      if ( parseInt(clockTime) > 0 ){
+        clockTime = clockTime - 1;
+        $("#questionTimeLeft").text(clockTime)
+      } else {
+        $("#abandonQuestion").click()
+        };
+      };
+    };
   function finishModalSession(){
-    console.log("This would clear it")
     $("#benchmarkSessionModal").modal("hide");
+    $("#sessionInProgress").val(0)
+    $("#textEntryInput").val("")
     checkSessionStatus()
 
   }
@@ -25,7 +45,6 @@ $(document).ready(function(){
     $("#textEntry").val("")
     $("#textEntryInput").show()
   };
-
   function loadMultipleChoice(sessionQuestion){
     $("#submitSessionAnswer").val("multiple-choice");
     $("#sessionQuestionId").val(sessionQuestion.id)
@@ -41,7 +60,6 @@ $(document).ready(function(){
         `)
     })
   };
-
   function loadMultipleCorrectChoice(sessionQuestion){
     console.log(sessionQuestion)
     $("#submitSessionAnswer").val("multiple-correct-choice");
@@ -60,11 +78,11 @@ $(document).ready(function(){
     })
 
   };
-
   function loadSessionQuestion(sessionId){
     console.log(`-----> ${sessionId}`)
     $("#submitSessionAnswer").addClass("disabled")
     $("#benchmarkSessionModal").modal("show");
+    $("#textEntryInput").val("")
     $.ajax({
           method:"GET",
           url:"/BenchmarkView_ajax_get_session_question/",
@@ -75,10 +93,11 @@ $(document).ready(function(){
             if (!json.completion_status){
               let question = json.data.question;
               let remainingTime = (json.data.remaining_time_to_answer) ? json.data.remaining_time_to_answer:question.session_default_time;
+              console.log("remainingTime", remainingTime)
               $("#questionShow").text(question.question_text)
               $("#currenSessionTotalQuestions").text(question.total_session_questions)
               $("#currentSessionQuestion").text(json.question_num)
-
+              $("#sessionInProgress").val(1)
               $("#questionTimeLeft").text(remainingTime)
 
               if (question.answer_type === "text-entry-exact"){
@@ -103,7 +122,17 @@ $(document).ready(function(){
 
           }});
   };
+  function loadSessionHistory(sessionHistoryData){
+    console.log("Historical Data",sessionHistoryData)
+    $("#sessionHistoryResults").empty()
+    $.each(sessionHistoryData, function(idx, session){
+      $("#sessionHistoryResults").append(`
+        <li class="list-group-item">
+          ${session.completion_date} @ ${session.completion_time.slice(0,8)} <strong> ${session.session_result}%</strong
+        </li>`);
 
+    })
+  }
   function checkSessionStatus(){
     console.log("I was called")
     $.ajax({
@@ -122,7 +151,8 @@ $(document).ready(function(){
           $("#newSessionBtn").removeClass("disabled");
           $("#newSessionBtn").show();
           $("#continueSessionBtn").hide()
-        }
+        };
+        loadSessionHistory(json.complete_session);
       }
     })
   }
@@ -269,6 +299,7 @@ $(document).ready(function(){
     })
   })
   $(document).on("click", "#benchmarkSessionModalClose", function(){
+    earlyExitTimeReduction()
     finishModalSession()
   })
 });

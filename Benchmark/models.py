@@ -23,8 +23,17 @@ class Benchmark(models.Model):
         kwargs = super(Benchmark, self).get_form_kwargs(*args, **kwargs)
         return kwargs
 
-
-
+    @property
+    def total_session_questions(self):
+        return min(self.max_num_questions, self.questions.count())
+    @property
+    def approx_session_length(self):
+        if self.override_time_with_default:
+            return min(self.max_num_questions, self.questions.count()) * self.default_answer_seconds //60
+        else:
+            times_to_answer = self.questions.values_list('time_to_answer', flat=True)
+            average_time_to_answer = int(sum(list(times_to_answer)) / times_to_answer.count(),0)
+            return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
 class Question(models.Model):
 
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
@@ -41,6 +50,8 @@ class Question(models.Model):
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     time_to_answer = models.PositiveIntegerField(blank=True, null=True)
+
+
 
     class Meta:
         ordering = ["order_position"]
@@ -62,10 +73,10 @@ class Question(models.Model):
 
     @property
     def session_default_time(self):
-        if self.time_to_answer:
-            return self.time_to_answer
-        else:
+        if self.on_benchmark.override_time_with_default:
             return self.on_benchmark.default_answer_seconds
+        else:
+            return self.time_to_answer
 
 
 class Answer(models.Model):
@@ -102,11 +113,23 @@ class BenchmarkSession(models.Model):
     on_benchmark = models.ForeignKey(Benchmark, on_delete=models.SET_NULL, null=True)
     completion_type = models.CharField(max_length=255, choices=COMPLETION_TYPES, default="testing")
     completed = models.BooleanField(default=False)
-    result = models.PositiveIntegerField(blank=True, null=True)
+    # result = models.PositiveIntegerField(blank=True, null=True)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
     completion_date = models.DateField(blank=True, null=True)
     completion_time = models.TimeField(blank=True, null=True)
+    class Meta:
+        ordering = ["-create_date", "-create_time"]
+    @property
+    def session_result(self):
+        total_questions = BenchmarkSessionQuestion.objects.filter( Q(benchmark_session=self) ).count()
+        print(total_questions)
+        total_correct_questions = BenchmarkSessionQuestion.objects.filter(Q(benchmark_session=self),
+        Q(answered_correctly=True)).count()
+        print(total_correct_questions)
+
+        return round( (total_correct_questions / float(total_questions)) * 100, 2)
+
 
 class BenchmarkSessionQuestion(models.Model):
     QUESTION_STATUS = (("b_skipped", "skipped"),
