@@ -1,4 +1,22 @@
 $(document).ready(function(){
+
+  var questionTimeCounter = setInterval(checkQuestionTime, 1000);
+
+  function checkQuestionTime(){
+    let clockTime = $("#questionTimeLeft").text();
+    if (parseInt(clockTime) > 0){
+      clockTime = clockTime - 1
+      $("#questionTimeLeft").text(clockTime)
+    } else {
+      $("#abandonQuestion").click()
+    }
+  }
+  function finishModalSession(){
+    console.log("This would clear it")
+    $("#benchmarkSessionModal").modal("hide");
+    checkSessionStatus()
+
+  }
   function loadTextEntry(sessionQuestion){
     $("#submitSessionAnswer").val("text-entry");
     $("#sessionQuestionId").val(sessionQuestion.id)
@@ -23,6 +41,7 @@ $(document).ready(function(){
         `)
     })
   };
+
   function loadMultipleCorrectChoice(sessionQuestion){
     console.log(sessionQuestion)
     $("#submitSessionAnswer").val("multiple-correct-choice");
@@ -42,7 +61,6 @@ $(document).ready(function(){
 
   };
 
-
   function loadSessionQuestion(sessionId){
     console.log(`-----> ${sessionId}`)
     $("#submitSessionAnswer").addClass("disabled")
@@ -54,37 +72,71 @@ $(document).ready(function(){
           data: {session_id : sessionId },
           success: function(json){
             console.log("session",json)
-            let question = json.question;
-            $("#questionShow").text(question.question_text)
-            $("#currenSessionTotalQuestions").text(question.total_session_answers)
+            if (!json.completion_status){
+              let question = json.data.question;
+              let remainingTime = (json.data.remaining_time_to_answer) ? json.data.remaining_time_to_answer:question.session_default_time;
+              $("#questionShow").text(question.question_text)
+              $("#currenSessionTotalQuestions").text(question.total_session_questions)
+              $("#currentSessionQuestion").text(json.question_num)
 
-            if (question.answer_type === "text-entry-exact"){
-              loadTextEntry(json);
-              $("#questionType").text("Enter the exact answer with correct grammar, spelling, capitalisation and punctuation")
-            } else if(question.answer_type ===  "text-entry-nearest" ){
-              loadTextEntry(json);
-              $("#questionType").text("Enter an answer, we'll help you out with grammar, spelling, capitalisation and punctuation")
-            } else if (question.answer_type === "multiple-choice"){
-              $("#questionType").text("Select a single answer")
-              loadMultipleChoice(json)
-            } else if (question.answer_type === "multiple-correct-choice"){
-              let verbose = (question.num_correct_answers > 1) ? "answers":"answer";
-              $("#questionType").text(`Select ${question.num_correct_answers} ${verbose}`)
-              loadMultipleCorrectChoice(json)
+              $("#questionTimeLeft").text(remainingTime)
+
+              if (question.answer_type === "text-entry-exact"){
+                loadTextEntry(json.data);
+                $("#questionType").text("Enter the exact answer with correct grammar, spelling, capitalisation and punctuation")
+              } else if(question.answer_type ===  "text-entry-nearest" ){
+                loadTextEntry(json.data);
+                $("#questionType").text("Enter an answer, we'll help you out with grammar, spelling, capitalisation and punctuation")
+              } else if (question.answer_type === "multiple-choice"){
+                $("#questionType").text("Select a single answer")
+                loadMultipleChoice(json.data)
+              } else if (question.answer_type === "multiple-correct-choice"){
+                let verbose = (question.num_correct_answers > 1) ? "answers":"answer";
+                $("#questionType").text(`Select ${question.num_correct_answers} ${verbose}`)
+                loadMultipleCorrectChoice(json.data)
+              } else {
+                console.log("question_type_error")
+              };
             } else {
-              console.log("question_type_error")
-            };
+              finishModalSession()
+            }
+
           }});
   };
 
-$(document).on("keyup", "#textEntryInput", function(){
+  function checkSessionStatus(){
+    console.log("I was called")
+    $.ajax({
+      method:"GET",
+      url: "/BenchmarkView_ajax_get_session_status/",
+      data: {benchmark_id: $("#benchmarkId").val()},
+      datatype: "json",
+      success: function(json){
+        console.log(json)
+        if (json.uncomplete_session){
+          $("#newSessionBtn").addClass("disabled");
+          $("#newSessionBtn").hide();
+          $("#continueSessionBtn").show()
+          $("#continueSessionBtn").val(json.uncomplete_session)
+        } else {
+          $("#newSessionBtn").removeClass("disabled");
+          $("#newSessionBtn").show();
+          $("#continueSessionBtn").hide()
+        }
+      }
+    })
+  }
+  $(document).ready(checkSessionStatus );
+  $(document).on("click", "#continueSessionBtn", function(){
+    loadSessionQuestion($(this).val())
+  })
+  $(document).on("keyup", "#textEntryInput", function(){
   if ( $(this).val().length > 0 ){
     $("#submitSessionAnswer").removeClass("disabled")
   } else {
     $("#submitSessionAnswer").addClass("disabled")
   }
 })
-
   $(document).on("click", "[name='multipleChoiceSelect']", function(){
     $("[name='multipleChoiceSelect']").removeClass('active').removeClass('bg-primary');
     $(this).addClass('active').addClass('bg-primary');
@@ -104,7 +156,6 @@ $(document).on("keyup", "#textEntryInput", function(){
       }
     })
   });
-
   $(document).on("click", "[name='multipleCorrectChoiceSelect']", function(e){
     e.preventDefault();
     if( $(this).hasClass("active") ){
@@ -166,6 +217,7 @@ $(document).on("keyup", "#textEntryInput", function(){
             method:"POST",
             url: "/BenchmarkView_ajax_submit_answer/",
             data: {
+                  question_status: "complete",
                   question_type: $("#submitSessionAnswer").val(),
                   session_question_id: $("#sessionQuestionId").val(),
                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
@@ -181,4 +233,42 @@ $(document).on("keyup", "#textEntryInput", function(){
             }
       })
     })
+  $(document).on("click", "#skipQuestion", function(){
+    $.ajax({
+          method:"POST",
+          url: "/BenchmarkView_ajax_submit_answer/",
+          data: {
+                question_status: "skipped",
+                session_question_id: $("#sessionQuestionId").val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                remaining_time: parseInt($("#questionTimeLeft").text()),
+
+              },
+          datatype:"json",
+          success: function(json){
+            console.log(json);
+            loadSessionQuestion(json.session_id)
+          }
+    })
+  })
+  $(document).on("click", "#abandonQuestion", function(){
+    $.ajax({
+          method:"POST",
+          url: "/BenchmarkView_ajax_submit_answer/",
+          data: {
+                question_status: "abandoned",
+                session_question_id: $("#sessionQuestionId").val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+
+              },
+          datatype:"json",
+          success: function(json){
+            console.log(json);
+            loadSessionQuestion(json.session_id)
+          }
+    })
+  })
+  $(document).on("click", "#benchmarkSessionModalClose", function(){
+    finishModalSession()
+  })
 });

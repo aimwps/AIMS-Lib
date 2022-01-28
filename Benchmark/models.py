@@ -40,6 +40,7 @@ class Question(models.Model):
     order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
+    time_to_answer = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ["order_position"]
@@ -56,8 +57,15 @@ class Question(models.Model):
         return self.answers.filter(is_correct=True).count()
 
     @property
-    def total_session_answers(self):
+    def total_session_questions(self):
         return min(self.on_benchmark.questions.count(), self.on_benchmark.max_num_questions)
+
+    @property
+    def session_default_time(self):
+        if self.time_to_answer:
+            return self.time_to_answer
+        else:
+            return self.on_benchmark.default_answer_seconds
 
 
 class Answer(models.Model):
@@ -101,10 +109,15 @@ class BenchmarkSession(models.Model):
     completion_time = models.TimeField(blank=True, null=True)
 
 class BenchmarkSessionQuestion(models.Model):
+    QUESTION_STATUS = (("b_skipped", "skipped"),
+                        ("d_abandoned", "abandoned"),
+                        ("c_complete", "complete"),
+                        ("a_pending", "pending"))
     question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
     benchmark_session = models.ForeignKey(BenchmarkSession, on_delete=models.CASCADE, related_name="session_questions")
+    question_status = models.CharField(max_length=100, choices=QUESTION_STATUS, default="a_pending")
     answered_correctly = models.BooleanField(blank=True, null=True)
+    remaining_time_to_answer = models.PositiveIntegerField(blank=True, null=True)
     given_answer = models.TextField(blank=True, null=True)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
-    time_to_answer = models.PositiveIntegerField(blank=True, null=True)
