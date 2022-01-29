@@ -10,7 +10,7 @@
 
 {% block pageInfo_title %}
 
-Viewing an organisation
+ ORGANISATION
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
@@ -23,7 +23,6 @@ Viewing an organisation
 
 {% block content %}
 <div class="text-center my-4">
-
 
 <h4>{{ root_organisation.title }}</h4>
 <h6>{{ root_organisation.description }}</h6>
@@ -49,7 +48,7 @@ Viewing an organisation
           <div class="form-group">
             <form method="POST">
               {% csrf_token %}
-
+            
                 <p class="mb-0">Creating sub-organisation</p>
                 <p>{{ addOrganisationForm.title }}</p>
                 <p class="mb-0">Parent organisation</p>

@@ -130,7 +130,7 @@ function loadMembersList() {
           <li class="list-group-item">
           <div class="form-check">
           <input class="form-check-input" name="members" type="checkbox" value="${member.id}" id="newMemberCheck_${member.id}">
-          <label class="fo0rm-check-label" for="newMemberCheck_${member.id}">
+          <label class="form-check-label" for="newMemberCheck_${member.id}">
             ${member.username}: ${member.first_name} ${member.last_name}
           </label>
         </div>

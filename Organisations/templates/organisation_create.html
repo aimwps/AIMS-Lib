@@ -8,11 +8,11 @@
 {% endblock pageInfoCaro %}
 
 {% block pageInfo_title %}
-Create an organisation
+CREATE ROOT ORGANISATION
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-Organisations allow you to track the progression of pathways for users who have agreed to be a member. You
+A new root organisation is the start of something big. You'll be able to split root members into a custom hierachy you create, each sub organisation can be given different tasks & pathways.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -28,9 +28,8 @@ Organisations allow you to track the progression of pathways for users who have 
       {% csrf_token %}
       <div class="text-center">
         {{ form.media }}
-        <p>{{ form.parent_organisation }}</p>
         <p>{{ form.title }}</p>
-        <p>{{ form.members }}</p>
+        <p>{{ form.description}}</p>
         <button class="btn btn-al">Create Organisation</button>
       </div>
   </div>

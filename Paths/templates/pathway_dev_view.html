@@ -21,18 +21,37 @@ You're developing a pathway, add or change the content, set the order of complet
 {% endblock %}
 
 {% block content %}
-<h4 class="my-4">
+<div class="container text-center my-4">
+<div class="row text-center">
+    <h4><a  class="nounderline" href="{% url 'pathway-view' pathway.id %}">{{ pathway.title }}</a></h4>
+    <h6>Created {{ pathway.create_date}} @ {{ pathway.create_time }} by {{ pathway.author }}</h6>
 
-  {{ pathway.title }}
+  </div>
+  <div class="row">
 
-</h4>
-<p>
-  <a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a>
-  <a href="{% url 'pathway-edit' pathway.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit this pathway"><i class="far fa-edit"></i></a>
-</p>
-<p class="lead">
-  {{ pathway.description }}
-  </p>
+    <ul class="nav justify-content-center">
+      {% if user.is_authenticated %}
+        {% if user.id == pathway.author.id %}
+        <li class="nav-item px-2">
+          <a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a>
+        </li>
+        <li class="nav-item px-2">
+  <a href="{% url 'pathway-edit' pathway.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit pathway title and description"><i class="far fa-edit"></i></a>
+        </li>
+        <li class="nav-item px-2">
+            <a href="#" data-bs-toggle="tooltip" title="Delete this pathway"><i class="far fa-trash-alt"></i></a>
+        </li>
+        {% endif %}
+      {% endif %}
+    </ul>
+  </div>
+  <div class="row">
+    {{ pathway.description}}
+
+  </div>
+</div>
+
+<hr>
   <input type="hidden" name="pathway_id" value="{{pathway.id}}">
   {% csrf_token %}
 <div class="container" id="pathwayContent">

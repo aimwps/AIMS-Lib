@@ -25,8 +25,9 @@
       {% csrf_token %}
       <div class="text-center">
         {{ form.media }}
-        {{ form.as_p }}
-        <button class="btn btn-al">Submit</button>
+        <p>{{ form.title }}</p>
+        <p>{{ form.description}}</p>
+        <button class="btn btn-al">Update name & description</button>
       </div>
   </div>
 </div>

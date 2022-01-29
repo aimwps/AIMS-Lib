@@ -65,6 +65,7 @@ class PathwayContent(models.Model):
             )
         ]
         get_latest_by ='order_position'
+        ordering = ["order_position"]
 
     def get_next_order_by(self):
         max_rated_entry = self.objects.latest()

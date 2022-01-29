@@ -122,12 +122,13 @@ class OrganisationView(LoginRequiredMixin, View):
     def get(self, request, organisation_id):
         organisation = get_object_or_404(Organisation, id=organisation_id)
         if organisation.is_root():
-            if organisation.org_members.filter(member=request.user).exists():
+            if organisation.org_members.filter(member=request.user).exists() or organisation.author == request.user:
                 organisation_tree = get_suborganisation_tree(organisation)
                 organisation_list = get_suborganisation_list(organisation)
                 parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
                 add_org_form = OrganisationCreateForm()
                 add_org_form.fields['parent_organisation'].choices = parent_org_choices
+                print(add_org_form)
                 context = {"organisation_data": organisation_tree,
                             "root_organisation": organisation,
                             "organisation_list": organisation_list,
@@ -135,7 +136,7 @@ class OrganisationView(LoginRequiredMixin, View):
 
                             }
                 if request.user.id == organisation.author.id:
-                    context["addOrganisationForm"]= add_org_form,
+                    context["addOrganisationForm"]= add_org_form
                     context["admin_approved"] = True
                 return render(request, self.template_name, context)
             else:
@@ -200,6 +201,9 @@ class OrganisationCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
     def get_success_url(self):
+        print("yyyyyyyyyyyyyyyyyyyyyyyyy")
+        print(self.object.pk)
+        print("-----------------------------")
         return reverse('organisation', kwargs={'organisation_id' : self.object.pk})
 
 class OrganisationEdit(LoginRequiredMixin, UpdateView):
