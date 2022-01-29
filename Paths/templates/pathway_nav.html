@@ -7,39 +7,12 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto ms-auto mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Browse
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
-              <li><a class="dropdown-item" href="{% url 'user-dev-articles' %}">Articles</a></li>
-              <li><a class="dropdown-item" href="{% url 'user-dev-videos' %}">Videos</a></li>
-              <li><a class="dropdown-item" href="{% url 'user-benchmarks' %}">Benchmarks</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Develop
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                <li><a class="dropdown-item" href="{% url 'new-written-lecture' %}">Article</a></li>
-                <li><a class="dropdown-item" href="{% url 'new-video-lecture' %}">Video Lecture</a></li>
-                <li><a class="dropdown-item" href="{% url 'create-benchmark' %}">Benchmark</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{% url 'pathway-create' %}">New Pathway</a></li>
-              </ul>
-          </li>
-          <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Organisations
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown3">
-                <li><a class="dropdown-item" href="{% url 'user-organisations-view' %}">View  organisations</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{% url 'organisation-create' %}">Create organisation</a></li>
-              </ul>
-          </li>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-auto">
+        <li class="nav-item"><a class="nav-link active" href="{% url 'user-organisations-view' %}">Organisations</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{% url 'pathways' %}">Pathways</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{% url 'user-dev-articles' %}">Articles</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{% url 'user-dev-videos' %}">Videos</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{% url 'user-benchmarks' %}">Benchmarks</a></li>
       </ul>
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
       <li id="verifyQAGstatus" class="nav-item">
