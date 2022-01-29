@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, View, UpdateView, ListView
-from .forms import ArticleCreateForm, ArticleEditForm
+from .forms import ArticleCreateForm, ArticleEditForm, ArticleSessionForm
 from .models import Article
 import json
 import requests
@@ -32,11 +32,14 @@ class ArticleView(View):
     template_name = "written_lecture.html"
     def get(self, request, lit_lec_id):
         literature = get_object_or_404(Article, id=lit_lec_id)
-        context = {"lit_lec": literature}
+        context = {"lit_lec": literature,
+                    "form":ArticleSessionForm()}
 
         return render(request, self.template_name, context)
 
-
+    def post(self, request, lit_lec_id):
+        if request.method =="POST":
+            print(request.POST)
 class UserArticlesView(LoginRequiredMixin, ListView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
