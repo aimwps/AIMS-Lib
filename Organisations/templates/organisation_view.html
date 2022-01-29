@@ -9,6 +9,7 @@
 {% endblock pageInfoCaro %}
 
 {% block pageInfo_title %}
+
 Viewing an organisation
 {% endblock pageInfo_title %}
 
@@ -31,6 +32,7 @@ Viewing an organisation
 <div class="row my-4">
   <div class="col-xs-12 col-md-4">
     <h4 class="text-center my-2">Organisation</h4>
+    {% if admin_approved %}
       <div class="text-center">
         <ul class="nav justify-content-center">
             <!-- Button trigger modal -->
@@ -64,6 +66,9 @@ Viewing an organisation
 
         </div>
       </div>
+
+
+      {% endif %}
         <button id="selectRootOrgnaisation" name="suborganisationSelect" value="{{root_organisation.id}}" class="btn btn-al w-100 my-2">{{root_organisation.title}}</button>
 
       <ul>
@@ -80,7 +85,7 @@ Viewing an organisation
   <div class="col-xs-6 col-md-4">
     <h4 class="text-center my-2">Members</h4>
     <input type="hidden" id="selectedSubOrg" value="">
-
+{% if admin_approved %}
     <div class="text-center">
       <ul class="nav justify-content-center">
           <!-- Button trigger modal -->
@@ -110,13 +115,14 @@ Viewing an organisation
       <button class="btn btn-al w-100 my-2" name="cancelCloseMember">Cancel & close</button>
       </div>
     </div>
-
+{% endif %}
     <ul id="membersList" class="list-group list-group-flush">
     </ul>
 
   </div>
   <div class="col-xs-6 col-md-4">
     <h4 class="text-center my-2">Pathways</h4>
+    {% if admin_approved %}
     <div class="text-center">
       <ul class="nav justify-content-center">
           <!-- Button trigger modal -->
@@ -148,6 +154,7 @@ Viewing an organisation
           <button class="btn btn-al w-100 my-2" name="cancelClosePathways">Cancel & close</button>
       </div>
     </div>
+    {% endif  %}
     <ul id="pathwayList" class="list-group list-group-flush">
     </ul>
   </div>

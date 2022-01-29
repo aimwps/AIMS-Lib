@@ -1,3 +1,5 @@
+$(document).ready(function(){
+
 $("input[name='deleteModalInput']").keyup(function(){
   if ($("input[name='deleteModalInput']").val() === "delete" ){
     $("button[name='deleteModalButton']").removeClass();
@@ -11,4 +13,11 @@ $("input[name='deleteModalInput']").keyup(function(){
     $("button[name='deleteModalButton']").addClass("disabled");
     $("button[name='deleteModalButton']").html("type 'delete' to activate");
   }
+})
+
+function highlightModNavLink(linkName){
+  $("[name='modLink']").removeClass("active");
+  $(linkName).addClass("active");
+}
+
 })

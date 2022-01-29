@@ -7,26 +7,28 @@
 {% block pageInfoCaro %}
 {% endblock pageInfoCaro %}
 
+
 {% block pageInfo_title %}
-ARTICLES
+PATHWAYS
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-This is an overview of the articles you have created. You'll see how they are being shared and other helpful stats on your content in the future.
+Pathways are learnable content based on video lectures & written articles. User engagement is tested with benchmarks. Track your progression below and see an overview of pathways you're developing.
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
   {% include "pathway_nav.html" %}
 {% endblock %}
 
+
 {% block content %}
 <div class="container my-4">
 <div class="row justify-content-center px-0 my-2">
 <div class="col-7">
-<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your articles"></input>
+<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your pathways"></input>
 </div>
 <div class="col-5">
-<a class="btn btn-al w-100" href="{% url 'create-article' %}">create</a>
+<a class="btn btn-al w-100" href="{% url 'pathway-create' %}">create</a>
 </div>
 </div>
 <div class="row px-0 my-2">
@@ -37,7 +39,7 @@ This is an overview of the articles you have created. You'll see how they are be
       <div class="container px-2 py-2 border border-primary rounded">
 
 
-      <h4 class="text-center"><a href="{% url 'article' obj.pk %}" class="nounderline">{{ obj.title }}</a></h4>
+      <h4 class="text-center"><a href="{% url 'pathway-view' obj.pk %}" class="nounderline">{{ obj.title }}</a></h4>
       <h6 class="text-center">{{ obj.description }}</h6>
 
 
@@ -46,7 +48,7 @@ This is an overview of the articles you have created. You'll see how they are be
 
 
             <li class="nav-item px-2">
-              <a href="{% url 'update-article' obj.id %}" data-bs-toggle="tooltip" title="edit benchmark" >
+              <a href="{% url 'pathway-edit' obj.id %}" data-bs-toggle="tooltip" title="edit pathway" >
                 <i class="far fa-edit"></i>
               </a>
             </li>
@@ -78,6 +80,6 @@ function highlightModNavLink(linkName){
   $(linkName).addClass("active");
   $(linkName).addClass("text-white");
 }
-highlightModNavLink("#articlesModNavLink")
+highlightModNavLink("#pathwaysModNavLink")
 </script>
 {% endblock scripts %}

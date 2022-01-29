@@ -8,7 +8,7 @@
 {% endblock pageInfoCaro %}
 
 {% block pageInfo_title %}
-PATHWAYS
+PATHWAY
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
@@ -30,10 +30,10 @@ Pathways are learnable content based on video lectures & written articles. User 
        {{ pathway_obj.order_position }}
      </div>
      <div class="col-3 mt-2">
-       {{ pathway_obj.pretty_content_type|title }}
+       {{ pathway_obj.content_type}}
      </div>
      <div class="col-6 mt-2">
-       {% if pathway_obj.article %}<a href="{% url 'written-lecture' pathway_obj.article.id %}#begin">{{ pathway_obj.article.title }}</a>{% endif %}
+       {% if pathway_obj.article %}<a href="{% url 'article' pathway_obj.article.id %}#begin">{{ pathway_obj.article.title }}</a>{% endif %}
        {% if pathway_obj.video %}<a href="{% url 'video-lecture' pathway_obj.video.id %}#begin">{{ pathway_obj.video.title }}</a>{% endif %}
        {% if pathway_obj.benchmark %}<a href="{% url 'benchmark' pathway_obj.benchmark.id %}#begin">{{ pathway_obj.benchmark.title }}</a>{% endif %}
      </div>
@@ -108,4 +108,6 @@ Pathways are learnable content based on video lectures & written articles. User 
       {% endif %}
 
 
+{% endblock %}
+{% block scripts%}
 {% endblock %}

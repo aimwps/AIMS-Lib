@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Groups{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
+{% block pageInfo_title %}
+ORGANISATIONS
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Here you'll find the organisations that you are involed in. See the tasks being tracked by your membership. Organisation developers can manage content and track progression.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+  {% include "pathway_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="accordion accordion-flush" id="myGroupsAccordion">
+    {% for group in object_list %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="flush_{{group.id}}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{group.id}}" aria-expanded="false" aria-controls="collapse_{{group.id}}">
+           {{ group.title }}
+        </button>
+      </h2>
+      <div id="collapse_{{group.id}}" class="accordion-collapse collapse" aria-labelledby="flush_{{group.id}}" data-bs-parent="#myGroupsAccordion">
+        <div class="accordion-body">
+          <div class="text-center">
+              <a href="{% url 'organisation-view' group.id %}"><h4>{{group.title }}</h4></a>
+              <h6>Created {{ group.create_date }} @ {{ group.create_time }} by {{ group.author }} # Members: {{ group.members.all|length }}</h6>
+            </div>
+            <div class="text-center">
+              <ul class="nav justify-content-center">
+                {% if user.is_authenticated %}
+                  {% if user.id == group.author.id %}
+                  <!-- Button trigger modal -->
+                  <li class="nav-item px-2">
+                    <a type="button" class="primary" data-bs-toggle="modal" data-bs-target="#modal_{{ group.id }}"><i class="fas fa-bars"></i></a>
+                  </li>
+                    <li class="nav-item px-2">
+                      <a href="{% url 'organisation-edit' group.id %}" data-bs-toggle="tooltip" title="Edit this aim"><i class="far fa-edit"></i></a>
+                    </li>
+                    <li class="nav-item px-2">
+                        <a href='' class="text-primary"><i class="far fa-plus"></i></a>
+                    </li>
+                  {% endif %}
+                {% endif %}
+              </ul>
+              {{ group.description }}
+        </div>
+        <div class="container">
+          <div class="row">
+              <div class="">
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    <div class="modal fade" id="modal_{{ group.id }}" tabindex="-1" aria-labelledby="modal_{{ group.id }}Label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal_{{ group.id }}Label">Organisation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="lead">{{ group.title }}</p>
+            <p>An organisation is a way of sharing pathways between groups of people. You can create sub organisations to share pathways in a variety of ways</p>
+
+
+          </div>
+          <div class="modal-footer">
+            <a href='' class="btn btn-al"><i class="far fa-plus"></i></a>
+            <a href='' class="btn btn-al"><i class="far fa-edit"></i></a>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+              <i class="far fa-trash-alt"></i>
+            </a>
+
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              <p> Are you sure you want to delete this organisation? You will no longer be able to access the members completion records including your sub organisations.</p>
+              <form action="." method="POST">
+                {% csrf_token %}
+                <p><input id="deleteCheck" type="text"></p>
+                <button id="deleteCheckSubmit" name="delete_organisation" value="{{group.id}}" class="btn btn-secondary disabled">
+                  type 'delete' to activate
+                  </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+        </div>
+   {% endfor %}
+
+  </div>
+</div>
+
+
+<!-- Modal -->
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/organisations/organisationDash.js' %}"></script>
+
+<script>
+function highlightModNavLink(linkName){
+  $("[name='modLink']").removeClass("active");
+  $("[name='modLink']").removeClass("text-white");
+  $(linkName).addClass("active");
+  $(linkName).addClass("text-white");
+}
+highlightModNavLink("#organisationsModNavLink")
+</script>
+
+{% endblock scripts %}

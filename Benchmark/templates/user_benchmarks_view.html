@@ -69,3 +69,14 @@ This is an overview of the benchmarks you have created. You'll see how they are 
 </div>
 
 {% endblock %}
+{% block scripts %}
+<script>
+function highlightModNavLink(linkName){
+  $("[name='modLink']").removeClass("active");
+  $("[name='modLink']").removeClass("text-white");
+  $(linkName).addClass("active");
+  $(linkName).addClass("text-white");
+}
+highlightModNavLink("#benchmarksModNavLink")
+</script>
+{% endblock scripts %}

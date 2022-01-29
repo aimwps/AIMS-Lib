@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect,JsonResponse
 from .organisation_serializers import OrganisationSerializer
 from Members.members_serializers import UserSerializer
 from django.contrib.auth.models import User
+from django.db.models import Q
 import json
 
 def getUserBookmarkedPathways(request):
@@ -121,25 +122,27 @@ class OrganisationView(LoginRequiredMixin, View):
     def get(self, request, organisation_id):
         organisation = get_object_or_404(Organisation, id=organisation_id)
         if organisation.is_root():
-            organisation_tree = get_suborganisation_tree(organisation)
-            organisation_list = get_suborganisation_list(organisation)
-            parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
-            add_org_form = OrganisationCreateForm()
-            add_org_form.fields['parent_organisation'].choices = parent_org_choices
-
-            if request.user.id == organisation.author.id:
+            if organisation.org_members.filter(member=request.user).exists():
+                organisation_tree = get_suborganisation_tree(organisation)
+                organisation_list = get_suborganisation_list(organisation)
+                parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
+                add_org_form = OrganisationCreateForm()
+                add_org_form.fields['parent_organisation'].choices = parent_org_choices
                 context = {"organisation_data": organisation_tree,
                             "root_organisation": organisation,
                             "organisation_list": organisation_list,
-                            "addOrganisationForm": add_org_form,
+                            "admin_approved": False
 
                             }
+                if request.user.id == organisation.author.id:
+                    context["addOrganisationForm"]= add_org_form,
+                    context["admin_approved"] = True
+                return render(request, self.template_name, context)
             else:
-                context = {}
-            return render(request, self.template_name, context)
+                return redirect("access-denied")
         else:
             root = organisation.find_root_organisation()
-            return redirect("organisation-view", organisation_id=root.id)
+            return redirect("organisation", organisation_id=root.id)
 
 
     def form_valid(self, form):
@@ -185,7 +188,7 @@ class OrganisationView(LoginRequiredMixin, View):
 
 
 
-        return redirect("organisation-view", organisation_id=organisation_id)
+        return redirect("organisation", organisation_id=organisation_id)
 
 class OrganisationCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
@@ -197,7 +200,7 @@ class OrganisationCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
     def get_success_url(self):
-        return reverse('organisation-view', kwargs={'organisation_id' : self.object.pk})
+        return reverse('organisation', kwargs={'organisation_id' : self.object.pk})
 
 class OrganisationEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
@@ -264,8 +267,10 @@ class UserOrganisationsView(LoginRequiredMixin,ListView):
         context = super().get_context_data(**kwargs)
         return context
     def get_queryset(self):
-        x = Organisation.objects.filter(author=self.request.user)
-        return x
+        return Organisation.objects.filter(
+                            (Q(parent_organisation=None) & Q(org_members__member=self.request.user)) |(Q(author=self.request.user) &Q(parent_organisation=None) )
+                            ).distinct()
+
 
     def post(self, request):
 

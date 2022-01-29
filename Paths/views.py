@@ -1,6 +1,6 @@
 from .models import Pathway, PathwayContent, PathwayParticipant
 from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm, PathwayContentEditForm
-from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView
+from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView, ListView
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, get_object_or_404
@@ -296,36 +296,47 @@ class PathwayCreate(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("pathway-content-create", kwargs={'pathway_id' : self.object.pk})
 
-class PathsHomeView(LoginRequiredMixin, View):
+class PathsHomeView(LoginRequiredMixin, ListView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
-    template_name = "paths.html"
-    def get(self, request):
+    model = VideoLecture
+    paginate_by = 100  # if pagination is desired
+    template_name = "pathways_dash.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+    def get_queryset(self):
+        return Pathway.objects.filter(author=self.request.user)
 
-        context = {}
-        user_pathway_data = {}
-        if self.request.user.is_authenticated:
-            if hasattr(self.request.user, 'profile'):
-                context['user_profile'] = MemberProfile.objects.get(author=self.request.user.id)
-                context['has_user_profile'] = True
-            else:
-                context['has_user_profile'] = False
-
-            user_pathways = PathwayParticipant.objects.filter(author=self.request.user).values_list("on_pathway", flat=True)
-            pathways = [get_object_or_404(Pathway, id=i) for i in user_pathways]
-            context['user_pathways'] = pathways
-            developer_pathway_data = {}
-            developer_pathways = Pathway.objects.filter(author=self.request.user)
-            for dev_pathway in developer_pathways:
-                pathway_objs = list(PathwayContent.objects.filter(on_pathway=dev_pathway).order_by('order_position'))
-                developer_pathway_data[dev_pathway] = pathway_objs
-            context['developer_pathways'] = developer_pathway_data
-
-            # user_groups = UserCreatedGroup.objects.filter(members=self.request.user.id)
-            # context["user_groups"] = user_groups
-            #
-
-        return render(request, self.template_name, context)
+    # login_url = '/login-or-register/'
+    # redirect_field_name = 'redirect_to'
+    # template_name = "pathways_dash.html"#"paths.html"
+    # def get(self, request):
+    #
+    #     context = {}
+    #     user_pathway_data = {}
+    #     if self.request.user.is_authenticated:
+    #         if hasattr(self.request.user, 'profile'):
+    #             context['user_profile'] = MemberProfile.objects.get(author=self.request.user.id)
+    #             context['has_user_profile'] = True
+    #         else:
+    #             context['has_user_profile'] = False
+    #
+    #         user_pathways = PathwayParticipant.objects.filter(author=self.request.user).values_list("on_pathway", flat=True)
+    #         pathways = [get_object_or_404(Pathway, id=i) for i in user_pathways]
+    #         context['user_pathways'] = pathways
+    #         developer_pathway_data = {}
+    #         developer_pathways = Pathway.objects.filter(author=self.request.user)
+    #         for dev_pathway in developer_pathways:
+    #             pathway_objs = list(PathwayContent.objects.filter(on_pathway=dev_pathway).order_by('order_position'))
+    #             developer_pathway_data[dev_pathway] = pathway_objs
+    #         context['developer_pathways'] = developer_pathway_data
+    #
+    #         # user_groups = UserCreatedGroup.objects.filter(members=self.request.user.id)
+    #         # context["user_groups"] = user_groups
+    #         #
+    #
+    #     return render(request, self.template_name, context)
 
     def post(self, request):
         if "delete_pathway" in request.POST:

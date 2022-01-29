@@ -37,7 +37,7 @@ This is an overview of the video lectures you have created. You'll see how they 
       <div class="container px-2 py-2 border border-primary rounded">
 
 
-      <h4 class="text-center"><a href="{% url 'benchmark' obj.pk %}" class="nounderline">{{ obj.title }}</a></h4>
+      <h4 class="text-center"><a href="{% url 'video-lecture' obj.pk %}" class="nounderline">{{ obj.title }}</a></h4>
       <h6 class="text-center">{{ obj.description }}</h6>
 
 
@@ -46,13 +46,13 @@ This is an overview of the video lectures you have created. You'll see how they 
 
 
             <li class="nav-item px-2">
-              <a href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit benchmark" >
+              <a href="{% url 'edit-video' obj.id %}" data-bs-toggle="tooltip" title="edit video" >
                 <i class="far fa-edit"></i>
               </a>
             </li>
 
             <li class="nav-item px-2">
-              <a data-bs-toggle="tooltip" title="test this benchmark">
+              <a data-bs-toggle="tooltip" title="test this video">
                 <i class="fas fa-vial"></i>
               </a>
             </li>
@@ -70,3 +70,14 @@ This is an overview of the video lectures you have created. You'll see how they 
 </div>
 
 {% endblock %}
+{% block scripts %}
+<script>
+function highlightModNavLink(linkName){
+  $("[name='modLink']").removeClass("active");
+  $("[name='modLink']").removeClass("text-white");
+  $(linkName).addClass("active");
+  $(linkName).addClass("text-white");
+}
+highlightModNavLink("#videosModNavLink")
+</script>
+{% endblock scripts %}

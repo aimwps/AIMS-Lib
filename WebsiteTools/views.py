@@ -6,3 +6,6 @@ def home(request):
 
 class LoginRegisterRequiredView(TemplateView):
     template_name = "login_register.html"
+
+class AccessDeniedView(TemplateView):
+    template_name = "access_denied.html"
