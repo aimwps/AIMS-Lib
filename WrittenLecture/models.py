@@ -42,3 +42,18 @@ class ArticleText(models.Model): # A body of text with extra elements e.g. Data 
         return f"<WrittenLecture : {self.title}>"
     def get_absolute_url(self):
         return reverse('pathways')
+
+class ArticleSession(models.Model):
+
+    ARTICLE_STATUS = (
+                        ("pending", "pending"),
+                        ("recap", "recap"),
+                        ("complete", "complete"),
+                        ("incomplete", "incomplete"),
+                    )
+    for_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="article_sessions")
+    on_article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    status = models.CharField(max_length=100, choices=ARTICLE_STATUS)
+    create_date = models.DateField(auto_now=False,auto_now_add=True)
+    create_time = models.TimeField(auto_now=False,auto_now_add=True)
+    completion_time = models.PositiveIntegerField()
