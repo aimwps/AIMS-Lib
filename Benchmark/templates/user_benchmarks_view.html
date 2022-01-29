@@ -6,11 +6,12 @@
 {% block pageInfoCaro %}
 {% endblock pageInfoCaro %}
 {% block pageInfo_title %}
-MY BENCHMARKS
+BENCHMARKS
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
 This is an overview of the benchmarks you have created. You'll see how they are being shared and other helpful stats on your content in the future.
+
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -19,8 +20,15 @@ This is an overview of the benchmarks you have created. You'll see how they are 
 
 {% block content %}
 <div class="container my-4">
-<div class="row justify-content-center px-0">
-
+<div class="row justify-content-center px-0 my-2">
+<div class="col-7">
+<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your benchmarks and bookmarks"></input>
+</div>
+<div class="col-5">
+<a class="btn btn-al w-100" href="{% url 'create-benchmark' %}">create</a>
+</div>
+</div>
+<div class="row px-0 my-2">
   {% for obj in object_list %}
   {% if user.is_authenticated %}
     {% if user.id == obj.author.id %}
@@ -48,11 +56,7 @@ This is an overview of the benchmarks you have created. You'll see how they are 
               </a>
             </li>
 
-            <li class="nav-item px-2">
-              <a data-bs-toggle="tooltip" title="test this benchmark">
-                <i class="fas fa-vial"></i>
-              </a>
-            </li>
+
         </ul>
       </div>
     </div>

@@ -3,16 +3,15 @@
 
 {% block topcarousel %}
 {% endblock %}
-
 {% block pageInfoCaro %}
 {% endblock pageInfoCaro %}
-
 {% block pageInfo_title %}
-ARTICLES
+BENCHMARKS
 {% endblock pageInfo_title %}
 
 {% block pageInfo_message %}
-This is an overview of the articles you have created. You'll see how they are being shared and other helpful stats on your content in the future.
+This is an overview of the benchmarks you have created. You'll see how they are being shared and other helpful stats on your content in the future.
+
 {% endblock pageInfo_message %}
 
 {% block modulenav %}
@@ -23,12 +22,23 @@ This is an overview of the articles you have created. You'll see how they are be
 <div class="container my-4">
 <div class="row justify-content-center px-0 my-2">
 <div class="col-7">
-<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your articles"></input>
+<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your benchmarks and bookmarks"></input>
 </div>
 <div class="col-5">
-<a class="btn btn-al w-100" href="{% url 'create-benchmark' %}">create</a>
+<a class="btn btn-al w-100" href="{% url 'create-benchmark' %}">New</a>
 </div>
 </div>
+<div class="row">
+<div class="col-">
+
+</div>
+</div>
+
+
+
+
+
+
 <div class="row px-0 my-2">
   {% for obj in object_list %}
   {% if user.is_authenticated %}
