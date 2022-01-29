@@ -5,7 +5,7 @@ from ckeditor.fields import RichTextField
 # Create your models here.
 class Article(models.Model): # A body of text with extra elements e.g. Data Tables, recipes or images
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True,  null=True)
+    description = models.TextField(max_length=500,blank=True,  null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
@@ -15,7 +15,7 @@ class Article(models.Model): # A body of text with extra elements e.g. Data Tabl
     def __str__(self):
         return f"<WrittenLecture : {self.title}>"
     def get_absolute_url(self):
-        return reverse('pathways')
+        return reverse('"articles-dash"')
 
 class ArticleImage(models.Model): # A body of text with extra elements e.g. Data Tables, recipes or images
     title = models.CharField(max_length=255)
