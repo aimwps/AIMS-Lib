@@ -20,30 +20,53 @@ This is an overview of the video lectures you have created. You'll see how they 
 
 {% block content %}
 
-<div class="container text-center my-4">
-    <ul class="list-group list-group-flush">
-    {% for obj in object_list %}
-    <li class="list-group-item">
-      <div class="row">
-      <div class="col-3">
+<div class="container my-4">
+<div class="row justify-content-center px-0 my-2">
+<div class="col-7">
+<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your videos"></input>
+</div>
+<div class="col-5">
+<a class="btn btn-al w-100" href="{% url 'create-video' %}">create</a>
+</div>
+</div>
+<div class="row px-0 my-2">
+  {% for obj in object_list %}
+  {% if user.is_authenticated %}
+    {% if user.id == obj.author.id %}
+    <div class="col-xs-12 col-md-3 p-2">
+      <div class="container px-2 py-2 border border-primary rounded">
 
-      </div>
-      <div class="col-6">
-        <p class="lead pt-1"><a href='{% url "video-lecture" obj.id %}'>{{ obj.title }}</a> <small>{{ obj.publish_date }} @ {{ obj.publish_time }}</small></p>
-      </div>
-      <div class="col-3">
-          <ul class="list-group list-group-horizontal border-0">
-            <li class="list-group-item border-0"><a href="{% url 'edit-video-lecture' obj.id %}"><i class="far fa-edit"></i></a></li>
-            <li class="list-group-item border-0"><a href="#"><i class="far fa-trash-alt"></i></a></li>
-          </ul>
-        <p> </p>
-      </div>
-      </div>
-      </li>
-      {% endfor %}
-</ul>
 
+      <h4 class="text-center"><a href="{% url 'benchmark' obj.pk %}" class="nounderline">{{ obj.title }}</a></h4>
+      <h6 class="text-center">{{ obj.description }}</h6>
+
+
+      <div class="text-center">
+        <ul class="nav justify-content-center my-2 pt-2">
+
+
+            <li class="nav-item px-2">
+              <a href="{% url 'edit-benchmark' obj.id %}" data-bs-toggle="tooltip" title="edit benchmark" >
+                <i class="far fa-edit"></i>
+              </a>
+            </li>
+
+            <li class="nav-item px-2">
+              <a data-bs-toggle="tooltip" title="test this benchmark">
+                <i class="fas fa-vial"></i>
+              </a>
+            </li>
+
+
+        </ul>
+      </div>
+    </div>
+    </div>
+    {% endif %}
+      {% endif %}
+    {% endfor %}
 
 </div>
 </div>
+
 {% endblock %}

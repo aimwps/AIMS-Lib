@@ -5,6 +5,7 @@ from django.urls import reverse
 
 class VideoLecture(models.Model):
     title = models.CharField(max_length=255)
+    description = models.TextField(max_length=500,blank=True,  null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
