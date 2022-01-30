@@ -38,8 +38,22 @@ class ArticleView(View):
         return render(request, self.template_name, context)
 
     def post(self, request, lit_lec_id):
+        print(request.POST)
+        article = Article.objects.get(id=lit_lec_id)
+        pathway = Pathway.objets.filter((Q(full_pathway__article=article)
+        & Q(participants__author=request.user)))
+        print(pathway)
         if request.method =="POST":
-            print(request.POST)
+
+            if request.POST.get("status") == "incomplete":
+                print("incomplete")
+            return redirect('pathway-view', pathway_id=pathway.id)
+    def form_valid(self, form):
+        form.instance.for_user = self.request.user
+        form.instance.on_article = self.request.lit_lec.id
+        return super().form_valid(form)
+
+
 class UserArticlesView(LoginRequiredMixin, ListView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
