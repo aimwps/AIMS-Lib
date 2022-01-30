@@ -7,8 +7,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from embed_video.fields import EmbedVideoField
 from rest_framework import serializers
 from VideoLecture.models import VideoLecture
-from WrittenLecture.models import Article
-from Benchmark.models import Benchmark
+from WrittenLecture.models import Article, ArticleSession
+from Benchmark.models import Benchmark, BenchmarkSession
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.models import ContentType
 
@@ -76,6 +76,58 @@ class PathwayContent(models.Model):
                         "benchmark": "benchmark",}
         return pretty_dict[self.content_type]
 
+    def is_active(self, user):
+        """
+        returns True if the previous content is complete and
+        """
+        if self.order_position > 1:
+            print(self.on_pathway.full_pathway.all())
+            print(self.order_position)
+            previous_content = self.on_pathway.full_pathway.filter(Q(order_position=self.order_position-1))[0]
+
+            print("----------------------------------------------")
+            print(previous_content)
+
+            # Check whether previous content needs to be completed if not we can pass straight through
+            if previous_content.complete_to_move_on:
+
+
+                # Previous content needs to be completed, lets see if the uSER HAS
+                if self.content_type == "article":
+                     article_session = ArticleSession.objects.filter(Q(on_article=self.article) & Q(for_user=user)).order_by('create_date', 'create_time')
+
+                     if article_session.exists():
+                        if article_session[0].status == "complete" or article_session[0].status == "recap":
+                             return True
+                        else:
+                            return False
+                     else:
+                         return False
+
+                elif self.content_type == "benchmark":
+                     benchmark_sessions = BenchmarkSession.objects.filter(Q(on_benchmark=self.benchmark) & Q(for_user=user)).order_by('create_date', 'create_time')
+                     if benchmark_sessions.exists():
+
+                         for benchmark_session in benchmark_sessions:
+                            if benchmark_session.session_result >= self.benchmark.percent_to_pass:
+                                return True
+                         return False
+
+                     else:
+                        return False
+
+                elif self.content_type =="video":
+                    #video_sessions = VideoLectureSession.objects.filter()
+                    pass
+                else:
+                    print("content type error")
+
+            else:
+                return True
+
+
+        return True
+
 class PathwayCompletitionRecord(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_record")
     create_date = models.DateField(auto_now_add=True)
@@ -92,25 +144,3 @@ class PathwayParticipant(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['on_pathway','author'], name="duplicate_pathway_participant")]
-
-
-# class VideoLectureCompletionRecord(models.Model):
-#     RECORD_STATUS = (('first_completion', 'first_completion'),
-#                     ('did_not_complete', 'did_not_complete'),
-#                     ('recap_completion', 'recap_completion'))
-#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
-#
-# class BenchmarkLectureCompletionRecord(models.Model):
-#     RECORD_STATUS = (('first_completion', 'first_completion'),
-#                     ('did_not_complete', 'did_not_complete'),
-#                     ('recap_completion', 'recap_completion'))
-#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)
-#
-# class WrittenLectureCompletionRecord(models.Model):
-#     RECORD_STATUS = (('first_completion', 'first_completion'),
-#                     ('did_not_complete', 'did_not_complete'),
-#                     ('recap_completion', 'recap_completion'))
-#     record_status = models.CharField(max_length=100, choices=RECORD_STATUS)
-#     pathway_to_complete = models.ForeignKey(PathwayCompletitionRecords, on_delete=models.CASCADE)

@@ -129,6 +129,7 @@ class PathwayView(View):
     def get(self, request, pathway_id):
         context = {}
         pathway = Pathway.objects.get(id=pathway_id)
+
         if request.user.is_authenticated:
             is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
         else:
@@ -139,6 +140,9 @@ class PathwayView(View):
         else:
             context['participation_status'] = False
         context['pathway'] = pathway
+        context['pathway_content'] = [(content,content.is_active(request.user)) for content in pathway.full_pathway.all()]
+
+        print(context['pathway_content'])
 
         return render(request, self.template_name, context)
 

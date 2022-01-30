@@ -1,10 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, View, UpdateView, ListView
 from .forms import ArticleCreateForm, ArticleEditForm, ArticleSessionForm
-from .models import Article
+from .models import Article, ArticleSession
+from Paths.models import Pathway
 import json
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 # Create your views here.
 class ArticleEdit(LoginRequiredMixin, UpdateView):
@@ -40,14 +42,19 @@ class ArticleView(View):
     def post(self, request, lit_lec_id):
         print(request.POST)
         article = Article.objects.get(id=lit_lec_id)
-        pathway = Pathway.objets.filter((Q(full_pathway__article=article)
+        pathway = Pathway.objects.filter((Q(full_pathway__article=article)
         & Q(participants__author=request.user)))
         print(pathway)
         if request.method =="POST":
+            new_article_session  = ArticleSession(
+                                            for_user= request.user,
+                                            on_article = article,
+                                            status = request.POST.get("status"),
+                                            completion_time = request.POST.get("completion_time"))
+            new_article_session.save()
 
-            if request.POST.get("status") == "incomplete":
-                print("incomplete")
-            return redirect('pathway-view', pathway_id=pathway.id)
+            return redirect('pathway-view', pathway_id=pathway[0].id)
+
     def form_valid(self, form):
         form.instance.for_user = self.request.user
         form.instance.on_article = self.request.lit_lec.id

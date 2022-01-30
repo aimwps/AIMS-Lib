@@ -14,6 +14,7 @@ class Benchmark(models.Model):
     override_time_with_default = models.BooleanField(default=True, choices=((True, 'Yes'), (False, 'No')))
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
+    percent_to_pass = models.PositiveIntegerField(default=70)
     def __str__(self):
         return f"Benchmark_{self.title}"
     def get_success_url(self):
@@ -34,6 +35,7 @@ class Benchmark(models.Model):
             times_to_answer = self.questions.values_list('time_to_answer', flat=True)
             average_time_to_answer = int(sum(list(times_to_answer)) / times_to_answer.count(),0)
             return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
+            
 class Question(models.Model):
 
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),

@@ -18,3 +18,17 @@ class VideoLecture(models.Model):
         return f"<VideoLecture : {self.title}>"
     def get_absolute_url(self):
         return reverse('user-videos')
+class VideoLectureSession(models.Model):
+
+    ARTICLE_STATUS = (
+                        ("pending", "pending"),
+                        ("recap", "recap"),
+                        ("complete", "complete"),
+                        ("incomplete", "incomplete"),
+                    )
+    for_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="video_sessions")
+    on_video = models.ForeignKey(VideoLecture, on_delete=models.CASCADE)
+    status = models.CharField(max_length=100, choices=ARTICLE_STATUS, default="pending")
+    completion_time = models.PositiveIntegerField()
+    create_date = models.DateField(auto_now=False,auto_now_add=True)
+    create_time = models.TimeField(auto_now=False,auto_now_add=True)
