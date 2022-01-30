@@ -140,9 +140,14 @@ class PathwayView(View):
         else:
             context['participation_status'] = False
         context['pathway'] = pathway
+
+        # for i, content in enumerate(pathway.full_pathway.all()):
+        #     print((i, content, content.is_active(request.user)))
+
         context['pathway_content'] = [(content,content.is_active(request.user)) for content in pathway.full_pathway.all()]
 
-        print(context['pathway_content'])
+        for c in context['pathway_content']:
+            print(c)
 
         return render(request, self.template_name, context)
 

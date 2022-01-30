@@ -35,7 +35,7 @@ class Benchmark(models.Model):
             times_to_answer = self.questions.values_list('time_to_answer', flat=True)
             average_time_to_answer = int(sum(list(times_to_answer)) / times_to_answer.count(),0)
             return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
-            
+
 class Question(models.Model):
 
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),
@@ -128,9 +128,10 @@ class BenchmarkSession(models.Model):
         print(total_questions)
         total_correct_questions = BenchmarkSessionQuestion.objects.filter(Q(benchmark_session=self),
         Q(answered_correctly=True)).count()
-        print(total_correct_questions)
-
-        return round( (total_correct_questions / float(total_questions)) * 100, 2)
+        if total_correct_questions > 0:
+            return round( (total_correct_questions / float(total_questions)) * 100, 2)
+        else:
+            return 0
 
 
 class BenchmarkSessionQuestion(models.Model):
