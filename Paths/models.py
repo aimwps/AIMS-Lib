@@ -117,15 +117,18 @@ class PathwayContent(models.Model):
                         return False
 
                 elif previous_content.content_type == "benchmark":
-                     benchmark_sessions = BenchmarkSession.objects.filter(Q(on_benchmark=previous_content.benchmark) & Q(for_user=user)).order_by('-create_date', '-create_time')
-                     if benchmark_sessions.exists():
 
-                         for benchmark_session in benchmark_sessions:
-                            if benchmark_session.session_result >= self.benchmark.percent_to_pass:
+                    benchmark_sessions = BenchmarkSession.objects.filter((Q(on_benchmark=previous_content.benchmark) & Q(for_user=user) & Q(completed=True) )).order_by('-create_date', '-create_time')
+
+                    if benchmark_sessions.exists():
+                        for benchmark_session in benchmark_sessions:
+                            print(f"benchmark_session {benchmark_session}, ")
+                            print(benchmark_session.session_result, previous_content.benchmark.percent_to_pass)
+                            if benchmark_session.session_result >= previous_content.benchmark.percent_to_pass:
                                 return True
-                         return False
+                        return False
 
-                     else:
+                    else:
                         return False
                 elif previous_content.content_type =="video":
                     video_sessions = VideoLectureSession.objects.filter(Q(on_video=previous_content.video)& Q(for_user=user)).order_by('-create_date', '-create_time')

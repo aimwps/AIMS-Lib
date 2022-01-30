@@ -144,10 +144,28 @@ class PathwayView(View):
         # for i, content in enumerate(pathway.full_pathway.all()):
         #     print((i, content, content.is_active(request.user)))
 
-        context['pathway_content'] = [(content,content.is_active(request.user)) for content in pathway.full_pathway.all()]
+        pathway_content_with_status = [(content,content.is_active(request.user)) for content in pathway.full_pathway.all()]
 
-        for c in context['pathway_content']:
-            print(c)
+        previous_content_is_locked = False
+        corrected_pathway_content = []
+
+
+        ## Double checks that for this pathway content isn't unlocked earlier
+        ## Should a benchmark be used in 2 different pathways this code preventS
+        ## early unlocks on pathway content
+        for pathway_content in pathway_content_with_status:
+            if previous_content_is_locked:
+                corrected_pathway_content.append((pathway_content[0], False))
+            else:
+                if pathway_content[1] == False:
+                    corrected_pathway_content.append(pathway_content)
+                    previous_content_is_locked = True
+                else:
+                    corrected_pathway_content.append(pathway_content)
+
+
+        context['pathway_content'] = corrected_pathway_content
+
 
         return render(request, self.template_name, context)
 
