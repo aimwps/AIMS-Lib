@@ -1,5 +1,5 @@
 from django import forms
-from .models import VideoLecture
+from .models import VideoLecture, VideoLectureSession
 from bootstrap_datepicker_plus import DatePickerInput
 
 
@@ -33,3 +33,16 @@ class VideoLectureEditForm(forms.ModelForm):
                                                 'placeholder': 'Add any notes'
                                                 }),
                                                 }
+class VideoLectureSessionForm(forms.ModelForm):
+    class Meta:
+        model = VideoLectureSession
+        fields =(
+                "status",
+                "completion_time",
+                )
+        widgets = {
+            'status': forms.TextInput(attrs = {'type':'hidden'}),
+            'completion_time': forms.NumberInput(attrs = {'type':'hidden',
+                                                        "value":0}),
+
+                }

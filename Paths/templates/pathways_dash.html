@@ -34,7 +34,6 @@ Pathways are learnable content based on video lectures & written articles. User 
 <div class="row px-0 my-2">
   {% for obj in object_list %}
   {% if user.is_authenticated %}
-    {% if user.id == obj.author.id %}
     <div class="col-xs-12 col-md-3 p-2">
       <div class="container px-2 py-2 border border-primary rounded">
 
@@ -46,25 +45,20 @@ Pathways are learnable content based on video lectures & written articles. User 
       <div class="text-center">
         <ul class="nav justify-content-center my-2 pt-2">
 
-
+            {% if user == obj.author %}
             <li class="nav-item px-2">
               <a href="{% url 'pathway-develop' obj.id %}" data-bs-toggle="tooltip" title="edit pathway" >
                 <i class="far fa-edit"></i>
               </a>
             </li>
+            {% endif %}
 
-            <li class="nav-item px-2">
-              <a data-bs-toggle="tooltip" title="test this benchmark">
-                <i class="fas fa-vial"></i>
-              </a>
-            </li>
 
 
         </ul>
       </div>
     </div>
     </div>
-    {% endif %}
       {% endif %}
     {% endfor %}
 

@@ -27,7 +27,7 @@ REVISE_FREQ = ( ('Never', 'Never'),
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField(max_length=500,blank=True)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
     modify_date = models.DateField(auto_now=True,auto_now_add=False)
@@ -78,12 +78,8 @@ class PathwayContent(models.Model):
 
     def is_active(self, user):
         """
-        returns True if the previous content is complete and
+        returns True if the previous content is complete or does not need to be completed to unlock the content in question
         """
-        print(f"\n\nRUNNING IS_ACTIVE ON {self}")
-        print(f"order_position {self.order_position}")
-        print(f"pathway content type {self.content_type}")
-
         if self.order_position > 1:
             previous_content = self.on_pathway.full_pathway.filter(Q(order_position=self.order_position-1))[0]
 
@@ -98,22 +94,18 @@ class PathwayContent(models.Model):
 
                     # If there are sessions there is a possibility to return true
                     if article_session.exists():
-                        print("This article has records")
-                        print(f"The first in QS: {article_session[0].status} on {article_session[0].create_date}@ {article_session[0].create_time}")
-                        print(f"The most last in QS: {article_session[article_session.count()-1].status} on {article_session[article_session.count()-1].create_date}@ {article_session[article_session.count()-1].create_time}")
 
                         # If the session has been completed or awaiting recap,
-                        print(article_session[0].status, type(article_session[0].status))
+
                         if article_session[0].status == "complete" or article_session[0].status == "recap":
-                            print("----------end of article test----------------")
+                            print("Returned true because user is a member, has sessions as complete or recap")
                             return True
                         else:
-                            print("----------end of article test----------------")
+                            print("Returned False because user is a member but has NO complete or recap sessions")
                             return False
                     # No records have been found, must be false
                     else:
-                        print("No records found for this article")
-                        print("----------end of article test----------------")
+                        print("returned false because user has NO article session records")
                         return False
 
                 elif previous_content.content_type == "benchmark":
@@ -122,35 +114,66 @@ class PathwayContent(models.Model):
 
                     if benchmark_sessions.exists():
                         for benchmark_session in benchmark_sessions:
-                            print(f"benchmark_session {benchmark_session}, ")
-                            print(benchmark_session.session_result, previous_content.benchmark.percent_to_pass)
                             if benchmark_session.session_result >= previous_content.benchmark.percent_to_pass:
                                 return True
                         return False
 
                     else:
+
                         return False
                 elif previous_content.content_type =="video":
                     video_sessions = VideoLectureSession.objects.filter(Q(on_video=previous_content.video)& Q(for_user=user)).order_by('-create_date', '-create_time')
                     if video_sessions.exists():
                         if video_sessions[0].status =="complete" or video_sessions[0].status =="recap":
-                            print("----------end of video test----------------")
                             return True
+
                         else:
-                            print("----------end of video test----------------")
+
                             return False
                     else:
-                        print("----------end of video test----------------")
                         return False
                 else:
                     print("content type error")
 
             else:
-                print("----------end of complete to move on test----------------")
+                print("returned True because the previous content does not need to be completed")
                 return True
+        else:
+            print("returned true because it's in position 1")
+            return True
 
-        print("----------end of first in position test test----------------")
-        return True
+    def get_latest_result(self, user):
+        """
+        for a sessions content, see the users latest result.
+
+        For articles and videos this comes in the form of "complete, incomplete, recap or pending"
+
+        For benchmarks this comes in the form of pending or a % result.
+        """
+        if self.content_type == "article":
+            article_session = ArticleSession.objects.filter((Q(on_article=self.article) & Q(for_user=user))).order_by('-create_date', '-create_time')
+
+            # If there are sessions there is a possibility to return true
+            if article_session.exists():
+                return article_session[0].status
+            else:
+                return "pending"
+
+        if self.content_type == "benchmark":
+            benchmark_sessions = BenchmarkSession.objects.filter((Q(on_benchmark=self.benchmark) & Q(for_user=user) & Q(completed=True) )).order_by('-create_date', '-create_time')
+
+            if benchmark_sessions.exists():
+                return f"{benchmark_sessions[0].session_result}%"
+            else:
+                return "pending"
+
+
+        if self.content_type == "video":
+            video_sessions = VideoLectureSession.objects.filter(Q(on_video=self.video) & Q(for_user=user)).order_by('-create_date', '-create_time')
+            if video_sessions.exists():
+                return video_sessions[0].status
+            else:
+                return "pending"
 
 class PathwayCompletitionRecord(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_record")

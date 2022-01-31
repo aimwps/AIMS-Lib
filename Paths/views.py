@@ -129,44 +129,53 @@ class PathwayView(View):
     def get(self, request, pathway_id):
         context = {}
         pathway = Pathway.objects.get(id=pathway_id)
-
+        context['pathway'] = pathway
         if request.user.is_authenticated:
             is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
-        else:
-            is_participant = None
 
-        if is_participant:
-            context['participation_status'] = True
+            if is_participant.exists():
+                context['participation_status'] = True
+                pathway_content_with_status = [
+                                                (
+                                                content,
+                                                content.is_active(request.user),
+                                                content.get_latest_result(request.user)
+                                                ) for content in pathway.full_pathway.all()
+                                            ]
+                previous_content_is_locked = False
+                corrected_pathway_content = []
+                for pathway_content in pathway_content_with_status:
+                    if previous_content_is_locked:
+                        corrected_pathway_content.append((pathway_content[0], False, pathway_content[2]))
+                    else:
+                        if pathway_content[1] == False:
+                            corrected_pathway_content.append(pathway_content)
+                            previous_content_is_locked = True
+                        else:
+                            corrected_pathway_content.append(pathway_content)
+                context['pathway_content'] = corrected_pathway_content
+
+            else:
+                context['participation_status'] = False
+                pathway_content_with_status = [
+                                                (
+                                                content,
+                                                False,
+                                                None,
+                                                ) for content in pathway.full_pathway.all()
+                                                ]
+                context['pathway_content'] = pathway_content_with_status
         else:
             context['participation_status'] = False
-        context['pathway'] = pathway
-
-        # for i, content in enumerate(pathway.full_pathway.all()):
-        #     print((i, content, content.is_active(request.user)))
-
-        pathway_content_with_status = [(content,content.is_active(request.user)) for content in pathway.full_pathway.all()]
-
-        previous_content_is_locked = False
-        corrected_pathway_content = []
-
-
-        ## Double checks that for this pathway content isn't unlocked earlier
-        ## Should a benchmark be used in 2 different pathways this code preventS
-        ## early unlocks on pathway content
-        for pathway_content in pathway_content_with_status:
-            if previous_content_is_locked:
-                corrected_pathway_content.append((pathway_content[0], False))
-            else:
-                if pathway_content[1] == False:
-                    corrected_pathway_content.append(pathway_content)
-                    previous_content_is_locked = True
-                else:
-                    corrected_pathway_content.append(pathway_content)
-
-
-        context['pathway_content'] = corrected_pathway_content
-
-
+            pathway_content_with_status = [
+                                            (
+                                            content,
+                                            False,
+                                            None,
+                                            ) for content in pathway.full_pathway.all()
+                                            ]
+            context['pathway_content'] = pathway_content_with_status
+        print(context)
         return render(request, self.template_name, context)
 
     def post(self, request, pathway_id):
@@ -326,14 +335,20 @@ class PathwayCreate(LoginRequiredMixin, CreateView):
 class PathsHomeView(LoginRequiredMixin, ListView):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
-    model = VideoLecture
-    paginate_by = 100  # if pagination is desired
+    model = Pathway
+
     template_name = "pathways_dash.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
     def get_queryset(self):
-        return Pathway.objects.filter(author=self.request.user)
+        print("------------------")
+        x = Pathway.objects.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(participants__author=self.request.user)))
+        print(x)
+        print("------------------")
+
+        return Pathway.objects.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(participants__author=self.request.user)))
 
     # login_url = '/login-or-register/'
     # redirect_field_name = 'redirect_to'

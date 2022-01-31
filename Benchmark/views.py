@@ -7,6 +7,8 @@ from django.db.models import Q
 from .models import Benchmark, Question, Answer, BenchmarkSession, BenchmarkSessionQuestion
 from WrittenLecture.models import Article
 from VideoLecture.models import VideoLecture
+from Paths.models import Pathway
+from Paths.pathway_serializers import PathwaySerializer
 from .forms import BenchmarkForm, BenchmarkNewForm, BenchmarkAnswerForm, BenchmarkEditQuestionForm, BenchmarkEditAnswerForm
 from .benchmark_serializers import QuestionSerializer, BenchmarkSerializer, AnswerSerializer,GeneratedQuestionBankSerializer, BenchmarkSessionSerializer, BenchmarkSessionQuestionSerializer
 from QuestionGenerator.views import search_questions
@@ -26,15 +28,20 @@ def BenchmarkView_ajax_get_session_status(request):
 
         sessions = BenchmarkSession.objects.filter(Q(for_user=request.user), Q(on_benchmark= benchmark), Q(completed=False))
 
+        contributions = Pathway.objects.filter((Q(participants__author=request.user) & Q( full_pathway__benchmark=benchmark)))
+
+        contributions_data = PathwaySerializer(contributions, many=True)
         if sessions:
             data = {
                 "uncomplete_session": sessions[0].id,
-                "complete_session": session_history_data
+                "complete_session": session_history_data,
+                "contributions":contributions_data.data
                 }
         else:
             data = {
                 "uncomplete_session": None,
-                "complete_session": session_history_data
+                "complete_session": session_history_data,
+                "contributions":contributions_data.data
                 }
         return JsonResponse(data, safe=False)
 
@@ -188,10 +195,6 @@ def BenchmarkView_ajax_get_new_session(request):
     data = {"session_id": new_session.id}
 
     return JsonResponse(data, safe=False)
-
-
-
-
 
 def submitCrudBenchmark(request):
 
@@ -494,9 +497,27 @@ class BenchmarkCreateView(LoginRequiredMixin, CreateView):
 class BenchmarkView(View):
     template_name = "benchmark_view.html"
     def get(self, request, benchmark_id):
-        context = {}
+
         benchmark = get_object_or_404(Benchmark, id=benchmark_id)
-        context["benchmark"] = benchmark
+        print(benchmark)
+        participation_status = False
+        if request.user.is_authenticated:
+            benchmark_user_pathways = Pathway.objects.filter(Q(full_pathway__benchmark=benchmark) & Q(participants__author=request.user))
+            if benchmark_user_pathways.exists():
+                for bm in benchmark_user_pathways:
+                    for content in bm.full_pathway.all():
+                        if content.is_active:
+                            participation_status = True
+            else:
+                participation_status = False
+
+        part_of_pathways = Pathway.objects.filter(Q(full_pathway__benchmark=benchmark)).distinct()
+
+        context= {
+                "benchmark": benchmark,
+                "participation_status": participation_status,
+                "part_of_pathways": part_of_pathways}
+
         return render(request, self.template_name, context)
 
 def BenchmarkView_ajax_get_benchmark_data(request):

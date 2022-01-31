@@ -133,6 +133,16 @@ $(document).ready(function(){
 
     })
   }
+  function loadContributionData(data){
+    $("#contributionResults").empty()
+    $.each(data, function(idx, contribution){
+      $("#contributionResults").append(`
+        <li class="list-group-item">
+          <a href="/pathway/${contribution.id}">${contribution.title}</a>
+        </li>`);
+
+    })
+  }
   function checkSessionStatus(){
     console.log("I was called")
     $.ajax({
@@ -153,6 +163,7 @@ $(document).ready(function(){
           $("#continueSessionBtn").hide()
         };
         loadSessionHistory(json.complete_session);
+        loadContributionData(json.contributions)
       }
     })
   }

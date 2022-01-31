@@ -35,7 +35,7 @@ Pathways are learnable content based on video lectures & written articles. User 
           <li class="nav-item px-2">
             <a href="{% url 'pathway-develop' pathway.id %}" data-bs-toggle="tooltip" title="Edit this pathway"><i class="far fa-edit"></i></a>
           </li>
-    
+
         {% endif %}
       {% else %}
       <li class="nav-item px-2">
@@ -76,62 +76,103 @@ Pathways are learnable content based on video lectures & written articles. User 
 
 </div>
   <hr>
-    {% for pathway_obj in pathway.full_pathway.all %}
+  <div class="container mx-2">
+
+
+    {% for pathway_obj in pathway_content %}
     <div class="row">
      <div class="col-1 mt-2">
-       {{ pathway_obj.order_position }}
+       {{ pathway_obj.0.order_position }}
+     </div>
+     <div class="col-1 mt-2">
+       {% if pathway_obj.0.content_type == "article" %}
+       <i class="far fa-newspaper"></i>
+       {% elif pathway_obj.0.content_type == "video" %}
+       <i class="fas fa-film"></i>
+       {% elif pathway_obj.0.content_type == "benchmark" %}
+       <i class="fas fa-balance-scale-right"></i>
+       {% else %}
+       {{ pathway_obj.0.content_type }}
+       {% endif %}
+     </div>
+     <div class="col-7 mt-2">
+       {% if pathway_obj.0.article %}
+        {% if pathway_obj.1 %}
+         <a href="{% url 'article' pathway_obj.0.article.id %}">
+           {{ pathway_obj.0.article.title }}
+         </a>
+         {% else %}
+         {{ pathway_obj.0.article.title }}
+         {% endif %}
+       {% endif %}
+
+       {% if pathway_obj.0.video %}
+         {% if pathway_obj.1 %}
+           <a href="{% url 'video-lecture' pathway_obj.0.video.id %}">
+             {{ pathway_obj.0.video.title }}
+           </a>
+        {% else %}
+          {{ pathway_obj.0.video.title }}
+        {% endif %}
+
+       {% endif %}
+
+       {% if pathway_obj.0.benchmark %}
+         {% if pathway_obj.1 %}
+         <a href="{% url 'benchmark' pathway_obj.0.benchmark.id %}">
+           {{ pathway_obj.0.benchmark.title }}
+         </a>
+         {% else %}
+         {{ pathway_obj.0.benchmark.title }}
+         {% endif %}
+       {% endif %}
+
      </div>
      <div class="col-3 mt-2">
-       {{ pathway_obj.content_type}}
-     </div>
-     <div class="col-6 mt-2">
-       {% if pathway_obj.article %}<a href="{% url 'article' pathway_obj.article.id %}">{{ pathway_obj.article.title }}</a>{% endif %}
-       {% if pathway_obj.video %}<a href="{% url 'video-lecture' pathway_obj.video.id %}">{{ pathway_obj.video.title }}</a>{% endif %}
-       {% if pathway_obj.benchmark %}<a href="{% url 'benchmark' pathway_obj.benchmark.id %}">{{ pathway_obj.benchmark.title }}</a>{% endif %}
-     </div>
-     <div class="col-2 mt-2">
-       {% if user.is_authenticated %}
-          {%  if participation_status %}
-           <p><i class="fas fa-lock"></i></p>
-           {% else %}
-           <p><i class="fas fa-sign-in-alt"></i></p>
-           {% endif %}
+       {% if participation_status %}
+       {{ pathway_obj.2}}
+       {% else %}
+       <i class="fas fa-lock"></i>
        {% endif %}
+
      </div>
    </div>
 
 
     {% endfor %}
+  </div>
 
-
-       {% if user.is_authenticated %}
-       <hr>
+  {% if user.is_authenticated %}
+        <hr>
         {% if participation_status %}
-              <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">Leave Pathway</a></p>
-        {% else %}
-        <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Join Pathway</a></p>
-
-          <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="pathway_leaveLabel">Leave pathway confirmation</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  You are trying to leave a pathway, leaving may effect your previous progress, Are you sure?
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <form action="." method="POST">
-                    {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ request.path }}">
-                  <button name="leave_pathway" value="{{pathway.id}}" class="btn btn-al">Leave</button>
-                </form>
+            <p class="text-center">
+              <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">
+                Leave Pathway
+              </a>
+            </p>
+            <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="pathway_leaveLabel">Leave pathway confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    You are trying to leave a pathway, leaving may effect your previous progress, Are you sure?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="." method="POST">
+                      {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button name="leave_pathway" value="{{pathway.id}}" class="btn btn-al">Leave</button>
+                  </form>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+        {% else %}
+        <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Join Pathway</a></p>
 
           <div class="modal fade" id="pathway_join" tabindex="-1" aria-labelledby="pathway_joinLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -157,6 +198,13 @@ Pathways are learnable content based on video lectures & written articles. User 
 
       {% endif %}
     <hr>
+    {% else %}
+    <div class="container border border-primary rounded my-4">
+    <p class="my-4">
+        You are not logged in, access to this content has been restricted.
+        You can log in <a href="{% url 'login' %}" >here</a>
+      </p>
+    </div>
       {% endif %}
 
 

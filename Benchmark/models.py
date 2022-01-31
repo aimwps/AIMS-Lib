@@ -32,9 +32,13 @@ class Benchmark(models.Model):
         if self.override_time_with_default:
             return min(self.max_num_questions, self.questions.count()) * self.default_answer_seconds //60
         else:
-            times_to_answer = self.questions.values_list('time_to_answer', flat=True)
-            average_time_to_answer = int(sum(list(times_to_answer)) / times_to_answer.count(),0)
-            return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
+            if self.questions.count() == 0:
+                return 0
+            else:
+                times_to_answer = self.questions.values_list('time_to_answer', flat=True)
+                average_time_to_answer = int(sum(list(times_to_answer)) / times_to_answer.count(),0)
+
+                return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
 
 class Question(models.Model):
 
@@ -132,6 +136,16 @@ class BenchmarkSession(models.Model):
             return round( (total_correct_questions / float(total_questions)) * 100, 2)
         else:
             return 0
+
+    @property
+    def status(self):
+        if self.session_result > self.on_benchmark.percent_to_pass:
+            return "complete"
+        else:
+            return "recap"
+
+
+
 
 
 class BenchmarkSessionQuestion(models.Model):

@@ -15,7 +15,7 @@ class Article(models.Model): # A body of text with extra elements e.g. Data Tabl
     def __str__(self):
         return f"<WrittenLecture : {self.title}>"
     def get_absolute_url(self):
-        return reverse('"articles-dash"')
+        return reverse('user-articles')
 
 class ArticleImage(models.Model): # A body of text with extra elements e.g. Data Tables, recipes or images
     title = models.CharField(max_length=255)

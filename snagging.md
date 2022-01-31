@@ -1,4 +1,43 @@
 
+
+
+
+
+
+
+Most recent
+
+
+
+When viewing Articles, Videos Or Benchmarks OR pathays you can see descriptions only unless you are on the pathway.
+
+
+If you are on the pathway...
+
+Content can be unlocked by completing previous content, if is_active the viewer can engage with the content in full.
+
+
+Display if not member...
+
+DISPLAY ONLY
+
+pending - no results yet
+
+complete -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 All results are stored against a pathway
 
 

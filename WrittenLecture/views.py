@@ -22,6 +22,7 @@ class ArticleCreate(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleCreateForm
     template_name = "written_lecture_new.html"
+    success_url = "user-articles"
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -30,21 +31,49 @@ class ArticleCreate(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
 class ArticleView(View):
     template_name = "written_lecture.html"
     def get(self, request, lit_lec_id):
         literature = get_object_or_404(Article, id=lit_lec_id)
-        context = {"lit_lec": literature,
-                    "form":ArticleSessionForm()}
+        participation_status = False
 
+
+        if request.user.is_authenticated:
+            article_user_pathways = Pathway.objects.filter((Q(full_pathway__article=literature) & Q(participants__author=request.user)))
+            print(f"COUNT OF QUERY {article_user_pathways.count()}")
+            for a in article_user_pathways:
+                print(a)
+                print(a.participants.all())
+            if article_user_pathways.exists():
+                for pathway in article_user_pathways:
+                    print(pathway, pathway.title)
+                    for content in pathway.full_pathway.all():
+
+                        # The user is a member and the content is available to them
+                        if content.is_active(request.user):
+                            print("participation_status is True because they are a member and the content is is_active")
+                            participation_status = True
+                    print("\nend of content check\n")
+
+            # The user is the author, overides allowing them to see content
+            if literature.author == request.user:
+                print("participation_status is True because they are the author")
+                participation_status = True
+
+        part_of_pathways = Pathway.objects.filter(Q(full_pathway__article=literature)).distinct()
+
+        context = { "participation_status": participation_status,
+                    "lit_lec": literature,
+                    "form":ArticleSessionForm(),
+                    "part_of_pathways": part_of_pathways}
+        print(context)
         return render(request, self.template_name, context)
 
     def post(self, request, lit_lec_id):
-        print(request.POST)
         article = Article.objects.get(id=lit_lec_id)
         pathway = Pathway.objects.filter((Q(full_pathway__article=article)
         & Q(participants__author=request.user)))
-        print(pathway)
         if request.method =="POST":
             new_article_session  = ArticleSession(
                                             for_user= request.user,
