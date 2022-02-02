@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import CreateView, View, UpdateView, ListView
 from .forms import ArticleCreateForm, ArticleEditForm, ArticleSessionForm
 from .models import Article, ArticleSession
@@ -22,7 +23,7 @@ class ArticleCreate(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleCreateForm
     template_name = "written_lecture_new.html"
-    success_url = "user-articles"
+    success_url = reverse_lazy("user-articles")
 
     def form_valid(self, form):
         form.instance.author = self.request.user

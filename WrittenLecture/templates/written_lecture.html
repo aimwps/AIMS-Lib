@@ -25,7 +25,7 @@ This is an article; lay your thoughts still, read and learn. If you found the co
 <div class="row text-center">
     <h4>{{ lit_lec.title }}</h4>
     <h6>Created {{ lit_lec.create_date}} @ {{ lit_lec.create_time }} by {{ lit_lec.author }}</h6>
-    <p> {{ lit_lect.description }}</p>
+    <p> {{ lit_lec.description }}</p>
   </div>
 {% if user.is_authenticated %}
   {% if participation_status %}

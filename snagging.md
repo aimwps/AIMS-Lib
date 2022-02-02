@@ -5,6 +5,57 @@
 
 
 
+##### THE MOVE ON CHECKLIST
+
+## AI completely recrafted and moved to another site making use of an API
+    - It will handle tabular data
+    - PDF's of mixed content
+
+## PATHWAYS
+    - View organisations members pathway data for the group
+    - Sign off pathway
+    - Allow messaging to be sent accepting pathway requests
+    - Send pathway join requests
+    - Search for Articles, Videos, Benchmarks, Pathways in there relative pages
+####### PATHWAY BACKBURNER
+        - Checkpoint (add certificate uploads as requirements etc)
+        -
+## AIMS
+    - Redo quickfire Aims as modal
+    - Add pause to quickfire aims
+
+
+#######################################################
+## COMMUNITY
+    - Reapproach forum layout
+######################################################
+
+
+
+## LIBRARY
+    - The library will contain pathways & Aims only
+    - Bookmark Content from library
+
+
+######  LIBRARY BACKBURNER
+    - Scraped data of resources
+
+## Formatting
+    - Check every template and form
+
+# Code
+    - Note main sections
+
+
+
+
+
+
+
+
+
+
+
 Most recent
 
 

@@ -5,10 +5,14 @@ from .models import Article, ArticleSession
 class ArticleEditForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ('title',"body")
+        fields = ('title',"description", "body")
         widgets ={
-            'title': forms.TextInput(attrs = {'class': 'form-conrtrol text-center',
+            'title': forms.TextInput(attrs = {'class': 'form-control text-center',
                                             "placeholder": "Insert an article title here"}),
+            'description': forms.TextInput(attrs = {'class': 'form-control text-center',
+                                                "placeholder": "add a description.."
+                                            }),
+
             'body': forms.Textarea(attrs = {'class': 'form-control',
                                             }),}
 
@@ -16,10 +20,14 @@ class ArticleEditForm(forms.ModelForm):
 class ArticleCreateForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ('title','body')
+        fields = ('title','description','body')
         widgets = {
             'title': forms.TextInput(attrs = {'class': 'form-control text-center',
-                                            "placeholder": "Insert an article title here"}),
+                                            "placeholder": "Insert an article title here",
+                                            }),
+            'description': forms.Textarea(attrs = {'class': 'form-control text-center',
+                                                    "placeholder": "add a description.."
+                                            }),
             'body': forms.Textarea(attrs = {'class': 'form-control',}),
                 }
 
