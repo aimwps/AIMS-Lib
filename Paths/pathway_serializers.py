@@ -1,9 +1,14 @@
 from rest_framework import serializers
-from .models import PathwayContent, Pathway
+from .models import PathwayContent, Pathway, PathwayParticipant
 from WrittenLecture.article_serializers import ArticleSerializer
 from VideoLecture.video_serializers import VideoSerializer
 from Benchmark.benchmark_serializers import BenchmarkSerializer
 
+class PathwayParticipantSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PathwayParticipant
+        fields = ("on_pathway", "status",)
 
 class PathwayContentSerializer(serializers.ModelSerializer):
     article = ArticleSerializer()

@@ -21,14 +21,14 @@ This is an overview of the articles you have created. You'll see how they are be
 
 {% block content %}
 <div class="container my-4">
-<div class="row justify-content-center px-0 my-2">
-<div class="col-7">
-<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your articles"></input>
-</div>
-<div class="col-5">
-<a class="btn btn-al w-100" href="{% url 'create-article' %}">create</a>
-</div>
-</div>
+  <div class="row justify-content-center px-0 my-2">
+    <div class="col-7">
+      <input type="text"class="form-control w-100" name="filterInput" placeholder="Search your articles"></input>
+    </div>
+    <div class="col-5">
+      <a class="btn btn-al w-100" href="{% url 'create-article' %}">create</a>
+    </div>
+  </div>
 <div class="row px-0 my-2">
   {% for obj in object_list %}
   {% if user.is_authenticated %}

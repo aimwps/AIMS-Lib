@@ -10,7 +10,8 @@ from .views import (OrganisationView,
                     getOrganisationMembers,
                     searchExactUser,
                     submitNewMember,
-                    getUserBookmarkedPathways,)
+                    getUserBookmarkedPathways,
+                    ajax_submit_organisation_invite,)
 # from .views import
 
 urlpatterns = [
@@ -25,5 +26,6 @@ urlpatterns = [
     path("get_organisation_members/", getOrganisationMembers, name="get-org-members"),
     path("ajax_search_exact_user/", searchExactUser, name="search-exact-user"),
     path("ajax_submit_new_membership/", submitNewMember, name="submit-new-member"),
-    path("ajax_get_user_and_bookmarked_pathway_data/", getUserBookmarkedPathways, name="get-user-pathway")
+    path("ajax_get_user_and_bookmarked_pathway_data/", getUserBookmarkedPathways, name="get-user-pathway"),
+    path("ajax_submit_organisation_invite/", ajax_submit_organisation_invite, name="submit-org-invite"),
 ]

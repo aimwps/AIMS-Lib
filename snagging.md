@@ -1,3 +1,36 @@
+- Redesign login or register page
+- - redirect to pathway on using the pages if not logged in for site areas that require log in
+
+- Content adding to pathway needs to be limited to content that the user owns
+- -  need to redoo formatting.
+
+- Content needs flag to say whether it's open source allowing it to appear in library for book marking
+- - open source content can be viewed without logging in.
+- - bookmarked content can then be added to pathways
+
+- Invites to organisations
+- -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

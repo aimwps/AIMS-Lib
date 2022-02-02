@@ -14,12 +14,12 @@ from .views import (PathsHomeView,
 )
 
 urlpatterns = [
-    path('pathways/', PathsHomeView.as_view(), name="pathways"),
-    path('create_pathway/', PathwayCreate.as_view(), name="pathway-create"),
-    path('create_pathway_obj/<int:pathway_id>/', PathwayContentCreate.as_view(), name="pathway-content-create"),
+    path('pathways/user', PathsHomeView.as_view(), name="pathways"),
+    path('pathway/create', PathwayCreate.as_view(), name="pathway-create"),
+    path('pathway/add_content/<int:pathway_id>/', PathwayContentCreate.as_view(), name="pathway-content-create"),
     path('pathway/<int:pathway_id>/', PathwayView.as_view(), name="pathway-view"),
     path('pathway/develop/<int:pathway_id>/', PathwayDevelopView.as_view(), name="pathway-develop"),
-    path('edit_pathway/<int:pk>/', PathwayEdit.as_view(), name="pathway-edit"),
+    path('pathway/update/<int:pk>/', PathwayEdit.as_view(), name="pathway-edit"),
     path('get_dev_pathway_content/', get_dev_pathway_content, name="pathway-dev-content-get"),
     path('dev_pathway_edit/', edit_dev_pathway_content, name="pathway-dev-content-edit"),
     path('ajax_get_pathway_content_obj/', get_pathway_content_obj, name="pathway-dev-content-modal-edit"),

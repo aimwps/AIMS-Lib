@@ -23,14 +23,29 @@ Here you'll find the organisations that you are involed in. See the tasks being 
 
 {% block content %}
 <div class="container my-4">
-<div class="row justify-content-center px-0 my-2">
-<div class="col-7">
-<input type="text"class="form-control w-100" name="filterInput" placeholder="Search your benchmarks and bookmarks"></input>
-</div>
-<div class="col-5">
-<a class="btn btn-al w-100" href="{% url 'create-organisation' %}">create</a>
-</div>
-</div>
+  <div id="inviteArea" style="display:none;" class="row justify-content-center p-2 my-2" >
+    {% csrf_token %}
+  <button class="btn btn-al w-100" type="button" data-bs-toggle="collapse" data-bs-target="#inviteCollapse" aria-expanded="false" aria-controls="inviteCollapse">
+    You have pending organisation invites
+    </button>
+    <div class="collapse px-0" id="inviteCollapse">
+      <div class="card card-body border-top-0 border-primary">
+        <ul class="list-group-flush px-0" id="organisationInvites">
+        </ul>
+      </div>
+    </div>
+
+
+
+  </div>
+  <div class="row justify-content-center p-2 my-2">
+      <div class="col-7 ps-0">
+          <input type="text"class="form-control w-100" name="filterInput" placeholder="Search my organisations"></input>
+      </div>
+      <div class="col-5  pe-0">
+        <a class="btn btn-al w-100" href="{% url 'create-organisation' %}">create</a>
+        </div>
+      </div>
 <div class="row px-0 my-2">
   {% for obj in object_list %}
   {% if user.is_authenticated %}

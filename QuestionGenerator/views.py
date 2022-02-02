@@ -19,6 +19,7 @@ def submit_status_change(request):
         gqb.user_proof = request.POST.get('submit_status')
         gqb.save()
         return JsonResponse({"Success":"success"})
+
 class VerifyGqbView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'

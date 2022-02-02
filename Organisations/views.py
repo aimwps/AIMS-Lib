@@ -14,6 +14,13 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 import json
 
+
+def ajax_submit_organisation_invite(request):
+    if request.method=="POST":
+        invite = OrganisationMembers.objects.get(id=request.POST.get("invite_id"))
+        invite.status = request.POST.get("status")
+        invite.save()
+        return JsonResponse({"success":"success"}, safe=False)
 def getUserBookmarkedPathways(request):
     if request.method=="GET":
         user_pathways = Pathway.objects.filter(author=request.user)

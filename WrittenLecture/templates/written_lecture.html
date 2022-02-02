@@ -125,7 +125,7 @@ This is an article; lay your thoughts still, read and learn. If you found the co
     <ul class="list-group-flush">
     {% for pathway in part_of_pathways %}
     <li class="list-group-item">
-      <a href="{% url 'video-lecture' pathway.id %}">{{ pathway.title }}</a>
+      <a href="{% url 'pathway-view' pathway.id %}">{{ pathway.title }}</a>
     </li>
 
     {% endfor %}

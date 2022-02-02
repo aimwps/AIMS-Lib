@@ -11,6 +11,11 @@ from WrittenLecture.models import Article, ArticleSession
 from Benchmark.models import Benchmark, BenchmarkSession
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.models import ContentType
+PARTICIPATION_STATUS = (
+                    ('pending', 'pending'),
+                    ('rejected','rejected'),
+                    ('active','active'),
+                    )
 
 
 CONTENT_TYPE = (('article', "Article"),
@@ -23,6 +28,9 @@ REVISE_FREQ = ( ('Never', 'Never'),
                 ('Monthly', 'Monthly'),
                 ('Yearly', 'Yearly')
                 )
+INVITE_TYPES = (("author_free_invite", "author_invite"),
+                ("organisation_invite", "organisation_invite"),
+                ("author_paid_invite", "author_paid_invite", ))
 
 class Pathway(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pathway_creator')
@@ -182,10 +190,11 @@ class PathwayCompletitionRecord(models.Model):
     pathway_content = models.ForeignKey(PathwayContent, on_delete=models.CASCADE)
 
 
-
 class PathwayParticipant(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)#, related_name='pathway_participant')
     on_pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="participants")
+    status = models.CharField(max_length=100, choices=PARTICIPATION_STATUS, default="pending")
+    invite_from = models.CharField(max_length=100, choices=INVITE_TYPES,)
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
 
