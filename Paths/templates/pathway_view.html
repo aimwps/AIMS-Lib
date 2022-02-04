@@ -192,7 +192,9 @@ Pathways are learnable content based on video lectures & written articles. User 
                       After joining below you will gain access to the content<br>
 
                       {% else %}
-
+                      {% if pathway.author.id == request.user.id %}
+                      You are the author of this pathway, it's free to join.
+                      {% else %}
                       Life time access to this pathway costs <strong>£{{pathway.single_user_cost}}</strong><br><br>
                       Direct purchasing gives you the option to restrict which organisations can view your progress.<br><br>
 
@@ -202,7 +204,7 @@ Pathways are learnable content based on video lectures & written articles. User 
                       <p class="text-center">
                       <strong>{{pathway.title}}</strong>
                     </p>
-
+                      {% endif %}
 
                       {% endif %}
 
@@ -217,8 +219,12 @@ Pathways are learnable content based on video lectures & written articles. User 
                       {% if pathway.single_user_cost == "free" %}
                       Join
                       {% else %}
-                      Purchase
+                        {% if pathway.author.id == request.user.id %}
+                          Join
+                        {% else %}
+                        Purchase
                       {% endif %}
+                    {% endif %}
                   </form>
                   </div>
                 </div>

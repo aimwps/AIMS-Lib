@@ -186,17 +186,45 @@ class PathwayView(View):
     def post(self, request, pathway_id):
         if "join_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("join_pathway"))
+
             if pathway.single_user_cost == "free":
                 new_purchase = PathwayPurchase(
                                     purchase_type="author_free",
-                                    purchase_owener=request.user.id,
+                                    purchase_owner=request.user.id,
                                     pathway = pathway,
                                     spent_by_user = request.user,
                                     spent_on_user = request.user,
                                     status = "active"
                 )
-                new_participant = PathwayParticipant(author=request.user, on_pathway=pathway, purchase=new_purchase)
-                new_participant.save()
+                new_purchase.save()
+
+            else:
+                if pathway.author == request.user:
+                    new_purchase = PathwayPurchase(
+                                        purchase_type="author_free",
+                                        purchase_owner=request.user.id,
+                                        pathway = pathway,
+                                        spent_by_user = request.user,
+                                        spent_on_user = request.user,
+                                        status = "active"
+                    )
+                    new_purchase.save()
+                else:
+                    new_purchase = PathwayPurchase(
+                                        purchase_type = "author_paid",
+                                        purchase_owner = request.user.id,
+                                        pathway = pathway,
+                                        spent_by_user = request.user,
+                                        spent_on_user = request.user,
+                                        status = "active"
+                    )
+                    new_purchase.save()
+
+            new_participant = PathwayParticipant(
+                                author = request.user,
+                                on_pathway = pathway,
+                                purchase = new_purchase )
+            new_participant.save()
 
 
 
