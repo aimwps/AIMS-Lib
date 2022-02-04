@@ -241,7 +241,8 @@ class PathwayDevelopView(LoginRequiredMixin, View):
             pathway_content = PathwayContent.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
             pathway_content.delete()
         if "add_pathway_cost" in request.POST:
-            print("we in the right place")
+            print(request.POST)
+            print("....")
             pathway_cost_form = PathwayCostCreateForm(request.POST)
             if pathway_cost_form.is_valid():
                 pathway_cost_form.cleaned_data
@@ -249,6 +250,9 @@ class PathwayDevelopView(LoginRequiredMixin, View):
             else:
                 print(pathway_cost_form.errors)
                 return JsonResponse({'error':True, "data": pathway_cost_form.errors})
+        if "delete_pathway_cost" in request.POST:
+            pathway_cost = PathwayCost.objects.get(id=request.POST.get("delete_pathway_cost"))
+            pathway_cost.delete()
         return HttpResponseRedirect(request.path)
 
 

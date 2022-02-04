@@ -14,12 +14,20 @@ $(document).ready(function () {
               if (json.length > 0) {
               $.each(json, function(idx, cost){
                 console.log(cost.purchase_quantity > 1)
-                let plural = (cost.purchase_quantity >= 1) ? `Life time access for a single user is £${cost.purchase_cost}`:`Life time access through an organisation purchasing ${cost.purchase_quantity} is £${cost.purchase_cost}`;
-                $("#pathwayCostList").append(plural)
+                let btnStatus = (json.length > 1 && idx === 0) ? " disabled":" active";
+                let plural = (idx === 0) ? `Single user access: £${cost.purchase_cost}`:`${cost.purchase_quantity} units for organisation: £${cost.purchase_cost}`;
+
+                $("#pathwayCostList").append(`
+                  <li class="list-group-item">
+                    <button type="submit" value="${cost.id}" class="btn btn-link ${btnStatus}" name="delete_pathway_cost">
+                      <i class="far fa-trash-alt"></i>
+                    </button> ${plural}
+                  </li>`)
               });
             } else{
               $("#id_purchase_quantity").val(1);
-              $("#id_purchase_quantity").prop('read_only', true);
+              $("#id_purchase_quantity").attr("type", "hidden")
+              $("#quantity_1").text("1")
               $("#id_pathway").val($("input[name=pathway_id]").val());
               $("#pathwayCostList").append(`
                 <li class="list-group-item">This pathway is currently free to join.<br>
@@ -182,9 +190,13 @@ $(document).ready(function () {
     console.log("clicked")
     getPathwayCost()
   });
-$(document).on("click", "#addCostBtn", function(e){
+  $(document).on("click", "#addCostBtn", function(e){
     $("#newPathwayCost").toggle()
+
 })
+  $(document).on("click", "[name='add_pathway_cost']", function(){
+    $("#id_pathway").val($("input[name=pathway_id]").val())
+  })
   });
 
 

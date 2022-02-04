@@ -151,8 +151,11 @@ You're developing a pathway, add or change the content, set the order of complet
            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
          <div class="modal-body">
-           <ul class="list-group-flush" id="pathwayCostList">
+           <form class="form-group" method="POST">
+             {% csrf_token %}
+           <ul class="list-group-flush px-0" id="pathwayCostList">
            </ul>
+         </form>
          <div class="container" id="newPathwayCost">
            <form method="POST">
              {% csrf_token %}
@@ -163,7 +166,7 @@ You're developing a pathway, add or change the content, set the order of complet
              </div>
              <div class="col-4">
               {{ cost_form.pathway }}
-             <p>{{ cost_form.purchase_quantity }}</p>
+             <p class="text-center"><span class="lead" id="quantity_1"></span>{{ cost_form.purchase_quantity }}</p>
              <p>{{ cost_form.purchase_cost }}</p>
              </div>
             </div>
