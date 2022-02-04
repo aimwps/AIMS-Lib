@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PathwayContent, Pathway, PathwayParticipant
+from .models import PathwayContent, Pathway, PathwayParticipant, PathwayCost
 from WrittenLecture.article_serializers import ArticleSerializer
 from VideoLecture.video_serializers import VideoSerializer
 from Benchmark.benchmark_serializers import BenchmarkSerializer
@@ -36,3 +36,7 @@ class PathwaySerializer(serializers.ModelSerializer):
             "modify_time",
             "full_pathway",
                 )
+class PathwayCostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PathwayCost
+        fields = ("id", "purchase_quantity", "purchase_cost")

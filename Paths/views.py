@@ -1,9 +1,9 @@
-from .models import Pathway, PathwayContent, PathwayParticipant
-from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm, PathwayContentEditForm
+from .models import Pathway, PathwayContent, PathwayParticipant, PathwayCost, PathwayPurchase
+from .forms import PathwayContentCreateForm, PathwayEditForm, PathwayCreateForm, PathwayContentEditForm, PathwayCostCreateForm
 from django.views.generic import TemplateView, CreateView, View, UpdateView, DetailView, ListView
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from ckeditor.fields import RichTextField
 from django.contrib import messages
@@ -16,10 +16,19 @@ from VideoLecture.models import VideoLecture
 from QuestionGenerator.models import GeneratedQuestionBank
 from Members.models import MemberProfile
 import json, requests
-from .pathway_serializers import PathwaySerializer, PathwayContentSerializer
+from .pathway_serializers import PathwaySerializer, PathwayContentSerializer, PathwayCostSerializer
+
+
+def UserPathways_ajax_get_pathway_costs(request):
+    print(request.GET)
+    if request.method == "GET":
+        pathway = get_object_or_404(Pathway, id=request.GET.get("pathway"))
+        pathway_costs = PathwayCost.objects.filter(pathway=pathway)
+        data = PathwayCostSerializer(pathway_costs, many=True).data
+        return JsonResponse(data, safe=False)
+
 
 def submit_cotent_delete(request):
-    print(request.POST)
     pathway_obj = PathwayContent.objects.get(id=request.POST.get("content_id"))
     if request.POST.get("type") == "delete":
         pathway_obj.delete()
@@ -205,15 +214,15 @@ class PathwayDevelopView(LoginRequiredMixin, View):
     form_class = PathwayContentEditForm()
     def get(self, request, pathway_id):
         context = {}
-        pathway = Pathway.objects.get(id=pathway_id)
-        is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
-        if is_participant:
-            context['participation_status'] = True
+        pathway = Pathway.objects.filter(Q(id=pathway_id, author=request.user))
+        print(pathway)
+        if pathway.exists():
+            context['pathway'] = pathway[0]
+            context['form'] = self.form_class
+            context['cost_form'] = PathwayCostCreateForm()
+            return render(request, self.template_name, context)
         else:
-            context['participation_status'] = False
-        context['pathway'] = pathway
-        context['form'] = self.form_class
-        return render(request, self.template_name, context)
+            return redirect("access-denied")
 
     def post(self, request, pathway_id):
         if "join_pathway" in request.POST:
@@ -231,7 +240,17 @@ class PathwayDevelopView(LoginRequiredMixin, View):
         if "delete_pathwayOBJ" in request.POST:
             pathway_content = PathwayContent.objects.get(id=int(request.POST.get("delete_pathwayOBJ")))
             pathway_content.delete()
+        if "add_pathway_cost" in request.POST:
+            print("we in the right place")
+            pathway_cost_form = PathwayCostCreateForm(request.POST)
+            if pathway_cost_form.is_valid():
+                pathway_cost_form.cleaned_data
+                pathway_cost_form.save()
+            else:
+                print(pathway_cost_form.errors)
+                return JsonResponse({'error':True, "data": pathway_cost_form.errors})
         return HttpResponseRedirect(request.path)
+
 
 class PathwayContentCreate(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
@@ -330,7 +349,7 @@ class PathwayCreate(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         return context
     def get_success_url(self):
-        return reverse("pathway-content-create", kwargs={'pathway_id' : self.object.pk})
+        return reverse("pathways")
 
 class PathsHomeView(LoginRequiredMixin, ListView):
     login_url = '/login-or-register/'

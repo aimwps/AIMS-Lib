@@ -36,10 +36,16 @@ You're developing a pathway, add or change the content, set the order of complet
           <a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a>
         </li>
         <li class="nav-item px-2">
-  <a href="{% url 'pathway-edit' pathway.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit pathway title and description"><i class="far fa-edit"></i></a>
+          <a href="{% url 'pathway-develop' pathway.id %}" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit pathway title and description"><i class="far fa-edit"></i></a>
         </li>
         <li class="nav-item px-2">
             <a href="#" data-bs-toggle="tooltip" title="Delete this pathway"><i class="far fa-trash-alt"></i></a>
+        </li>
+        <li class="nav-item px-2">
+          <a type="button" name="costSettings" class="text-primary" data-bs-toggle="modal" data-bs-target="#costSettingModal">
+              <i class="fas fa-coins"></i>
+            </a>
+
         </li>
         {% endif %}
       {% endif %}
@@ -135,6 +141,46 @@ You're developing a pathway, add or change the content, set the order of complet
      </div>
    </div>
 
+
+   <!-- Modal -->
+   <div class="modal fade" id="costSettingModal" tabindex="-1" aria-labelledby="costSettingModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title" id="costSettingModalLabel">Access permissions and costs</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+           <ul class="list-group-flush" id="pathwayCostList">
+           </ul>
+         <div class="container" id="newPathwayCost">
+           <form method="POST">
+             {% csrf_token %}
+             <div class="row">
+             <div class="text-end col-8">
+               <p class="pt-1">Purchase quantity</p>
+               <p class="pt-3">Cost for quantity</p>
+             </div>
+             <div class="col-4">
+              {{ cost_form.pathway }}
+             <p>{{ cost_form.purchase_quantity }}</p>
+             <p>{{ cost_form.purchase_cost }}</p>
+             </div>
+            </div>
+
+             <button class="btn btn-al w-100" type="submit" name="add_pathway_cost">Add cost</button>
+           </form>
+         </div>
+         </div>
+
+
+         <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-primary" id="addCostBtn"><i class="fas fa-plus"></i></button>
+         </div>
+       </div>
+     </div>
+   </div>
 
 {% endblock %}
 

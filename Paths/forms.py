@@ -1,5 +1,18 @@
 from django import forms
-from .models import Pathway, PathwayContent
+from .models import Pathway, PathwayContent, PathwayCost
+class PathwayCostCreateForm(forms.ModelForm):
+    class Meta:
+        model = PathwayCost
+        fields = (
+                    "pathway",
+                    "purchase_quantity",
+                    "purchase_cost",
+                    )
+        widgets = {
+            "pathway": forms.TextInput(attrs = {'class': 'form-control', "type":"hidden"}),
+            "purchase_quantity": forms.TextInput(attrs = {'class': 'form-control'}),
+            "purchase_cost" :forms.TextInput(attrs = {'class': 'form-control'}),
+                                            }
 
 
 class PathwayContentEditForm(forms.ModelForm):

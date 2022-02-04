@@ -3,6 +3,7 @@
 
 - Content adding to pathway needs to be limited to content that the user owns
 - -  need to redoo formatting.
+- - add back button to add content
 
 - Content needs flag to say whether it's open source allowing it to appear in library for book marking
 - - open source content can be viewed without logging in.

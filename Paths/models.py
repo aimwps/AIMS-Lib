@@ -49,6 +49,7 @@ class Pathway(models.Model):
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
     modify_date = models.DateField(auto_now=True,auto_now_add=False)
     modify_time = models.TimeField(auto_now=True,auto_now_add=False)
+
     def __str__(self):
         return f"pathway_{self.id}"
 
@@ -56,6 +57,14 @@ class Pathway(models.Model):
         kwargs = super(Pathway, self).get_form_kwargs(
             *args, **kwargs)
         return kwargs
+
+class PathwayCost(models.Model):
+    pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="cost_brackets")
+    purchase_quantity = models.PositiveIntegerField()
+    purchase_cost = models.DecimalField(decimal_places=2, max_digits=6)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["pathway", "purchase_quantity"], name="duplicate_quantity_costs")]
 
 
 class PathwayContent(models.Model):
