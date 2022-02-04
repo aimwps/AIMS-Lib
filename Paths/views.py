@@ -130,7 +130,6 @@ def get_dev_pathway_content(request):
 
     return JsonResponse(json_data_info, safe=False)
 
-
 class PathwayView(View):
     model = Pathway
     template_name = "pathway_view.html"
@@ -166,33 +165,42 @@ class PathwayView(View):
 
             else:
                 context['participation_status'] = False
-                pathway_content_with_status = [
-                                                (
-                                                content,
-                                                False,
-                                                None,
-                                                ) for content in pathway.full_pathway.all()
-                                                ]
+                pathway_content_with_status = [(    content,
+                                                    False,
+                                                    None,
+                                                ) for content in pathway.full_pathway.all()]
+
                 context['pathway_content'] = pathway_content_with_status
         else:
             context['participation_status'] = False
-            pathway_content_with_status = [
-                                            (
-                                            content,
-                                            False,
-                                            None,
-                                            ) for content in pathway.full_pathway.all()
-                                            ]
+            pathway_content_with_status = [(    content,
+                                                False,
+                                                None,
+                                            ) for content in pathway.full_pathway.all()]
             context['pathway_content'] = pathway_content_with_status
-        print(context)
+
+        # Get the pathway cost
+
         return render(request, self.template_name, context)
 
     def post(self, request, pathway_id):
-        print(request.POST)
         if "join_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("join_pathway"))
-            new_participant = PathwayParticipant(author=request.user, on_pathway=pathway)
-            new_participant.save()
+            if pathway.single_user_cost == "free":
+                new_purchase = PathwayPurchase(
+                                    purchase_type="author_free",
+                                    purchase_owener=request.user.id,
+                                    pathway = pathway,
+                                    spent_by_user = request.user,
+                                    spent_on_user = request.user,
+                                    status = "active"
+                )
+                new_participant = PathwayParticipant(author=request.user, on_pathway=pathway, purchase=new_purchase)
+                new_participant.save()
+
+
+
+
         if "leave_pathway" in request.POST:
             pathway = Pathway.objects.get(id=request.POST.get("leave_pathway"))
             participant = PathwayParticipant.objects.get(author=request.user, on_pathway=pathway)

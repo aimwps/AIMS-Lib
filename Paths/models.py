@@ -58,6 +58,14 @@ class Pathway(models.Model):
             *args, **kwargs)
         return kwargs
 
+    @property
+    def single_user_cost(self):
+        costs = PathwayCost.objects.filter(Q(pathway=self, purchase_quantity=1))
+        if costs.exists():
+            return costs[0].purchase_cost
+        else:
+            return "free"
+
 class PathwayCost(models.Model):
     pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="cost_brackets")
     purchase_quantity = models.PositiveIntegerField()
@@ -201,6 +209,13 @@ class PathwayContent(models.Model):
             else:
                 return "pending"
 
+class PathwayPurchase(models.Model):
+    purchase_type = models.CharField(max_length=100, choices=MEMBERSHIP_TYPES)
+    purchase_owner = models.PositiveIntegerField()
+    pathway = models.ForeignKey(Pathway, on_delete=models.SET_NULL, null=True)
+    spent_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="user_spends")
+    spent_on_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="pathway_purchases")
+    status = models.CharField(max_length=100, choices=(("active", "active"), ("pending", "pending"), ("spent", "spent")))
 
 
 class PathwayParticipant(models.Model):
@@ -209,14 +224,7 @@ class PathwayParticipant(models.Model):
     status = models.CharField(max_length=100, choices=PARTICIPATION_STATUS, default="pending")
     create_date = models.DateField(auto_now=False,auto_now_add=True)
     create_time = models.TimeField(auto_now=False,auto_now_add=True)
+    purchase = models.ForeignKey(PathwayPurchase, on_delete=models.PROTECT)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['on_pathway','author'], name="duplicate_pathway_participant")]
-
-class PathwayPurchase(models.Model):
-    purchase_type = models.CharField(max_length=100, choices=MEMBERSHIP_TYPES)
-    purchase_owner = models.PositiveIntegerField()
-    pathway = models.ForeignKey(Pathway, on_delete=models.SET_NULL, null=True)
-    spent_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="user_spends")
-    spent_on_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="pathway_purchases")
-    status = models.CharField(max_length=100, choices=(("active", "active"), ("pending", "pending"), ("spent", "spent")))

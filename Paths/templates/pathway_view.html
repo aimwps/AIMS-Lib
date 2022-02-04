@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Pathways{% endblock %}
 
 {% block topcarousel %}
@@ -22,6 +23,7 @@ Pathways are learnable content based on video lectures & written articles. User 
 {% block content %}
 <div class="container text-center my-4">
 <div class="row text-center">
+  <input type="hidden" name="pathway_id" value="{{pathway.id}}">
     <h4>{{ pathway.title }}</h4>
     <h6>Created {{ pathway.create_date}} @ {{ pathway.create_time }} by {{ pathway.author }}</h6>
 
@@ -128,7 +130,7 @@ Pathways are learnable content based on video lectures & written articles. User 
        {% endif %}
 
      </div>
-     <div class="col-3 mt-2">
+     <div class="col-3 mt-2 text-end">
        {% if participation_status %}
        {{ pathway_obj.2}}
        {% else %}
@@ -143,71 +145,108 @@ Pathways are learnable content based on video lectures & written articles. User 
   </div>
 
   {% if user.is_authenticated %}
-        <hr>
-        {% if participation_status %}
-            <p class="text-center">
-              <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">
-                Leave Pathway
-              </a>
-            </p>
-            <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
+    <div class="container">
+      <div class="row my-4">
+        <div class="col border border-primary rounded">
+          {% if participation_status %}
+              <p class="text-center my-2">
+                <a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_leave">
+                  Leave Pathway
+                </a>
+              </p>
+              <div class="modal fade" id="pathway_leave" tabindex="-1" aria-labelledby="pathway_leaveLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="pathway_leaveLabel">Leave pathway confirmation</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      You are trying to leave a pathway, leaving may effect your previous progress, Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <form action="." method="POST">
+                        {% csrf_token %}
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                      <button name="leave_pathway" value="{{pathway.id}}" class="btn btn-al">Leave</button>
+                    </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          {% else %}
+          <p class="text-center my-2"><a type="button" id="joinPathwayBtn" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Join Pathway</a></p>
+            <div class="modal fade" id="pathway_join" tabindex="-1" aria-labelledby="pathway_joinLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="pathway_leaveLabel">Leave pathway confirmation</h5>
+                    <h5 class="modal-title" id="pathway_joinLabel">Join pathway confirmation</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    You are trying to leave a pathway, leaving may effect your previous progress, Are you sure?
+                    <p id="costOptionText">
+
+                      {% if pathway.single_user_cost == "free" %}
+                      This pathway is free to join <br>
+                      After joining below you will gain access to the content<br>
+
+                      {% else %}
+
+                      Life time access to this pathway costs <strong>£{{pathway.single_user_cost}}</strong><br><br>
+                      Direct purchasing gives you the option to restrict which organisations can view your progress.<br><br>
+
+                      Organisations may be able to bulk purcase this at a discount rate. <a class="nounderline" href="#">Bookmark</a> the pathway so you can add it to your <a class="nounderline" href="{% url 'user-organisations-view' %}">Organisations</a> where purchase options will be available. <br><br>
+
+                      I'm ready to start the path..<br>
+                      <p class="text-center">
+                      <strong>{{pathway.title}}</strong>
+                    </p>
+
+
+                      {% endif %}
+
+                    </p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form action="." method="POST">
                       {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <button name="leave_pathway" value="{{pathway.id}}" class="btn btn-al">Leave</button>
+                    <button name="join_pathway" value="{{pathway.id}}" class="btn btn-al">
+                      {% if pathway.single_user_cost == "free" %}
+                      Join
+                      {% else %}
+                      Purchase
+                      {% endif %}
                   </form>
                   </div>
                 </div>
               </div>
             </div>
-        {% else %}
-        <p class="text-center"><a type="button" class="btn text-primary" data-bs-toggle="modal" data-bs-target="#pathway_join">Join Pathway</a></p>
+        {% endif %}
+        </div>
 
-          <div class="modal fade" id="pathway_join" tabindex="-1" aria-labelledby="pathway_joinLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="pathway_joinLabel">Join pathway confirmation</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  You are joining this pathway, your progress can be tracked by the author, are you sure?
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <form action="." method="POST">
-                    {% csrf_token %}
-                  <input type="hidden" name="next" value="{{ request.path }}">
-                  <button name="join_pathway" value="{{pathway.id}}" class="btn btn-al">Join</button>
-                </form>
-                </div>
-              </div>
-            </div>
-          </div>
+      </div>
 
-      {% endif %}
-    <hr>
+    </div>
+
     {% else %}
-    <div class="container border border-primary rounded my-4">
-    <p class="my-4">
-        You are not logged in, access to this content has been restricted.
-        You can log in <a href="{% url 'login' %}" >here</a>
-      </p>
+    <div class="container">
+      <div class="row my-4">
+        <div class="col border border-primary rounded">
+          <p class="my-2">
+              You are not logged in, access to this content has been restricted.
+              You can log in <a href="{% url 'login' %}" >here</a>
+          </p>
+        </div>
+      </div>
+
     </div>
       {% endif %}
 
 
 {% endblock %}
 {% block scripts%}
+<script src="{% static 'js/pathway/pathwayView.js'%}"></script>
 {% endblock %}
