@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Organisation, OrganisationContent, OrganisationMembers
 from .forms import OrganisationCreateForm, OrganisationEditForm, OrganisationContentCreateForm, OrganisationContentEditForm
-from Paths.models import Pathway
-from Paths.pathway_serializers import PathwaySerializer
+from Paths.models import Pathway, PathwayPurchase, PathwayCost
+from Paths.pathway_serializers import PathwaySerializer, PathwayContentSerializer, PathwayCostSerializer
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, CreateView, UpdateView, View, ListView
@@ -18,23 +18,32 @@ def ajax_get_organisation_pathway_data(request):
     pathway = Pathway.objects.get(id=request.GET.get("pathway"))
     organisation = Organisation.objects.get(id=request.GET.get("organisation"))
     organisation_pathways = organisation.group_pathways.filter()
+    organsation_member_ids = organisation.org_members.values_list("member_id")
+    pathway_and_organisation_participants = pathway.participants.filter(author__in=organsation_member_ids)
+
+
+
+
 
     # Pathway participant
 
 
-    x = PathwaySerializer(pathway)
-    y = PathwayContentSerializer(pathway_objs,many=True)
-    pathway_purchases = PathwayPurchase.objects.filter(Q(purchase_type="organisation_paid", pathway=pathway))
+    pathway_data = PathwaySerializer(pathway)
+
+    pathway_purchases = PathwayPurchase.objects.filter(purchase_type="organisation_paid", purchase_owner=organisation.find_root_organisation.id, status="active")
+
+
+
 
 
     data_info = {
-                "branch_members": ,
-                "active_members": ,
-                "pending_members": ,
-                "own_subscription_members": ,
-                "pathway_purchases": ,
-                "pathway": x.data,
-                "pathway_content": y.data,
+                "branch_members": organisation.org_members.count() ,
+                "active_members": pathway_and_organisation_participants.filter(purchase__status="spent").count() ,
+                "pending_members": pathway_and_organisation_participants.filter(purchase__status="pending").count() ,
+                "own_subscription_members": pathway_and_organisation_participants.filter(Q(purchase__status="spent"), Q(purchase__purchase_type="author_paid") | Q(purchase__purchase_type="author_free")).count() ,
+                "pathway_available_invites": pathway_purchases.count() ,
+                "pathway_costs": PathwayCostSerializer(pathway.cost_brackets.all().order_by("purchase_quantity"), many=True).data,
+                "pathway": pathway_data.data,
                 }
 
     return JsonResponse(data_info, safe=False)
@@ -43,6 +52,7 @@ def ajax_get_organisation_pathway_data(request):
 def ajax_submit_organisation_invite(request):
     if request.method=="POST":
         invite = OrganisationMembers.objects.get(id=request.POST.get("invite_id"))
+
         invite.status = request.POST.get("status")
         invite.save()
         return JsonResponse({"success":"success"}, safe=False)

@@ -26,7 +26,7 @@ class Organisation(models.Model):
 
     def __str__(self):
         return f"{self.title}_#{self.id}"
-
+    @property
     def find_root_organisation(self):
         node = self
         while node.parent_organisation:

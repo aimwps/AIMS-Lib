@@ -213,8 +213,8 @@ class PathwayPurchase(models.Model):
     purchase_type = models.CharField(max_length=100, choices=MEMBERSHIP_TYPES)
     purchase_owner = models.PositiveIntegerField()
     pathway = models.ForeignKey(Pathway, on_delete=models.SET_NULL, null=True)
-    spent_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="user_spends")
-    spent_on_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="pathway_purchases")
+    spent_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="user_spends")
+    spent_on_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="pathway_purchases")
     status = models.CharField(max_length=100, choices=(("active", "active"), ("pending", "pending"), ("spent", "spent")))
 
 

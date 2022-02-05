@@ -1,5 +1,6 @@
 from django import forms
-from .models import Pathway, PathwayContent, PathwayCost
+from .models import Pathway, PathwayContent, PathwayCost, PathwayPurchase
+
 class PathwayCostCreateForm(forms.ModelForm):
     class Meta:
         model = PathwayCost

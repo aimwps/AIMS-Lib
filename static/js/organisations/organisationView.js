@@ -7,7 +7,7 @@ $(document).ready(function(){
                 organisation: $("#selectedSubOrg").val()},
         datatype:"json",
         success: function(json){
-          console.log(json)
+          console.log("this json we want",json)
           $("#pathwayModalLabel").text(json.pathway.title);
           $("#pathwayModalDescription").text(json.pathway.description);
           $("#pathwayModalContentList").empty()

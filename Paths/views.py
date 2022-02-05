@@ -20,7 +20,7 @@ from .pathway_serializers import PathwaySerializer, PathwayContentSerializer, Pa
 
 
 def UserPathways_ajax_get_pathway_costs(request):
-    
+
     if request.method == "GET":
         pathway = get_object_or_404(Pathway, id=request.GET.get("pathway"))
         pathway_costs = PathwayCost.objects.filter(pathway=pathway)
@@ -192,7 +192,7 @@ class PathwayView(View):
                                     pathway = pathway,
                                     spent_by_user = request.user,
                                     spent_on_user = request.user,
-                                    status = "active"
+                                    status = "spent"
                 )
                 new_purchase.save()
 
@@ -204,7 +204,7 @@ class PathwayView(View):
                                         pathway = pathway,
                                         spent_by_user = request.user,
                                         spent_on_user = request.user,
-                                        status = "active"
+                                        status = "spent"
                     )
                     new_purchase.save()
                 else:
@@ -214,7 +214,7 @@ class PathwayView(View):
                                         pathway = pathway,
                                         spent_by_user = request.user,
                                         spent_on_user = request.user,
-                                        status = "active"
+                                        status = "spent"
                     )
                     new_purchase.save()
 
