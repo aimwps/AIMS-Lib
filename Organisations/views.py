@@ -14,6 +14,31 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 import json
 
+def ajax_get_organisation_pathway_data(request):
+    pathway = Pathway.objects.get(id=request.GET.get("pathway"))
+    organisation = Organisation.objects.get(id=request.GET.get("organisation"))
+    organisation_pathways = organisation.group_pathways.filter()
+
+    # Pathway participant
+
+
+    x = PathwaySerializer(pathway)
+    y = PathwayContentSerializer(pathway_objs,many=True)
+    pathway_purchases = PathwayPurchase.objects.filter(Q(purchase_type="organisation_paid", pathway=pathway))
+
+
+    data_info = {
+                "branch_members": ,
+                "active_members": ,
+                "pending_members": ,
+                "own_subscription_members": ,
+                "pathway_purchases": ,
+                "pathway": x.data,
+                "pathway_content": y.data,
+                }
+
+    return JsonResponse(data_info, safe=False)
+
 
 def ajax_submit_organisation_invite(request):
     if request.method=="POST":

@@ -21,9 +21,14 @@ class PathwayContentSerializer(serializers.ModelSerializer):
     def get_queryset(self):
         queryset = PathwayContent.objects.all().order_by('order_position')
         return queryset
+class PathwayCostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PathwayCost
+        fields = ("id", "purchase_quantity", "purchase_cost")
 
 class PathwaySerializer(serializers.ModelSerializer):
     full_pathway = PathwayContentSerializer(many=True)
+    cost_brackets = PathwayCostSerializer(many=True)
     class Meta:
         model = Pathway
         fields = (
@@ -35,8 +40,6 @@ class PathwaySerializer(serializers.ModelSerializer):
             "modify_date",
             "modify_time",
             "full_pathway",
+            "single_user_cost",
+            "cost_brackets",
                 )
-class PathwayCostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PathwayCost
-        fields = ("id", "purchase_quantity", "purchase_cost")

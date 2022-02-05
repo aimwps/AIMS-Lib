@@ -1,0 +1,9 @@
+
+<select class="form-select" aria-label="Default select example" id="selectOrganisationBranch">
+  {% for organisation in organisation_list %}
+    <option {% if forloop.counter ==  0 %}selected{% endif %}  name="suborganisationSelect" value="{{ organisation.id }}">
+{% for i in organisation.distance_from_root%}___{% endfor %}
+          {{ organisation.title }}
+    </option>
+{% endfor %}
+</select>

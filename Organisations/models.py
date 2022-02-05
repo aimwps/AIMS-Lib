@@ -39,6 +39,15 @@ class Organisation(models.Model):
         else:
             return True
 
+    @property
+    def distance_from_root(self):
+        count = 0
+        current = self
+        while current.parent_organisation:
+            count += 1
+            current = current.parent_organisation
+        return [i for i in range(count)]
+
 
 
 class OrganisationContent(models.Model):

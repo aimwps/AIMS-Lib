@@ -20,7 +20,7 @@ from .pathway_serializers import PathwaySerializer, PathwayContentSerializer, Pa
 
 
 def UserPathways_ajax_get_pathway_costs(request):
-    print(request.GET)
+    
     if request.method == "GET":
         pathway = get_object_or_404(Pathway, id=request.GET.get("pathway"))
         pathway_costs = PathwayCost.objects.filter(pathway=pathway)
@@ -126,9 +126,7 @@ def get_dev_pathway_content(request):
                 "pathway_content": y.data,
                 }
 
-    json_data_info = json.dumps(data_info)
-
-    return JsonResponse(json_data_info, safe=False)
+    return JsonResponse(data_info, safe=False)
 
 class PathwayView(View):
     model = Pathway
