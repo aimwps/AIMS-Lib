@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, CreateView, UpdateView, View, ListView
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect,JsonResponse
-from .organisation_serializers import OrganisationSerializer
+from .organisation_serializers import OrganisationSerializer, OrganisationMembersSerializer
 from Members.members_serializers import UserSerializer
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -20,26 +20,17 @@ def ajax_get_organisation_pathway_data(request):
     organisation_pathways = organisation.group_pathways.filter()
     organsation_member_ids = organisation.org_members.values_list("member_id")
     pathway_and_organisation_participants = pathway.participants.filter(author__in=organsation_member_ids)
-
-
-
-
-
-    # Pathway participant
-
-
+    organisation_non_pathway_participants = organisation.org_members.filter(~Q(member__in=pathway.participants.values_list("author_id")))
+    print("----------------------------------")
+    print(organisation_non_pathway_participants)
+    print("----------------------------------")
     pathway_data = PathwaySerializer(pathway)
-
     pathway_purchases = PathwayPurchase.objects.filter(purchase_type="organisation_paid", purchase_owner=organisation.find_root_organisation.id, status="active")
-
-
-
-
-
     data_info = {
                 "branch_members": organisation.org_members.count() ,
                 "active_members": pathway_and_organisation_participants.filter(purchase__status="spent").count() ,
                 "pending_members": pathway_and_organisation_participants.filter(purchase__status="pending").count() ,
+                "without_pathway_invite": OrganisationMembersSerializer(organisation_non_pathway_participants, many=True).data,
                 "own_subscription_members": pathway_and_organisation_participants.filter(Q(purchase__status="spent"), Q(purchase__purchase_type="author_paid") | Q(purchase__purchase_type="author_free")).count() ,
                 "pathway_available_invites": pathway_purchases.count() ,
                 "pathway_costs": PathwayCostSerializer(pathway.cost_brackets.all().order_by("purchase_quantity"), many=True).data,
@@ -69,7 +60,7 @@ def getUserBookmarkedPathways(request):
 
 def submitNewMember(request):
     if request.method=="POST":
-        print(request.POST)
+
         user = get_object_or_404(User, id=request.POST.get("user_id"))
         organisation = get_object_or_404(Organisation, id=request.POST.get("organisation_id"))
         new_membership = OrganisationMembers(organisation=organisation, member=user, status="pending")
@@ -80,7 +71,7 @@ def submitNewMember(request):
 
 def searchExactUser(request):
     if request.method=="GET":
-        print(request.GET)
+
         search_phrase = request.GET.get("search_phrase")
         user = User.objects.filter(email__iexact=search_phrase) | User.objects.filter(username__iexact=search_phrase)
         if user:
@@ -154,9 +145,6 @@ def get_suborganisation_list(organisation, organisation_list=[]):
         get_suborganisation_list(organisation=child, organisation_list=organisation_list)
     return organisation_list
 
-
-
-
 class OrganisationView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -170,7 +158,7 @@ class OrganisationView(LoginRequiredMixin, View):
                 parent_org_choices = [(organisation.id, organisation.title) for organisation in organisation_list]
                 add_org_form = OrganisationCreateForm()
                 add_org_form.fields['parent_organisation'].choices = parent_org_choices
-                print(add_org_form)
+
                 context = {"organisation_data": organisation_tree,
                             "root_organisation": organisation,
                             "organisation_list": organisation_list,
@@ -194,6 +182,7 @@ class OrganisationView(LoginRequiredMixin, View):
 
     def post(self, request, organisation_id):
         print(request.POST)
+
         if "create_sub_organisation" in request.POST:
             new_organisation = Organisation(
                                 author=request.user,
@@ -226,9 +215,19 @@ class OrganisationView(LoginRequiredMixin, View):
                     pathway = Pathway.objects.get(id=new_pathway_id)
                     new_content_for_organisation = OrganisationContent(assigned_group=organisation, content_type="pathway", pathway=pathway)
                     new_content_for_organisation.save()
+        if "org_purchase_pathway_invites" in request.POST:
 
+            cost = PathwayCost.objects.get(id=request.POST.get("org_purchase_pathway_invites"))
+            organisation = Organisation.objects.get(id=organisation_id)
 
-
+            for unit in range(cost.purchase_quantity):
+                new_purchase = PathwayPurchase(
+                                purchase_type = "organisation_paid",
+                                purchase_owner= organisation.find_root_organisation.id,
+                                pathway = cost.pathway,
+                                status = "active",
+                )
+                new_purchase.save()
 
 
         return redirect("organisation", organisation_id=organisation_id)
@@ -243,9 +242,6 @@ class OrganisationCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
     def get_success_url(self):
-        print("yyyyyyyyyyyyyyyyyyyyyyyyy")
-        print(self.object.pk)
-        print("-----------------------------")
         return reverse('organisation', kwargs={'organisation_id' : self.object.pk})
 
 class OrganisationEdit(LoginRequiredMixin, UpdateView):
@@ -264,7 +260,6 @@ class OrganisationContentView(LoginRequiredMixin, DetailView):
     template_name = "organisation_content_view.html"
     model = OrganisationContent
 
-
 class OrganisationContentCreate(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
@@ -276,7 +271,6 @@ class OrganisationContentCreate(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
     def post(self, request, organisation_id):
         if "create_group_pathway" in request.POST:
-            print(request.POST)
             new_group_pathway = OrganisationContent(
                             assigned_group = get_object_or_404(Organisation, id=organisation_id),
                             content_type = ContentType.objects.get_for_model(Pathway),
@@ -285,8 +279,6 @@ class OrganisationContentCreate(LoginRequiredMixin, View):
 
             new_group_pathway.save()
             return HttpResponseRedirect("/my-organisations/")
-
-
 
 class OrganisationContentEdit(LoginRequiredMixin, UpdateView):
     login_url = '/login-or-register/'
@@ -302,7 +294,6 @@ class OrganisationContentEdit(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.content_type = ContentType.objects.get_for_model(Pathway)
         return super().form_valid(form)
-
 
 class UserOrganisationsView(LoginRequiredMixin,ListView):
     login_url = '/login-or-register/'

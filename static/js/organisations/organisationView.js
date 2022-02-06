@@ -10,8 +10,46 @@ $(document).ready(function(){
           console.log("this json we want",json)
           $("#pathwayModalLabel").text(json.pathway.title);
           $("#pathwayModalDescription").text(json.pathway.description);
+          $("#inOrgSubscribers").text(json.branch_members)
+          $("#activePathwayInvites").text(json.active_members)
+          $("#pendingPathwayInvite").text(json.pending_members)
+          $("#externalPathwayMembership").text(json.own_subscription_members)
+          $("#unspentOrgPathwayInvites").text(json.pathway_available_invites)
+          $("#noPathwayInviteMembers").text(json.without_pathway_invite.length)
+
+
+          // Add members without invite to invite form.
+          $("#orgMembersToInvite").empty()
+          $.each(json.without_pathway_invite, function(idx, member){
+            $("#orgMembersToInvite").append(`
+              <li class="list-group-item">
+              <div class="form-check">
+              <input class="form-check-input" name="members" type="checkbox" value="${member.member.id}" id="newMemberCheck_${member.id}">
+              <label class="form-check-label" for="newMemberCheck_${member.member.id}">
+                ${member.member.username}: ${member.member.first_name} ${member.member.last_name}
+              </label>
+            </div>
+          </li>`)
+          })
+
+          // Add the pathway costs and buy buttons to the collapse frame
+          $("#purchaseInviteCosts").empty()
+          $.each(json.pathway_costs, function(idx, cost){
+          let plural = (idx === 0) ? `Single pathway invite: £${cost.purchase_cost}`:`${cost.purchase_quantity} invites: £${cost.purchase_cost}`;
+          console.log("plural", plural)
+          $("#purchaseInviteCosts").append(`
+            <li class="list-group-item text-right">
+             ${plural}
+              <button type="submit" value="${cost.id}" class="btn btn-link" name="org_purchase_pathway_invites">
+                <i class="fas fa-shopping-basket"></i>
+              </button>
+            </li>`)
+
+          });
+
+          // add the pathweay contents to the modal display
           $("#pathwayModalContentList").empty()
-          $.each(json.pathway_content, function(idx, content){
+          $.each(json.pathway.full_pathway, function(idx, content){
             if (content.content_type === "article"){
               $("#pathwayModalContentList").append(`
                 <li class="list-group-item">
@@ -38,6 +76,7 @@ $(document).ready(function(){
 
     })
   }})}
+
   function loadMembersList() {
     $("#parentMembers").empty();
     $("#parentMembers").append(`<div class="spinner-border text-primary text-center" role="status">
@@ -277,5 +316,8 @@ $(document).ready(function(){
     ajaxFillPathwayModal(pathId)
 
   });
-    loadMembersList();
+  // $(document).on("click", "#buyInviteBtn", function(){
+  //   $("#purchaseInvitesModal").modal("show")
+  // })
+  loadMembersList();
 });
