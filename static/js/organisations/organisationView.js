@@ -110,7 +110,6 @@ $(document).ready(function(){
 
     })
   }})}
-
   function loadMembersList() {
     $("#parentMembers").empty();
     $("#parentMembers").append(`<div class="spinner-border text-primary text-center" role="status">
@@ -139,12 +138,12 @@ $(document).ready(function(){
 
   }}
   )};
-  function submitNewMember(orgId, userId){
+  function submitNewMember(orgId){
       $.ajax({
         method: "POST",
         url: "/ajax_submit_new_membership/",
         data: { organisation_id: orgId,
-                user_id: userId,
+                user_id: $("#inviteUserById").val(),
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()},
         success: function(){
           $("#userSearchInput").val("");
@@ -311,8 +310,8 @@ $(document).ready(function(){
               </li>`);
               if (data.status.status === "no membership"){
                 $("#userSearchResults").append(`
-                    <input type="hidden" name="inviteUserById" value="${data.user.id}">
-                    <button type="button" name="submitInvite" onclick="submitNewMember(${data.status.organisation.id}, ${data.user.id})" class="btn btn-al w-100"> Send Invite</button>
+                    <input type="hidden" name="inviteUserById" id="inviteUserById" value="${data.user.id}">
+                    <button type="button" name="submitInvite" id="submitInvite" value="${data.status.organisation.id}" class="btn btn-al w-100"> Send Invite</button>
     `);
               }
           } else {
@@ -338,7 +337,10 @@ $(document).ready(function(){
     $("#addPathway").collapse('toggle');
 
   });
-
+  $(document).on("click", "#submitInvite", function(){
+    let orgId = $(this).val();
+    submitNewMember(orgId)
+  })
   $(document).on("change", "#selectOrganisationBranch", function(){
     let orgId = $(this).val();
     selectOrganisationBranch(orgId);
