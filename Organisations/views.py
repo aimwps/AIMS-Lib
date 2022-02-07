@@ -18,10 +18,11 @@ def ajax_users_organisation_pathway_data(request):
     print(request.GET)
     organisation = Organisation.objects.get(id=request.GET.get("organisation_id"))
     user = User.objects.get(id=request.GET.get("user_id"))
-    user_pathway_results = []
+    user_pathway_results = {"pathway_results":[],
+                            "user": UserSerializer(user).data}
 
     for content in organisation.group_pathways.all():
-        user_pathway_results.append({"result": content.pathway.user_percent_completion(user),
+        user_pathway_results['pathway_results'].append({"result": content.pathway.user_percent_completion(user),
                                     "pathway": PathwaySerializer(content.pathway).data})
 
 

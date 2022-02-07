@@ -185,7 +185,22 @@ $(document).ready(function(){
       data: {user_id: userId,
             organisation_id: $("#selectedSubOrg").val()},
       success: function(json){
+        $("#userInfoModalLabel").text(`${json.user.username}: ${json.user.first_name} ${json.user.last_name}`)
         console.log(json)
+        $("#userPathwayResults").empty();
+        $.each(json.pathway_results, function(idx, pathway){
+          $("#userPathwayResults").append(`
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-10">
+                    ${pathway.pathway.title}
+                </div>
+                <div class="col-2">
+                    ${pathway.result}
+                </div>
+              </div>
+            </li>`)
+        })
       }
     })
 
