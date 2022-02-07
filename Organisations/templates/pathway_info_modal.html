@@ -6,76 +6,103 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p class="lead">Subscription status</p>
+        <p class="lead">Pathway Invite Status</p>
           <ul class="list-group-flush">
+
             <li class="list-group-item">Branch members: <span id="inOrgSubscribers">
-              8
+              -
               </span>
             </li>
-            <li class="list-group-item ps-0">
-              <button class="btn btn-link text-start w-100 nounderline">Members with active pathway: <span id="activePathwayInvites" class="text-black">
-              8
-              </span>
-            </button>
+
+            <li class="list-group-item">
+              <a type="button" class="btn-link nounderline" data-bs-toggle="collapse" data-bs-target="#activePathwayCollapsee" aria-expanded="false" aria-controls="activePathwayCollapsee">
+                Members with active pathway: <span id="activePathwayInvites" class="text-black">-</span>
+              </a>
+
+              <div class="collapse  w-100" id="activePathwayCollapsee">
+                <div class="card card-body border-0">
+                    <ul class="list-group-flush text-start" id="activePathwayMembers"></ul>
+                </div>
+              </div>
             </li>
-            <li class="list-group-item ps-0">
-              <button class="btn btn-link text-start w-100 nounderline">Members with no invite: <span id="noPathwayInviteMembers" class="text-black">
-              8
-              </span>
-            </button>
+
+            <li class="list-group-item">
+
+              <a type="button" class="btn-link nounderline" data-bs-toggle="collapse" data-bs-target="#sendInviteCollapse" aria-expanded="false" aria-controls="sendInviteCollapse">
+                Members with no invite: <span id="noPathwayInviteMembers" class="text-black">
+                8
+              </a>
+
+              <div class="collapse  w-100" id="sendInviteCollapse">
+                <div class="card card-body border-0">
+                  <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="pathwayInviteId" name="pathway_id">
+                    <ul class="list-group-flush text-start" id="orgMembersToInvite">
+
+                    </ul>
+                    <button type="submit" class="btn btn-al w-100 my-2 py-2" name="submit_pathway_invites">Send Invites</button>
+                </form>
+              </div>
+            </div>
             </li>
-            <li class="list-group-item ps-0">
-              <button class="btn btn-link text-start w-100 nounderline">Pending pathway invites: <span id="pendingPathwayInvites" class="text-black">
-              8
-              </span>
-            </button>
-            </li>
-            <li class="list-group-item ps-0">
-              <button class="btn btn-link text-start w-100 nounderline">Members with external invite:  <span id="externalPathwayMembership" class="text-black">
-              8
-              </span>
-            </button>
+
+            <li class="list-group-item">
+                <a type="button" class="btn-link nounderline" data-bs-toggle="collapse" data-bs-target="#pendingPathwayCollapse" aria-expanded="false" aria-controls="pendingPathwayCollapse">
+                  Pending pathway invites: <span id="pendingPathwayInvites" class="text-black">-</span>
+                </a>
+
+                <div class="collapse  w-100" id="pendingPathwayCollapse">
+                  <div class="card card-body border-0">
+
+                      <ul class="list-group-flush text-start" id="orgMembersPendingInvite">
+
+                      </ul>
+                </div>
+              </div>
+
             </li>
             <li class="list-group-item">
-              Unspent invites: <span id="unspentOrgPathwayInvites" class="text-black">8</span>
+              <a type="button" class="btn-link nounderline" data-bs-toggle="collapse" data-bs-target="#externalInviteCollapse" aria-expanded="false" aria-controls="externalInviteCollapse">
+                Members with external invite:  <span id="externalPathwayMembership" class="text-black">
+                -
+                </span>
+              </a>
+
+              <div class="collapse  w-100" id="externalInviteCollapse">
+                <div class="card card-body border-0">
+
+                    <ul class="list-group-flush text-start" id="orgMembersExternalInvite">
+
+                    </ul>
+              </div>
+            </div>
             </li>
-          </ul>
-
-        <div class="container text-center">
-          <button class="btn btn-al w-100 m-2" type="button" data-bs-toggle="collapse" data-bs-target="#sendInviteCollapse" aria-expanded="false" aria-controls="sendInviteCollapse">
-            Send pathway invites
-          </button>
-          <div class="collapse mb-2 w-100" id="sendInviteCollapse">
-          <div class="card card-body border-0">
-            <form method="POST">
-              {% csrf_token %}
-            <ul class="list-group-flush text-start" id="orgMembersToInvite">
-
-            </ul>
-            <button type="submit" class="btn btn-al">Send Invites</button>
-          </form>
-
-          </div>
-        </div>
-
-
-        <button class="btn btn-al w-100 m-2" type="button" data-bs-toggle="collapse" data-bs-target="#buyInviteCollapse" aria-expanded="false" aria-controls="buyInviteCollapse">
-          Buy pathway invites
-        </button>
-        <div class="collapse" id="buyInviteCollapse">
-        <div class="card card-body border-0">
-          <form method="POST">
-            {% csrf_token %}
-          <ul class="list-group-flush" id="purchaseInviteCosts">
-
-          </ul>
-        </form>
-        </div>
-      </div>
 
 
 
-      </div>
+
+
+
+
+            <li class="list-group-item">
+              <a class="btn-link nounderline" type="button" data-bs-toggle="collapse" data-bs-target="#buyInviteCollapse" aria-expanded="false" aria-controls="buyInviteCollapse">
+                Unspent invites: <span id="unspentOrgPathwayInvites" class="text-black">-</span>
+              </a>
+              <div class="collapse" id="buyInviteCollapse">
+              <div class="card card-body border-0">
+                <p><strong>Invites are currently free,</strong> you will not be charged but will be granted the credits for adding invites to your basket</p>
+                <form method="POST">
+                  {% csrf_token %}
+                <ul class="list-group-flush" id="purchaseInviteCosts">
+
+                </ul>
+              </form>
+              </div>
+            </div>
+          </li>
+        </ul>
+
 
         <p class="lead">Description</p>
         <p id="pathwayModalDescription" class="ps-4">

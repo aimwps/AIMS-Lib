@@ -8,15 +8,28 @@ $(document).ready(function(){
         datatype:"json",
         success: function(json){
           console.log("this json we want",json)
+          console.log("also this length", json.active_members.length)
           $("#pathwayModalLabel").text(json.pathway.title);
           $("#pathwayModalDescription").text(json.pathway.description);
           $("#inOrgSubscribers").text(json.branch_members)
-          $("#activePathwayInvites").text(json.active_members)
-          $("#pendingPathwayInvite").text(json.pending_members)
-          $("#externalPathwayMembership").text(json.own_subscription_members)
+          $("#activePathwayInvites").text(json.active_members.length)
+          $("#pendingPathwayInvites").text(json.pending_members.length)
+          $("#externalPathwayMembership").text(json.own_subscription_members.length)
           $("#unspentOrgPathwayInvites").text(json.pathway_available_invites)
           $("#noPathwayInviteMembers").text(json.without_pathway_invite.length)
+          $("#pathwayInviteId").val(json.pathway.id)
 
+          // List active members in display
+          $("#activePathwayMembers").empty()
+          $.each(json.active_members, function(idx, member){
+            console.log(member)
+            $("#activePathwayMembers").append(`
+              <li class="list-group-item">
+                ${member.member.username}: ${member.member.first_name} ${member.member.last_name}
+                </li>
+              `)
+
+          });
 
           // Add members without invite to invite form.
           $("#orgMembersToInvite").empty()
@@ -31,6 +44,27 @@ $(document).ready(function(){
             </div>
           </li>`)
           })
+
+          // Add members with pending invite to displa
+          $("#orgMembersPendingInvite").empty()
+          $.each(json.pending_members, function(idx, member){
+            $("#orgMembersPendingInvite").append(`
+              <li class="list-group-item">
+                ${member.member.username}: ${member.member.first_name} ${member.member.last_name}
+                </li>
+              `)
+          })
+
+          // Add organisation members with external invite to
+          $("#orgMembersExternalInvite").empty();
+          $.each(json.own_subscription_members, function(idx, member){
+            $("#orgMembersExternalInvite").append(`
+              <li class="list-group-item">
+                ${member.member.username}: ${member.member.first_name} ${member.member.last_name}
+                </li>
+              `)
+          })
+
 
           // Add the pathway costs and buy buttons to the collapse frame
           $("#purchaseInviteCosts").empty()
@@ -47,7 +81,7 @@ $(document).ready(function(){
 
           });
 
-          // add the pathweay contents to the modal display
+          // add the pathway contents to the modal display
           $("#pathwayModalContentList").empty()
           $.each(json.pathway.full_pathway, function(idx, content){
             if (content.content_type === "article"){

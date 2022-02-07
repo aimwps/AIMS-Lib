@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Organisation, OrganisationContent, OrganisationMembers
 from .forms import OrganisationCreateForm, OrganisationEditForm, OrganisationContentCreateForm, OrganisationContentEditForm
-from Paths.models import Pathway, PathwayPurchase, PathwayCost
+from Paths.models import Pathway, PathwayPurchase, PathwayCost, PathwayParticipant
 from Paths.pathway_serializers import PathwaySerializer, PathwayContentSerializer, PathwayCostSerializer
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -16,29 +16,42 @@ import json
 
 def ajax_get_organisation_pathway_data(request):
     pathway = Pathway.objects.get(id=request.GET.get("pathway"))
+    pathway_participant_ids = pathway.participants.values_list("author_id")
+
+    pathway_external_participant_ids = pathway.participants.filter(Q(purchase__status="spent"), Q(purchase__purchase_type="author_paid") | Q(purchase__purchase_type="author_free")).values_list("author_id")
     organisation = Organisation.objects.get(id=request.GET.get("organisation"))
-    organisation_pathways = organisation.group_pathways.filter()
+
     organsation_member_ids = organisation.org_members.values_list("member_id")
-    pathway_and_organisation_participants = pathway.participants.filter(author__in=organsation_member_ids)
+
+    members_with_participation = OrganisationMembers.objects.filter(organisation=organisation, organisation__group_pathways__pathway=pathway, member__in=pathway_participant_ids)
+    # Member is in organisation
+    # Member is in pathway_partipants as pending
+    # 
+    organisation_members_with_pathway_invite = members_with_participation.filter(status="active")
+    organisation_members_pending_pathway_invite = members_with_participation.filter(status="pending")
+
+    organisation_members_external_pathway_invite = OrganisationMembers.objects.filter(organisation=organisation, organisation__group_pathways__pathway=pathway, member__in=pathway_external_participant_ids)
+
+
+    #
+    # pathway_and_organisation_participants = pathway.participants.filter(author__in=organsation_member_ids)
+
     organisation_non_pathway_participants = organisation.org_members.filter(~Q(member__in=pathway.participants.values_list("author_id")))
-    print("----------------------------------")
-    print(organisation_non_pathway_participants)
-    print("----------------------------------")
-    pathway_data = PathwaySerializer(pathway)
+
     pathway_purchases = PathwayPurchase.objects.filter(purchase_type="organisation_paid", purchase_owner=organisation.find_root_organisation.id, status="active")
+
     data_info = {
                 "branch_members": organisation.org_members.count() ,
-                "active_members": pathway_and_organisation_participants.filter(purchase__status="spent").count() ,
-                "pending_members": pathway_and_organisation_participants.filter(purchase__status="pending").count() ,
+                "active_members": OrganisationMembersSerializer(organisation_members_with_pathway_invite, many=True).data,
+                "pending_members":OrganisationMembersSerializer(organisation_members_pending_pathway_invite, many=True).data,
                 "without_pathway_invite": OrganisationMembersSerializer(organisation_non_pathway_participants, many=True).data,
-                "own_subscription_members": pathway_and_organisation_participants.filter(Q(purchase__status="spent"), Q(purchase__purchase_type="author_paid") | Q(purchase__purchase_type="author_free")).count() ,
+                "own_subscription_members":  OrganisationMembersSerializer(organisation_members_external_pathway_invite, many=True).data,
                 "pathway_available_invites": pathway_purchases.count() ,
                 "pathway_costs": PathwayCostSerializer(pathway.cost_brackets.all().order_by("purchase_quantity"), many=True).data,
-                "pathway": pathway_data.data,
+                "pathway": PathwaySerializer(pathway).data,
                 }
 
     return JsonResponse(data_info, safe=False)
-
 
 def ajax_submit_organisation_invite(request):
     if request.method=="POST":
@@ -175,13 +188,11 @@ class OrganisationView(LoginRequiredMixin, View):
             root = organisation.find_root_organisation()
             return redirect("organisation", organisation_id=root.id)
 
-
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
     def post(self, request, organisation_id):
-        print(request.POST)
 
         if "create_sub_organisation" in request.POST:
             new_organisation = Organisation(
@@ -228,6 +239,39 @@ class OrganisationView(LoginRequiredMixin, View):
                                 status = "active",
                 )
                 new_purchase.save()
+
+        if "submit_pathway_invites" in request.POST:
+            new_participant_ids = request.POST.getlist("members")
+            organisation = Organisation.objects.get(id=organisation_id)
+
+            pathway = Pathway.objects.get(id=request.POST.get("pathway_id"))
+            unspent_credits = PathwayPurchase.objects.filter(
+                                    pathway=pathway,
+                                    purchase_owner=organisation.find_root_organisation.id,
+                                    status="active",
+                                    spent_on_user=None,
+                                    spent_by_user=None
+            )
+            if unspent_credits.exists():
+                if unspent_credits.count() >= len(new_participant_ids):
+                    for i, new_participant_id in enumerate(new_participant_ids):
+                        user_to_invite = User.objects.get(id=new_participant_id)
+                        existing_credit = unspent_credits[i]
+                        existing_credit.spent_on_user = user_to_invite
+                        existing_credit.spent_by_user = request.user
+                        existing_credit.status = "spent"
+                        existing_credit.save()
+                        new_participant = PathwayParticipant(
+                                            author=user_to_invite,
+                                            on_pathway=pathway,
+                                            status="pending",
+                                            purchase=existing_credit)
+                    new_participant.save()
+
+                else:
+                    print("HERE WE RETURN ERROR TO SAY ORGANISATION DOESNT HAVE ENOUGH CREDITS")
+
+
 
 
         return redirect("organisation", organisation_id=organisation_id)
