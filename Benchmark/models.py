@@ -36,7 +36,7 @@ class Benchmark(models.Model):
                 return 0
             else:
                 times_to_answer = self.questions.values_list('time_to_answer', flat=True)
-                average_time_to_answer = int(sum(list(times_to_answer)) / times_to_answer.count(),0)
+                average_time_to_answer = sum(list(times_to_answer)) / times_to_answer.count()
 
                 return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
 
@@ -55,7 +55,7 @@ class Question(models.Model):
     order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
-    time_to_answer = models.PositiveIntegerField(blank=True, null=True)
+    time_to_answer = models.PositiveIntegerField(default=30)
 
 
 

@@ -26,6 +26,7 @@
 
 <h4>{{ root_organisation.title }}</h4>
 <h6>{{ root_organisation.description }}</h6>
+<input type="hidden" id="rootORganisationId" value={{root_organisation.id}}></input>
 </div>
 <div class="container">
 <div class="row my-4">
@@ -188,7 +189,8 @@
   </div>
 </div>
 
-{% include "pathway_info_modal.html"%}
+{% include "pathway_info_modal.html" %}
+{% include "user_info_modal.html" %}
 
 {% endblock %}
 

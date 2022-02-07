@@ -14,6 +14,21 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 import json
 
+def ajax_users_organisation_pathway_data(request):
+    print(request.GET)
+    organisation = Organisation.objects.get(id=request.GET.get("organisation_id"))
+    user = User.objects.get(id=request.GET.get("user_id"))
+    user_pathway_results = []
+
+    for content in organisation.group_pathways.all():
+        user_pathway_results.append({"result": content.pathway.user_percent_completion(user),
+                                    "pathway": PathwaySerializer(content.pathway).data})
+
+
+
+    return JsonResponse(user_pathway_results, safe=False)
+
+
 def ajax_get_organisation_pathway_data(request):
     pathway = Pathway.objects.get(id=request.GET.get("pathway"))
     pathway_participant_ids = pathway.participants.values_list("author_id")
@@ -161,6 +176,12 @@ class OrganisationView(LoginRequiredMixin, View):
     redirect_field_name = 'redirect_to'
     template_name = "organisation_view.html"
     def get(self, request, organisation_id):
+        # qs = Question.objects.all()
+        # for q in qs:
+        #     if not q.time_to_answer:
+        #         q.time_to_answer = 30
+        #         q.save()
+
         organisation = get_object_or_404(Organisation, id=organisation_id)
         if organisation.is_root():
             if organisation.org_members.filter(member=request.user).exists() or organisation.author == request.user:

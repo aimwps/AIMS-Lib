@@ -177,6 +177,19 @@ $(document).ready(function(){
       }
     })
   };
+  function ajaxFillUserInfoModal(userId){
+    $.ajax({
+      type:"GET",
+      url: "/ajax_users_organisation_pathway_data/",
+      datatype: "json",
+      data: {user_id: userId,
+            organisation_id: $("#selectedSubOrg").val()},
+      success: function(json){
+        console.log(json)
+      }
+    })
+
+  }
   function selectOrganisationBranch(orgId){
     getUserPathwayData(orgId);
 
@@ -220,9 +233,9 @@ $(document).ready(function(){
           if(member.status==="active"){
           $("#membersList").append(
             `<li class="list-group-item">
-              <a type="button" name="memberInfoTrigger" value="${member.member.id}">
+              <button  class="btn btn-link nounderline w-100 text-start" type="button" name="memberInfoTrigger" value="${member.member.id}">
               ${member.member.username}: ${member.member.first_name} ${member.member.last_name}
-              </a>
+              </button>
             </li>`)};
         });
       };
@@ -348,12 +361,17 @@ $(document).ready(function(){
   $(document).on("click", "[name='pathwayInfoTrigger']", function(){
     let pathId = $(this).val();
     $("#pathwayModal").modal("show")
-    console.log("thisisPATHID",pathId)
     ajaxFillPathwayModal(pathId)
-
   });
-  // $(document).on("click", "#buyInviteBtn", function(){
-  //   $("#purchaseInvitesModal").modal("show")
-  // })
+
+
+  $(document).on("click", "[name='memberInfoTrigger']", function(){
+    let userId = $(this).val();
+    $("#userInfoModal").modal("show")
+    ajaxFillUserInfoModal(userId)
+  })
+
+
   loadMembersList();
+  selectOrganisationBranch($("#rootORganisationId").val())
 });

@@ -9,6 +9,7 @@ from rest_framework import serializers
 from VideoLecture.models import VideoLecture, VideoLectureSession
 from WrittenLecture.models import Article, ArticleSession
 from Benchmark.models import Benchmark, BenchmarkSession
+from collections import Counter
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.models import ContentType
 PARTICIPATION_STATUS = (
@@ -65,6 +66,22 @@ class Pathway(models.Model):
             return costs[0].purchase_cost
         else:
             return "free"
+
+    def user_percent_completion(self, user):
+        results = []
+        for content in self.full_pathway.all():
+            results.append(content.get_latest_result(user, finite=True))
+
+        result_dict = Counter(results)
+        complete = result_dict['complete'] * 1
+        recap = result_dict["recap"] * 0.5
+        pending = result_dict["pending"] * 0
+        print(results)
+        print(result_dict)
+        print(complete, recap, pending)
+        total_comp_points = sum([complete, recap, pending])
+        return f"{(total_comp_points / len(results)) *100}%"
+
 
 class PathwayCost(models.Model):
     pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="cost_brackets")
@@ -175,7 +192,7 @@ class PathwayContent(models.Model):
             print("returned true because it's in position 1")
             return True
 
-    def get_latest_result(self, user):
+    def get_latest_result(self, user, finite=False):
         """
         for a sessions content, see the users latest result.
 
@@ -196,7 +213,11 @@ class PathwayContent(models.Model):
             benchmark_sessions = BenchmarkSession.objects.filter((Q(on_benchmark=self.benchmark) & Q(for_user=user) & Q(completed=True) )).order_by('-create_date', '-create_time')
 
             if benchmark_sessions.exists():
-                return f"{benchmark_sessions[0].session_result}%"
+                if finite:
+                    return f"{benchmark_sessions[0].status}"
+                else:
+
+                    return f"{benchmark_sessions[0].session_result}%"
             else:
                 return "pending"
 
