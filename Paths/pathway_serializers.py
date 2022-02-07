@@ -1,14 +1,15 @@
 from rest_framework import serializers
-from .models import PathwayContent, Pathway, PathwayParticipant, PathwayCost
+from .models import PathwayContent, Pathway, PathwayParticipant, PathwayCost, PathwayPurchase
 from WrittenLecture.article_serializers import ArticleSerializer
 from VideoLecture.video_serializers import VideoSerializer
 from Benchmark.benchmark_serializers import BenchmarkSerializer
+from Members.members_serializers import UserSerializer
 
 class PathwayParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PathwayParticipant
-        fields = ("on_pathway", "status",)
+        fields = ("id","on_pathway", "status",)
 
 class PathwayContentSerializer(serializers.ModelSerializer):
     article = ArticleSerializer()
@@ -26,6 +27,18 @@ class PathwayCostSerializer(serializers.ModelSerializer):
         model = PathwayCost
         fields = ("id", "purchase_quantity", "purchase_cost")
 
+
+class PathwayPurchaseSerializer(serializers.ModelSerializer):
+    spent_by_user = UserSerializer()
+    spent_on_user = UserSerializer()
+    class Meta:
+        model = PathwayPurchase
+        fields = (  "purchase_type",
+                    "purchase_owner",
+                    "pathway",
+                    "spent_by_user",
+                    "spent_on_user",
+                    "status",)
 class PathwaySerializer(serializers.ModelSerializer):
     full_pathway = PathwayContentSerializer(many=True)
     cost_brackets = PathwayCostSerializer(many=True)
@@ -43,3 +56,9 @@ class PathwaySerializer(serializers.ModelSerializer):
             "single_user_cost",
             "cost_brackets",
                 )
+class SinglePathwayParticipantSerializer(serializers.ModelSerializer):
+    on_pathway = PathwaySerializer()
+    purchase = PathwayPurchaseSerializer()
+    class Meta:
+        model = PathwayParticipant
+        fields = ("id","on_pathway", "status", "purchase")

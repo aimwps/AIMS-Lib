@@ -11,7 +11,9 @@ from .views import (PathsHomeView,
                     get_pathway_content_obj,
                     submit_content_setting_changes,
                     submit_cotent_delete,
-                    UserPathways_ajax_get_pathway_costs
+                    UserPathways_ajax_get_pathway_costs,
+                    UserPathways_ajax_check_pathway_invites,
+                    UserPathways_ajax_submit_pathway_invite,
 )
 
 urlpatterns = [
@@ -27,6 +29,8 @@ urlpatterns = [
     path('ajax_submit_content_setting_changes/', submit_content_setting_changes, name="content-setting-changes-submit"),
     path('ajax_submit_delete_pathway_content/', submit_cotent_delete, name="submit-content-delete"),
     path("UserPathways_ajax_get_pathway_costs/", UserPathways_ajax_get_pathway_costs, name="get-pathway-costs"),
+    path("UserPathways_ajax_check_pathway_invites/", UserPathways_ajax_check_pathway_invites, name="check-pathway-invites"),
+    path("UserPathways_ajax_submit_pathway_invite/", UserPathways_ajax_submit_pathway_invite, name="submit-pathway-invite"),
 
 
 ]

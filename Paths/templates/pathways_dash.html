@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Pathways{% endblock %}
 
 {% block topcarousel %}
@@ -23,6 +24,19 @@ Pathways are learnable content based on video lectures & written articles. User 
 
 {% block content %}
 <div class="container my-4">
+  <div id="inviteArea" style="display:none;" class="row justify-content-center p-2 my-2" >
+    {% csrf_token %}
+  <button class="btn btn-al w-100" type="button" data-bs-toggle="collapse" data-bs-target="#inviteCollapse" aria-expanded="false" aria-controls="inviteCollapse">
+    You have pending organisation invites
+    </button>
+    <div class="collapse px-0" id="inviteCollapse">
+      <div class="card card-body border-top-0 border-primary">
+        <ul class="list-group-flush px-0" id="pathwayInvites">
+        </ul>
+      </div>
+    </div>
+  </div>
+
 <div class="row justify-content-center px-0 my-2">
 <div class="col-7">
 <input type="text"class="form-control w-100" name="filterInput" placeholder="Search your pathways"></input>
@@ -67,6 +81,8 @@ Pathways are learnable content based on video lectures & written articles. User 
 
 {% endblock %}
 {% block scripts %}
+<script src="{% static 'js/pathway/pathwayDash.js' %}"></script>
+
 <script>
 function highlightModNavLink(linkName){
   $("[name='modLink']").removeClass("active");

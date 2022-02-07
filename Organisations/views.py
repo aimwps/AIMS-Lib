@@ -54,7 +54,7 @@ def ajax_submit_organisation_invite(request):
         invite.status = request.POST.get("status")
         invite.save()
         return JsonResponse({"success":"success"}, safe=False)
-        submitNewMember
+
 def getUserBookmarkedPathways(request):
     if request.method=="GET":
         user_pathways = Pathway.objects.filter(author=request.user)

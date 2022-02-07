@@ -16,7 +16,33 @@ from VideoLecture.models import VideoLecture
 from QuestionGenerator.models import GeneratedQuestionBank
 from Members.models import MemberProfile
 import json, requests
-from .pathway_serializers import PathwaySerializer, PathwayContentSerializer, PathwayCostSerializer
+from .pathway_serializers import PathwaySerializer, PathwayContentSerializer, PathwayCostSerializer, PathwayParticipantSerializer, SinglePathwayParticipantSerializer
+
+def UserPathways_ajax_submit_pathway_invite(request):
+
+    print(request.POST)
+    if request.method=="POST":
+        invite = PathwayParticipant.objects.get(id=request.POST.get("invite_id"))
+        invite.status = request.POST.get("status")
+        invite.save()
+        if invite.status =="rejected":
+            if invite.purchase.purchase_type == "organisation_paid":
+                invite.purchase.spent_by_user = None
+                invite.purchase.spent_on_user = None
+                invite.purchase.status = "active"
+                invite.purchase.save()
+            else:
+                print("type error <-------<<")
+            invite.delete()
+        return JsonResponse({"success":"success"}, safe=False)
+
+def UserPathways_ajax_check_pathway_invites(request):
+    if request.method == "GET":
+        data = None
+        if request.user.is_authenticated:
+            pathway_invites = PathwayParticipant.objects.filter(Q(status="pending", author=request.user))
+            data = SinglePathwayParticipantSerializer(pathway_invites, many=True).data
+        return JsonResponse(data, safe=False)
 
 
 def UserPathways_ajax_get_pathway_costs(request):

@@ -74,7 +74,6 @@ class PathwayCost(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=["pathway", "purchase_quantity"], name="duplicate_quantity_costs")]
 
-
 class PathwayContent(models.Model):
     on_pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name='full_pathway')
     content_type =  models.CharField(max_length=100, choices=CONTENT_TYPE)
@@ -212,11 +211,12 @@ class PathwayContent(models.Model):
 class PathwayPurchase(models.Model):
     purchase_type = models.CharField(max_length=100, choices=MEMBERSHIP_TYPES)
     purchase_owner = models.PositiveIntegerField()
+    # purchased_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    # purchased_by_organisation = models.ForeignKey(Organisation, on_delete=models.SET_NULL, null=True, blank=True)
     pathway = models.ForeignKey(Pathway, on_delete=models.SET_NULL, null=True)
     spent_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="user_spends")
     spent_on_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="pathway_purchases")
     status = models.CharField(max_length=100, choices=(("active", "active"), ("pending", "pending"), ("spent", "spent")))
-
 
 class PathwayParticipant(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)#, related_name='pathway_participant')
