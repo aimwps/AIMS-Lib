@@ -44,8 +44,8 @@ $(document).ready(function () {
                     pathway: $("input[name=pathway_id]").val(),
                   },
             datatype: 'json',
-            success: function(data){
-              var json = JSON.parse(data);
+            success: function(json){
+              // var json = JSON.parse(data);
               console.log(json);
               $("#pathwayContent").empty();
               var pathwayContent = json.pathway_content;

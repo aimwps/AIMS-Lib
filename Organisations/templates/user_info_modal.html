@@ -3,9 +3,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="userInfoModalLabel">Member pathway results</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeUserInfoModalBtn"></button>
       </div>
       <div class="modal-body">
+
         <ul class="list-group-flush" id="userPathwayResults">
 
 
@@ -15,7 +16,33 @@
       <div class="modal-footer">
 
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
+        {% if admin_approved %}
+        <a class="btn btn-secondary" data-bs-toggle="collapse" href="#crudModalDeleteCollapse_MemberDelete" role="button" aria-expanded="false" aria-controls="crudModalDeleteCollapse_MemberDelete" id="crudModalDeleteCollapse_MemberDeleteBtn">
+          <i class="far fa-trash-alt"></i>
+        </a>
+
+
+        {% endif %}
+        <div class="collapse" id="crudModalDeleteCollapse_MemberDelete">
+          <div class="card card-body">
+
+            <p> Removing this user will also remove them from the following sub organisation branches:</p>
+            <ul class="list-group-flush" id="child_membership">
+            </ul>
+
+              <p><input id="crudModalDeleteCheckInput" type="text" class="form-control text-center w-100"></p>
+              <form method="POST">
+                {% csrf_token %}
+              <input type="hidden" name="member_to_remove" id="member_to_remove">
+              <button id="crudModalDeleteCheckSubmit" type="submit" name="remove_member_from_organisation" class="btn btn-secondary disabled w-100">
+                type 'remove' to activate
+                </button>
+              </form>
+          </div>
+        </div>
+
+
+
       </div>
     </div>
   </div>

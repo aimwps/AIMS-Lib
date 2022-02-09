@@ -28,167 +28,157 @@
 <h6>{{ root_organisation.description }}</h6>
 <input type="hidden" id="rootORganisationId" value={{root_organisation.id}}></input>
 </div>
+
+
+{% if org_member %}
 <div class="container">
-<div class="row my-4">
-  <div class="col-xs-12 col-md-4  mx-0 px-0">
+  <div class="row my-4">
+    <div class="col-xs-12 col-md-4  mx-0 px-0">
 
-    <div class="border border-primary rounded px-xs-0 m-2 p-3">
+      <div class="border border-primary rounded px-xs-0 m-2 p-3">
 
-    <h4 class="text-center my-2">Branches</h4>
-    <div class="my-2" id="mobileView">
-      {% include "list_organisations.html" %}
+      <h4 class="text-center my-2">Branches</h4>
+      <div class="my-2" id="mobileView">
+        {% include "list_organisations.html" %}
+      </div>
+
+      {% if admin_approved %}
+        <div class="text-center">
+          <ul class="nav justify-content-center">
+              <!-- Button trigger modal -->
+
+                <li class="nav-item px-2">
+                  <a class="text-primary" href="#addOrganisation" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addOrganisation">
+                    <i class="far fa-plus"></i>
+                  </a>
+                </li>
+          </ul>
+        </div>
+        <div class="collapse py-2" id="addOrganisation">
+          <div class="card card-body border-primary">
+            <div class="form-group">
+              <form method="POST">
+                {% csrf_token %}
+
+                  <p class="mb-0">Creating sub-organisation</p>
+                  <p>{{ addOrganisationForm.title }}</p>
+                  <p class="mb-0">Parent organisation</p>
+                  <p>{{ addOrganisationForm.parent_organisation }}</p>
+                  <p class="mb-0">Select members from parent</p>
+                  <ul class="list-group list-group-flush" id="parentMembers">
+                  </ul>
+                  <button name="create_sub_organisation" val="" class="btn btn-al w-100 my-2">Create Organisation</button>
+
+              </form>
+
+            </div>
+            <button class="btn btn-al w-100 my-2" name="cancelCloseOrgs">Cancel & close</button>
+
+          </div>
+        </div>
+
+
+        {% endif %}
+
+          <div id="desktopView">
+            <button id="selectRootOrgnaisation" name="suborganisationSelect" value="{{root_organisation.id}}" class="btn btn-al w-100 my-2">{{root_organisation.title}}</button>
+              {% include "suborganisations.html" %}
+          </div>
+
+    </div>
+    </div>
+    <div class="col-xs-12 col-md-4 mx-0 px-0">
+      <div class="border border-primary rounded px-xs-0 m-2 p-3">
+      <h4 class="text-center my-2">Members</h4>
+      <input type="hidden" id="selectedSubOrg" value="">
+
+      {% if admin_approved %}
+          <div class="text-center">
+            <ul class="nav justify-content-center">
+                <!-- Button trigger modal -->
+                  <li class="nav-item px-2">
+                    <a class="text-primary" href="#addMember" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addMember">
+                      <i class="far fa-plus"></i></a>
+                  </li>
+            </ul>
+          </div>
+          <div class="collapse py-2" id="addMember">
+            <div class="card card-body border-primary">
+              <p class="mb-0">Invite to root organisation</p>
+              <input id="userSearchInput" class="form-control" placeholder="Search exact username or email">
+              <ul class="list-group list-group-flush my-2 border-0" id="userSearchResults">
+              </ul>
+              <hr class="my-2">
+              <div class="form-group my-2">
+                <form method="POST">
+                  {% csrf_token %}
+
+                <p class="mb-0"><span id="parentOrgTitle"></span></p>
+                <ul id="addMemberFromParent" class="list-group list-group-flush">
+                </ul>
+              </form>
+            </div>
+
+            <button class="btn btn-al w-100 my-2" name="cancelCloseMember">Cancel & close</button>
+            </div>
+      </div>
+      {% endif %}
+        <ul id="membersList" class="list-group list-group-flush">
+        </ul>
+      </div>
     </div>
 
-    {% if admin_approved %}
+
+  {# PATHWAYS #}
+  <div class="col-xs-12 col-md-4 mx-0 px-0">
+      <div class="border border-primary rounded px-xs-0 m-2 p-3">
+      <h4 class="text-center my-2">Pathways</h4>
+      {% if admin_approved %}
       <div class="text-center">
         <ul class="nav justify-content-center">
             <!-- Button trigger modal -->
-
               <li class="nav-item px-2">
-                <a class="text-primary" href="#addOrganisation" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addOrganisation">
+                <a class="text-primary" href="#addPathway" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addPathway">
                   <i class="far fa-plus"></i>
                 </a>
               </li>
         </ul>
       </div>
-      <div class="collapse py-2" id="addOrganisation">
+      <div class="collapse py-2" id="addPathway">
         <div class="card card-body border-primary">
+
           <div class="form-group">
             <form method="POST">
               {% csrf_token %}
-
-                <p class="mb-0">Creating sub-organisation</p>
-                <p>{{ addOrganisationForm.title }}</p>
-                <p class="mb-0">Parent organisation</p>
-                <p>{{ addOrganisationForm.parent_organisation }}</p>
-                <p class="mb-0">Select members from parent</p>
-                <ul class="list-group list-group-flush" id="parentMembers">
-                </ul>
-                <button name="create_sub_organisation" val="" class="btn btn-al w-100 my-2">Create Organisation</button>
-
-            </form>
-
-          </div>
-          <button class="btn btn-al w-100 my-2" name="cancelCloseOrgs">Cancel & close</button>
-
-        </div>
-      </div>
-
-
-      {% endif %}
-
-        <div id="desktopView">
-          <button id="selectRootOrgnaisation" name="suborganisationSelect" value="{{root_organisation.id}}" class="btn btn-al w-100 my-2">{{root_organisation.title}}</button>
-            {% include "suborganisations.html" %}
-        </div>
-
-  </div>
-  </div>
-  <div class="col-xs-12 col-md-4 mx-0 px-0">
-    <div class="border border-primary rounded px-xs-0 m-2 p-3">
-    <h4 class="text-center my-2">Members</h4>
-    <input type="hidden" id="selectedSubOrg" value="">
-
-    {% if admin_approved %}
-        <div class="text-center">
-          <ul class="nav justify-content-center">
-              <!-- Button trigger modal -->
-                <li class="nav-item px-2">
-                  <a class="text-primary" href="#addMember" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addMember">
-                    <i class="far fa-plus"></i></a>
-                </li>
-          </ul>
-        </div>
-        <div class="collapse py-2" id="addMember">
-          <div class="card card-body border-primary">
-            <p class="mb-0">Invite to root organisation</p>
-            <input id="userSearchInput" class="form-control" placeholder="Search exact username or email">
-            <ul class="list-group list-group-flush my-2 border-0" id="userSearchResults">
-            </ul>
-            <hr class="my-2">
-            <div class="form-group my-2">
-              <form method="POST">
-                {% csrf_token %}
-
-              <p class="mb-0"><span id="parentOrgTitle"></span></p>
-              <ul id="addMemberFromParent" class="list-group list-group-flush">
+              <p class="mb-0">Created</p>
+              <ul class="list-group list-group-flush my-2 border-0" id="myPathways">
               </ul>
+            <p class="mb-0">Bookmarked</p>
+            <ul class="list-group list-group-flush my-2 border-0" id="bookMarkedPathways">
+            </ul>
+
+            <ul class="list-group list-group-flush" id="parentMembers">
+            </ul>
+            <button name="add_pathways_to_organisation" value="{{ root_organisation.id }}" class="btn btn-al w-100 my-2">Add selected to organsation</button>
             </form>
           </div>
-
-          <button class="btn btn-al w-100 my-2" name="cancelCloseMember">Cancel & close</button>
-          </div>
-    </div>
-    {% endif %}
-      <ul id="membersList" class="list-group list-group-flush">
-      </ul>
-    </div>
-  </div>
-
-
-{# PATHWAYS #}
-<div class="col-xs-12 col-md-4 mx-0 px-0">
-    <div class="border border-primary rounded px-xs-0 m-2 p-3">
-    <h4 class="text-center my-2">Pathways</h4>
-    {% if admin_approved %}
-    <div class="text-center">
-      <ul class="nav justify-content-center">
-          <!-- Button trigger modal -->
-            <li class="nav-item px-2">
-              <a class="text-primary" href="#addPathway" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="addPathway">
-                <i class="far fa-plus"></i>
-              </a>
-            </li>
-      </ul>
-    </div>
-    <div class="collapse py-2" id="addPathway">
-      <div class="card card-body border-primary">
-
-        <div class="form-group">
-          <form method="POST">
-            {% csrf_token %}
-            <p class="mb-0">Created</p>
-            <ul class="list-group list-group-flush my-2 border-0" id="myPathways">
-            </ul>
-          <p class="mb-0">Bookmarked</p>
-          <ul class="list-group list-group-flush my-2 border-0" id="bookMarkedPathways">
-          </ul>
-
-          <ul class="list-group list-group-flush" id="parentMembers">
-          </ul>
-          <button name="add_pathways_to_organisation" value="{{ root_organisation.id }}" class="btn btn-al w-100 my-2">Add selected to organsation</button>
-          </form>
+            <button class="btn btn-al w-100 my-2" name="cancelClosePathways">Cancel & close</button>
         </div>
-          <button class="btn btn-al w-100 my-2" name="cancelClosePathways">Cancel & close</button>
       </div>
-    </div>
-    {% endif  %}
-    <ul id="pathwayList" class="list-group list-group-flush">
-    </ul>
-  </div>
-</div>
-</div>
-
-</div>
-
-<div class="modal fade" id="memberModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="memberModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
+      {% endif  %}
+      <ul id="pathwayList" class="list-group list-group-flush">
+      </ul>
     </div>
   </div>
+  </div>
+
 </div>
 
+
+{% else %}
+
+<p> you are not a part of this organisation, what you can see is limited, to request joining this organisation click here</p>
+{% endif %}
 {% include "pathway_info_modal.html" %}
 {% include "user_info_modal.html" %}
 

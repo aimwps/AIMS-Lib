@@ -13,7 +13,8 @@ from .views import (OrganisationView,
                     getUserBookmarkedPathways,
                     ajax_submit_organisation_invite,
                     ajax_get_organisation_pathway_data,
-                    ajax_users_organisation_pathway_data,)
+                    ajax_users_organisation_pathway_data,
+                    ajax_find_organisation_children_with_member)
 # from .views import
 
 urlpatterns = [
@@ -32,4 +33,5 @@ urlpatterns = [
     path("ajax_submit_organisation_invite/", ajax_submit_organisation_invite, name="submit-org-invite"),
     path("ajax_get_organisation_pathway_data/", ajax_get_organisation_pathway_data, name="org-get-pathway"),
     path("ajax_users_organisation_pathway_data/", ajax_users_organisation_pathway_data, name="get-user-org-path-stats"),
+    path("ajax_find_organisation_children_with_member/", ajax_find_organisation_children_with_member, name="get-org-child-memberships"),
 ]

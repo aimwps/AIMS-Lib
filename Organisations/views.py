@@ -14,12 +14,43 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 import json
 
-def ajax_users_organisation_pathway_data(request):
-    print(request.GET)
+
+
+def get_suborganisation_list(organisation, organisation_list=[]):
+    if not organisation_list:
+        organisation_list = [organisation]
+    for child in organisation.children.all():
+        organisation_list.append(child)
+        get_suborganisation_list(organisation=child, organisation_list=organisation_list)
+    return organisation_list
+
+
+def ajax_find_organisation_children_with_member(request):
     organisation = Organisation.objects.get(id=request.GET.get("organisation_id"))
+    member = User.objects.get(id=request.GET.get("user_id"))
+    list_of_sub_orgs = get_suborganisation_list(organisation)
+    data = []
+    for org in list_of_sub_orgs:
+        org_member = org.org_members.filter(member=member).exists()
+        if org_member:
+            data.append(OrganisationSerializer(org).data)
+    return JsonResponse(data, safe=False)
+
+
+
+
+def ajax_users_organisation_pathway_data(request):
+
+    organisation = Organisation.objects.get(id=request.GET.get("organisation_id"))
+    if request.user.id == organisation.author.id:
+        admin_approved = True
+    else:
+        admin_approved = False
+
     user = User.objects.get(id=request.GET.get("user_id"))
     user_pathway_results = {"pathway_results":[],
-                            "user": UserSerializer(user).data}
+                            "user": UserSerializer(user).data,
+                            "admin_approved": admin_approved}
 
     for content in organisation.group_pathways.all():
         user_pathway_results['pathway_results'].append({"result": content.pathway.user_percent_completion(user),
@@ -164,24 +195,19 @@ def get_suborganisation_tree(organisation):
     # for each of their children repeat the process until all children are found
         return {child: get_suborganisation_tree(child) for child in children}
 
-def get_suborganisation_list(organisation, organisation_list=[]):
-    if not organisation_list:
-        organisation_list = [organisation]
-    for child in organisation.children.all():
-        organisation_list.append(child)
-        get_suborganisation_list(organisation=child, organisation_list=organisation_list)
-    return organisation_list
+def delete_org_children_members(organisation, user_id):
+    organisation_member = organisation.org_members.filter(member_id=user_id)
+    if organisation_member:
+        organisation_member[0].delete()
+    if organisation.children:
+        for child in organisation.children.all():
+            delete_org_children_members(child, user_id)
 
 class OrganisationView(LoginRequiredMixin, View):
     login_url = '/login-or-register/'
     redirect_field_name = 'redirect_to'
     template_name = "organisation_view.html"
     def get(self, request, organisation_id):
-        # qs = Question.objects.all()
-        # for q in qs:
-        #     if not q.time_to_answer:
-        #         q.time_to_answer = 30
-        #         q.save()
 
         organisation = get_object_or_404(Organisation, id=organisation_id)
         if organisation.is_root():
@@ -195,13 +221,19 @@ class OrganisationView(LoginRequiredMixin, View):
                 context = {"organisation_data": organisation_tree,
                             "root_organisation": organisation,
                             "organisation_list": organisation_list,
-                            "admin_approved": False
-
+                            "admin_approved": False,
+                            "org_member": False,
                             }
                 if request.user.id == organisation.author.id:
                     context["addOrganisationForm"]= add_org_form
                     context["admin_approved"] = True
+
+                org_member = organisation.org_members.filter(member=request.user).exists()
+                if org_member:
+                    context["org_member"] = True
+
                 return render(request, self.template_name, context)
+
             else:
                 return redirect("access-denied")
         else:
@@ -213,6 +245,10 @@ class OrganisationView(LoginRequiredMixin, View):
         return super().form_valid(form)
 
     def post(self, request, organisation_id):
+        print(request.POST)
+        if "remove_member_from_organisation" in request.POST:
+            organisation = Organisation.objects.get(id=request.POST.get("remove_member_from_organisation"))
+            delete_org_children_members(organisation, request.POST.get("member_to_remove"))
 
         if "create_sub_organisation" in request.POST:
             new_organisation = Organisation(
@@ -274,8 +310,6 @@ class OrganisationView(LoginRequiredMixin, View):
                                     spent_by_user=None
             )
 
-            print(f"UNSPENT_CREDITS:{unspent_credits.count()} NEW_PARTI: {len(new_participant_ids)}")
-            print("-----------------------------------------------------------------------------------------------")
             if unspent_credits.exists():
                 if unspent_credits.count() >= len(new_participant_ids):
                     for i, new_participant_id in enumerate(new_participant_ids):

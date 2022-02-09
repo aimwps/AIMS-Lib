@@ -6,6 +6,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        {% if admin_approved %}
         <p class="lead">Pathway Invite Status</p>
           <ul class="list-group-flush">
 
@@ -102,7 +103,7 @@
             </div>
           </li>
         </ul>
-
+        {% endif %}
 
         <p class="lead">Description</p>
         <p id="pathwayModalDescription" class="ps-4">
@@ -115,7 +116,12 @@
       <div class="modal-footer">
 
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
+        {% if admin_approved %}
+        <form method="POST">
+        <input type="hidden" name="member_to_remove" id="member_to_remove">
+        <button type="submit" id="remove_member_from_organisation" name="remove_member_from_organisation" class="btn btn-secondary"><i class="far fa-trash-alt"></i></button>
+        </form>
+        {% endif %}
       </div>
     </div>
   </div>

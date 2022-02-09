@@ -1,4 +1,8 @@
 $(document).ready(function(){
+  function resetUserInfoModal(){
+    $("#crudModalDeleteCollapse_MemberDelete").hide()
+    $("#crudModalDeleteCheckInput").val("")
+  }
   function ajaxFillPathwayModal(pathId){
     $.ajax({
         type:"GET",
@@ -187,7 +191,10 @@ $(document).ready(function(){
       success: function(json){
         $("#userInfoModalLabel").text(`${json.user.username}: ${json.user.first_name} ${json.user.last_name}`)
         console.log(json)
+        $("input[name='member_to_remove']").val(json.user.id);
         $("#userPathwayResults").empty();
+
+        if (json.admin_approved === true){
         $.each(json.pathway_results, function(idx, pathway){
           $("#userPathwayResults").append(`
             <li class="list-group-item">
@@ -200,13 +207,23 @@ $(document).ready(function(){
                 </div>
               </div>
             </li>`)
-        })
+        })} else {
+          $("#userPathwayResults").append(`
+            <li class="list-group-item">
+              Only branch moderators can view pathway results
+              </li>
+            `)
+        };
       }
     })
 
   }
   function selectOrganisationBranch(orgId){
     getUserPathwayData(orgId);
+
+  // set the organisation ID for removing members from it.
+
+    $("button[name='remove_member_from_organisation']").val(orgId)
 
   // set the organisation ID for adding a pathway to it
     $("button[name='add_pathways_to_organisation']").val(orgId)
@@ -386,6 +403,41 @@ $(document).ready(function(){
     ajaxFillUserInfoModal(userId)
   })
 
+  $(document).on('keyup',"#crudModalDeleteCheckInput", function(){
+    if ($("#crudModalDeleteCheckInput").val() === "remove" ){
+      $("#crudModalDeleteCheckSubmit").removeClass("disabled");
+      $("#crudModalDeleteCheckSubmit").removeClass("btn-secondary");
+      $("#crudModalDeleteCheckSubmit").addClass("btn-al");
+      $("#crudModalDeleteCheckSubmit").html("remove member");
+    } else {
+      $("#crudModalDeleteCheckSubmit").removeClass("btn-al");
+      $("#crudModalDeleteCheckSubmit").addClass("btn-secondary");
+      $("#crudModalDeleteCheckSubmit").addClass("disabled");
+      $("#crudModalDeleteCheckSubmit").html("type 'remove' to activate");
+    }
+  })
+
+  $(document).on("click", "#crudModalDeleteCollapse_MemberDeleteBtn", function(){
+    $("#crudModalDeleteCollapse_MemberDelete").show()
+    $.ajax({type:"GET",
+            url: "/ajax_find_organisation_children_with_member/",
+            data:{organisation_id:$("#crudModalDeleteCheckSubmit").val() ,
+                  user_id: $("#member_to_remove").val(),},
+            datatype: "json",
+            success: function(json){
+              $("#child_membership").empty();
+              $.each(json, function(idx, org){
+                $("#child_membership").append(`
+                  <li class="list-group-flush">
+                    ${org.title}
+                  </li>`)
+              })
+            }})
+  })
+
+  $(document).on("click", "#closeUserInfoModalBtn", function(){
+    resetUserInfoModal();
+  });
 
   loadMembersList();
   selectOrganisationBranch($("#rootORganisationId").val())
