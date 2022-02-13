@@ -28,6 +28,7 @@ class Aim(models.Model):
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True, blank=True, null=True)
     create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
+    is_a_copy = models.BooleanField(default=False)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['author', 'order_position'], name='unique_order_of_aims')
@@ -40,11 +41,12 @@ class Aim(models.Model):
 
 class Behaviour(models.Model):
     title = models.TextField()
-    on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE)
+    on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE, related_name="behaviours")
     user_status = models.CharField(max_length=100, choices=USER_STATUS, default="active")
     order_position = models.PositiveIntegerField()
     create_date = models.DateField(auto_now_add=True, blank=True, null=True)
     create_time = models.TimeField(auto_now_add=True, blank=True, null=True)
+    is_a_copy = models.BooleanField(default=False)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['on_aim', 'order_position'], name='unique_order_of_behaviours')
@@ -78,6 +80,7 @@ class StepTracker(models.Model):
     order_position = models.PositiveIntegerField(default=9999)
     create_date = models.DateField(auto_now_add=True)
     create_time = models.TimeField(auto_now_add=True)
+    is_a_copy = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
@@ -552,7 +555,6 @@ class StepTrackerLog(models.Model):
 
     def __str__(self):
         return f"TrackerLog_{self.id}"
-
 
 class StepTrackerCustomFrequency(models.Model):
     on_tracker = models.ForeignKey(StepTracker, on_delete=models.CASCADE)
