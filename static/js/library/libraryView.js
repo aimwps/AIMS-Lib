@@ -116,24 +116,38 @@ $(document).ready(function(){
     $("#aimMotivation").text(aimData.motivation)
     $.each(aimData.behaviours, function(idx, behaviour){
       $("#aimBehaviours").append(`
-        <li class="list-group-item">
+        <li class="list-group-item border-0">
 
-          <a class="btn btn-link w-100 my-2" data-bs-toggle="collapse" href="#behaviourCollapse_${behaviour.id}" role="button" aria-expanded="false" aria-controls="behaviourCollapse_${behaviour.id}">
+          <a class="btn-link nounderline" data-bs-toggle="collapse" href="#behaviourCollapse_${behaviour.id}" role="button" aria-expanded="false" aria-controls="behaviourCollapse_${behaviour.id}">
             ${behaviour.title}
           </a>
 
             <div class="collapse" id="behaviourCollapse_${behaviour.id}">
               <div class="card card-body border-0">
-                <ul class="list-group-flush" id="behaviours_${behaviour.id}_tracker_list">
+                <ul class="list-group-flush px-0" id="behaviours_${behaviour.id}_tracker_list">
                 </ul>
               </div>
             </div>
 
         </li>
         `);
-        $.each(behaviour.trackers, function(tracker_idx, tracker){
-          console.log(tracker_idx, tracker)
-        });
+        let addToList = `#behaviours_${behaviour.id}_tracker_list`
+        if(behaviour.trackers.length > 0){
+          $.each(behaviour.trackers, function(tracker_idx, tracker){
+            console.log(tracker_idx, tracker)
+            $(addToList).append(`
+              <li class="list-group-item">
+              ${tracker.get_tsentence}
+              </li>`)
+          });
+        }else{
+        $(addToList).append(`
+          <li class="list-group-item">
+         There are no trackers set for this behaviour
+          </li>`);
+
+      }
+
     })
   };
   function loadLibraryItemToModal(resultData){
