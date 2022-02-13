@@ -19,6 +19,8 @@ class AimLibrarySerializer(serializers.ModelSerializer):
                 "create_date",
                 "create_time",
                 "behaviours",
+                "library_type",
+                "library_description",
                 )
 class StepTrackerSerializer(serializers.ModelSerializer):
     class Meta:

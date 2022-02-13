@@ -55,6 +55,8 @@ class PathwaySerializer(serializers.ModelSerializer):
             "full_pathway",
             "single_user_cost",
             "cost_brackets",
+            "library_type",
+            "library_description",
                 )
 class SinglePathwayParticipantSerializer(serializers.ModelSerializer):
     on_pathway = PathwaySerializer()

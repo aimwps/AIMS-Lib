@@ -81,8 +81,17 @@ class Pathway(models.Model):
         print(complete, recap, pending)
         total_comp_points = sum([complete, recap, pending])
         return f"{(total_comp_points / len(results)) *100}%"
+    @property
+    def library_type(self):
+        return "Pathway"
+    @property
+    def library_description(self):
+        if self.description:
+            return self.description
+        else:
+            return "There is no set description for this pathway"
 
-
+            
 class PathwayCost(models.Model):
     pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="cost_brackets")
     purchase_quantity = models.PositiveIntegerField()

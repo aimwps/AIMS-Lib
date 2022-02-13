@@ -38,7 +38,12 @@ class Aim(models.Model):
 
     def get_absolute_url(self):
         return reverse('aims-dash')
-
+    @property
+    def library_type(self):
+        return "Aim"
+    @property
+    def library_description(self):
+        return self.motivation
 class Behaviour(models.Model):
     title = models.TextField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE, related_name="behaviours")

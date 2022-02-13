@@ -16,7 +16,16 @@ class Article(models.Model): # A body of text with extra elements e.g. Data Tabl
         return f"<WrittenLecture : {self.title}>"
     def get_absolute_url(self):
         return reverse('user-articles')
+    @property
+    def library_type(self):
+        return "Organisation"
 
+    @property
+    def library_description(self):
+        if self.description:
+            return self.description
+        else:
+            return "There is no set description for this article"
 class ArticleImage(models.Model): # A body of text with extra elements e.g. Data Tables, recipes or images
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

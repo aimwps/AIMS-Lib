@@ -12,6 +12,7 @@ class OrganisationInfoSearializer(serializers.ModelSerializer):
                 "id",
                 "title",
                 "description",
+                "library_type"
                   )
 
 class OrganisationMembersSerializer(serializers.ModelSerializer):
@@ -39,6 +40,7 @@ class singleOrganisationSerializer(serializers.ModelSerializer):
                 "description",
                 "org_members",
                 "group_pathways",
+                "library_type",
 
                   )
 
@@ -54,5 +56,7 @@ class OrganisationSerializer(serializers.ModelSerializer):
                 "description",
                 "org_members",
                 "group_pathways",
-                "parent_organisation"
+                "parent_organisation",
+                "library_type",
+                "library_description",
                   )

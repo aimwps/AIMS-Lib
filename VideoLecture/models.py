@@ -18,6 +18,17 @@ class VideoLecture(models.Model):
         return f"<VideoLecture : {self.title}>"
     def get_absolute_url(self):
         return reverse('user-videos')
+    @property
+    def library_type(self):
+        return "Video"
+
+    @property
+    def library_description(self):
+        if self.description:
+            return self.description
+        else:
+            return "There is no set description for this video"
+
 class VideoLectureSession(models.Model):
 
     ARTICLE_STATUS = (

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'Paths',
     'Organisations',
     'WebsiteTools',
+    'Library',
     #'ShareContent'
     #'Benchmark'
 

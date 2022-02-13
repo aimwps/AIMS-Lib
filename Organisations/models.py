@@ -48,8 +48,17 @@ class Organisation(models.Model):
             current = current.parent_organisation
         return [i for i in range(count)]
 
+    @property
+    def library_type(self):
+        return "Organisation"
 
 
+    @property
+    def library_description(self):
+        if self.description:
+            return self.description
+        else:
+            return "There is no set description for this organisation"
 class OrganisationContent(models.Model):
     assigned_group = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="group_pathways")
     content_type = models.CharField(max_length=100, choices=CONTENT_TYPE)

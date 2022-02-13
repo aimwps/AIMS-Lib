@@ -39,7 +39,17 @@ class Benchmark(models.Model):
                 average_time_to_answer = sum(list(times_to_answer)) / times_to_answer.count()
 
                 return ( min(self.max_num_questions, self.questions.count()) * average_time_to_answer) // 60
+    @property
+    def library_type(self):
+        return "Benchmark"
 
+    @property
+    def library_description(self):
+        if self.description:
+            return self.description
+        else:
+            return "There is no set description for this benchmark"
+            
 class Question(models.Model):
 
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),

@@ -4,7 +4,8 @@ from .models import VideoLecture
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
       model = VideoLecture
-      fields = (
+      fields = ("id",
+                "description",
                 "title",
                 "author",
                 "create_date",
@@ -14,4 +15,6 @@ class VideoSerializer(serializers.ModelSerializer):
                 "video_link",
                 "transcript",
                 "notes",
+                "library_type",
+                "library_description",
                 )

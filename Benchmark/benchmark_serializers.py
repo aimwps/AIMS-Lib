@@ -40,6 +40,8 @@ class BenchmarkSerializer(serializers.ModelSerializer):
         "randomize_questions",
         "default_answer_seconds",
         "override_time_with_default",
+        "library_type",
+        "library_description",
         )
 
 
