@@ -108,16 +108,45 @@ $(document).ready(function(){
       }
     })
   };
-  function loadLibraryItemToModal(resultData){
-    $("#viewLibraryResultModal").modal("show");
+  function loadAimItemToModal(aimData){
+    console.log(aimData)
+    $("#aimBehaviours").empty()
+    $("#viewLibraryAimResultModal").modal("show")
+    $("#aimTitle").text(aimData.title)
+    $("#aimMotivation").text(aimData.motivation)
+    $.each(aimData.behaviours, function(idx, behaviour){
+      $("#aimBehaviours").append(`
+        <li class="list-group-item">
 
-    $.ajax({
+          <a class="btn btn-link w-100 my-2" data-bs-toggle="collapse" href="#behaviourCollapse_${behaviour.id}" role="button" aria-expanded="false" aria-controls="behaviourCollapse_${behaviour.id}">
+            ${behaviour.title}
+          </a>
+
+            <div class="collapse" id="behaviourCollapse_${behaviour.id}">
+              <div class="card card-body border-0">
+                <ul class="list-group-flush" id="behaviours_${behaviour.id}_tracker_list">
+                </ul>
+              </div>
+            </div>
+
+        </li>
+        `);
+        $.each(behaviour.trackers, function(tracker_idx, tracker){
+          console.log(tracker_idx, tracker)
+        });
+    })
+  };
+  function loadLibraryItemToModal(resultData){
+        $.ajax({
         type: "GET",
         url: "/LibraryView_ajax_get_library_result/",
         data: {result_phrase: resultData},
         datatype: "json",
         success: function(json){
           console.log(json)
+          if (json.library_type ==="Aim"){
+            loadAimItemToModal(json)
+          }
         }
     })
   }

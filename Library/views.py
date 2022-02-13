@@ -29,8 +29,21 @@ def LibraryView_ajax_get_library_result(request):
                             "Aim": Aim,
                             }
     result = get_object_or_404(content_type_converter[content_type], id=content_id)
-    print(type(result), result.title)
-    return JsonResponse(data, safe=False)
+    if isinstance(result, VideoLecture):
+        data = VideoSerializer(result)
+    elif isinstance(result, Article):
+        data = ArticleSerializer(result)
+    elif isinstance(result, Benchmark):
+        data = BenchmarkSerializer(result)
+    elif isinstance(result, Pathway):
+        data = PathwaySerializer(result)
+    elif isinstance(result, Organisation):
+        data = OrganisationSerializer(result)
+    elif isinstance(result, Aim):
+        data = AimLibrarySerializer(result)
+    else:
+        print("DATA TYPE ERROR FOR SERIALIZATION")
+    return JsonResponse(data.data, safe=False)
 def LibraryView_ajax_search_library(request):
     search_phrase = request.GET.get("search_phrase")
     pathways = Pathway.objects.filter(Q(title__icontains=search_phrase)| Q(description__icontains=search_phrase)).distinct()

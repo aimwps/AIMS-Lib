@@ -2,26 +2,7 @@ from rest_framework import serializers
 from .models import StepTracker, Aim, Behaviour
 
 
-class BehaviourSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Behaviour
-        fields = ("id", "title",)
 
-class AimLibrarySerializer(serializers.ModelSerializer):
-    behaviours  = BehaviourSerializer(many=True)
-    class Meta:
-        model = Aim
-        fields = (
-                "id",
-                "title",
-                "motivation",
-                "category",
-                "create_date",
-                "create_time",
-                "behaviours",
-                "library_type",
-                "library_description",
-                )
 class StepTrackerSerializer(serializers.ModelSerializer):
     class Meta:
       model = StepTracker
@@ -45,4 +26,26 @@ class StepTrackerSerializer(serializers.ModelSerializer):
               "order_position",
               "create_date",
               "create_time",
+              "get_tsentence"
                   )
+class BehaviourSerializer(serializers.ModelSerializer):
+    trackers = StepTrackerSerializer(many=True)
+    class Meta:
+        model = Behaviour
+        fields = ("id", "title","trackers")
+
+class AimLibrarySerializer(serializers.ModelSerializer):
+    behaviours  = BehaviourSerializer(many=True)
+    class Meta:
+        model = Aim
+        fields = (
+                "id",
+                "title",
+                "motivation",
+                "category",
+                "create_date",
+                "create_time",
+                "behaviours",
+                "library_type",
+                "library_description",
+                )

@@ -135,6 +135,7 @@ class StepTracker(models.Model):
 
         return tsentence
 
+    @property
     def get_tquestion(self):
         return  self.get_tsentence() + " How did you get on?"
 
