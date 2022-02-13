@@ -55,7 +55,7 @@
           </ul>
         </div>
         <div class="collapse py-2" id="addOrganisation">
-          <div class="card card-body border-primary">
+          <div class="card card-body border-0">
             <div class="form-group">
               <form method="POST">
                 {% csrf_token %}
@@ -73,7 +73,7 @@
 
             </div>
             <button class="btn btn-al w-100 my-2" name="cancelCloseOrgs">Cancel & close</button>
-
+            <hr>
           </div>
         </div>
 
@@ -103,7 +103,7 @@
             </ul>
           </div>
           <div class="collapse py-2" id="addMember">
-            <div class="card card-body border-primary">
+            <div class="card card-body border-0">
               <p class="mb-0">Invite to root organisation</p>
               <input id="userSearchInput" class="form-control" placeholder="Search exact username or email">
               <ul class="list-group list-group-flush my-2 border-0" id="userSearchResults">
@@ -120,6 +120,7 @@
             </div>
 
             <button class="btn btn-al w-100 my-2" name="cancelCloseMember">Cancel & close</button>
+            <hr>
             </div>
       </div>
       {% endif %}

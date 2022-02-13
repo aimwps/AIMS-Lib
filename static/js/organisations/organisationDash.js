@@ -50,7 +50,8 @@ $(document).ready(function(){
           },
       datatype: "json",
       success: function(json){
-        console.log(json)
+        console.log(json);
+        window.location.reload();
       }
     })
 

@@ -37,8 +37,6 @@ def ajax_find_organisation_children_with_member(request):
     return JsonResponse(data, safe=False)
 
 
-
-
 def ajax_users_organisation_pathway_data(request):
 
     organisation = Organisation.objects.get(id=request.GET.get("organisation_id"))
@@ -80,7 +78,12 @@ def ajax_get_organisation_pathway_data(request):
 
     organisation_non_pathway_participants = organisation.org_members.filter(~Q(member__in=pathway.participants.values_list("author_id")))
 
-    pathway_purchases = PathwayPurchase.objects.filter(purchase_type="organisation_paid", purchase_owner=organisation.find_root_organisation.id, status="active")
+    if pathway.cost_brackets.exists():
+        pathway_purchases = PathwayPurchase.objects.filter(purchase_type="organisation_paid", purchase_owner=organisation.find_root_organisation.id, status="active", pathway=pathway).count()
+    else:
+        pathway_purchases = "free"
+
+
 
     data_info = {
                 "branch_members": organisation.org_members.count() ,
@@ -88,7 +91,7 @@ def ajax_get_organisation_pathway_data(request):
                 "pending_members":OrganisationMembersSerializer(organisation_members_pending_pathway_invite, many=True).data,
                 "without_pathway_invite": OrganisationMembersSerializer(organisation_non_pathway_participants, many=True).data,
                 "own_subscription_members":  OrganisationMembersSerializer(organisation_members_external_pathway_invite, many=True).data,
-                "pathway_available_invites": pathway_purchases.count() ,
+                "pathway_available_invites": pathway_purchases,
                 "pathway_costs": PathwayCostSerializer(pathway.cost_brackets.all().order_by("purchase_quantity"), many=True).data,
                 "pathway": PathwaySerializer(pathway).data,
                 }
@@ -302,40 +305,55 @@ class OrganisationView(LoginRequiredMixin, View):
             organisation = Organisation.objects.get(id=organisation_id)
 
             pathway = Pathway.objects.get(id=request.POST.get("pathway_id"))
-            unspent_credits = PathwayPurchase.objects.filter(
-                                    pathway=pathway,
-                                    purchase_owner=organisation.find_root_organisation.id,
-                                    status="active",
-                                    spent_on_user=None,
-                                    spent_by_user=None
-            )
+            if pathway.cost_brackets.exists():
+                unspent_credits = PathwayPurchase.objects.filter(
+                                        pathway=pathway,
+                                        purchase_owner=organisation.find_root_organisation.id,
+                                        status="active",
+                                        spent_on_user=None,
+                                        spent_by_user=None
+                )
 
-            if unspent_credits.exists():
-                if unspent_credits.count() >= len(new_participant_ids):
-                    for i, new_participant_id in enumerate(new_participant_ids):
-                        print(f"----UNSPENT_CREDITS:{unspent_credits.count()} NEW_PARTI: {len(new_participant_ids)} Iteration: {i}")
-                        user_to_invite = User.objects.get(id=new_participant_id)
-                        existing_credit = unspent_credits[0]
-                        existing_credit.spent_on_user = user_to_invite
-                        existing_credit.spent_by_user = request.user
-                        existing_credit.status = "spent"
-                        existing_credit.save()
-                        print(existing_credit)
-                        new_participant = PathwayParticipant(
-                                            author=user_to_invite,
-                                            on_pathway=pathway,
-                                            status="pending",
-                                            purchase=existing_credit)
-                        new_participant.save()
-                        print(new_participant)
+                if unspent_credits.exists():
+                    if unspent_credits.count() >= len(new_participant_ids):
+                        for i, new_participant_id in enumerate(new_participant_ids):
+                            print(f"----UNSPENT_CREDITS:{unspent_credits.count()} NEW_PARTI: {len(new_participant_ids)} Iteration: {i}")
+                            user_to_invite = User.objects.get(id=new_participant_id)
+                            existing_credit = unspent_credits[0]
+                            existing_credit.spent_on_user = user_to_invite
+                            existing_credit.spent_by_user = request.user
+                            existing_credit.status = "spent"
+                            existing_credit.save()
+                            print(existing_credit)
+                            new_participant = PathwayParticipant(
+                                                author=user_to_invite,
+                                                on_pathway=pathway,
+                                                status="pending",
+                                                purchase=existing_credit)
+                            new_participant.save()
+                            print(new_participant)
 
+                    else:
+                        print("HERE WE RETURN ERROR TO SAY ORGANISATION DOESNT HAVE ENOUGH CREDITS")
                 else:
-                    print("HERE WE RETURN ERROR TO SAY ORGANISATION DOESNT HAVE ENOUGH CREDITS")
+                    print("no credits to spend")
             else:
-                print("no credits to spend")
-
-
-
+                for new_participant_id in new_participant_ids:
+                    user_to_invite = User.objects.get(id=new_participant_id)
+                    new_purchase = PathwayPurchase(
+                                                purchase_type = "organisation_free",
+                                                purchase_owner = organisation.find_root_organisation.id,
+                                                pathway = pathway,
+                                                spent_by_user=request.user,
+                                                spent_on_user=user_to_invite,
+                                                status="pending",)
+                    new_purchase.save()
+                    new_participant = PathwayParticipant(author=user_to_invite,
+                                                        on_pathway= pathway,
+                                                        status="pending",
+                                                        purchase=new_purchase
+                                                        )
+                    new_participant.save()
 
         return redirect("organisation", organisation_id=organisation_id)
 
@@ -412,7 +430,7 @@ class UserOrganisationsView(LoginRequiredMixin,ListView):
         return context
     def get_queryset(self):
         return Organisation.objects.filter(
-                            (Q(parent_organisation=None) & Q(org_members__member=self.request.user)) |(Q(author=self.request.user) &Q(parent_organisation=None) )
+                            (Q(parent_organisation=None) & Q(org_members__member=self.request.user, org_members__status="active")) |(Q(author=self.request.user) &Q(parent_organisation=None) )
                             ).distinct()
 
 

@@ -426,12 +426,8 @@ class PathsHomeView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        print("------------------")
-        x = Pathway.objects.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(participants__author=self.request.user)))
-        print(x)
-        print("------------------")
 
-        return Pathway.objects.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(participants__author=self.request.user)))
+        return Pathway.objects.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(participants__author=self.request.user))).distinct()
 
     # login_url = '/login-or-register/'
     # redirect_field_name = 'redirect_to'
