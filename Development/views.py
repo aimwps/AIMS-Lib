@@ -89,7 +89,7 @@ def request_uncomplete_trackers(request):
         if tracker_status['next_period_status']== "period_progressing":
             uncomplete_tracker_dict = {'display_section': tracker_status['display_section'],
                                         'tracker': StepTrackerSerializer(tracker_status['tracker']).data,
-                                        'question': tracker.get_tquestion(),
+                                        'question': tracker.get_tquestion,
                                         'pretty_start':tracker_status['next_period_start'].strftime("%d/%m/%y @ %H:%M:%S"),
                                         'pretty_end': tracker_status['next_period_end'].strftime("%d/%m/%y @ %H:%M:%S")}
             uncomplete_trackers.append(uncomplete_tracker_dict)

@@ -114,6 +114,8 @@ $(document).ready(function(){
     $("#viewLibraryAimResultModal").modal("show")
     $("#aimTitle").text(aimData.title)
     $("#aimMotivation").text(aimData.motivation)
+    $("#submitCopyAim").val(aimData.id)
+    $("#submitBookmarkAim").val(aimData.id)
     $.each(aimData.behaviours, function(idx, behaviour){
       $("#aimBehaviours").append(`
         <li class="list-group-item border-0">
@@ -164,6 +166,27 @@ $(document).ready(function(){
         }
     })
   }
+  function submitCopyAim(aimId){
+    $.ajax({type:"POST",
+            url:"/LibraryView_ajax_use_content/",
+            datatype:"json",
+            data:{submitCopyAim: aimId,
+                  csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
+            success: function(json){
+              console.log(json);
+            }})
+  }
+  function submitBookmarkAim(aimId){
+    $.ajax({type:"POST",
+            url:"/LibraryView_ajax_use_content/",
+            datatype:"json",
+            data:{submitBookmarkAim: aimId,
+                  csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
+            success: function(json){
+              console.log(json);
+            }})
+  };
+
   $(document).on("keyup", "#searchInput", function(){
     let searchPhrase = $(this).val();
     if (searchPhrase.length > 0){
@@ -174,5 +197,16 @@ $(document).ready(function(){
   $(document).on("click", "[name='viewLibraryItem']", function(){
     let itemData = $(this).val();
     loadLibraryItemToModal(itemData);
+  })
+
+  $(document).on("click", "#submitCopyAim", function(e){
+    e.preventDefault();
+    let aimId = $(this).val();
+    submitCopyAim(aimId);
+  })
+  $(document).on("click", "#submitBookmarkAim", function(e){
+    e.preventDefault();
+    let aimId = $(this).val();
+    submitBookmarkAim(aimId);
   })
 })
