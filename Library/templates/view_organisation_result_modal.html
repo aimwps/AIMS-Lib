@@ -1,0 +1,25 @@
+<div class="modal fade" id="viewLibraryOrganisationResultModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewLibraryOrganisationResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewLibraryOrganisationResultModalLabel">Step tracker from library</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group-flush px-0" id="organisationDetails">
+          </ul>
+
+          <p><small><strong>Bookmarking</strong> this step organisation will allow you to keep track on it's publicly viewable content without becoming a member.
+          </small></p>
+
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-al" name="submitBookmarkOrganisation" id="submitBookmarkOrganisation">Bookmark</button>
+      </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="modal fade" id="viewLibraryStepTrackerResultModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewLibraryStepTrackerResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewLibraryStepTrackerResultModalLabel">Step tracker from library</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group-flush px-0" id="stepTrackerDetails">
+          </ul>
+
+          <p><small><strong>Bookmarking</strong> this step tracker will allow you to create a copy on one of your own behaviours. You'll be able to edit your copy of the tracker upon assigning it to a behaviour. Copied content will not appear in the library.
+          </small></p>
+
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-al" name="submitBookmarkBehaviour" id="submitBookmarkStepTracker">Bookmark</button>
+      </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

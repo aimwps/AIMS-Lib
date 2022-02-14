@@ -73,7 +73,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">ALL BOOKMARKS</h5>
-        <ul class="list-group-flush px-0 resultlist" name="bookmarkType" id="allUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType" id="AllUserBookmarks">
         </ul>
       </div>
 
@@ -85,7 +85,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">AIM BOOKMARKS</h5>
-        <ul class="list-group-flush px-0 resultlist" name="bookmarkType"  id="aimUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType"  id="AimUserBookmarks">
         </ul>
       </div>
     </div>
@@ -97,7 +97,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">BEHAVIOUR BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType"  id="behaviourUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType"  id="BehaviourUserBookmarks">
         </ul>
       </div>
     </div>
@@ -108,7 +108,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">STEP TRACKER BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType"  id="stepTrackerUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType"  id="StepTrackerUserBookmarks">
         </ul>
       </div>
     </div>
@@ -117,7 +117,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
       </ul>
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">PATHWAY BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType" id="pathwayUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType" id="PathwayUserBookmarks">
         </ul>
 
 
@@ -130,7 +130,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
           <div class="col  border border-primary rounded">
             <h5 class="card-title my-2 text-center">ARTICLE BOOKMARKS</h5>
-            <ul class="list-group-flush px-0" name="bookmarkType"  id="articleUserBookmarks">
+            <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType"  id="ArticleUserBookmarks">
             </ul>
           </div>
       </div>
@@ -140,7 +140,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
       </ul>
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">VIDEO BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType" id="videoUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType" id="VideoUserBookmarks">
         </ul>
       </div>
     </div>
@@ -150,7 +150,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
       </ul>
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">BENCHMARK BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType"  id="benchmarkUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType"  id="BenchmarkUserBookmarks">
         </ul>
 
       </div>
@@ -162,7 +162,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
       <div class="col  border border-primary rounded">
         <h5 class="card-title my-2 text-center">ORGANISATION BOOKMARKS</h5>
 
-        <ul class="list-group-flush px-0" name="bookmarkType"  id="organisationUserBookmarks">
+        <ul class="list-group-flush px-0 bookmarkresultlist" name="bookmarkType"  id="OrganisationUserBookmarks">
         </ul>
 
       </div>
@@ -173,10 +173,14 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
 </div>
 
-{% include "view_result_modal.html" %}
 {% include "view_aim_result_modal.html" %}
 {% include "view_behaviour_result_modal.html" %}
-
+{% include "view_steptracker_result_modal.html" %}
+{% include "view_pathway_result_modal.html" %}
+{% include "view_article_result_modal.html" %}
+{% include "view_video_result_modal.html" %}
+{% include "view_benchmark_result_modal.html" %}
+{% include "view_organisation_result_modal.html" %}
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'js/library/libraryView.js' %}"></script>

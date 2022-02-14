@@ -9,7 +9,7 @@ from WrittenLecture.article_serializers import ArticleSerializer
 from Benchmark.models import Benchmark
 from Benchmark.benchmark_serializers import BenchmarkSerializer
 from Development.models import Aim
-from Development.development_serializers import AimLibrarySerializer
+from Development.development_serializers import AimLibrarySerializer, StepTrackerSerializer, BehaviourSerializer
 from Organisations.models import Organisation
 from Organisations.organisation_serializers import OrganisationSerializer
 
@@ -21,6 +21,8 @@ class BookmarkSerializer(serializers.ModelSerializer):
     pathway = PathwaySerializer()
     organisation = OrganisationSerializer()
     aim = AimLibrarySerializer()
+    behaviour = BehaviourSerializer()
+    steptracker = StepTrackerSerializer()
     class Meta:
         model = Bookmark
         fields = (  "content_type",
@@ -30,4 +32,6 @@ class BookmarkSerializer(serializers.ModelSerializer):
                     "pathway",
                     "organisation",
                     "aim",
+                    "behaviour",
+                    "steptracker"
                     )

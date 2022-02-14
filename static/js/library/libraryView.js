@@ -7,9 +7,7 @@ $(document).ready(function(){
       data: {"search_phrase": searchPhrase},
       success: function(json){
         console.log(json)
-        // Display all results
-        $("#AllResultsList").empty();
-        $("ul.resultlist").empty();
+        // Display all result
         $.each(json, function(field_idx, result_field){
           $.each(result_field, function(result_idx, result){
 
@@ -157,8 +155,91 @@ $(document).ready(function(){
       })
 
     };
+  function loadStepTrackerItemToModal(tracker){
+    console.log(tracker)
+    $("#viewLibraryStepTrackerResultModal").modal("show")
+    $("#submitBookmarkStepTracker").val(tracker.id)
+    $("#stepTrackerDetails").empty()
+    $("#stepTrackerDetails").append(`
+        <li class="list-group-item border-0">
+        <small><strong>Tracker: </strong>${tracker.get_tsentence}</small>
+          </li>
+          <li class="list-group-item border-0">
+          <small><strong>Type: </strong>${tracker.get_type_sentence}</small>
+            </li>
+          <li class="list-group-item border-0">
+          <small><strong>Frequency: </strong>${tracker.get_frequency_sentence}</small>
+            </li>
+          <li class="list-group-item border-0">
+          <small><strong>Log window: </strong>A ${tracker.record_log_length}</small>
+            </li>`)
 
+  }
+  function loadOrganisationItemToModal(organisationData){
+      $("#viewLibraryOrganisationResultModal").modal("show")
+      $("#submitBookmarkOrganisation").val(organisationData.id)
+      $("#organsationDetails").empty()
+      $("#organsationDetails").append(`
+        <li class="list-group-item">
+        <small><strong>Title: </strong>${organisationData.title}</small>
+        </li>
+        <li class="list-group-item">
+        <small><strong>Description: </strong>${organisationData.description}</small>
+        </li>
+        `)
+  }
+  function loadVideoItemToModal(videoData){
+      $("#viewLibraryVideoResultModal").modal("show")
+      $("#submitBookmarkVideo").val(videoData.id)
+      $("#videoDetails").empty()
+      $("#videoDetails").append(`
+        <li class="list-group-item">
+        <small><strong>Title: </strong>${videoData.title}</small>
+        </li>
+        `)
+  }
 
+  function loadArticleItemToModal(articleData){
+      $("#viewLibraryArticleResultModal").modal("show")
+      $("#submitBookmarkArticle").val(articleData.id)
+      $("#articleDetails").empty()
+      $("#articleDetails").append(`
+        <li class="list-group-item">
+        <small><strong>Title: </strong>${articleData.title}</small>
+        </li>
+        <li class="list-group-item">
+        <small><strong>Description: </strong>${articleData.description}</small>
+        </li>
+        `)
+  }
+
+  function loadBenchmarkItemToModal(benchmarkData){
+      $("#viewLibraryBenchmarkResultModal").modal("show")
+      $("#submitBookmarkBenchmark").val(benchmarkData.id)
+      $("#benchmarkDetails").empty()
+      $("#benchmarkDetails").append(`
+        <li class="list-group-item">
+        <small><strong>Title: </strong>${benchmarkData.title}</small>
+        </li>
+        <li class="list-group-item">
+        <small><strong>Description: </strong>${benchmarkData.description}</small>
+        </li>
+        `)
+  }
+
+  function loadPathwayItemToModal(pathwayData){
+      $("#viewLibraryPathwayResultModal").modal("show")
+      $("#submitBookmarkPathway").val(pathwayData.id)
+
+      $("#pathwayDetails").append(`
+        <li class="list-group-item">
+        <small><strong>Title: </strong>${pathwayData.title}</small>
+        </li>
+        <li class="list-group-item">
+        <small><strong>Description: </strong>${pathwayData.description}</small>
+        </li>
+        `)
+  }
   function loadLibraryItemToModal(resultData){
         $.ajax({
         type: "GET",
@@ -168,16 +249,23 @@ $(document).ready(function(){
         success: function(json){
           console.log(json)
           if (json.library_type ==="Aim"){
-            console.log("Aim")
-            loadAimItemToModal(json)
+            loadAimItemToModal(json);
           } else if (json.library_type === "Behaviour"){
-            loadBehaviourItemToModal(json)
+            loadBehaviourItemToModal(json);
           } else if (json.library_type === "StepTracker"){
-            console.log("StepTracker")
+            loadStepTrackerItemToModal(json);
           } else if (json.library_type === "Organisation"){
-            console.log("Organisationr")
-          } else {
-            console.log("its a pathway, articLE, VIDEO or benchmark.")
+            loadOrganisationItemToModal(json);
+          } else if (json.library_type === "Video"){
+            loadVideoItemToModal(json);
+          } else if (json.library_type === "Article"){
+            loadArticleItemToModal(json);
+          } else if (json.library_type === "Benchmark"){
+            loadBenchmarkItemToModal(json);
+          } else if (json.library_type === "Pathway"){
+            loadPathwayItemToModal(json);
+         } else {
+            console.log("we haven't uinderstood the contentType")
           };
     }})
   }
@@ -191,10 +279,19 @@ $(document).ready(function(){
                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
             success: function(json){
               console.log(json);
+              getUserBookmarks()
+              $("#viewLibraryAimResultModal").modal("hide")
+              $("#viewLibraryBehaviourResultModal").modal("hide")
+              $("#viewLibraryStepTrackerResultModal").modal("hide")
+              $("#viewLibraryVideoResultModal").modal("hide")
+              $("#viewLibraryArticleResultModal").modal("hide")
+              $("#viewLibraryBenchmarkResultModal").modal("hide")
+              $("#viewLibraryOrganisationResultModal").modal("hide")
+              $("#viewLibraryPathwayResultModal").modal("hide")
             }})
   }
-
   function getUserBookmarks(){
+    $("ul.bookmarkresultlist").empty();
     $.ajax({
               type:"GET",
               url:"/LibraryView_ajax_get_user_bookmarks/",
@@ -204,60 +301,80 @@ $(document).ready(function(){
                 if (json.length > 0){
                   $.each(json, function(idx, bookmark){
                     if (bookmark.content_type === "Article"){
-                      $("#articleUserBookmarks").append(`
+                      $("#ArticleUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.article.title}
                         </li>`)
-                      $("#allUserBookmarks").append(`
+                      $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.article.title}
                         </li>`)
                     } else if (bookmark.content_type ==="VideoLecture"){
-                      $("#videoeUserBookmarks").append(`
+                      $("#VideoUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.video.title}
                         </li>`)
-                      $("#allUserBookmarks").append(`
+                      $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.video.title}
                         </li>`)
                     } else if (bookmark.content_type ==="Benchmark"){
-                      $("#benchmarkUserBookmarks").append(`
+                      $("#BenchmarkUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.benchmark.title}
                         </li>`)
-                      $("#allUserBookmarks").append(`
+                      $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.benchmark.title}
                         </li>`)
                     } else if (bookmark.content_type ==="Pathway") {
-                      $("#pathwayUserBookmarks").append(`
+                      $("#PathwayUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.pathway.title}
                         </li>`)
-                      $("#allUserBookmarks").append(`
+                      $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.pathway.title}
                         </li>`)
                     } else if (bookmark.content_type ==="Organisation") {
-                      $("#organisationUserBookmarks").append(`
+                      $("#OrganisationUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.organisation.title}
                         </li>`)
-                      $("#allUserBookmarks").append(`
+                      $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.organisation.title}
                         </li>`)
                     } else if (bookmark.content_type ==="Aim") {
-                      $("#aimUserBookmarks").append(`
+                      $("#AimUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.aim.title}
                         </li>`)
-                      $("#allUserBookmarks").append(`
+                      $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
                         ${bookmark.aim.title}
                         </li>`)
-                    } else {
+                    }  else if (bookmark.content_type ==="Behaviour") {
+                      $("#BehaviourUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.behaviour.title}
+                        </li>`)
+                      $("#AllUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.behaviour.title}
+                        </li>`)
+                    }  else if (bookmark.content_type ==="StepTracker") {
+                      $("#StepTrackerUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.steptracker.get_tsentence}
+                        </li>`)
+                      $("#AllUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.steptracker.get_tsentence}
+                        </li>`)
+                    }
+
+                    else {
                       console.log("errors with content type")
                     }
                   })
@@ -281,6 +398,13 @@ $(document).ready(function(){
 
   });
 
+    $(document).on("click", "#resetLibrarySearch", function(e){
+      e.preventDefault();
+      $("#searchInput").val("")
+      $("#AllResultsList").empty();
+      $("ul.resultlist").empty();
+
+    })
   $(document).on("click", "[name='viewLibraryItem']", function(){
     let itemData = $(this).val();
     loadLibraryItemToModal(itemData);
@@ -297,18 +421,43 @@ $(document).ready(function(){
     submitUseLibraryContent(aimId,"Aim","bookmark")
   })
 
-  $(document).on("click", "#resetLibrarySearch", function(e){
-    e.preventDefault();
-    $("#searchInput").val("")
-    $("#AllResultsList").empty();
-    $("ul.resultlist").empty();
-
-  })
 
   $(document).on("click", "#submitBookmarkBehaviour", function(e){
     e.preventDefault();
-    let behaviourId = $(this).val()
-    submitUseLibraryContent(behaviourId,"Behaviour","bookmark")
+    let id = $(this).val()
+    submitUseLibraryContent(id,"Behaviour","bookmark")
+  })
+
+  $(document).on("click", "#submitBookmarkStepTracker", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id,"StepTracker","bookmark")
+  })
+
+  $(document).on("click", "#submitBookmarkOrganisation", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id,"Organisation","bookmark")
+  })
+  $(document).on("click", "#submitBookmarkPathway", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id,"Pathway","bookmark")
+  })
+  $(document).on("click", "#submitBookmarkArticle", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id,"Article", "bookmark")
+  })
+  $(document).on("click", "#submitBookmarkVideo", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id,"VideoLecture","bookmark")
+  })
+  $(document).on("click", "#submitBookmarkBenchmark", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id,"Benchmark","bookmark")
   })
   getUserBookmarks()
 })

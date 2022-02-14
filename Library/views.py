@@ -86,64 +86,95 @@ def LibraryView_ajax_use_content(request):
         elif request.POST.get("submit_type") == "bookmark":
             if content_type == "Article":
                 bookmarked_object = Article.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="Article",
-                                        article=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, article=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Article",
+                                            article=bookmarked_object)
+                    new_bookmark.save()
 
-            elif content_type == "Video":
+            elif content_type == "VideoLecture":
                 bookmarked_object = VideoLecture.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="VideoLecture",
-                                        video=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, video=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="VideoLecture",
+                                            video=bookmarked_object)
+                    new_bookmark.save()
 
             elif content_type == "Benchmark":
                 bookmarked_object = Benchmark.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="Benchmark",
-                                        benchmark=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, benchmark=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Benchmark",
+                                            benchmark=bookmarked_object)
+                    new_bookmark.save()
 
             elif content_type == "Pathway":
                 bookmarked_object = Pathway.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="Pathway",
-                                        pathway=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, pathway=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Pathway",
+                                            pathway=bookmarked_object)
+                    new_bookmark.save()
 
             elif content_type == "Organisation":
                 bookmarked_object = Organisation.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="Organisation",
-                                        organisation=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user,organisation=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Organisation",
+                                            organisation=bookmarked_object)
+                    new_bookmark.save()
 
             elif content_type == "Aim":
                 bookmarked_object = Aim.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="Aim",
-                                        aim=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, aim=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Aim",
+                                            aim=bookmarked_object)
+                    new_bookmark.save()
 
 
             elif content_type == "Behaviour":
                 bookmarked_object = Behaviour.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="Behaviour",
-                                        behaviour=bookmarked_object)
-                new_bookmark.save()
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, behaviour=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Behaviour",
+                                            behaviour=bookmarked_object)
+                    new_bookmark.save()
+
 
             elif content_type == "StepTracker":
                 bookmarked_object = StepTracker.objects.get(id=content_id)
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type="StepTracker",
-                                        steptracker=bookmarked_object)
-                new_bookmark.save()
-
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, steptracker=bookmarked_object)
+                if existing_bookmark.exists():
+                    print("duplicating bookmark error")
+                else:
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="StepTracker",
+                                            steptracker=bookmarked_object)
+                    new_bookmark.save()
             else:
                 print("return an Content type error")
-
         else:
             print("unrecognised submit type")
 

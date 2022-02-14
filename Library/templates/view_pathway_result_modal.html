@@ -1,0 +1,25 @@
+<div class="modal fade" id="viewLibraryPathwayResultModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewLibraryPathwayResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewLibraryPathwayResultModalLabel">Pathway from library</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group-flush px-0" id="pathwayDetails">
+          </ul>
+
+          <p><small><strong>Bookmarking</strong> this pathway will allow you to to share it with members of your organisations or keep it safe for you to join at a later date.
+          </small></p>
+
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-al" name="submitBookmarkPathway" id="submitBookmarkPathway">Bookmark</button>
+      </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="modal fade" id="viewLibraryVideoResultModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewLibraryVideoResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewLibraryVideoResultModalLabel">Video lecture from library</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group-flush px-0" id="videoDetails">
+        </ul>
+        <p><small><strong>Bookmarking</strong> this video will allow you to create a copy to use on one of your own pathways. Copied video content cannot be  used in pathways that charge a fee.
+        </small></p>
+
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-al" name="submitBookmarkVideo" id="submitBookmarkVideo">Bookmark</button>
+      </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
