@@ -30,31 +30,31 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
   <ul class="nav nav-pills nav-justified" id="resultsTab" role="tablist">
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="all-results-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="allResults" aria-selected="true">All</button>
+      <button class="nav-link active" name="filterContentType" id="all-results-tab" data-bs-toggle="tab" data-bs-target="#allResults" type="button" role="tab" aria-controls="allResults" aria-selected="true">All</button>
     </li>
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" id="aims-tab" data-bs-toggle="tab" data-bs-target="#aimsTab" type="button" role="tab" aria-controls="aimsTab" aria-selected="false">Aims</button>
+      <button class="nav-link ms-auto me-auto" name="filterContentType"  id="aims-tab" data-bs-toggle="tab" data-bs-target="#aimsTab" type="button" role="tab" aria-controls="aimsTab" aria-selected="false">Aims</button>
     </li>
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" id="pathways-tab" data-bs-toggle="tab" data-bs-target="#pathwaysTab" type="button" role="tab" aria-controls="pathwaysTab" aria-selected="false">Pathways</button>
+      <button class="nav-link ms-auto me-auto" name="filterContentType" id="pathways-tab" data-bs-toggle="tab" data-bs-target="#pathwaysTab" type="button" role="tab" aria-controls="pathwaysTab" aria-selected="false">Pathways</button>
     </li>
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articlesTab" type="button" role="tab" aria-controls="articlesTab" aria-selected="false">Articles</button>
+      <button class="nav-link ms-auto me-auto" name="filterContentType" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articlesTab" type="button" role="tab" aria-controls="articlesTab" aria-selected="false">Articles</button>
     </li>
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" id="video-tab" data-bs-toggle="tab" data-bs-target="#videoTab" type="button" role="tab" aria-controls="videoTab" aria-selected="false">Videos</button>
+      <button class="nav-link ms-auto me-auto" name="filterContentType" id="video-tab" data-bs-toggle="tab" data-bs-target="#videoTab" type="button" role="tab" aria-controls="videoTab" aria-selected="false">Videos</button>
     </li>
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" id="benchmarks-tab" data-bs-toggle="tab" data-bs-target="#benchmarksTab" type="button" role="tab" aria-controls="benchmarksTab" aria-selected="false">Benchmarks</button>
+      <button class="nav-link ms-auto me-auto" name="filterContentType" id="benchmarks-tab" data-bs-toggle="tab" data-bs-target="#benchmarksTab" type="button" role="tab" aria-controls="benchmarksTab" aria-selected="false">Benchmarks</button>
     </li>
 
     <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" id="organisation-tab" data-bs-toggle="tab" data-bs-target="#organisationsTab" type="button" role="tab" aria-controls="organisationsTab" aria-selected="false">Organisations</button>
+      <button class="nav-link ms-auto me-auto" name="filterContentType"  id="organisation-tab" data-bs-toggle="tab" data-bs-target="#organisationsTab" type="button" role="tab" aria-controls="organisationsTab" aria-selected="false">Organisations</button>
     </li>
   </ul>
 </div>
@@ -63,41 +63,85 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
     <div class="tab-pane fade show active" id="allResults" role="tabpanel" aria-labelledby="all-results-tab">
       <ul class="list-group-flush" id="allResultsList">
-        <ul>
+      </ul>
+
+      <div class="col  border border-primary rounded">
+        <h5 class="my-2 text-center">ALL BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType" id="allUserBookmarks">
+        </ul>
+      </div>
+
     </div>
 
     <div class="tab-pane fade" id="aimsTab" role="tabpanel" aria-labelledby="aims-tab">
       <ul class="list-group-flush" id="aimsResultsList">
-        <ul>
+      </ul>
+
+      <div class="col  border border-primary rounded">
+        <h5 class="my-2 text-center">AIM BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType"  id="aimUserBookmarks">
+        </ul>
+      </div>
     </div>
 
     <div class="tab-pane fade" id="pathwaysTab" role="tabpanel" aria-labelledby="pathways-tab">
       <ul class="list-group-flush" id="pathwaysResultsList">
-        <ul>
+      </ul>
+      <div class="col  border border-primary rounded">
+        <h5 class="my-2 text-center">PATHWAY BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType" id="pathwayUserBookmarks">
+        </ul>
+
+
+      </div>
     </div>
 
     <div class="tab-pane fade" id="articlesTab" role="tabpanel" aria-labelledby="articles-tab">
       <ul class="list-group-flush" id="articlesResultsList">
-        <ul>
+      </ul>
+
+          <div class="col  border border-primary rounded">
+            <h5 class="my-2 text-center">ARTICLE BOOKMARKS</h5>
+            <ul class="list-group-flush px-0" name="bookmarkType"  id="articleUserBookmarks">
+            </ul>
+          </div>
       </div>
 
     <div class="tab-pane fade" id="videoTab" role="tabpanel" aria-labelledby="video-tab">
       <ul class="list-group-flush" id="videosResultsList">
-        <ul>
+      </ul>
+      <div class="col  border border-primary rounded">
+        <h5 class="my-2 text-center">VIDEO BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType" id="videoUserBookmarks">
+        </ul>
+      </div>
     </div>
 
     <div class="tab-pane fade" id="benchmarksTab" role="tabpanel" aria-labelledby="benchmarks-tab">
       <ul class="list-group-flush" id="benchmarksResultsList">
-        <ul>
+      </ul>
+      <div class="col  border border-primary rounded">
+        <h5 class="my-2 text-center">BENCHMARK BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType"  id="benchmarkUserBookmarks">
+        </ul>
+
+      </div>
     </div>
 
     <div class="tab-pane fade" id="organisationsTab" role="tabpanel" aria-labelledby="organisation-tab">
       <ul class="list-group-flush" id="organisationsResultsList">
-        <ul>
+      </ul>
+      <div class="col  border border-primary rounded">
+        <h5 class="my-2 text-center">ORGANISATION BOOKMARKS</h5>
+
+        <ul class="list-group-flush px-0" name="bookmarkType"  id="organisationUserBookmarks">
+        </ul>
+
+      </div>
     </div>
 
-
   </div>
+
 
 </div>
 

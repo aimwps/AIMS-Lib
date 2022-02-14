@@ -59,6 +59,10 @@ class Organisation(models.Model):
             return self.description
         else:
             return "There is no set description for this organisation"
+
+    @property
+    def library_title(self):
+        return self.title            
 class OrganisationContent(models.Model):
     assigned_group = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="group_pathways")
     content_type = models.CharField(max_length=100, choices=CONTENT_TYPE)

@@ -15,4 +15,5 @@ class ArticleSerializer(serializers.ModelSerializer):
                 "modify_time",
                 "body",
                 "library_type",
-                "library_description", )
+                "library_description",
+                "library_title")

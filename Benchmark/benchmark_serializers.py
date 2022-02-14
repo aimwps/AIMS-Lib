@@ -42,6 +42,7 @@ class BenchmarkSerializer(serializers.ModelSerializer):
         "override_time_with_default",
         "library_type",
         "library_description",
+        "library_title",
         )
 
 

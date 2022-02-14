@@ -90,8 +90,10 @@ class Pathway(models.Model):
             return self.description
         else:
             return "There is no set description for this pathway"
+    @property
+    def library_title(self):
+        return self.title
 
-            
 class PathwayCost(models.Model):
     pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, related_name="cost_brackets")
     purchase_quantity = models.PositiveIntegerField()

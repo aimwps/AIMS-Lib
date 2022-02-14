@@ -49,7 +49,9 @@ class Benchmark(models.Model):
             return self.description
         else:
             return "There is no set description for this benchmark"
-            
+    @property
+    def library_title(self):
+        return self.title            
 class Question(models.Model):
 
     ANSWER_TYPES = (("multiple-choice", "Multiple choice"),

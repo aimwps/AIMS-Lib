@@ -37,3 +37,21 @@ class Bookmark(models.Model):
     pathway = models.ForeignKey(Pathway, on_delete=models.CASCADE, null=True, blank=True)
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True)
     aim = models.ForeignKey(Aim, on_delete=models.CASCADE, null=True, blank=True)
+
+
+    @property
+    def bookmarked_object(self):
+        if self.content_type == "Article":
+            return self.article
+        elif self.content_type =="Organisation":
+            return self.organisation
+        elif self.content_type=="Benchmark":
+            return self.benchmark
+        elif self.content_type =="Pathway":
+            return self.pathway
+        elif self.content_type =="Aim":
+            return self.aim
+        elif self.content_type == "VideoLecture":
+            return self.video
+        else:
+            return "no_object_found"

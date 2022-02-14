@@ -11,14 +11,14 @@ $(document).ready(function(){
         $("#allResultsList").empty();
         $.each(json, function(field_idx, result_field){
           $.each(result_field, function(result_idx, result){
-            let descriptionOrMotivation = (result.library_description)? result.library_description: result.motivation;
+            // let descriptionOrMotivation = (result.library_description)? result.library_description: result.motivation;
             $("#allResultsList").append(`
               <li class="list-group-item">
               <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-                ${result.library_type}: ${result.title}
+                ${result.library_type}: ${result.library_title}
                </button>
               <br>
-              <small> ${descriptionOrMotivation}..</small>
+              <small> ${result.library_description}..</small>
               </li>
               `)
           });
@@ -30,7 +30,7 @@ $(document).ready(function(){
         $("#aimsResultsList").append(`
           <li class="list-group-item">
           <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.title}
+            ${result.library_type}: ${result.library_title}
            </button>
           <br>
           <small> ${result.motivation}..</small>
@@ -44,7 +44,7 @@ $(document).ready(function(){
         $("#pathwaysResultsList").append(`
           <li class="list-group-item">
           <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.title}
+            ${result.library_type}: ${result.library_title}
            </button>
           <br>
           <small> ${result.library_description}..</small>
@@ -57,7 +57,7 @@ $(document).ready(function(){
         $("#articlesResultsList").append(`
           <li class="list-group-item">
           <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.title}
+            ${result.library_type}: ${result.library_title}
            </button>
           <br>
           <small> ${result.library_description}..</small>
@@ -71,7 +71,7 @@ $(document).ready(function(){
         $("#videosResultsList").append(`
           <li class="list-group-item">
           <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.title}
+            ${result.library_type}: ${result.library_title}
            </button>
           <br>
           <small> ${result.library_description}..</small>
@@ -84,7 +84,7 @@ $(document).ready(function(){
         $("#benchmarksResultsList").append(`
           <li class="list-group-item">
           <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.title}
+            ${result.library_type}: ${result.library_title}
            </button>
           <br>
           <small> ${result.library_description}..</small>
@@ -98,7 +98,7 @@ $(document).ready(function(){
         $("#organisationsResultsList").append(`
           <li class="list-group-item">
           <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.title}
+            ${result.library_type}: ${result.library_title}
            </button>
           <br>
           <small> ${result.library_description}..</small>
@@ -161,10 +161,18 @@ $(document).ready(function(){
         success: function(json){
           console.log(json)
           if (json.library_type ==="Aim"){
+            console.log("Aim")
             loadAimItemToModal(json)
-          }
-        }
-    })
+          } else if (json.library_type === "Behaviour"){
+            console.log("Behaviour")
+          } else if (json.library_type === "StepTracker"){
+            console.log("StepTracker")
+          } else if (json.library_type === "Organisation"){
+            console.log("Organisationr")
+          } else {
+            console.log("its a pathway, articLE, VIDEO or benchmark.")
+          };
+    }})
   }
   function submitCopyAim(aimId){
     $.ajax({type:"POST",
@@ -184,14 +192,91 @@ $(document).ready(function(){
                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
             success: function(json){
               console.log(json);
+              getUserBookmarks();
             }})
   };
+  function getUserBookmarks(){
+    $.ajax({
+              type:"GET",
+              url:"/LibraryView_ajax_get_user_bookmarks/",
+              datatype: "json",
+              success: function(json){
+                console.log(json)
+                if (json.length > 0){
+                  $.each(json, function(idx, bookmark){
+                    if (bookmark.content_type === "Article"){
+                      $("#articleUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.article.title}
+                        </li>`)
+                      $("#allUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.article.title}
+                        </li>`)
+                    } else if (bookmark.content_type ==="VideoLecture"){
+                      $("#videoeUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.video.title}
+                        </li>`)
+                      $("#allUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.video.title}
+                        </li>`)
+                    } else if (bookmark.content_type ==="Benchmark"){
+                      $("#benchmarkUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.benchmark.title}
+                        </li>`)
+                      $("#allUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.benchmark.title}
+                        </li>`)
+                    } else if (bookmark.content_type ==="Pathway") {
+                      $("#pathwayUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.pathway.title}
+                        </li>`)
+                      $("#allUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.pathway.title}
+                        </li>`)
+                    } else if (bookmark.content_type ==="Organisation") {
+                      $("#organisationUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.organisation.title}
+                        </li>`)
+                      $("#allUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.organisation.title}
+                        </li>`)
+                    } else if (bookmark.content_type ==="Aim") {
+                      $("#aimUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.aim.title}
+                        </li>`)
+                      $("#allUserBookmarks").append(`
+                        <li class="list-group-item">
+                        ${bookmark.aim.title}
+                        </li>`)
+                    } else {
+                      console.log("errors with content type")
+                    }
+                  })
+                } else{
+                  console.log("no records found")
+                }
 
+              }
+    })
+  }
   $(document).on("keyup", "#searchInput", function(){
     let searchPhrase = $(this).val();
-    if (searchPhrase.length > 0){
+    if (searchPhrase.length > 0 & searchPhrase != " "){
         ajaxSearchLibrary(searchPhrase);
-        }
+      } else {
+        $("#allResultsList").empty();
+      }
+
   });
 
   $(document).on("click", "[name='viewLibraryItem']", function(){
@@ -209,4 +294,12 @@ $(document).ready(function(){
     let aimId = $(this).val();
     submitBookmarkAim(aimId);
   })
+
+  $(document).on("click", "#resetLibrarySearch", function(e){
+    e.preventDefault();
+    $("#searchInput").val("")
+    $("#allResultsList").empty();
+
+  })
+  getUserBookmarks()
 })

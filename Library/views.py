@@ -7,8 +7,8 @@ from WrittenLecture.models import Article
 from WrittenLecture.article_serializers import ArticleSerializer
 from Benchmark.models import Benchmark
 from Benchmark.benchmark_serializers import BenchmarkSerializer
-from Development.models import Aim
-from Development.development_serializers import AimLibrarySerializer
+from Development.models import Aim, Behaviour, StepTracker
+from Development.development_serializers import AimLibrarySerializer, StepTrackerSerializer, BehaviourSerializer
 from Organisations.models import Organisation
 from Organisations.organisation_serializers import OrganisationSerializer
 from django.views.generic import View
@@ -16,6 +16,18 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
 from .models import Bookmark, LibraryContentType
+from .library_serializers import BookmarkSerializer
+
+
+
+def LibraryView_ajax_get_user_bookmarks(request):
+    if request.method=="GET":
+        bookmarks = request.user.bookmarks.all()
+        data = BookmarkSerializer(bookmarks, many=True)
+        return JsonResponse(data.data, safe=False)
+    else:
+        print(errors)
+
 
 def LibraryView_ajax_use_content(request):
     print(request.POST)
@@ -70,13 +82,16 @@ def LibraryView_ajax_use_content(request):
             if aim_to_bookmark.author == request.user:
                 print("return erros for bookmarking own content")
             else:
-                content_type = LibraryContentType.objects.get(content_type="Aim")
-                new_bookmark = Bookmark(for_user=request.user,
-                                        content_type=content_type,
-                                        content_id=aim_to_bookmark.id)
-                new_bookmark.save()
-            print(request.user.bookmarks.all())
+                # check user hasn't already bookmarked
+                existing_bookmark = Bookmark.objects.filter(for_user=request.user, aim=aim_to_bookmark)
+                if existing_bookmark.exists():
+                    print("Return errors for bookmark already exists ")
+                else:
 
+                    new_bookmark = Bookmark(for_user=request.user,
+                                            content_type="Aim",
+                                            aim=aim_to_bookmark)
+                    new_bookmark.save()
 
     return JsonResponse({"success":"success"}, safe=False)
 
@@ -115,8 +130,10 @@ def LibraryView_ajax_search_library(request):
     videos = VideoLecture.objects.filter(Q(title__icontains=search_phrase)| Q(description__icontains=search_phrase)).distinct()
     articles = Article.objects.filter(Q(title__icontains=search_phrase)| Q(description__icontains=search_phrase)).distinct()
     benchmarks = Benchmark.objects.filter(Q(title__icontains=search_phrase)| Q(description__icontains=search_phrase)).distinct()
-    organisations = Organisation.objects.filter(Q(title__icontains=search_phrase)| Q(description__icontains=search_phrase)).distinct()
+    organisations = Organisation.objects.filter(Q(parent_organisation=None) & (Q(title__icontains=search_phrase)| Q(description__icontains=search_phrase))).distinct()
     aims = Aim.objects.filter(Q(is_a_copy=False) & (Q(motivation__icontains=search_phrase) | Q(title__icontains=search_phrase))).distinct()
+    behaviours = Behaviour.objects.filter(Q(is_a_copy=False) & Q(title__icontains=search_phrase))
+    steptrackers = StepTracker.objects.filter(Q(is_a_copy=False) & (Q(metric_tracker_type__icontains=search_phrase) | Q(minimum_show_description__icontains=search_phrase) | Q(metric_unit__icontains=search_phrase) | Q(metric_action__icontains=search_phrase)) )
     data =  {
             "pathways": PathwaySerializer(pathways, many=True).data ,
             "videos": VideoSerializer(videos, many=True).data,
@@ -124,6 +141,8 @@ def LibraryView_ajax_search_library(request):
             "benchmarks": BenchmarkSerializer(benchmarks, many=True).data,
             "organisations": OrganisationSerializer(organisations, many=True).data,
             "aims": AimLibrarySerializer(aims, many=True).data,
+            "behaviours": BehaviourSerializer(behaviours, many=True).data,
+            "steptrackers": StepTrackerSerializer(steptrackers, many=True).data,
             }
     return JsonResponse(data, safe=False)
 

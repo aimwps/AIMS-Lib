@@ -28,7 +28,9 @@ class VideoLecture(models.Model):
             return self.description
         else:
             return "There is no set description for this video"
-
+    @property
+    def library_title(self):
+        return self.title
 class VideoLectureSession(models.Model):
 
     ARTICLE_STATUS = (

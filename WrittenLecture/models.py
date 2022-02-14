@@ -18,7 +18,7 @@ class Article(models.Model): # A body of text with extra elements e.g. Data Tabl
         return reverse('user-articles')
     @property
     def library_type(self):
-        return "Organisation"
+        return "Article"
 
     @property
     def library_description(self):
@@ -26,6 +26,10 @@ class Article(models.Model): # A body of text with extra elements e.g. Data Tabl
             return self.description
         else:
             return "There is no set description for this article"
+
+    @property
+    def library_title(self):
+        return self.title
 class ArticleImage(models.Model): # A body of text with extra elements e.g. Data Tables, recipes or images
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

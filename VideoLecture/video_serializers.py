@@ -17,4 +17,5 @@ class VideoSerializer(serializers.ModelSerializer):
                 "notes",
                 "library_type",
                 "library_description",
+                "library_title"
                 )

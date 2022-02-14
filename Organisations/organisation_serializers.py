@@ -59,4 +59,5 @@ class OrganisationSerializer(serializers.ModelSerializer):
                 "parent_organisation",
                 "library_type",
                 "library_description",
+                "library_title",
                   )

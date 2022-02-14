@@ -26,13 +26,16 @@ class StepTrackerSerializer(serializers.ModelSerializer):
               "order_position",
               "create_date",
               "create_time",
-              "get_tsentence"
+              "get_tsentence",
+              "library_type",
+              "library_title",
+              "library_description",
                   )
 class BehaviourSerializer(serializers.ModelSerializer):
     trackers = StepTrackerSerializer(many=True)
     class Meta:
         model = Behaviour
-        fields = ("id", "title","trackers")
+        fields = ("id", "title","trackers","library_type","library_title","library_description",)
 
 class AimLibrarySerializer(serializers.ModelSerializer):
     behaviours  = BehaviourSerializer(many=True)
@@ -48,4 +51,5 @@ class AimLibrarySerializer(serializers.ModelSerializer):
                 "behaviours",
                 "library_type",
                 "library_description",
+                "library_title"
                 )

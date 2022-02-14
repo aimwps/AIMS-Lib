@@ -44,6 +44,10 @@ class Aim(models.Model):
     @property
     def library_description(self):
         return self.motivation
+    @property
+    def library_title(self):
+        return self.title
+
 class Behaviour(models.Model):
     title = models.TextField()
     on_aim = models.ForeignKey(Aim, on_delete=models.CASCADE, related_name="behaviours")
@@ -62,7 +66,15 @@ class Behaviour(models.Model):
 
     def get_absolute_url(self):
         return reverse('aims-dash')
-
+    @property
+    def library_type(self):
+        return "Behaviour"
+    @property
+    def library_title(self):
+        return self.title
+    @property
+    def library_description(self):
+        return self.title
 class StepTracker(models.Model):
     on_behaviour = models.ForeignKey(Behaviour,on_delete=models.CASCADE, related_name="trackers")
     metric_tracker_type =  models.CharField(max_length=100, choices=TRACKER_TYPE, default="boolean")
@@ -134,7 +146,9 @@ class StepTracker(models.Model):
             tsentence += " ".join([period, action_min, action_max])
 
         return tsentence
-
+    @property
+    def library_type(self):
+        return "StepTracker"
     @property
     def get_tquestion(self):
         return  self.get_tsentence() + " How did you get on?"
@@ -546,6 +560,12 @@ class StepTracker(models.Model):
         }
         return status_dict
 
+    @property
+    def library_title(self):
+        return self.get_tquestion
+    @property
+    def library_description(self):
+        return self.get_tquestion
 class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
                         ("min_showup","minimum show"),
