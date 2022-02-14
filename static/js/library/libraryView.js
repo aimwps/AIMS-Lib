@@ -8,11 +8,62 @@ $(document).ready(function(){
       success: function(json){
         console.log(json)
         // Display all results
-        $("#allResultsList").empty();
+        $("#AllResultsList").empty();
+        $("ul.resultlist").empty();
         $.each(json, function(field_idx, result_field){
           $.each(result_field, function(result_idx, result){
-            // let descriptionOrMotivation = (result.library_description)? result.library_description: result.motivation;
-            $("#allResultsList").append(`
+
+            if(result.library_type === "StepTracker"){
+              $("#AllResultsList").append(`
+                <li class="list-group-item">
+                <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
+                  ${result.library_type}: ${result.library_title}
+                 </button>
+                <br>
+                <small> ${result.library_description}..</small>
+                </li>
+                `);
+              $("#StepTrackerResultsList").append(`
+                <li class="list-group-item">
+                <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
+                  ${result.library_type}: ${result.library_title}
+                 </button>
+                <br>
+                <small> ${result.library_description}..</small>
+                </li>
+                `)
+
+            } else if(result.library_type === "Behaviour"){
+              $("#AllResultsList").append(`
+                <li class="list-group-item">
+                <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
+                  ${result.library_type}: ${result.library_title}
+                 </button>
+                <br>
+                <small> ${result.library_description}..</small>
+                </li>
+                `);
+              $("#BehaviourResultsList").append(`
+                <li class="list-group-item">
+                <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
+                  ${result.library_type}: ${result.library_title}
+                 </button>
+                <br>
+                <small> ${result.library_description}..</small>
+                </li>
+                `);
+            } else {
+            $("#AllResultsList").append(`
+              <li class="list-group-item">
+              <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
+                ${result.library_type}: ${result.library_title}
+               </button>
+              <br>
+              <small> ${result.library_description}..</small>
+              </li>
+              `);
+            let contentListId = `#${result.library_type}ResultsList`
+            $(contentListId).append(`
               <li class="list-group-item">
               <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
                 ${result.library_type}: ${result.library_title}
@@ -21,92 +72,10 @@ $(document).ready(function(){
               <small> ${result.library_description}..</small>
               </li>
               `)
-          });
-        });
-
-      // Display Aims Results
-      $("#aimsResultsList").empty();
-      $.each(json.aims, function(result_idx, result){
-        $("#aimsResultsList").append(`
-          <li class="list-group-item">
-          <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.library_title}
-           </button>
-          <br>
-          <small> ${result.motivation}..</small>
-          </li>
-          `)
+          }
       })
-
-      // Display Pathway Results
-      $("#pathwaysResultsList").empty();
-      $.each(json.pathways, function(result_idx, result){
-        $("#pathwaysResultsList").append(`
-          <li class="list-group-item">
-          <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.library_title}
-           </button>
-          <br>
-          <small> ${result.library_description}..</small>
-          </li>
-          `)
-      })
-      // Display article Results
-      $("#articlesResultsList").empty();
-      $.each(json.articles, function(result_idx, result){
-        $("#articlesResultsList").append(`
-          <li class="list-group-item">
-          <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.library_title}
-           </button>
-          <br>
-          <small> ${result.library_description}..</small>
-          </li>
-          `)
-      })
-
-      // Display Video Results
-      $("#videosResultsList").empty();
-      $.each(json.videos, function(result_idx, result){
-        $("#videosResultsList").append(`
-          <li class="list-group-item">
-          <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.library_title}
-           </button>
-          <br>
-          <small> ${result.library_description}..</small>
-          </li>
-          `)
-      })
-      // Display benchjmark Results
-      $("#benchmarksResultsList").empty();
-      $.each(json.benchmarks, function(result_idx, result){
-        $("#benchmarksResultsList").append(`
-          <li class="list-group-item">
-          <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.library_title}
-           </button>
-          <br>
-          <small> ${result.library_description}..</small>
-          </li>
-          `)
-      })
-
-      // Display organisation Results
-      $("#organisationsResultsList").empty();
-      $.each(json.organisations, function(result_idx, result){
-        $("#organisationsResultsList").append(`
-          <li class="list-group-item">
-          <button class="btn btn-link text-start  px-0" name="viewLibraryItem" value="${result.library_type}_${result.id}">
-            ${result.library_type}: ${result.library_title}
-           </button>
-          <br>
-          <small> ${result.library_description}..</small>
-          </li>
-          `)
-      })
-      }
     })
+  }})
   };
   function loadAimItemToModal(aimData){
     console.log(aimData)
@@ -152,6 +121,44 @@ $(document).ready(function(){
 
     })
   };
+  function loadBehaviourItemToModal(behaviourData){
+    $("#behaviourTrackers").empty()
+    $("#viewLibraryBehaviourResultModal").modal("show")
+    $("#behaviourTitle").text(behaviourData.title)
+    $("#submitBookmarkBehaviour").val(behaviourData.id)
+    $.each(behaviourData.trackers, function(idx, tracker){
+      $("#behaviourTrackers").append(`
+        <li class="list-group-item border-0">
+
+          <a class="btn-link nounderline" data-bs-toggle="collapse" href="#trackerCollapse_${tracker.id}" role="button" aria-expanded="false" aria-controls="trackerCollapse_${tracker.id}">
+            ${tracker.get_tsentence}
+          </a>
+
+            <div class="collapse" id="trackerCollapse_${tracker.id}">
+              <div class="card card-body border-0 px-0">
+                <ul class="list-group-flush px-0" id="behaviours_${tracker.id}_tracker_list">
+                  <li class="list-group-item border-0">
+                  <small><strong>Type: </strong>${tracker.get_type_sentence}</small>
+                    </li>
+                  <li class="list-group-item border-0">
+                  <small><strong>Frequency: </strong>${tracker.get_frequency_sentence}</small>
+                    </li>
+                  <li class="list-group-item border-0">
+                  <small><strong>Log window: </strong>A ${tracker.record_log_length}</small>
+                    </li>
+                    </li>
+                </ul>
+              </div>
+            </div>
+
+        </li>
+        `);
+
+      })
+
+    };
+
+
   function loadLibraryItemToModal(resultData){
         $.ajax({
         type: "GET",
@@ -164,7 +171,7 @@ $(document).ready(function(){
             console.log("Aim")
             loadAimItemToModal(json)
           } else if (json.library_type === "Behaviour"){
-            console.log("Behaviour")
+            loadBehaviourItemToModal(json)
           } else if (json.library_type === "StepTracker"){
             console.log("StepTracker")
           } else if (json.library_type === "Organisation"){
@@ -174,27 +181,19 @@ $(document).ready(function(){
           };
     }})
   }
-  function submitCopyAim(aimId){
+  function submitUseLibraryContent(contentId, contentType, submitType){
     $.ajax({type:"POST",
             url:"/LibraryView_ajax_use_content/",
             datatype:"json",
-            data:{submitCopyAim: aimId,
+            data:{content_id: contentId,
+                  content_type: contentType,
+                  submit_type: submitType,
                   csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
             success: function(json){
               console.log(json);
             }})
   }
-  function submitBookmarkAim(aimId){
-    $.ajax({type:"POST",
-            url:"/LibraryView_ajax_use_content/",
-            datatype:"json",
-            data:{submitBookmarkAim: aimId,
-                  csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),},
-            success: function(json){
-              console.log(json);
-              getUserBookmarks();
-            }})
-  };
+
   function getUserBookmarks(){
     $.ajax({
               type:"GET",
@@ -269,12 +268,15 @@ $(document).ready(function(){
               }
     })
   }
+
+
   $(document).on("keyup", "#searchInput", function(){
     let searchPhrase = $(this).val();
     if (searchPhrase.length > 0 & searchPhrase != " "){
         ajaxSearchLibrary(searchPhrase);
       } else {
-        $("#allResultsList").empty();
+        $("#AllResultsList").empty();
+        $("ul.resultlist").empty();
       }
 
   });
@@ -287,19 +289,26 @@ $(document).ready(function(){
   $(document).on("click", "#submitCopyAim", function(e){
     e.preventDefault();
     let aimId = $(this).val();
-    submitCopyAim(aimId);
+    submitUseLibraryContent(aimId,"Aim","copy")
   })
   $(document).on("click", "#submitBookmarkAim", function(e){
     e.preventDefault();
     let aimId = $(this).val();
-    submitBookmarkAim(aimId);
+    submitUseLibraryContent(aimId,"Aim","bookmark")
   })
 
   $(document).on("click", "#resetLibrarySearch", function(e){
     e.preventDefault();
     $("#searchInput").val("")
-    $("#allResultsList").empty();
+    $("#AllResultsList").empty();
+    $("ul.resultlist").empty();
 
+  })
+
+  $(document).on("click", "#submitBookmarkBehaviour", function(e){
+    e.preventDefault();
+    let behaviourId = $(this).val()
+    submitUseLibraryContent(behaviourId,"Behaviour","bookmark")
   })
   getUserBookmarks()
 })

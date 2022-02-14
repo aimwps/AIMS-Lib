@@ -17,6 +17,7 @@ class StepTrackerSerializer(serializers.ModelSerializer):
               "minimum_show_description",
               "record_start_date",
               "record_frequency",
+              "record_log_length",
               "record_multiple_per_frequency",
               "record_verification_date",
               "complete_allowed",
@@ -30,12 +31,14 @@ class StepTrackerSerializer(serializers.ModelSerializer):
               "library_type",
               "library_title",
               "library_description",
+              "get_type_sentence",
+              "get_frequency_sentence"
                   )
 class BehaviourSerializer(serializers.ModelSerializer):
     trackers = StepTrackerSerializer(many=True)
     class Meta:
         model = Behaviour
-        fields = ("id", "title","trackers","library_type","library_title","library_description",)
+        fields = ("id", "title","trackers","library_type","library_title","library_description", )
 
 class AimLibrarySerializer(serializers.ModelSerializer):
     behaviours  = BehaviourSerializer(many=True)

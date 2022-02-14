@@ -105,7 +105,7 @@ class StepTracker(models.Model):
         ]
     def __str__(self):
         return f"StepTracker_{self.id}"
-
+    @property
     def get_frequency_sentence(self):
         vocab = {"daily": "day",
                 "weekly": "week",
@@ -117,7 +117,7 @@ class StepTracker(models.Model):
 
         }
         if self.record_frequency != "custom":
-            return f"Every {vocab[self.record_frequency]} I track"
+            return f"Every {vocab[self.record_frequency]}"
         else:
             freq_codes = StepTrackerCustomFrequency.objects.filter(on_tracker=self)
             code_list = ", ".join(freq_codes.values_list('code', flat=True))
@@ -125,8 +125,8 @@ class StepTracker(models.Model):
             plural = ""
             if len(freq_codes) > 1:
                 plural = "'s"
-            return f"For the {self.record_log_length}{plural} {code_list} of the {related_epoch[self.record_log_length]} I track"
-
+            return f"For the {self.record_log_length}{plural} {code_list} of the {related_epoch[self.record_log_length]}"
+    @property
     def get_tsentence(self):
         tsentence = ""
         if self.metric_int_only:
@@ -135,12 +135,12 @@ class StepTracker(models.Model):
         if self.metric_tracker_type == "boolean":
             tsentence += f"{self.metric_action}. "
         if self.metric_tracker_type == "maximize":
-            period = self.get_frequency_sentence()
+            period = self.get_frequency_sentence
             action_min = f"I {self.metric_action} a minimum {self.metric_min} {self.metric_unit}. "
             action_max = f"I take steps towards achieving {self.metric_max} {self.metric_unit}. "
             tsentence += "".join([period, action_min, action_max])
         if self.metric_tracker_type == "minimize":
-            period = self.get_frequency_sentence()
+            period = self.get_frequency_sentence
             action_min = f"I {self.metric_action} a maximum {self.metric_min} {self.metric_unit}. "
             action_max = f"I take steps towards achieving {self.metric_max} {self.metric_unit}. "
             tsentence += " ".join([period, action_min, action_max])
@@ -151,8 +151,17 @@ class StepTracker(models.Model):
         return "StepTracker"
     @property
     def get_tquestion(self):
-        return  self.get_tsentence() + " How did you get on?"
-
+        return  self.get_tsentence + " How did you get on?"
+    @property
+    def get_type_sentence(self):
+        if self.metric_tracker_type == "boolean":
+            return "Boolean (Tracker is defintively completed)"
+        elif self.metric_tracker_type == "maximize":
+            return "Maximize (Tracker counts up to completion)"
+        elif self.metric_tracker_type == "minimize":
+            return "Minimize (Tracker counts down to completion)"
+        else:
+            return "Tracker type not recorgnised"
     def get_milestone_sentence(self):
         period_words = {"daily": "days", "weekly": "weeks", "monthly": "months", "yearly": "years", "custom":"custom"}
         sentence = ""
@@ -562,10 +571,10 @@ class StepTracker(models.Model):
 
     @property
     def library_title(self):
-        return self.get_tquestion
+        return self.get_tsentence
     @property
     def library_description(self):
-        return self.get_tquestion
+        return self.get_tsentence
 class StepTrackerLog(models.Model):
     TRACKER_LOG_TYPE = (
                         ("min_showup","minimum show"),

@@ -29,32 +29,38 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
   <ul class="nav nav-pills nav-justified" id="resultsTab" role="tablist">
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" name="filterContentType" id="all-results-tab" data-bs-toggle="tab" data-bs-target="#allResults" type="button" role="tab" aria-controls="allResults" aria-selected="true">All</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 active" name="filterContentType" id="all-results-tab" data-bs-toggle="tab" data-bs-target="#allResults" type="button" role="tab" aria-controls="allResults" aria-selected="true">All</button>
     </li>
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" name="filterContentType"  id="aims-tab" data-bs-toggle="tab" data-bs-target="#aimsTab" type="button" role="tab" aria-controls="aimsTab" aria-selected="false">Aims</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType"  id="aims-tab" data-bs-toggle="tab" data-bs-target="#aimsTab" type="button" role="tab" aria-controls="aimsTab" aria-selected="false">Aims</button>
+    </li>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType"  id="behaviours-tab" data-bs-toggle="tab" data-bs-target="#behavioursTab" type="button" role="tab" aria-controls="behavioursTab" aria-selected="false">Behaviours</button>
     </li>
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" name="filterContentType" id="pathways-tab" data-bs-toggle="tab" data-bs-target="#pathwaysTab" type="button" role="tab" aria-controls="pathwaysTab" aria-selected="false">Pathways</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType"  id="steptrackers-tab" data-bs-toggle="tab" data-bs-target="#stepTrackerTab" type="button" role="tab" aria-controls="stepTrackerTab" aria-selected="false"> Trackers</button>
+    </li>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType" id="pathways-tab" data-bs-toggle="tab" data-bs-target="#pathwaysTab" type="button" role="tab" aria-controls="pathwaysTab" aria-selected="false">Pathways</button>
     </li>
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" name="filterContentType" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articlesTab" type="button" role="tab" aria-controls="articlesTab" aria-selected="false">Articles</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articlesTab" type="button" role="tab" aria-controls="articlesTab" aria-selected="false">Articles</button>
     </li>
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" name="filterContentType" id="video-tab" data-bs-toggle="tab" data-bs-target="#videoTab" type="button" role="tab" aria-controls="videoTab" aria-selected="false">Videos</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType" id="video-tab" data-bs-toggle="tab" data-bs-target="#videoTab" type="button" role="tab" aria-controls="videoTab" aria-selected="false">Videos</button>
     </li>
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" name="filterContentType" id="benchmarks-tab" data-bs-toggle="tab" data-bs-target="#benchmarksTab" type="button" role="tab" aria-controls="benchmarksTab" aria-selected="false">Benchmarks</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType" id="benchmarks-tab" data-bs-toggle="tab" data-bs-target="#benchmarksTab" type="button" role="tab" aria-controls="benchmarksTab" aria-selected="false">Benchmarks</button>
     </li>
 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link ms-auto me-auto" name="filterContentType"  id="organisation-tab" data-bs-toggle="tab" data-bs-target="#organisationsTab" type="button" role="tab" aria-controls="organisationsTab" aria-selected="false">Organisations</button>
+    <li class="nav-item p-1" role="presentation">
+      <button class="nav-link p-1 ms-auto me-auto" name="filterContentType"  id="organisation-tab" data-bs-toggle="tab" data-bs-target="#organisationsTab" type="button" role="tab" aria-controls="organisationsTab" aria-selected="false">Organisations</button>
     </li>
   </ul>
 </div>
@@ -62,33 +68,55 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
 
     <div class="tab-pane fade show active" id="allResults" role="tabpanel" aria-labelledby="all-results-tab">
-      <ul class="list-group-flush" id="allResultsList">
+      <ul class="list-group-flush" id="AllResultsList">
       </ul>
 
       <div class="col  border border-primary rounded">
-        <h5 class="my-2 text-center">ALL BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType" id="allUserBookmarks">
+        <h5 class="card-title my-2 text-center">ALL BOOKMARKS</h5>
+        <ul class="list-group-flush px-0 resultlist" name="bookmarkType" id="allUserBookmarks">
         </ul>
       </div>
 
     </div>
 
     <div class="tab-pane fade" id="aimsTab" role="tabpanel" aria-labelledby="aims-tab">
-      <ul class="list-group-flush" id="aimsResultsList">
+      <ul class="list-group-flush resultlist" id="AimResultsList">
       </ul>
 
       <div class="col  border border-primary rounded">
-        <h5 class="my-2 text-center">AIM BOOKMARKS</h5>
-        <ul class="list-group-flush px-0" name="bookmarkType"  id="aimUserBookmarks">
+        <h5 class="card-title my-2 text-center">AIM BOOKMARKS</h5>
+        <ul class="list-group-flush px-0 resultlist" name="bookmarkType"  id="aimUserBookmarks">
         </ul>
       </div>
     </div>
 
+
+    <div class="tab-pane fade" id="behavioursTab" role="tabpanel" aria-labelledby="behaviours-tab">
+      <ul class="list-group-flush resultlist" id="BehaviourResultsList">
+      </ul>
+
+      <div class="col  border border-primary rounded">
+        <h5 class="card-title my-2 text-center">BEHAVIOUR BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType"  id="behaviourUserBookmarks">
+        </ul>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="stepTrackerTab" role="tabpanel" aria-labelledby="steptracker-tab">
+      <ul class="list-group-flush resultlist" id="StepTrackerResultsList">
+      </ul>
+
+      <div class="col  border border-primary rounded">
+        <h5 class="card-title my-2 text-center">STEP TRACKER BOOKMARKS</h5>
+        <ul class="list-group-flush px-0" name="bookmarkType"  id="stepTrackerUserBookmarks">
+        </ul>
+      </div>
+    </div>
     <div class="tab-pane fade" id="pathwaysTab" role="tabpanel" aria-labelledby="pathways-tab">
-      <ul class="list-group-flush" id="pathwaysResultsList">
+      <ul class="list-group-flush resultlist" id="PathwayResultsList">
       </ul>
       <div class="col  border border-primary rounded">
-        <h5 class="my-2 text-center">PATHWAY BOOKMARKS</h5>
+        <h5 class="card-title my-2 text-center">PATHWAY BOOKMARKS</h5>
         <ul class="list-group-flush px-0" name="bookmarkType" id="pathwayUserBookmarks">
         </ul>
 
@@ -97,31 +125,31 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
     </div>
 
     <div class="tab-pane fade" id="articlesTab" role="tabpanel" aria-labelledby="articles-tab">
-      <ul class="list-group-flush" id="articlesResultsList">
+      <ul class="list-group-flush resultlist" id="ArticleResultsList">
       </ul>
 
           <div class="col  border border-primary rounded">
-            <h5 class="my-2 text-center">ARTICLE BOOKMARKS</h5>
+            <h5 class="card-title my-2 text-center">ARTICLE BOOKMARKS</h5>
             <ul class="list-group-flush px-0" name="bookmarkType"  id="articleUserBookmarks">
             </ul>
           </div>
       </div>
 
     <div class="tab-pane fade" id="videoTab" role="tabpanel" aria-labelledby="video-tab">
-      <ul class="list-group-flush" id="videosResultsList">
+      <ul class="list-group-flush resultlist" id="VideoResultsList">
       </ul>
       <div class="col  border border-primary rounded">
-        <h5 class="my-2 text-center">VIDEO BOOKMARKS</h5>
+        <h5 class="card-title my-2 text-center">VIDEO BOOKMARKS</h5>
         <ul class="list-group-flush px-0" name="bookmarkType" id="videoUserBookmarks">
         </ul>
       </div>
     </div>
 
     <div class="tab-pane fade" id="benchmarksTab" role="tabpanel" aria-labelledby="benchmarks-tab">
-      <ul class="list-group-flush" id="benchmarksResultsList">
+      <ul class="list-group-flush resultlist" id="BenchmarkResultsList">
       </ul>
       <div class="col  border border-primary rounded">
-        <h5 class="my-2 text-center">BENCHMARK BOOKMARKS</h5>
+        <h5 class="card-title my-2 text-center">BENCHMARK BOOKMARKS</h5>
         <ul class="list-group-flush px-0" name="bookmarkType"  id="benchmarkUserBookmarks">
         </ul>
 
@@ -129,10 +157,10 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
     </div>
 
     <div class="tab-pane fade" id="organisationsTab" role="tabpanel" aria-labelledby="organisation-tab">
-      <ul class="list-group-flush" id="organisationsResultsList">
+      <ul class="list-group-flush resultlist" id="OrganisationResultsList">
       </ul>
       <div class="col  border border-primary rounded">
-        <h5 class="my-2 text-center">ORGANISATION BOOKMARKS</h5>
+        <h5 class="card-title my-2 text-center">ORGANISATION BOOKMARKS</h5>
 
         <ul class="list-group-flush px-0" name="bookmarkType"  id="organisationUserBookmarks">
         </ul>
@@ -147,7 +175,7 @@ The library is a collection of user created Aims, Pathways  & Organisations. You
 
 {% include "view_result_modal.html" %}
 {% include "view_aim_result_modal.html" %}
-
+{% include "view_behaviour_result_modal.html" %}
 
 {% endblock %}
 {% block scripts %}

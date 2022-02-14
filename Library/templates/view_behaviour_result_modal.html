@@ -1,0 +1,32 @@
+<div class="modal fade" id="viewLibraryBehaviourResultModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewLibraryBehaviourResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewLibraryBehaviourResultModalLabel">Behaviour from library</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group-flush px-0">
+          <li class="list-group-item">
+            <strong>Behaviour: </strong><span  id="behaviourTitle"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Trackers: </strong>
+            <ul class="list-group-flush px-0" id="behaviourTrackers">
+            </ul>
+          </li>
+
+          <p><small><strong>Bookmarking</strong> this a behaviour will allow you to create a copy on one of your own aims. It will include all the trackers  the orignal author has assigned it. You'll be able to edit your copy of the content upon assigning it to an aim. Copied content will not appear in the library.
+          </small></p>
+
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-al" name="submitBookmarkBehaviour" id="submitBookmarkBehaviour">Bookmark</button>
+      </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

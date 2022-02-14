@@ -32,66 +32,120 @@ def LibraryView_ajax_get_user_bookmarks(request):
 def LibraryView_ajax_use_content(request):
     print(request.POST)
     if request.method == "POST":
-        if "submitCopyAim" in request.POST:
+        content_type = request.POST.get("content_type")
+        content_id = request.POST.get("content_id")
+        if request.POST.get("submit_type") == "copy":
+            bookmarked_object = Aim.objects.get(id=content_id)
+            if isinstance(bookmarked_object, Aim):
+                # get the aim to copy
+                aim_to_copy = bookmarked_obect
 
-            # get the aim to copy
-            aim_to_copy = Aim.objects.get(id=request.POST.get("submitAimCopy"))
-
-            print(f"FOUND AIM: {aim_to_copy.title}")
-            print(f"{aim_to_copy.author} vs {request.user}")
-            # Check user isn't copying own content
-            if aim_to_copy.author == request.user:
-                print("add errors to return here ")
-            else:
-                # Find the app users aims to get an order posiition
-                user_aims = Aim.objects.filter(author=request.user)
-
-                # Make a coopy of the aim
-                aim_to_copy.pk = None
-                aim_to_copy.order_position = 99999
-                aim_to_copy.save()
-
-                # Update the copy to the app users details, mark as a copy
-                aim_to_copy.author = request.user
-                aim_to_copy.order_position = user_aims.count()+1
-                aim_to_copy.is_a_copy = True
-                aim_to_copy.save()
-
-                # Find the behaviours to update
-                behaviours_to_copy = aim_to_copy.behaviours.all()
-
-                # loop through, copy and update the aims behaviours
-                for i, behaviour in enumerate(behaviours_to_copy,1):
-                    behaviour.pk = None
-                    behaviour.save()
-                    behaviour.on_aim = aim_to_copy
-                    behaviour.order_position = i
-                    behaviour.is_a_copy = True
-                    trackers_to_copy = behaviour.trackers.all()
-
-                    # loop through, copy and update the behaviours trackers
-                    for ii, steptracker in enumerate(trackers_to_copy):
-                        step_tracker.pk = None
-                        step_tracker.save()
-                        step_tracker.on_behaviour = behaviour
-                        step_tracker.is_a_copy = True
-                        step_tracker.order_position = ii
-                        step_tracker.save()
-        elif "submitBookmarkAim" in request.POST:
-            aim_to_bookmark = Aim.objects.get(id=request.POST.get("submitBookmarkAim"))
-            if aim_to_bookmark.author == request.user:
-                print("return erros for bookmarking own content")
-            else:
-                # check user hasn't already bookmarked
-                existing_bookmark = Bookmark.objects.filter(for_user=request.user, aim=aim_to_bookmark)
-                if existing_bookmark.exists():
-                    print("Return errors for bookmark already exists ")
+                print(f"FOUND AIM: {aim_to_copy.title}")
+                print(f"{aim_to_copy.author} vs {request.user}")
+                # Check user isn't copying own content
+                if aim_to_copy.author == request.user:
+                    print("add errors to return here ")
                 else:
+                    # Find the app users aims to get an order posiition
+                    user_aims = Aim.objects.filter(author=request.user)
 
-                    new_bookmark = Bookmark(for_user=request.user,
-                                            content_type="Aim",
-                                            aim=aim_to_bookmark)
-                    new_bookmark.save()
+                    # Make a coopy of the aim
+                    aim_to_copy.pk = None
+                    aim_to_copy.order_position = 99999
+                    aim_to_copy.save()
+
+                    # Update the copy to the app users details, mark as a copy
+                    aim_to_copy.author = request.user
+                    aim_to_copy.order_position = user_aims.count()+1
+                    aim_to_copy.is_a_copy = True
+                    aim_to_copy.save()
+
+                    # Find the behaviours to update
+                    behaviours_to_copy = aim_to_copy.behaviours.all()
+
+                    # loop through, copy and update the aims behaviours
+                    for i, behaviour in enumerate(behaviours_to_copy,1):
+                        behaviour.pk = None
+                        behaviour.save()
+                        behaviour.on_aim = aim_to_copy
+                        behaviour.order_position = i
+                        behaviour.is_a_copy = True
+                        trackers_to_copy = behaviour.trackers.all()
+
+                        # loop through, copy and update the behaviours trackers
+                        for ii, steptracker in enumerate(trackers_to_copy):
+                            step_tracker.pk = None
+                            step_tracker.save()
+                            step_tracker.on_behaviour = behaviour
+                            step_tracker.is_a_copy = True
+                            step_tracker.order_position = ii
+                            step_tracker.save()
+            else:
+                print("We shouldnt be allowing copies of anything but aims yet")
+
+        elif request.POST.get("submit_type") == "bookmark":
+            if content_type == "Article":
+                bookmarked_object = Article.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="Article",
+                                        article=bookmarked_object)
+                new_bookmark.save()
+
+            elif content_type == "Video":
+                bookmarked_object = VideoLecture.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="VideoLecture",
+                                        video=bookmarked_object)
+                new_bookmark.save()
+
+            elif content_type == "Benchmark":
+                bookmarked_object = Benchmark.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="Benchmark",
+                                        benchmark=bookmarked_object)
+                new_bookmark.save()
+
+            elif content_type == "Pathway":
+                bookmarked_object = Pathway.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="Pathway",
+                                        pathway=bookmarked_object)
+                new_bookmark.save()
+
+            elif content_type == "Organisation":
+                bookmarked_object = Organisation.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="Organisation",
+                                        organisation=bookmarked_object)
+                new_bookmark.save()
+
+            elif content_type == "Aim":
+                bookmarked_object = Aim.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="Aim",
+                                        aim=bookmarked_object)
+                new_bookmark.save()
+
+
+            elif content_type == "Behaviour":
+                bookmarked_object = Behaviour.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="Behaviour",
+                                        behaviour=bookmarked_object)
+                new_bookmark.save()
+
+            elif content_type == "StepTracker":
+                bookmarked_object = StepTracker.objects.get(id=content_id)
+                new_bookmark = Bookmark(for_user=request.user,
+                                        content_type="StepTracker",
+                                        steptracker=bookmarked_object)
+                new_bookmark.save()
+
+            else:
+                print("return an Content type error")
+
+        else:
+            print("unrecognised submit type")
 
     return JsonResponse({"success":"success"}, safe=False)
 
@@ -106,6 +160,8 @@ def LibraryView_ajax_get_library_result(request):
                             "Pathway": Pathway,
                             "Organisation": Organisation,
                             "Aim": Aim,
+                            "StepTracker": StepTracker,
+                            "Behaviour": Behaviour,
                             }
     result = get_object_or_404(content_type_converter[content_type], id=content_id)
     if isinstance(result, VideoLecture):
@@ -120,6 +176,10 @@ def LibraryView_ajax_get_library_result(request):
         data = OrganisationSerializer(result)
     elif isinstance(result, Aim):
         data = AimLibrarySerializer(result)
+    elif isinstance(result, Behaviour):
+        data = BehaviourSerializer(result)
+    elif isinstance(result, StepTracker):
+        data = StepTrackerSerializer(result)
     else:
         print("DATA TYPE ERROR FOR SERIALIZATION")
     return JsonResponse(data.data, safe=False)
