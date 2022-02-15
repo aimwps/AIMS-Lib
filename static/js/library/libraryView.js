@@ -6,7 +6,18 @@ $(document).ready(function(){
       datatype:"json",
       data: {"search_phrase": searchPhrase},
       success: function(json){
-        console.log(json)
+        console.log(json);
+
+        $("#AllResultsList").empty();
+        $("ul.resultlist").empty();
+        // $("#BehaviourResultsList").empty();
+        // $("#StepTrackerResultsList").empty();
+        // $("#PathwayResultsList").empty();
+        // $("#ArticleResultsList").empty();
+        // $("#VideoResultsList").empty();
+        // $("#BenchmarkResultsList").empty();
+        // $("#OrganisationResultsList").empty();
+
         // Display all result
         $.each(json, function(field_idx, result_field){
           $.each(result_field, function(result_idx, result){
@@ -198,7 +209,6 @@ $(document).ready(function(){
         </li>
         `)
   }
-
   function loadArticleItemToModal(articleData){
       $("#viewLibraryArticleResultModal").modal("show")
       $("#submitBookmarkArticle").val(articleData.id)
@@ -212,7 +222,6 @@ $(document).ready(function(){
         </li>
         `)
   }
-
   function loadBenchmarkItemToModal(benchmarkData){
       $("#viewLibraryBenchmarkResultModal").modal("show")
       $("#submitBookmarkBenchmark").val(benchmarkData.id)
@@ -226,7 +235,37 @@ $(document).ready(function(){
         </li>
         `)
   }
+  function loadLibraryItemFromBookmark(id){
+    $.ajax({
+      method:"GET",
+      url: "/LibraryView_ajax_get_bookmark_content/",
+      datatype: "json",
+      data: {bookmark_id: id},
+      success: function(json){
+        if (json.content_type === "StepTracker"){
+          loadStepTrackerItemToModal(json.steptracker, true)
+        } else if (json.content_type === "Behaviour"){
+          loadBehaviourItemToModal(json.behaviour, true)
+        } else if (json.content_type === "Aim"){
+          loadAimItemToModal(json.aim, true)
+        } else if (json.content_type === "Pathway"){
+          loadPathwayItemToModal(json.pathway,true)
+        } else if (json.content_type === "Article"){
+          loadArticleItemToModal(json.article, true)
+        } else if (json.content_type === "Video"){
+          loadVideoItemToModal(json.video, true)
+        } else if (json.content_type === "Benchmark"){
+          loadBenchmarkItemToModal(json.benchmark, true)
+        } else if (json.content_type === "Organisation"){
+          loadOrganisationItemToModal(json.benchmark, true)
+        } else {
+          console.log("content type not recognised")
+        }
 
+        }
+
+    })
+  }
   function loadPathwayItemToModal(pathwayData){
       $("#viewLibraryPathwayResultModal").modal("show")
       $("#submitBookmarkPathway").val(pathwayData.id)
@@ -249,21 +288,21 @@ $(document).ready(function(){
         success: function(json){
           console.log(json)
           if (json.library_type ==="Aim"){
-            loadAimItemToModal(json);
+            loadAimItemToModal(json, false);
           } else if (json.library_type === "Behaviour"){
-            loadBehaviourItemToModal(json);
+            loadBehaviourItemToModal(json, false);
           } else if (json.library_type === "StepTracker"){
-            loadStepTrackerItemToModal(json);
+            loadStepTrackerItemToModal(json, false);
           } else if (json.library_type === "Organisation"){
-            loadOrganisationItemToModal(json);
+            loadOrganisationItemToModal(json, false);
           } else if (json.library_type === "Video"){
-            loadVideoItemToModal(json);
+            loadVideoItemToModal(json, false);
           } else if (json.library_type === "Article"){
-            loadArticleItemToModal(json);
+            loadArticleItemToModal(json, false);
           } else if (json.library_type === "Benchmark"){
-            loadBenchmarkItemToModal(json);
+            loadBenchmarkItemToModal(json, false);
           } else if (json.library_type === "Pathway"){
-            loadPathwayItemToModal(json);
+            loadPathwayItemToModal(json, false);
          } else {
             console.log("we haven't uinderstood the contentType")
           };
@@ -303,74 +342,74 @@ $(document).ready(function(){
                     if (bookmark.content_type === "Article"){
                       $("#ArticleUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.article.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.article.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.article.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.article.title}</button>
                         </li>`)
                     } else if (bookmark.content_type ==="VideoLecture"){
                       $("#VideoUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.video.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.video.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.video.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.video.title}</button>
                         </li>`)
                     } else if (bookmark.content_type ==="Benchmark"){
                       $("#BenchmarkUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.benchmark.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.benchmark.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.benchmark.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.benchmark.title}</button>
                         </li>`)
                     } else if (bookmark.content_type ==="Pathway") {
                       $("#PathwayUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.pathway.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.pathway.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.pathway.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.pathway.title}</button>
                         </li>`)
                     } else if (bookmark.content_type ==="Organisation") {
                       $("#OrganisationUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.organisation.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.organisation.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.organisation.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.organisation.title}</button>
                         </li>`)
                     } else if (bookmark.content_type ==="Aim") {
                       $("#AimUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.aim.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.aim.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.aim.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.aim.title}</button>
                         </li>`)
                     }  else if (bookmark.content_type ==="Behaviour") {
                       $("#BehaviourUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.behaviour.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.behaviour.title}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.behaviour.title}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.behaviour.title}</button>
                         </li>`)
                     }  else if (bookmark.content_type ==="StepTracker") {
                       $("#StepTrackerUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.steptracker.get_tsentence}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.steptracker.get_tsentence}</button>
                         </li>`)
                       $("#AllUserBookmarks").append(`
                         <li class="list-group-item">
-                        ${bookmark.steptracker.get_tsentence}
+                        <button class="btn btn-link nounderline py-0 w-100 text-start" name="loadLibraryItemFromBookmark" value="${bookmark.id}"  >${bookmark.steptracker.get_tsentence}</button>
                         </li>`)
                     }
 
@@ -385,20 +424,38 @@ $(document).ready(function(){
               }
     })
   }
+  
 
 
   $(document).on("keyup", "#searchInput", function(){
     let searchPhrase = $(this).val();
     if (searchPhrase.length > 0 & searchPhrase != " "){
+        $("#AllResultsList").empty();
+        $("#AimResultsList").empty();
+        $("#BehaviourResultsList").empty();
+        $("#StepTrackerResultsList").empty();
+        $("#PathwayResultsList").empty();
+        $("#ArticleResultsList").empty();
+        $("#VideoResultsList").empty();
+        $("#BenchmarkResultsList").empty();
+        $("#OrganisationResultsList").empty();
+
         ajaxSearchLibrary(searchPhrase);
       } else {
         $("#AllResultsList").empty();
-        $("ul.resultlist").empty();
+        $("#AimResultsList").empty();
+        $("#BehaviourResultsList").empty();
+        $("#StepTrackerResultsList").empty();
+        $("#PathwayResultsList").empty();
+        $("#ArticleResultsList").empty();
+        $("#VideoResultsList").empty();
+        $("#BenchmarkResultsList").empty();
+        $("#OrganisationResultsList").empty();
+
       }
 
   });
-
-    $(document).on("click", "#resetLibrarySearch", function(e){
+  $(document).on("click", "#resetLibrarySearch", function(e){
       e.preventDefault();
       $("#searchInput").val("")
       $("#AllResultsList").empty();
@@ -409,7 +466,6 @@ $(document).ready(function(){
     let itemData = $(this).val();
     loadLibraryItemToModal(itemData);
   })
-
   $(document).on("click", "#submitCopyAim", function(e){
     e.preventDefault();
     let aimId = $(this).val();
@@ -420,20 +476,16 @@ $(document).ready(function(){
     let aimId = $(this).val();
     submitUseLibraryContent(aimId,"Aim","bookmark")
   })
-
-
   $(document).on("click", "#submitBookmarkBehaviour", function(e){
     e.preventDefault();
     let id = $(this).val()
     submitUseLibraryContent(id,"Behaviour","bookmark")
   })
-
   $(document).on("click", "#submitBookmarkStepTracker", function(e){
     e.preventDefault();
     let id = $(this).val()
     submitUseLibraryContent(id,"StepTracker","bookmark")
   })
-
   $(document).on("click", "#submitBookmarkOrganisation", function(e){
     e.preventDefault();
     let id = $(this).val()
@@ -458,6 +510,11 @@ $(document).ready(function(){
     e.preventDefault();
     let id = $(this).val()
     submitUseLibraryContent(id,"Benchmark","bookmark")
+  })
+  $(document).on("click", "button[name='loadLibraryItemFromBookmark']", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    loadLibraryItemFromBookmark(id)
   })
   getUserBookmarks()
 })

@@ -25,7 +25,10 @@ class BookmarkSerializer(serializers.ModelSerializer):
     steptracker = StepTrackerSerializer()
     class Meta:
         model = Bookmark
-        fields = (  "content_type",
+
+        fields = (
+                    "id",
+                    "content_type",
                     "article",
                     "video",
                     "benchmark",

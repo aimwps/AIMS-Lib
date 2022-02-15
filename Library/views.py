@@ -18,7 +18,11 @@ from django.db.models import Q
 from .models import Bookmark, LibraryContentType
 from .library_serializers import BookmarkSerializer
 
-
+def LibraryView_ajax_get_bookmark_content(request):
+    if request.method=="GET":
+        bookmark = Bookmark.objects.get(id=request.GET.get("bookmark_id"))
+        data = BookmarkSerializer(bookmark)
+        return JsonResponse(data.data, safe=False)
 
 def LibraryView_ajax_get_user_bookmarks(request):
     if request.method=="GET":
@@ -156,6 +160,8 @@ def LibraryView_ajax_use_content(request):
                 existing_bookmark = Bookmark.objects.filter(for_user=request.user, behaviour=bookmarked_object)
                 if existing_bookmark.exists():
                     print("duplicating bookmark error")
+                    print("for behaviour")
+                    print(existing_bookmark)
                 else:
                     new_bookmark = Bookmark(for_user=request.user,
                                             content_type="Behaviour",

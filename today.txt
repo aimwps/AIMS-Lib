@@ -1,0 +1,21 @@
+
+View bookmarks / Delete
+-  Open modal when you click a bookmark
+-  have delete button instead of bookmark
+
+Use bookmarks
+- Behaviours, copy to your aim
+- Steptrackers, copy to your behaviour
+- Pathways, assign to your organisation
+- Articles, Videos & benchmarks assign to pathways
+
+
+Library permissions
+- Hide from library
+- Content is copyable
+- Content is viewable without pathway
+
+
+Pathway Development
+- Edit pathway title & description
+- delete pathway button
