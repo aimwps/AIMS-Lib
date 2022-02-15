@@ -86,7 +86,8 @@ $(document).ready(function(){
     })
   }})
   };
-  function loadAimItemToModal(aimData){
+  function loadAimItemToModal(aimData, isABookmark){
+    bookmarkOrDelete(isABookmark)
     console.log(aimData)
     $("#aimBehaviours").empty()
     $("#viewLibraryAimResultModal").modal("show")
@@ -130,7 +131,8 @@ $(document).ready(function(){
 
     })
   };
-  function loadBehaviourItemToModal(behaviourData){
+  function loadBehaviourItemToModal(behaviourData, isABookmark){
+    bookmarkOrDelete(isABookmark)
     $("#behaviourTrackers").empty()
     $("#viewLibraryBehaviourResultModal").modal("show")
     $("#behaviourTitle").text(behaviourData.title)
@@ -166,8 +168,9 @@ $(document).ready(function(){
       })
 
     };
-  function loadStepTrackerItemToModal(tracker){
+  function loadStepTrackerItemToModal(tracker, isABookmark){
     console.log(tracker)
+    bookmarkOrDelete(isABookmark)
     $("#viewLibraryStepTrackerResultModal").modal("show")
     $("#submitBookmarkStepTracker").val(tracker.id)
     $("#stepTrackerDetails").empty()
@@ -186,7 +189,8 @@ $(document).ready(function(){
             </li>`)
 
   }
-  function loadOrganisationItemToModal(organisationData){
+  function loadOrganisationItemToModal(organisationData, isABookmark){
+      bookmarkOrDelete(isABookmark)
       $("#viewLibraryOrganisationResultModal").modal("show")
       $("#submitBookmarkOrganisation").val(organisationData.id)
       $("#organsationDetails").empty()
@@ -199,7 +203,8 @@ $(document).ready(function(){
         </li>
         `)
   }
-  function loadVideoItemToModal(videoData){
+  function loadVideoItemToModal(videoData, isABookmark){
+      bookmarkOrDelete(isABookmark)
       $("#viewLibraryVideoResultModal").modal("show")
       $("#submitBookmarkVideo").val(videoData.id)
       $("#videoDetails").empty()
@@ -209,7 +214,8 @@ $(document).ready(function(){
         </li>
         `)
   }
-  function loadArticleItemToModal(articleData){
+  function loadArticleItemToModal(articleData, isABookmark){
+      bookmarkOrDelete(isABookmark)
       $("#viewLibraryArticleResultModal").modal("show")
       $("#submitBookmarkArticle").val(articleData.id)
       $("#articleDetails").empty()
@@ -222,7 +228,8 @@ $(document).ready(function(){
         </li>
         `)
   }
-  function loadBenchmarkItemToModal(benchmarkData){
+  function loadBenchmarkItemToModal(benchmarkData, isABookmark){
+      bookmarkOrDelete(isABookmark)
       $("#viewLibraryBenchmarkResultModal").modal("show")
       $("#submitBookmarkBenchmark").val(benchmarkData.id)
       $("#benchmarkDetails").empty()
@@ -235,38 +242,8 @@ $(document).ready(function(){
         </li>
         `)
   }
-  function loadLibraryItemFromBookmark(id){
-    $.ajax({
-      method:"GET",
-      url: "/LibraryView_ajax_get_bookmark_content/",
-      datatype: "json",
-      data: {bookmark_id: id},
-      success: function(json){
-        if (json.content_type === "StepTracker"){
-          loadStepTrackerItemToModal(json.steptracker, true)
-        } else if (json.content_type === "Behaviour"){
-          loadBehaviourItemToModal(json.behaviour, true)
-        } else if (json.content_type === "Aim"){
-          loadAimItemToModal(json.aim, true)
-        } else if (json.content_type === "Pathway"){
-          loadPathwayItemToModal(json.pathway,true)
-        } else if (json.content_type === "Article"){
-          loadArticleItemToModal(json.article, true)
-        } else if (json.content_type === "Video"){
-          loadVideoItemToModal(json.video, true)
-        } else if (json.content_type === "Benchmark"){
-          loadBenchmarkItemToModal(json.benchmark, true)
-        } else if (json.content_type === "Organisation"){
-          loadOrganisationItemToModal(json.benchmark, true)
-        } else {
-          console.log("content type not recognised")
-        }
-
-        }
-
-    })
-  }
-  function loadPathwayItemToModal(pathwayData){
+  function loadPathwayItemToModal(pathwayData, isABookmark){
+      bookmarkOrDelete(isABookmark)
       $("#viewLibraryPathwayResultModal").modal("show")
       $("#submitBookmarkPathway").val(pathwayData.id)
 
@@ -287,26 +264,108 @@ $(document).ready(function(){
         datatype: "json",
         success: function(json){
           console.log(json)
-          if (json.library_type ==="Aim"){
-            loadAimItemToModal(json, false);
-          } else if (json.library_type === "Behaviour"){
-            loadBehaviourItemToModal(json, false);
-          } else if (json.library_type === "StepTracker"){
-            loadStepTrackerItemToModal(json, false);
-          } else if (json.library_type === "Organisation"){
-            loadOrganisationItemToModal(json, false);
-          } else if (json.library_type === "Video"){
-            loadVideoItemToModal(json, false);
-          } else if (json.library_type === "Article"){
-            loadArticleItemToModal(json, false);
-          } else if (json.library_type === "Benchmark"){
-            loadBenchmarkItemToModal(json, false);
-          } else if (json.library_type === "Pathway"){
-            loadPathwayItemToModal(json, false);
+          if (json.content.library_type ==="Aim"){
+            if (json.bookmark){
+              $("button[name='deleteBookmark']").val(json.bookmark.id);
+              loadAimItemToModal(json.content, true);
+            } else {
+              loadAimItemToModal(json.content, false)
+            };
+          } else if (json.content.library_typeite === "Behaviour"){
+              if (json.bookmark){
+                $("button[name='deleteBookmark']").val(json.bookmark.id);
+                loadBehaviourItemToModal(json.content, true);
+            } else {
+                loadBehaviourItemToModal(json.content, false);
+            };
+          } else if (json.content.library_type === "StepTracker"){
+            if (json.bookmark){
+              $("button[name='deleteBookmark']").val(json.bookmark.id);
+              loadStepTrackerItemToModal(json.content, true);
+            } else {
+              loadStepTrackerItemToModal(json.content, false);
+            };
+
+          } else if (json.content.library_type === "Organisation"){
+            if (json.bookmark){
+              $("button[name='deleteBookmark']").val(json.bookmark.id);
+            loadOrganisationItemToModal(json.content, true);
+            } else {
+            loadOrganisationItemToModal(json.content, false);
+            };
+
+
+          } else if (json.content.library_type === "Video"){
+              if (json.bookmark){
+                $("button[name='deleteBookmark']").val(json.bookmark.id);
+                loadVideoItemToModal(json.content, true);
+              } else {
+                loadVideoItemToModal(json.content, false);
+              };
+
+
+          } else if (json.content.library_type === "Article"){
+            if (json.bookmark){
+                $("button[name='deleteBookmark']").val(json.bookmark.id);
+                loadArticleItemToModal(json.content, true);
+              } else {
+                loadArticleItemToModal(json.content, false);
+              };
+
+
+
+          } else if (json.content.library_type === "Benchmark"){
+            if (json.bookmark){
+                $("button[name='deleteBookmark']").val(json.bookmark.id);
+                loadBenchmarkItemToModal(json.content, true);
+            } else {
+                loadBenchmarkItemToModal(json.content, false);
+                };
+
+          } else if (json.content.library_type === "Pathway"){
+            if (json.bookmark){
+                $("button[name='deleteBookmark']").val(json.bookmark.id);
+                loadPathwayItemToModal(json.content, true);
+            } else {
+              loadPathwayItemToModal(json.content, false);
+                };
          } else {
             console.log("we haven't uinderstood the contentType")
           };
     }})
+  }
+  function loadLibraryItemFromBookmark(id){
+
+    $.ajax({
+      method:"GET",
+      url: "/LibraryView_ajax_get_bookmark_content/",
+      datatype: "json",
+      data: {bookmark_id: id},
+      success: function(json){
+        $("button[name='deleteBookmark']").val(json.id)
+        if (json.content_type === "StepTracker"){
+          loadStepTrackerItemToModal(json.steptracker, true)
+        } else if (json.content_type === "Behaviour"){
+          loadBehaviourItemToModal(json.behaviour, true)
+        } else if (json.content_type === "Aim"){
+          loadAimItemToModal(json.aim, true)
+        } else if (json.content_type === "Pathway"){
+          loadPathwayItemToModal(json.pathway,true)
+        } else if (json.content_type === "Article"){
+          loadArticleItemToModal(json.article, true)
+        } else if (json.content_type === "VideoLecture"){
+          loadVideoItemToModal(json.video, true)
+        } else if (json.content_type === "Benchmark"){
+          loadBenchmarkItemToModal(json.benchmark, true)
+        } else if (json.content_type === "Organisation"){
+          loadOrganisationItemToModal(json.benchmark, true)
+        } else {
+          console.log("content type not recognised")
+        }
+
+        }
+
+    })
   }
   function submitUseLibraryContent(contentId, contentType, submitType){
     $.ajax({type:"POST",
@@ -424,8 +483,15 @@ $(document).ready(function(){
               }
     })
   }
-  
-
+  function bookmarkOrDelete(isABookmark){
+    if (isABookmark){
+      $("button[name='submitBookmark']").hide()
+      $("button[name='deleteBookmark']").show()
+    } else {
+      $("button[name='submitBookmark']").show()
+      $("button[name='deleteBookmark']").hide()
+    }
+  }
 
   $(document).on("keyup", "#searchInput", function(){
     let searchPhrase = $(this).val();
@@ -515,6 +581,11 @@ $(document).ready(function(){
     e.preventDefault();
     let id = $(this).val()
     loadLibraryItemFromBookmark(id)
+  })
+  $(document).on("click", "button[name='deleteBookmark']", function(e){
+    e.preventDefault();
+    let id = $(this).val()
+    submitUseLibraryContent(id, "Bookmark", "delete")
   })
   getUserBookmarks()
 })

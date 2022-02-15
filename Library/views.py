@@ -181,6 +181,9 @@ def LibraryView_ajax_use_content(request):
                     new_bookmark.save()
             else:
                 print("return an Content type error")
+        elif request.POST.get("submit_type") == "delete":
+            bookmark = Bookmark.objects.get(id=content_id)
+            bookmark.delete()
         else:
             print("unrecognised submit type")
 
@@ -202,24 +205,39 @@ def LibraryView_ajax_get_library_result(request):
                             }
     result = get_object_or_404(content_type_converter[content_type], id=content_id)
     if isinstance(result, VideoLecture):
-        data = VideoSerializer(result)
+        content = VideoSerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, video=result)
     elif isinstance(result, Article):
-        data = ArticleSerializer(result)
+        content = ArticleSerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, article=result)
     elif isinstance(result, Benchmark):
-        data = BenchmarkSerializer(result)
+        content = BenchmarkSerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, benchmark=result)
     elif isinstance(result, Pathway):
-        data = PathwaySerializer(result)
+        content = PathwaySerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, pathway=result)
     elif isinstance(result, Organisation):
-        data = OrganisationSerializer(result)
+        content = OrganisationSerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, organisation=result)
     elif isinstance(result, Aim):
-        data = AimLibrarySerializer(result)
+        content = AimLibrarySerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, aim=result)
     elif isinstance(result, Behaviour):
-        data = BehaviourSerializer(result)
+        content = BehaviourSerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, behaviour=result)
     elif isinstance(result, StepTracker):
-        data = StepTrackerSerializer(result)
+        content = StepTrackerSerializer(result).data
+        existing_bookmark = Bookmark.objects.filter(for_user=request.user, steptracker=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     else:
         print("DATA TYPE ERROR FOR SERIALIZATION")
-    return JsonResponse(data.data, safe=False)
+
+    data = {"content": content,
+            "bookmark": bookmark }
+    return JsonResponse(data, safe=False)
 
 def LibraryView_ajax_search_library(request):
     search_phrase = request.GET.get("search_phrase")
