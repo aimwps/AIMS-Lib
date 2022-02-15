@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}AIMS{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
+{% block pageInfo_title %}
+CREATING A TRACKER
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Now we're getting to the nitty gritty. Here's where you create a step that when repeated moves you towards new behaviours and your aims. There's a few setttings, click the info button on each one for more details. or read the guide <a href="#">here</a>.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+{% include "aims_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container text-center my-4">
+
+<div class="row">
+  <p> Start building a tracker from scratch or if you've already browsed the library, create a copy of a book marked tracker</p>
+  <div class="col-6">
+    <a class="btn btn-al w-100" href="{% url 'steptracker-create' behaviour.id %}">Create new tracker</a>
+  </div>
+  <div class="col-6">
+    <a class="btn btn-al w-100" href="{% url 'steptracker-create-from-bookmark' behaviour.id %}">Copy from bookmark</a>
+  </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
+{% endblock %}

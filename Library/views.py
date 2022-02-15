@@ -42,10 +42,8 @@ def LibraryView_ajax_use_content(request):
             bookmarked_object = Aim.objects.get(id=content_id)
             if isinstance(bookmarked_object, Aim):
                 # get the aim to copy
-                aim_to_copy = bookmarked_obect
+                aim_to_copy = bookmarked_object
 
-                print(f"FOUND AIM: {aim_to_copy.title}")
-                print(f"{aim_to_copy.author} vs {request.user}")
                 # Check user isn't copying own content
                 if aim_to_copy.author == request.user:
                     print("add errors to return here ")
@@ -55,8 +53,6 @@ def LibraryView_ajax_use_content(request):
 
                     # Make a coopy of the aim
                     aim_to_copy.pk = None
-                    aim_to_copy.order_position = 99999
-                    aim_to_copy.save()
 
                     # Update the copy to the app users details, mark as a copy
                     aim_to_copy.author = request.user
@@ -64,22 +60,24 @@ def LibraryView_ajax_use_content(request):
                     aim_to_copy.is_a_copy = True
                     aim_to_copy.save()
 
-                    # Find the behaviours to update
-                    behaviours_to_copy = aim_to_copy.behaviours.all()
+                    # Locate the orginal behaviours
+                    orginal_aim = Aim.objects.get(id=content_id)
+                    behaviours_to_copy = orginal_aim.behaviours.all()
 
                     # loop through, copy and update the aims behaviours
                     for i, behaviour in enumerate(behaviours_to_copy,1):
+                        behaviour_id = behaviour.id
                         behaviour.pk = None
-                        behaviour.save()
                         behaviour.on_aim = aim_to_copy
                         behaviour.order_position = i
                         behaviour.is_a_copy = True
-                        trackers_to_copy = behaviour.trackers.all()
+                        behaviour.save()
+                        original_behaviour = Behaviour.objects.get(id=behaviour_id)
+                        trackers_to_copy = original_behaviour.trackers.all()
 
                         # loop through, copy and update the behaviours trackers
-                        for ii, steptracker in enumerate(trackers_to_copy):
+                        for ii, step_tracker in enumerate(trackers_to_copy):
                             step_tracker.pk = None
-                            step_tracker.save()
                             step_tracker.on_behaviour = behaviour
                             step_tracker.is_a_copy = True
                             step_tracker.order_position = ii
@@ -207,24 +205,52 @@ def LibraryView_ajax_get_library_result(request):
     if isinstance(result, VideoLecture):
         content = VideoSerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, video=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, Article):
         content = ArticleSerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, article=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, Benchmark):
         content = BenchmarkSerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, benchmark=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, Pathway):
         content = PathwaySerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, pathway=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, Organisation):
         content = OrganisationSerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, organisation=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, Aim):
         content = AimLibrarySerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, aim=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, Behaviour):
         content = BehaviourSerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, behaviour=result)
+        if existing_bookmark.exists():
+            bookmark = BookmarkSerializer(existing_bookmark[0]).data
+        else:
+            bookmark = None
     elif isinstance(result, StepTracker):
         content = StepTrackerSerializer(result).data
         existing_bookmark = Bookmark.objects.filter(for_user=request.user, steptracker=result)

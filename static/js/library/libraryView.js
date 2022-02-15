@@ -264,6 +264,7 @@ $(document).ready(function(){
         datatype: "json",
         success: function(json){
           console.log(json)
+          console.log(json.content.library_type)
           if (json.content.library_type ==="Aim"){
             if (json.bookmark){
               $("button[name='deleteBookmark']").val(json.bookmark.id);
@@ -271,7 +272,7 @@ $(document).ready(function(){
             } else {
               loadAimItemToModal(json.content, false)
             };
-          } else if (json.content.library_typeite === "Behaviour"){
+          } else if (json.content.library_type === "Behaviour"){
               if (json.bookmark){
                 $("button[name='deleteBookmark']").val(json.bookmark.id);
                 loadBehaviourItemToModal(json.content, true);

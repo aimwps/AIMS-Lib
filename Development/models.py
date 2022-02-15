@@ -452,23 +452,35 @@ class StepTracker(models.Model):
                 soonest_date = None
                 for freq_code in all_custom_freq_code:
                     temp_reset_user_time = self.record_start_date
+                    print(f"RECORD START DATE {self.record_start_date}")
                     if freq_code.code in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
                         while temp_reset_user_time.strftime('%A') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
                         if soonest_date:
                             if soonest_date > temp_reset_user_time:
                                 soonest_date = temp_reset_user_time
+                            else:
+                                print("caused here nere 462")
                         else:
                             soonest_date = temp_reset_user_time
-                    if freq_code.code in range(1,32):
+                    elif freq_code.code in range(1,32):
 
                         while temp_reset_user_time.strftime('%d') != freq_code.code:
                             temp_reset_user_time += relativedelta(days=1)
                         if soonest_date:
                             if soonest_date > temp_reset_user_time:
                                 soonest_date = temp_reset_user_time
+                            else:
+                                print("471 here")
                         else:
                             soonest_date = temp_reset_user_time
+                    else:
+                        print("custOM FREQ CODE INCORRECT")
+                print("---------------------------------------------")
+                print(member_profile.reset_hour_as_time())
+                print(soonest_date)
+                print("---------------------------------------------")
+
                 start_date = datetime.combine(soonest_date, member_profile.reset_hour_as_time())
                 end_date = start_date + relativedelta(days=1) - timedelta(seconds=1)
 

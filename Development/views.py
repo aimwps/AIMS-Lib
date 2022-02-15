@@ -17,6 +17,7 @@ from .utils import prettify_tracker_status_dict
 from .development_serializers import StepTrackerSerializer
 import pandas as pd
 from django.utils import timezone
+from Library.models import Bookmark
 def get_tracker_calmap_data(request):
     tracker = get_object_or_404(StepTracker, id=request.GET.get("tracker_id"))
 
@@ -107,12 +108,13 @@ class StepTrackerCreate(LoginRequiredMixin,CreateView):
         return reverse("aims-dash")
 
     def form_valid(self, form):
+        print(self.request.POST)
         form.instance.on_behaviour = get_object_or_404(Behaviour, id=self.kwargs['behaviour_id'])
         all_behaviour_trackers =  StepTracker.objects.filter(on_behaviour=self.kwargs['behaviour_id']).order_by('order_position')
         for i, tracker in  enumerate(all_behaviour_trackers):
             tracker.order_position =  i
             tracker.save()
-        form.instance.order_position = len(all_behaviour_trackers)
+        form.instance.order_position = all_behaviour_trackers.count()
         response = super().form_valid(form)
         if form.instance.record_frequency == "custom":
             for key in self.request.POST:
@@ -156,13 +158,48 @@ class BehaviourCreate(LoginRequiredMixin, CreateView):
         for i, lever in  enumerate(all_aim_levers):
             lever.order_position =  i
             lever.save()
-        form.instance.order_position = len(all_aim_levers)
+        form.instance.order_position = all_aim_levers.count()
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['aim_for_lever'] = Aim.objects.get(id=self.kwargs['aim_id'])
+        context['bookmarked_behaviours'] = Bookmark.objects.filter(content_type="Behaviour", for_user=self.request.user)
+
         return context
+
+    def post(self, request, aim_id):
+        aim = Aim.objects.get(id=aim_id)
+        print(f"THE LENGTH OF ORIGINAL BEHAVIOURS IS {aim.behaviours.all().count()}")
+        if "bookmark_id" in request.POST:
+            bookmark = Bookmark.objects.get(id=request.POST.get("bookmark_id"))
+            original_behaviour_id = bookmark.behaviour.id
+            trackers = bookmark.behaviour.trackers.all()
+            behaviour = bookmark.behaviour
+            behaviour.pk = None
+            behaviour.order_position = aim.behaviours.all().count()
+            for b in aim.behaviours.all():
+                print(f"ORDERPOSITION {b.order_position} for ID#{b.id} COUNT{aim.behaviours.all().count()}")
+            behaviour.on_aim = aim
+            behaviour.is_a_copy = True
+            behaviour.save()
+            for i, tracker in enumerate(trackers):
+                tracker.pk = None
+                tracker.on_behaviour = behaviour
+                tracker.order_position = i
+                tracker.is_a_copy = True
+                tracker.save()
+
+
+        else:
+            for b in aim.behaviours.all():
+                print(f"ORDERPOSITION {b.order_position} for ID#{b.id} COUNT{aim.behaviours.all().count()}")
+            new_behaviour = Behaviour(on_aim=aim,
+                                    title=request.POST.get("title"),
+                                    order_position =aim.behaviours.all().count())
+            new_behaviour.save()
+
+        return HttpResponseRedirect("/aims/")
 
 class AimCreate(LoginRequiredMixin, CreateView):
     login_url = '/login-or-register/'
@@ -264,7 +301,107 @@ class AimsDash(LoginRequiredMixin, TemplateView):
         else:
             return HttpResponseRedirect('/aims/#myaims')
 
+class AimCreate_decide(LoginRequiredMixin, TemplateView):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    template_name = "aim_new_decide.html"
 
+class StepTrackerCreate_decide(LoginRequiredMixin, View):
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    template_name = "steptracker_new_decide.html"
+
+    def get(self, request, behaviour_id):
+        context = {}
+        behaviour = Behaviour.objects.get(id=behaviour_id)
+        context['behaviour']= behaviour
+        return render(request, self.template_name, context)
+
+class AimCreateFromBookmark(LoginRequiredMixin, View):
+    template_name = "aim_new_from_bookmark.html"
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    def get(self, request):
+        context = {}
+        context['aim_bookmarks'] = Bookmark.objects.filter(for_user=self.request.user, content_type="Aim")
+        return render(request, self.template_name, context)
+    def post(self, request):
+        print(request.POST)
+        if request.method == "POST":
+            content_type = request.POST.get("content_type")
+            content_id = request.POST.get("bookmark_id")
+            bookmarked_object = Bookmark.objects.get(id=content_id)
+            bookmarked_object = bookmarked_object.aim
+            original_aim_id = bookmarked_object.id
+            print(type(bookmarked_object))
+            if isinstance(bookmarked_object, Aim):
+                # get the aim to copy
+                aim_to_copy = bookmarked_object
+
+                # Check user isn't copying own content
+                if aim_to_copy.author == request.user:
+                    print("add errors to return here ")
+                else:
+                    # Find the app users aims to get an order posiition
+                    user_aims = Aim.objects.filter(author=request.user)
+
+                    # Make a coopy of the aim
+                    aim_to_copy.pk = None
+
+                    # Update the copy to the app users details, mark as a copy
+                    aim_to_copy.author = request.user
+                    aim_to_copy.order_position = user_aims.count()
+                    aim_to_copy.is_a_copy = True
+                    aim_to_copy.save()
+
+                    # Locate the orginal behaviours
+                    orginal_aim = Aim.objects.get(id=original_aim_id)
+                    behaviours_to_copy = orginal_aim.behaviours.all()
+
+                    # loop through, copy and update the aims behaviours
+                    for i, behaviour in enumerate(behaviours_to_copy):
+                        behaviour_id = behaviour.id
+                        behaviour.pk = None
+                        behaviour.on_aim = aim_to_copy
+                        behaviour.order_position = i
+                        behaviour.is_a_copy = True
+                        behaviour.save()
+                        original_behaviour = Behaviour.objects.get(id=behaviour_id)
+                        trackers_to_copy = original_behaviour.trackers.all()
+
+                        # loop through, copy and update the behaviours trackers
+                        for ii, step_tracker in enumerate(trackers_to_copy):
+                            step_tracker.pk = None
+                            step_tracker.on_behaviour = behaviour
+                            step_tracker.is_a_copy = True
+                            step_tracker.order_position = ii
+                            step_tracker.save()
+            else:
+                print("copying only works on an aim currently")
+        return HttpResponseRedirect("/aims/")
+
+class StepTrackerCreateFromBookmark(LoginRequiredMixin, View):
+    template_name = "steptracker_new_from_bookmark.html"
+    login_url = '/login-or-register/'
+    redirect_field_name = 'redirect_to'
+    def get(self, request, behaviour_id):
+        context = {}
+        context['bookmarks'] = Bookmark.objects.filter(for_user=self.request.user, content_type="StepTracker")
+        return render(request, self.template_name, context)
+
+    def post(self, request, behaviour_id):
+        print(request.POST)
+        if request.method == "POST":
+            behaviour = Behaviour.objects.get(id=behaviour_id)
+            step_tracker = Bookmark.objects.get(id=request.POST.get("bookmark_id")).steptracker
+            step_tracker.pk = None
+            step_tracker.on_behaviour = behaviour
+            step_tracker.is_a_copy = True
+            step_tracker.order_position = behaviour.trackers.all().count()
+            step_tracker.save()
+            print(step_tracker.id)
+
+        return HttpResponseRedirect("/aims/")
 
 ## Check tracker history
 

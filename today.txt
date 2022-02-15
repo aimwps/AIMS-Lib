@@ -4,6 +4,7 @@ View bookmarks / Delete
 -  have delete button instead of bookmark
 
 Use bookmarks
+- aims copy to your user
 - Behaviours, copy to your aim
 - Steptrackers, copy to your behaviour
 - Pathways, assign to your organisation

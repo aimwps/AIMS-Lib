@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}AIMS{% endblock %}
 
 {% block topcarousel %}
@@ -22,19 +23,57 @@ If you remember from our pathway article <a href="#">Crafting your future</a>,  
 {% endblock %}
 {% block content %}
 <div class="container my-4">
+<div class="row text-center">
+  <div class="col-xs-12 col-md-6">
+    <div class="container border border-primary rounded p-3 my-2">
+      <form method="post">
+        {% csrf_token %}
 
-
-  <div class="form-group">
-    <form method="post">
-      {% csrf_token %}
-      {{ form.title }}
-      <br>
-      <div class="text-center">
-
-      <button class="btn btn-al">Take a step closer</button>
-  </div>
+        <p class="lead">Create a new behaviour</p>
+        {{ form.title }}
+        <br>
+        <button class="btn btn-al w-100">Add new behaviour</button>
       </form>
+    </div>
+  </div>
+      <div class="col-xs-12 col-md-6">
+        <div class="container border border-primary rounded p-3 my-2">
+
+        <p class="lead">Select from bookmarks</p>
+        <form method="post">
+          {% csrf_token %}
+        <p class="mt-2 mb-4">
+          <select class="form-select" aria-label="bookmark_to_copy" name="bookmark_id" id="selectBookmark">
+
+          <option selected>My bookmarked behaviours</option>
+          {% for bookmark in bookmarked_behaviours %}
+          <option value="{{bookmark.id}}">{{bookmark.behaviour.title}}</option>
+          {% endfor %}
+
+        </select>
+      </p>
+
+        <div class="row">
+          <div class="col-8">
+
+            <button class="btn btn-al w-100">Copy from bookmark</button>
+
+          </div>
+        </form>
+          <div class="col-4">
+
+            <button class="btn btn-al w-100" name="loadLibraryItemFromBookmark">Preview</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
 
 </div>
-</div>
+{% include "view_behaviour_result_modal.html" %}
 {% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/development/behaviourCreate.js' %}"></script>
+{% endblock scripts %}

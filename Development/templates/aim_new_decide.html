@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}AIMS{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
+{% block pageInfo_title %}
+CREATING AN AIM
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Hey {{ user }}! Just by being here, you're taking a step closer to the future you desire. Set a category, change your aim, and your reasons why below. If you need help structuring a successful aim, check out our pathway article, <a href="#">Crafting your future</a>.
+{% endblock pageInfo_message %}
+
+{% block modulenav %}
+{% include "aims_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container text-center my-4">
+
+<div class="row">
+  <p> Start building an aim from scratch or if you've already browsed the library, create a copy of a book marked aim</p>
+  <div class="col-6">
+    <a class="btn btn-al w-100" href="{% url 'aim-create' %}">Create new aim</a>
+  </div>
+  <div class="col-6">
+    <a class="btn btn-al w-100" href="{% url 'aim-create-from-bookmark' %}">Copy from bookmark</a>
+  </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
+{% endblock %}

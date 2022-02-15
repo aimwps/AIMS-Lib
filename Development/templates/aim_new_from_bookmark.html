@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}AIMS{% endblock %}
+
+{% block topcarousel %}
+{% endblock %}
+
+{% block pageInfoCaro %}
+{% endblock pageInfoCaro %}
+
+{% block pageInfo_title %}
+CREATING AN AIM
+{% endblock pageInfo_title %}
+
+{% block pageInfo_message %}
+Hey {{ user }}! Just by being here, you're taking a step closer to the future you desire. Set a category, change your aim, and your reasons why below. If you need help structuring a successful aim, check out our pathway article, <a href="#">Crafting your future</a>.
+{% endblock pageInfo_message %}
+{% load static %}
+{% block modulenav %}
+{% include "aims_nav.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="container text-center my-4">
+
+
+  <div class="form-group">
+    <form method="post">
+      {% csrf_token %}
+      <select class="form-select my-2" aria-label="bookmark_to_copy" name="bookmark_id" id="selectBookmark">
+
+      <option selected>-- Select from my bookmarked aims --</option>
+      {% for bookmark in aim_bookmarks %}
+      <option value="{{bookmark.id}}">{{bookmark.aim.title}}</option>
+      {% endfor %}
+
+    </select>
+
+    <div class="row my-2">
+      <div class="col-8 my-2">
+
+        <button class="btn btn-al w-100">Create copy of selected aim</button>
+
+      </div>
+    </form>
+      <div class="col-4 my-2">
+
+        <button class="btn btn-al w-100" name="loadLibraryItemFromBookmark">Preview</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% include "view_aim_result_modal.html" %}
+{% endblock %}
+
+{% block modulenav_bottom %}
+{% endblock %}
+
+{% block bottomleftbar  %}
+{% endblock %}
+
+{% block bottomcontent %}
+{% endblock %}
+
+{% block bottomrightbar  %}
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/development/aimCreate.js' %}"></script>
+{% endblock scripts %}
