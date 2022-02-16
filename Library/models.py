@@ -41,7 +41,8 @@ class Bookmark(models.Model):
     aim = models.ForeignKey(Aim, on_delete=models.CASCADE, null=True, blank=True)
     behaviour =  models.ForeignKey(Behaviour, on_delete=models.CASCADE, null=True, blank=True)
     steptracker =  models.ForeignKey(StepTracker, on_delete=models.CASCADE, null=True, blank=True)
-
+    create_date = models.DateField(auto_now=False,auto_now_add=True)
+    create_time = models.TimeField(auto_now=False,auto_now_add=True)
 
     @property
     def bookmarked_object(self):

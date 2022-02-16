@@ -19,9 +19,9 @@ PARTICIPATION_STATUS = (
                     )
 
 
-CONTENT_TYPE = (('article', "Article"),
-                ('video', "Video"),
-                ('benchmark', "Benchmark"),
+CONTENT_TYPE = (('Article', "Article"),
+                ('Video', "Video"),
+                ('Benchmark', "Benchmark"),
                 )
 REVISE_FREQ = ( ('Never', 'Never'),
                 ('Daily', 'Daily'),

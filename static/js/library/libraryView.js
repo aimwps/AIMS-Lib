@@ -209,7 +209,7 @@ $(document).ready(function(){
       $("#submitBookmarkVideo").val(videoData.id)
       $("#videoDetails").empty()
       $("#videoDetails").append(`
-        <li class="list-group-item">
+        <li class="list-group-item" id="videoItemTitle">
         <small><strong>Title: </strong>${videoData.title}</small>
         </li>
         `)
@@ -220,7 +220,7 @@ $(document).ready(function(){
       $("#submitBookmarkArticle").val(articleData.id)
       $("#articleDetails").empty()
       $("#articleDetails").append(`
-        <li class="list-group-item">
+        <li class="list-group-item" id="articleItemTitle">
         <small><strong>Title: </strong>${articleData.title}</small>
         </li>
         <li class="list-group-item">
@@ -234,7 +234,7 @@ $(document).ready(function(){
       $("#submitBookmarkBenchmark").val(benchmarkData.id)
       $("#benchmarkDetails").empty()
       $("#benchmarkDetails").append(`
-        <li class="list-group-item">
+        <li class="list-group-item" id="benchmarkItemTitle">
         <small><strong>Title: </strong>${benchmarkData.title}</small>
         </li>
         <li class="list-group-item">

@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="col-xs-12 col-md-6 my-2">
+    <div class="container  border border-primary rounded px-0">
+    <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchVideoInputs" placeholder="Search benchmarks you created"></p>
+    {% if benchmarks %}
+    <ul class="list-group-flush px-0 resultlist" name="bookmarkType"  id="VideoUser">
+
+      {% for benchmark in benchmarks %}
+        <li class="list-group-item py-1 px-2">
+          <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectBookmark" >{{ benchmark.title }}</button>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="container">
+      <div class="pagination justify-content-center">
+        <small>
+          <span class="step-links">
+            {% if benchmark_bookmarks.has_previous %}
+                <a href="?benchmarkPage={{ benchmark_bookmarks.previous_page_number }}"> previous </a>
+            {% endif %}
+            <span class="current">
+                Page {{ benchmarks.number }} of {{ benchmarks.paginator.num_pages }}
+            </span>
+            {% if benchmark_bookmarks.has_next %}
+                <a href="?benchmarkPage={{ benchmark_bookmarks.next_page_number }}"> next </a>
+            {% endif %}
+          </span>
+        </small>
+      </div>
+    </div>
+  {% endif %}
+  </div>
+</div>
+<div class="col-xs-12 col-md-6 my-2">
+  <div class="container  border border-primary rounded px-0">
+    <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchVideoBookmarkInputs" placeholder="Search your bookmarked benchmarks"></p>
+
+      {% if benchmark_bookmarks %}
+      <ul class="list-group-flush bookmarkresultlist mx-0 px-0" name="bookmarkType"  id="VideoUserBookmarks">
+        {% for benchmark_bookmark in benchmark_bookmarks %}
+        <li class="list-group-item py-1 px-2">
+          <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectBookmark" >{{ benchmark_bookmark.benchmark.title }}</button>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="container">
+        <div class="pagination justify-content-center">
+          <small>
+            <span class="step-links">
+              {% if benchmark_bookmarks.has_previous %}
+                  <a href="?benchmarkBookmarkPage={{ benchmark_bookmarks.previous_page_number }}"> previous </a>
+              {% endif %}
+              <span class="current">
+                  Page {{ benchmark_bookmarks.number }} of {{ benchmark_bookmarks.paginator.num_pages }}
+              </span>
+              {% if benchmark_bookmarks.has_next %}
+                  <a href="?benchmarkBookmarkPage={{ benchmark_bookmarks.next_page_number }}">next </a>
+              {% endif %}
+          </span>
+        </small>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+</div>

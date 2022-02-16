@@ -24,7 +24,7 @@ class PathwayContentEditForm(forms.ModelForm):
                     "revise_frequency",)
         widgets ={
             'complete_to_move_on': forms.CheckboxInput(attrs = {'class': 'form-check-input'}),
-            'complete_anytime_overide': forms.CheckboxInput(attrs = {'class': 'form-check-input'}),
+            'complete_anytime_overide': forms.CheckboxInput(attrs  = {'class': 'form-check-input'}),
             'revise_frequency': forms.Select(attrs={'class': 'form-control'}
                                             ),}
 class PathwayEditForm(forms.ModelForm):
@@ -39,11 +39,12 @@ class PathwayEditForm(forms.ModelForm):
 class PathwayContentCreateForm(forms.ModelForm):
     class Meta:
         model =  PathwayContent
-        fields = ('content_type', 'article', 'video', 'benchmark','complete_anytime_overide', 'complete_to_move_on', 'revise_frequency')
-        widgets = {'content_type': forms.Select(attrs={'class': 'form-control'}),
-                    'article': forms.Select(attrs={'class': 'form-control'}),
-                    'video': forms.Select(attrs={'class': 'form-control'}),
-                    'benchmark': forms.Select(attrs={'class': 'form-control'}),
+        fields = ('on_pathway','content_type', 'article', 'video', 'benchmark','complete_anytime_overide', 'complete_to_move_on', 'revise_frequency')
+        widgets = { 'on_pathway' : forms.HiddenInput(),
+                    'content_type': forms.HiddenInput(),
+                    'article': forms.HiddenInput(),
+                    'video': forms.HiddenInput(),
+                    'benchmark': forms.HiddenInput(),
                     'complete_anytime_overide': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
                     'complete_to_move_on': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
                     'revise_frequency': forms.Select(attrs={'class': 'form-control'})

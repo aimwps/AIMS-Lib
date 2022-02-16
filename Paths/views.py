@@ -17,7 +17,9 @@ from QuestionGenerator.models import GeneratedQuestionBank
 from Members.models import MemberProfile
 import json, requests
 from .pathway_serializers import PathwaySerializer, PathwayContentSerializer, PathwayCostSerializer, PathwayParticipantSerializer, SinglePathwayParticipantSerializer
-
+from Library.models import Bookmark
+from Library.library_serializers import BookmarkSerializer
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def UserPathways_ajax_submit_pathway_invite(request):
 
     print(request.POST)
@@ -316,71 +318,157 @@ class PathwayContentCreate(LoginRequiredMixin, View):
     form_class = PathwayContentCreateForm
     template_name = "pathway_new_obj.html"
     def get(self, request, pathway_id):
+
+
+
+
+        article_bookmarks = Bookmark.objects.filter(content_type="Article", for_user=request.user).order_by("create_date")
+        article_bookmarks_paginator = Paginator(article_bookmarks, 6)
+        article_bookmark_page = request.GET.get('articleBookmarkPage')
+
+        try:
+            p_article_bookmarks = article_bookmarks_paginator.page(article_bookmark_page)
+        except PageNotAnInteger:
+            p_article_bookmarks = article_bookmarks_paginator.page(1)
+        except EmptyPage:
+            p_article_bookmarks = article_bookmarks_paginator.page(article_bookmarks_paginator.num_pages)
+
+
+        articles = Article.objects.filter(author=request.user)
+        article_paginator = Paginator(articles, 6)
+        article_page = request.GET.get('articlePage')
+        try:
+            p_articles = article_paginator.page(article_page)
+        except PageNotAnInteger:
+            p_articles = article_paginator.page(1)
+        except EmptyPage:
+            p_articles = article_paginator.page(article_paginator.num_pages)
+
+        video_bookmarks = Bookmark.objects.filter(content_type="VideoLecture", for_user=request.user).order_by("create_date")
+        video_bookmarks_paginator = Paginator(video_bookmarks, 6)
+        video_bookmark_page = request.GET.get('videoBookmarkPage')
+        try:
+            p_video_bookmarks = video_bookmarks_paginator.page(video_bookmark_page)
+        except PageNotAnInteger:
+            p_video_bookmarks = video_bookmarks_paginator.page(1)
+        except EmptyPage:
+            p_video_bookmarks = video_bookmarks_paginator.page(video_bookmarks_paginator.num_pages)
+
+
+        videos = VideoLecture.objects.filter(author=request.user)
+        videos_paginator = Paginator(videos, 6)
+        video_page = request.GET.get('videoBookmarkPage')
+        try:
+            p_videos = videos_paginator.page(video_page)
+        except PageNotAnInteger:
+            p_videos =  videos_paginator.page(1)
+        except EmptyPage:
+            p_videos = videos_paginator.page(videos_paginator.num_pages)
+
+
+        benchmark_bookmarks = Bookmark.objects.filter(content_type="Benchmark", for_user=request.user).order_by("create_date")
+        benchmark_bookmarks_paginator = Paginator(benchmark_bookmarks, 6)
+        benchmark_bookmarks_page = request.GET.get('benchmarkBookmarkPage')
+        try:
+            p_benchmark_bookmarks = benchmark_bookmarks_paginator.page(benchmark_bookmarks_page)
+        except PageNotAnInteger:
+            p_benchmark_bookmarks =  benchmark_bookmarks_paginator.page(1)
+        except EmptyPage:
+            p_benchmark_bookmarks = benchmark_bookmarks_paginator.page(benchmark_bookmarks_paginator.num_pages)
+
+
+        benchmarks = Benchmark.objects.filter(author=request.user)
+        benchmarks_paginator = Paginator(benchmarks, 6)
+        benchmark_page = request.GET.get('benchmarkPage')
+        try:
+            p_benchmarks = benchmarks_paginator.page(benchmark_page)
+        except PageNotAnInteger:
+            p_benchmarks =  benchmarks_paginator.page(1)
+        except EmptyPage:
+            p_benchmarks = benchmarks_paginator.page(benchmarks_paginator.num_pages)
+
+
+
+
         context = {
-        "on_pathway": Pathway.objects.get(id=pathway_id),
-        "form": PathwayContentCreateForm()}
+            "on_pathway": Pathway.objects.get(id=pathway_id),
+            "article_bookmarks": p_article_bookmarks,
+            "articles": p_articles,
+            "video_bookmarks": p_video_bookmarks,
+            "videos": p_videos,
+            "benchmark_bookmarks": p_benchmark_bookmarks,
+            "benchmarks":p_benchmarks,
+            "form": PathwayContentCreateForm()}
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
     def form_valid(self, form):
+        print(form)
         form.instance.on_pathway = Pathway.objects.get(id=self.kwargs['pathway_id'])
         return super().form_valid(form)
 
     def post(self, request, pathway_id):
-        relevant_pathway = PathwayContent.objects.filter(on_pathway=pathway_id)
-        if relevant_pathway:
-            new_order_position=  relevant_pathway.latest().order_position+ 1
-        else:
-            new_order_position= 1
         print(request.POST)
-        if "complete_to_move_on" in request.POST:
-            cp = True
+        relevant_pathway = Pathway.objects.get(id=pathway_id)
+        new = PathwayContentCreateForm(request.POST)
+        if new.is_valid():
+            new.save()
         else:
-            cp = False
-        if "complete_anytime_overide" in request.POST:
-            rc = True
-        else:
-            rc = False
+            print(new.errors)
+        #
+        # print(request.POST)
+        # if "complete_to_move_on" in request.POST:
+        #     cp = True
+        # else:
+        #     cp = False
+        # if "complete_anytime_overide" in request.POST:
+        #     rc = True
+        # else:
+        #     rc = False
+        # if "add-content" in request.POST:
+        #     new_path_obj = PathwayContent(request.POST)
+        #     new_path_obj.save()
 
-        if "lit-submit" in request.POST:
-            new_path_obj = PathwayContent(
-                                on_pathway = get_object_or_404(Pathway, id=pathway_id),
-                                content_type = "article",
-                                video = None,
-                                article = Article.objects.get(id=request.POST.get("article")),
-                                benchmark = None,
-                                order_position= new_order_position,
-                                complete_to_move_on = cp,
-                                complete_anytime_overide = rc)
-            new_path_obj.save()
 
-        elif "vid-submit" in request.POST:
-            new_path_obj = PathwayContent(
-                                on_pathway = get_object_or_404(Pathway, id=pathway_id),
-                                content_type = "video",
-                                video = VideoLecture.objects.get(id=request.POST.get("video")),
-                                article = None,
-                                benchmark = None,
-                                order_position= new_order_position,
-                                complete_to_move_on = cp,
-                                complete_anytime_overide = rc)
-            new_path_obj.save()
-
-        elif "benchmark-submit" in request.POST:
-            new_path_obj = PathwayContent(
-                                on_pathway = get_object_or_404(Pathway, id=pathway_id),
-                                content_type = "benchmark",
-                                video = None,
-                                article = None,
-                                benchmark = Benchmark.objects.get(id=request.POST.get('benchmark')),
-                                order_position= new_order_position,
-                                complete_to_move_on = cp,
-                                complete_anytime_overide = rc)
-            new_path_obj.save()
-        else:
-            print("FORM TYPE NOT RECOGNISED")
+        # if "lit-submit" in request.POST:
+        #     new_path_obj = PathwayContent(
+        #                         on_pathway = get_object_or_404(Pathway, id=pathway_id),
+        #                         content_type = "article",
+        #                         video = None,
+        #                         article = Article.objects.get(id=request.POST.get("article")),
+        #                         benchmark = None,
+        #                         order_position= new_order_position,
+        #                         complete_to_move_on = cp,
+        #                         complete_anytime_overide = rc)
+        #     new_path_obj.save()
+        #
+        # elif "vid-submit" in request.POST:
+        #     new_path_obj = PathwayContent(
+        #                         on_pathway = get_object_or_404(Pathway, id=pathway_id),
+        #                         content_type = "video",
+        #                         video = VideoLecture.objects.get(id=request.POST.get("video")),
+        #                         article = None,
+        #                         benchmark = None,
+        #                         order_position= new_order_position,
+        #                         complete_to_move_on = cp,
+        #                         complete_anytime_overide = rc)
+        #     new_path_obj.save()
+        #
+        # elif "benchmark-submit" in request.POST:
+        #     new_path_obj = PathwayContent(
+        #                         on_pathway = get_object_or_404(Pathway, id=pathway_id),
+        #                         content_type = "benchmark",
+        #                         video = None,
+        #                         article = None,
+        #                         benchmark = Benchmark.objects.get(id=request.POST.get('benchmark')),
+        #                         order_position= new_order_position,
+        #                         complete_to_move_on = cp,
+        #                         complete_anytime_overide = rc)
+        #     new_path_obj.save()
+        # else:
+        #     print("FORM TYPE NOT RECOGNISED")
 
         return HttpResponseRedirect(reverse('pathway-develop', args=(pathway_id,)))
 

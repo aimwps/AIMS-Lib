@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Pathways{% endblock %}
 
 {% block topcarousel %}
@@ -23,98 +24,294 @@ Here you can add content to your pathway. Select the article, video or benchmark
 
 <div class="container my-4">
   <h4>What item do you want to add to the "{{ on_pathway.title }}" pathway?</h4>
-  <nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-      <button class="nav-link active  ms-auto me-auto" id="lit-lec-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Article</button>
-      <button class="nav-link  ms-auto me-auto" id="vid-lec-tab" data-bs-toggle="tab" data-bs-target="#vid-lec" type="button" role="tab" aria-controls="vid-lec" aria-selected="false">Video</button>
-      <button class="nav-link  ms-auto me-auto" id="benchmark-tab" data-bs-toggle="tab" data-bs-target="#benchmark" type="button" role="tab" aria-controls="benchmark" aria-selected="false">Benchmark</button>
-    </div>
-  </nav>
-  <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-        <div class="form-group">
-          <form method="post">
-            {% csrf_token %}
-          <br/>
-            {{ form.article }}
-            <br/>
-            <div class="container">
-              <div class="row">
-                <div class="col-8">
-                  <p>Infinite revision?</p>
-                  <p>Requires previous item to be completed?</p>
-                </div>
-                <div class="col-4">
-                  <p>{{ form.complete_anytime_overide }}</p>
-                  <p>{{ form.complete_to_move_on }}</p>
-                  <p> {{form.revise_frequency }}</p>
-                </div>
-              </div>
-            </div>
-            <br/>
-            <div class="d-flex justify-content-center">
-               <button class="btn btn-al" name="lit-submit">Add written study to path</button>
-            </div>
+  <input type="hidden" id="pathwayId" value="{{ on_pathway.id }}"></input>
+<hr>
+<form method="post">
+<div class="row px-0">
+  <p class="lead">Content Settings</p>
 
-          </form>
-        </div>
-      </div>
-    <div class="tab-pane fade" id="vid-lec" role="tabpanel" aria-labelledby="vid-lec-tab">
-      <div class="form-group">
-        <form method="post">
-          {% csrf_token %}
-          <br/>
-          {{ form.video }}
-          <br/>
-          <div class="container">
-            <div class="row">
-              <div class="col-8">
-                <p>Infinite revision?</p>
-                <p>Requires previous item to be completed?</p>
-              </div>
-              <div class="col-4">
-                <p>{{ form.complete_anytime_overide }}</p>
-                <p>{{ form.complete_to_move_on }}</p>
-              </div>
-            </div>
-          </div>
-          <br/>
-          <div class="d-flex justify-content-center">
-          <button class="btn btn-al"  name="vid-submit">Add video study to path</button>
-        </div>
-        </form>
-      </div>
+
+      {% csrf_token %}
+    {{ form.on_pathway }}
+    {{ form.content_type}}
+    {{ form.article }}
+    {{ form.video }}
+    {{ form.benchmark }}
+    <div class="col-4">
+      <small><p>
+        Content can be completed no matter where it is placed on the pathway.
+      </p></small>
+      {{ form.complete_anytime_overide }}
+
     </div>
-    <div class="tab-pane fade" id="benchmark" role="tabpanel" aria-labelledby="benchmark-tab">
-      <div class="form-group">
-        <form method="post">
-          {% csrf_token %}
-          <br/>
-          {{ form.benchmark }}
-          <br/>
+    <div class="col-4">
+      <small><p>
+        Content must be completed to unlock the next stage in the pathway.
+      </p></small>
+      {{ form.complete_to_move_on }}
+
+    </div>
+    <div class="col-4">
+      <small><p>
+        For content to be completed users must revise it over what period..
+      </p></small>
+      {{ form.revise_frequency }}
+    </div>
+      <hr class="mt-4">
+    <p class="lead">Content Select</p>
+    <div class="container text-center" id="selectedPathwayContent" style="display: none;">
+      <p><strong><span id="contentSelectType"></span></strong><br><span id="contentSelectTitle"></span> </p>
+      <button type="submit" class="btn btn-al w-100" name="add-content"> Add content to pathway </button>
+      <hr class="mt-4">
+    </div>
+
+  </div>
+</form>
+  <div class="my-2">
+
+    <ul class="nav nav-pills nav-justified" id="resultsTab" role="tablist">
+
+      <li class="nav-item p-1" role="presentation">
+        <button class="nav-link p-1 ms-auto me-auto active" name="filterContentType" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articlesTab" type="button" role="tab" aria-controls="articlesTab" aria-selected="true">Articles</button>
+      </li>
+
+      <li class="nav-item p-1" role="presentation">
+        <button class="nav-link p-1 ms-auto me-auto" name="filterContentType" id="video-tab" data-bs-toggle="tab" data-bs-target="#videoTab" type="button" role="tab" aria-controls="videoTab" aria-selected="false">Videos</button>
+      </li>
+
+      <li class="nav-item p-1" role="presentation">
+        <button class="nav-link p-1 ms-auto me-auto" name="filterContentType" id="benchmarks-tab" data-bs-toggle="tab" data-bs-target="#benchmarksTab" type="button" role="tab" aria-controls="benchmarksTab" aria-selected="false">Benchmarks</button>
+      </li>
+
+    </ul>
+  </div>
+  <div class="tab-content" id="resultsTabContent">
+    <!--- FOR SELECTING AN ARTICLE__________________________________________________________________________________
+  __________________________________________________________________________________________________________________ -->
+    <div class="tab-pane fade show active" id="articlesTab" role="tabpanel" aria-labelledby="articles-tab">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 my-2">
+          <div class="container  border border-primary rounded px-0">
+          <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchArticleInputs" placeholder="Search articles you created"></p>
+          {% if articles %}
+          <ul class="list-group-flush px-0 resultlist" name="bookmarkType"  id="ArticleUser">
+
+            {% for article in articles %}
+              <li class="list-group-item py-1 px-2">
+                <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectArticle" value="{{article.library_type}}_{{article.id}}" >{{ article.title }}</button>
+              </li>
+            {% endfor %}
+          </ul>
           <div class="container">
-            <div class="row">
-              <div class="col-8">
-                <p>Infinite revision?</p>
-                <p>Requires previous item to be completed?</p>
-              </div>
-              <div class="col-4">
-                <p>{{ form.complete_anytime_overide }}</p>
-                <p>{{ form.complete_to_move_on }}</p>
-              </div>
+            <div class="pagination justify-content-center">
+              <small>
+                <span class="step-links">
+                  {% if article_bookmarks.has_previous %}
+                      <a href="?articlePage={{ article_bookmarks.previous_page_number }}"> previous </a>
+                  {% endif %}
+                  <span class="current">
+                      Page {{ article_bookmarks.number }} of {{ article_bookmarks.paginator.num_pages }}
+                  </span>
+                  {% if article_bookmarks.has_next %}
+                      <a href="?articlePage={{ article_bookmarks.next_page_number }}">next </a>
+                  {% endif %}
+                </span>
+              </small>
             </div>
           </div>
-          <br/>
-          <div class="d-flex justify-content-center">
-          <button class="btn btn-al" name="benchmark-submit">Add benchmark to path</button>
+        {% endif %}
         </div>
-        </form>
+      </div>
+      <div class="col-xs-12 col-md-6 my-2">
+        <div class="container  border border-primary rounded px-0">
+          <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchArticleInputs" placeholder="Search your bookmarked articles"></p>
+
+            {% if article_bookmarks %}
+            <ul class="list-group-flush bookmarkresultlist mx-0 px-0" name="bookmarkType"  id="ArticleUserBookmarks">
+              {% for article_bookmark in article_bookmarks %}
+              <li class="list-group-item py-1 px-2">
+                <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectBookmark" value="{{article_bookmark.id}}" >{{ article_bookmark.article.title }}</button>
+              </li>
+              {% endfor %}
+            </ul>
+            <div class="container">
+              <div class="pagination justify-content-center">
+                <small>
+                  <span class="step-links">
+                    {% if article_bookmarks.has_previous %}
+                        <a href="?articleBookmarkPage={{ article_bookmarks.previous_page_number }}"> previous </a>
+                    {% endif %}
+                    <span class="current">
+                        Page {{ article_bookmarks.number }} of {{ article_bookmarks.paginator.num_pages }}
+                    </span>
+                    {% if article_bookmarks.has_next %}
+                        <a href="?articleBookmarkPage={{ article_bookmarks.next_page_number }}">next </a>
+                    {% endif %}
+                </span>
+              </small>
+            </div>
+          </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
+  <!--- FOR SELECTING A VIDEO_____________________________________________________________________________________
+__________________________________________________________________________________________________________________ -->
+    <div class="tab-pane fade" id="videoTab" role="tabpanel" aria-labelledby="video-tab">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 my-2">
+          <div class="container  border border-primary rounded px-0">
+          <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchVideoInputs" placeholder="Search videos you created"></p>
+          {% if videos %}
+          <ul class="list-group-flush px-0 resultlist" name="bookmarkType"  id="VideoUser">
+
+            {% for video in videos %}
+              <li class="list-group-item py-1 px-2">
+                <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectVideo" value={{video.library_type}}_{{video.id}} >{{ video.title }}</button>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="container">
+            <div class="pagination justify-content-center">
+              <small>
+                <span class="step-links">
+                  {% if video_bookmarks.has_previous %}
+                      <a href="?videoPage={{ video_bookmarks.previous_page_number }}"> previous </a>
+                  {% endif %}
+                  <span class="current">
+                      Page {{ videos.number }} of {{ videos.paginator.num_pages }}
+                  </span>
+                  {% if video_bookmarks.has_next %}
+                      <a href="?videoPage={{ video_bookmarks.next_page_number }}"> next </a>
+                  {% endif %}
+                </span>
+              </small>
+            </div>
+          </div>
+        {% endif %}
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-6 my-2">
+        <div class="container  border border-primary rounded px-0">
+          <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchVideonputs" placeholder="Search your bookmarked videos"></p>
+
+            {% if video_bookmarks %}
+            <ul class="list-group-flush bookmarkresultlist mx-0 px-0" name="bookmarkType"  id="VideoUserBookmarks">
+              {% for video_bookmark in video_bookmarks %}
+              <li class="list-group-item py-1 px-2">
+                <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectBookmark" value="{{video_bookmark.id}}" >{{ video_bookmark.video.title }}</button>
+              </li>
+              {% endfor %}
+            </ul>
+            <div class="container">
+              <div class="pagination justify-content-center">
+                <small>
+                  <span class="step-links">
+                    {% if video_bookmarks.has_previous %}
+                        <a href="?videoBookmarkPage={{ video_bookmarks.previous_page_number }}"> previous </a>
+                    {% endif %}
+                    <span class="current">
+                        Page {{ video_bookmarks.number }} of {{ video_bookmarks.paginator.num_pages }}
+                    </span>
+                    {% if video_bookmarks.has_next %}
+                        <a href="?videoBookmarkPage={{ video_bookmarks.next_page_number }}">next </a>
+                    {% endif %}
+                </span>
+              </small>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      </div>
+
+    </div>
+    <!--- FOR SELECTING A BENCHMARK_________________________________________________________________________________
+  __________________________________________________________________________________________________________________ -->
+    <div class="tab-pane fade" id="benchmarksTab" role="tabpanel" aria-labelledby="benchmarks-tab">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 my-2">
+          <div class="container  border border-primary rounded px-0">
+          <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchBenchmarkInputs" placeholder="Search benchmarks you created"></p>
+          {% if benchmarks %}
+          <ul class="list-group-flush px-0 resultlist" name="bookmarkType"  id="BenchmarkUser">
+
+            {% for benchmark in benchmarks %}
+              <li class="list-group-item py-1 px-2">
+                <button class="btn btn-sm btn-link w-100 text-start nounderline" name="selectBenchmark" value="{{benchmark.library_type}}_{{benchmark.id}}" >{{ benchmark.title }}</button>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="container">
+            <div class="pagination justify-content-center">
+              <small>
+                <span class="step-links">
+                  {% if benchmark_bookmarks.has_previous %}
+                      <a href="?benchmarkPage={{ benchmark_bookmarks.previous_page_number }}"> previous </a>
+                  {% endif %}
+                  <span class="current">
+                      Page {{ benchmarks.number }} of {{ benchmarks.paginator.num_pages }}
+                  </span>
+                  {% if benchmark_bookmarks.has_next %}
+                      <a href="?benchmarkPage={{ benchmark_bookmarks.next_page_number }}"> next </a>
+                  {% endif %}
+                </span>
+              </small>
+            </div>
+          </div>
+        {% endif %}
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-6 my-2">
+        <div class="container  border border-primary rounded px-0">
+          <p class="lead m-2"><input class="form-control" name="searchContentInput" id="searchBenchmarkBookmarkInputs" placeholder="Search your bookmarked benchmarks"></p>
+
+            {% if benchmark_bookmarks %}
+            <ul class="list-group-flush bookmarkresultlist mx-0 px-0" name="bookmarkType"  id="BenchmarkUserBookmarks">
+              {% for benchmark_bookmark in benchmark_bookmarks %}
+              <li class="list-group-item py-1 px-2">
+                <button class="btn btn-sm btn-link w-100 text-start nounderline" value="{{benchmark_bookmark.id}}" name="selectBookmark" >{{ benchmark_bookmark.benchmark.title }}</button>
+              </li>
+              {% endfor %}
+            </ul>
+            <div class="container">
+              <div class="pagination justify-content-center">
+                <small>
+                  <span class="step-links">
+                    {% if benchmark_bookmarks.has_previous %}
+                        <a href="?benchmarkBookmarkPage={{ benchmark_bookmarks.previous_page_number }}"> previous </a>
+                    {% endif %}
+                    <span class="current">
+                        Page {{ benchmark_bookmarks.number }} of {{ benchmark_bookmarks.paginator.num_pages }}
+                    </span>
+                    {% if benchmark_bookmarks.has_next %}
+                        <a href="?benchmarkBookmarkPage={{ benchmark_bookmarks.next_page_number }}">next </a>
+                    {% endif %}
+                </span>
+              </small>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      </div>
+
+      </div>
+    </div>
 </div>
 
 
-
-
+{% include "view_aim_result_modal.html" %}
+{% include "view_behaviour_result_modal.html" %}
+{% include "view_steptracker_result_modal.html" %}
+{% include "view_pathway_result_modal.html" %}
+{% include "view_article_result_modal.html" %}
+{% include "view_video_result_modal.html" %}
+{% include "view_benchmark_result_modal.html" %}
+{% include "view_organisation_result_modal.html" %}
 {% endblock %}
+{% block scripts %}
+<script src="{% static 'js/pathway/pathwayContentCreate.js' %}"></script>
+
+{% endblock scripts %}

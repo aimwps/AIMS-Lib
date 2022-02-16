@@ -16,9 +16,10 @@
         <form method="POST">
           {% csrf_token %}
         <button type="submit" class="btn btn-al" name="submitBookmark" id="submitBookmarkVideo">Bookmark</button>
-        <button type="submit" class="btn btn-al" name="deleteBookmark"><i class="far fa-trash-alt"></i></button>
+        <button type="submit" class="btn btn-al" name="deleteBookmark" id="deleteVideoBookmark"><i class="far fa-trash-alt"></i></button>
       </form>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-al" name="addVideoToForm">Select this article</button>
       </div>
     </div>
   </div>
