@@ -87,5 +87,6 @@ $(document).on("change", "#selectBookmark", function(e){
   e.preventDefault()
   let id = $(this).val()
   $("button[name='loadLibraryItemFromBookmark']").val(id)
+  $("button[name='deleteBookmark']").hide()
 })
 })

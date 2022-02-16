@@ -75,4 +75,5 @@ $(document).on("change", "#selectBookmark", function(e){
   $("button[name='loadLibraryItemFromBookmark']").val(id)
 })
 $("#submitCopyAim").hide()
+$("button[name='deleteBookmark']").hide()
 })

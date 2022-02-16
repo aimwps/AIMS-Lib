@@ -48,9 +48,9 @@ $(document).ready(function(){
   function bookmarkOrDelete(isABookmark){
     if (isABookmark){
       $("button[name='submitBookmark']").hide()
-      $("button[name='deleteBookmark']").show()
+      $("button[name='deleteBookmark']").hide()
     } else {
-      $("button[name='submitBookmark']").show()
+      $("button[name='submitBookmark']").hide()
       $("button[name='deleteBookmark']").hide()
     }
   };
@@ -99,4 +99,5 @@ $(document).on("change", "#selectBookmark", function(e){
   $("button[name='loadLibraryItemFromBookmark']").val(id)
 })
 $("#submitCopyAim").hide()
+$("#deleteAimBookmark").hide()
 })

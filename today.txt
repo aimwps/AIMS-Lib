@@ -1,4 +1,4 @@
-
+cond
 View bookmarks / Delete
 -  Open modal when you click a bookmark
 -  have delete button instead of bookmark
