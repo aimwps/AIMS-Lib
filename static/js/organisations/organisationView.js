@@ -177,7 +177,20 @@ $(document).ready(function(){
 
             </li>`)
         })
+        $("#bookMarkedPathways").empty();
+        $.each(data.user_bookmarked, function(index, bookmark){
+          console.log(bookmark)
+          $("#bookMarkedPathways").append(`
+            <li class="list-group-item">
+            <div class="form-check">
+            <input class="form-check-input" name="addPathways" type="checkbox" value="${bookmark.pathway.id}" id="userPathwayCheck_${bookmark.pathway.id}">
+            <label class="form-check-label" for="userPathwayCheck_${bookmark.pathway.id}">
+            ${bookmark.pathway.title}
+            </label>
+            </div>
 
+            </li>`)
+        })
       }
     })
   };

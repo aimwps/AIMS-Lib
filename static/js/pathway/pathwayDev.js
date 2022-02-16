@@ -72,7 +72,7 @@ $(document).ready(function () {
                         <div class="container" id="contentControlsBody${index}">
                         <div class="row my-2">
                           <div class="col-3 ms-auto">
-                          <button name="editContentInModalBtn" value="${item.id}"class="btn btn-sm btn-al" data-bs-toggle="modal" data-bs-target="#contentSettingModal"><i class="fas fa-list-ul"></i></button>
+                          <button name="editContentInModalBtn" value="${item.id}"class="btn btn-link" data-bs-toggle="modal" data-bs-target="#contentSettingModal"><i class="fas fa-list-ul"></i></button>
                           </div>
                           <div class="col-9 me-auto">
                             Completion rules
@@ -80,7 +80,7 @@ $(document).ready(function () {
                         </div>
                         <div class="row my-2">
                           <div class="col-3 ms-auto">
-                          <button value="${item.id}" name="deletePathwayContentBtn" class="btn btn-sm btn-al" data-bs-toggle="modal" data-bs-target="#contentDeleteModal"><i class="far fa-trash-alt"></i></button>
+                          <button value="${item.id}" name="deletePathwayContentBtn" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#contentDeleteModal"><i class="far fa-trash-alt"></i></button>
                           </div>
                           <div class="col-9 me-auto">
                             Remove content from pathway
@@ -93,7 +93,7 @@ $(document).ready(function () {
                   $("#contentControlsBody"+ index).append(`
                     <div class="row my-2">
                     <div class="col-3 ms-auto">
-                    <a class="btn btn-sm btn-al" onClick="editContent(${item.id}, 'move-up')"><i class="fas fa-chevron-up"></i></a>
+                    <button class="btn btn-link" name="moveContentUp" value="${item.id}""><i class="fas fa-chevron-up"></i></button>
                     </div>
                     <div class="col-9 me-auto">
                       Move this up in order
@@ -105,19 +105,19 @@ $(document).ready(function () {
                   $("#contentControlsBody"+ index).append(`
                     <div class="row my-2">
                     <div class="col-3 ms-auto">
-                    <a type="button" class="btn btn-sm btn-al" onClick="editContent(${item.id},'move-down')"><i class="fas fa-chevron-down"></i></a>
+                    <button class="btn btn-link" name="moveContentDown" value="${item.id}"><i class="fas fa-chevron-down"></i></button>
                     </div>
                     <div class="col-9 me-auto">
                       Move this down in order
                     </div>
                     </div>`)
                 };
-                if (item.content_type =="video"){
+                if (item.content_type =="Video"){
                   console.log("vid", item.video.title)
                   $("#contentTitle"+index).append(`${item.video.title}`)
-                } else if(item.content_type =="article"){
+                } else if(item.content_type =="Article"){
                   $("#contentTitle"+index).append(`${item.article.title}`)
-                } else if(item.content_type =="benchmark"){
+                } else if(item.content_type =="Benchmark"){
                   $("#contentTitle"+index).append(`${item.benchmark.title}`)
                 } else {
                   $("#contentTitle"+index).append("unknown file")
@@ -127,6 +127,7 @@ $(document).ready(function () {
             }})
   };
   function editContent(contentId, actionType){
+    console.log("THE CONENT ID TO SUBMMIT", contentId)
     $.ajax({type:"POST",
             url:"/dev_pathway_edit/",
             data:{content_id: contentId,
@@ -207,7 +208,6 @@ $(document).ready(function () {
     console.log("ID", id)
     editContentInModal(id);
   })
-
   $(document).on("click", "button[name='deletePathwayContentBtn']", function(e){
     let id = $(this).val();
     $("#deleteModalSubmit").val(id)
@@ -218,10 +218,19 @@ $(document).ready(function () {
     $("#deleteModalSubmit").val(id)
 
   })
-
   $(document).on("click", "#deleteModalSubmit", function(e){
     let id = $(this).val();
     ajax_submit_delete_pathway_content(id)
 
   })
+  $(document).on("click", "[name='moveContentDown']", function(e){
+    let id = $(this).val()
+    console.log("HERE-- DOWN-->", id)
+    editContent(id, "move-down")
+  } )
+  $(document).on("click", "[name='moveContentUp']", function(e){
+    let id = $(this).val()
+    console.log("HERE- UP--->", id)
+    editContent(id, "move-up")
+  } )
   });

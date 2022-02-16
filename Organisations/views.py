@@ -10,6 +10,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect,JsonResponse
 from .organisation_serializers import OrganisationSerializer, OrganisationMembersSerializer
 from Members.members_serializers import UserSerializer
+from Library.models import Bookmark
+from Library.library_serializers import BookmarkSerializer
 from django.contrib.auth.models import User
 from django.db.models import Q
 import json
@@ -24,7 +26,6 @@ def get_suborganisation_list(organisation, organisation_list=[]):
         get_suborganisation_list(organisation=child, organisation_list=organisation_list)
     return organisation_list
 
-
 def ajax_find_organisation_children_with_member(request):
     organisation = Organisation.objects.get(id=request.GET.get("organisation_id"))
     member = User.objects.get(id=request.GET.get("user_id"))
@@ -35,7 +36,6 @@ def ajax_find_organisation_children_with_member(request):
         if org_member:
             data.append(OrganisationSerializer(org).data)
     return JsonResponse(data, safe=False)
-
 
 def ajax_users_organisation_pathway_data(request):
 
@@ -57,7 +57,6 @@ def ajax_users_organisation_pathway_data(request):
 
 
     return JsonResponse(user_pathway_results, safe=False)
-
 
 def ajax_get_organisation_pathway_data(request):
     pathway = Pathway.objects.get(id=request.GET.get("pathway"))
@@ -109,11 +108,12 @@ def getUserBookmarkedPathways(request):
     if request.method=="GET":
         user_pathways = Pathway.objects.filter(author=request.user)
         data_info = {"created": None,
-                    "user_bookmarked": None,
+                    "user_bookmarked": BookmarkSerializer(Bookmark.objects.filter(for_user=request.user, content_type="Pathway"), many=True).data,
                     "organisation_bookmarked": None}
 
         if user_pathways:
             data_info['created'] = PathwaySerializer(user_pathways, many=True).data
+        print(data_info["user_bookmarked"])
         return JsonResponse(data_info, safe=False)
 
 def submitNewMember(request):

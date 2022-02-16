@@ -93,6 +93,7 @@ def get_pathway_content_obj(request):
 # Get json of all associated content - json must be in order
 # User edits
 def edit_dev_pathway_content(request):
+    print(request.POST)
 
     data_info = {
                 "pathway_obj": request.POST.get("content_id"),

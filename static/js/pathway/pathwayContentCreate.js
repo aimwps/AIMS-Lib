@@ -3,6 +3,7 @@ $(document).ready(function(){
       bookmarkOrDelete(isABookmark)
       $("#viewLibraryVideoResultModal").modal("show")
       $("#submitBookmarkVideo").val(videoData.id)
+      $("[name='addVideoToForm']").val(`${videoData.library_type}_${videoData.id}`)
       $("#videoDetails").empty()
       $("#videoDetails").append(`
         <li class="list-group-item" id="videoItemTitle">
@@ -14,6 +15,7 @@ $(document).ready(function(){
       bookmarkOrDelete(isABookmark)
       $("#viewLibraryArticleResultModal").modal("show")
       $("#submitBookmarkArticle").val(articleData.id)
+      $("[name='addArticleToForm']").val(`${articleData.library_type}_${articleData.id}`)
       $("#articleDetails").empty()
       $("#articleDetails").append(`
         <li class="list-group-item" id="articleItemTitle">
@@ -28,6 +30,7 @@ $(document).ready(function(){
       bookmarkOrDelete(isABookmark)
       $("#viewLibraryBenchmarkResultModal").modal("show")
       $("#submitBookmarkBenchmark").val(benchmarkData.id)
+      $("[name='addBenchmarkToForm']").val(`${benchmarkData.library_type}_${benchmarkData.id}`)
       $("#benchmarkDetails").empty()
       $("#benchmarkDetails").append(`
         <li class="list-group-item" id="benchmarkItemTitle">
@@ -176,66 +179,69 @@ $(document).ready(function(){
   $(document).on("click", "button[name='selectArticle']", function(e){
     e.preventDefault();
     let id = $(this).val();
+    $("#id_article").val(id)
     $("button[name='addArticleToForm']").val(id)
     loadLibraryItemToModal(id, false)
   })
   $(document).on("click", "button[name='selectBenchmark']", function(e){
     e.preventDefault();
     let id = $(this).val();
+    $("#id_benchmark").val(id)
     $("button[name='addBenchmarkToForm']").val(id)
     loadLibraryItemToModal(id, false)
   })
   $(document).on("click", "button[name='selectVideo']", function(e){
     e.preventDefault();
     let id = $(this).val();
+    $("#id_video").val(id)
     $("button[name='addVideoToForm']").val(id)
     loadLibraryItemToModal(id, false)
   })
 
 
-$(document).on("click", "button[name='addArticleToForm']", function(e){
-  let typeId  = $(this).val().split("_")
-  let type = typeId[0]
-  let id = typeId[1]
-  console.log("ID", id)
-  $("#id_on_pathway").val($("#pathwayId").val())
-  $("#id_article").val(id)
-  $("#id_content_type").val(type)
-  $("#contentSelectType").text(type)
-  $("#contentSelectTitle").text($("#articleItemTitle").text())
-  $("#viewLibraryArticleResultModal").modal("hide")
-  $("#selectedPathwayContent").show()
-})
-$(document).on("click", "button[name='addBenchmarkToForm']", function(e){
-  let typeId  = $(this).val().split("_")
-  let type = typeId[0]
-  let id = typeId[1]
-  $("#id_on_pathway").val($("#pathwayId").val())
-  $("#id_benchmark").val(id)
-  $("#id_content_type").val(type)
-  $("#contentSelectType").text(type)
-  $("#contentSelectTitle").text($("#benchmarkItemTitle").text())
-  $("#viewLibraryBenchmarkResultModal").modal("hide")
-  $("#selectedPathwayContent").show()
-})
-$(document).on("click", "button[name='addVideoToForm']", function(e){
-  let typeId  = $(this).val().split("_")
-  let type = typeId[0]
-  let id = typeId[1]
-  $("#id_on_pathway").val($("#pathwayId").val())
-  $("#id_video").val(id)
-  $("#id_content_type").val(type)
-  $("#contentSelectType").text(type)
-  $("#contentSelectTitle").text($("#videoItemTitle").text())
-  $("#viewLibraryVideoeResultModal").modal("hide")
-  $("#selectedPathwayContent").show()
-})
-
-
-  $("#submitCopyAim").hide()
-  $("#deleteBenchmarkBookmark").hide()
-  $("#deleteVideokBookmark").hide()
-  $("#deleteArticleBookmark").hide()
-  $("button[name='addArticleToForm']").show()
-
+  $(document).on("click", "button[name='addArticleToForm']", function(e){
+    let typeId  = $(this).val().split("_")
+    let type = typeId[0]
+    let id = typeId[1]
+    console.log("ID", id)
+    $("#id_on_pathway").val($("#pathwayId").val())
+    $("#id_article").val(id)
+    $("#id_content_type").val("Article")
+    $("#contentSelectType").text("Article")
+    $("#contentSelectTitle").text($("#articleItemTitle").text())
+    $("#viewLibraryArticleResultModal").modal("hide")
+    $("#selectedPathwayContent").show()
   })
+  $(document).on("click", "button[name='addBenchmarkToForm']", function(e){
+    let typeId  = $(this).val().split("_")
+    let type = typeId[0]
+    let id = typeId[1]
+    $("#id_on_pathway").val($("#pathwayId").val())
+    $("#id_benchmark").val(id)
+    $("#id_content_type").val("Benchmark")
+    $("#contentSelectType").text("Benchmark")
+    $("#contentSelectTitle").text($("#benchmarkItemTitle").text())
+    $("#viewLibraryBenchmarkResultModal").modal("hide")
+    $("#selectedPathwayContent").show()
+  })
+  $(document).on("click", "button[name='addVideoToForm']", function(e){
+    let typeId  = $(this).val().split("_")
+    let type = typeId[0]
+    let id = typeId[1]
+    $("#id_on_pathway").val($("#pathwayId").val())
+    $("#id_video").val(id)
+    $("#id_content_type").val("Video")
+    $("#contentSelectType").text("Video")
+    $("#contentSelectTitle").text($("#videoItemTitle").text())
+    $("#viewLibraryVideoResultModal").modal("hide")
+    $("#selectedPathwayContent").show()
+  })
+
+
+    $("#submitCopyAim").hide()
+    $("#deleteBenchmarkBookmark").hide()
+    $("#deleteVideokBookmark").hide()
+    $("#deleteArticleBookmark").hide()
+    $("button[name='addArticleToForm']").show()
+
+    })
