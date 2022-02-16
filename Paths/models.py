@@ -149,7 +149,7 @@ class PathwayContent(models.Model):
 
 
                 # Previous content needs to be completed, lets see if the uSER HAS
-                if previous_content.content_type == "article":
+                if previous_content.content_type == "Article":
 
                     article_session = ArticleSession.objects.filter((Q(on_article=previous_content.article) & Q(for_user=user))).order_by('-create_date', '-create_time')
 
@@ -169,7 +169,7 @@ class PathwayContent(models.Model):
                         print("returned false because user has NO article session records")
                         return False
 
-                elif previous_content.content_type == "benchmark":
+                elif previous_content.content_type == "Benchmark":
 
                     benchmark_sessions = BenchmarkSession.objects.filter((Q(on_benchmark=previous_content.benchmark) & Q(for_user=user) & Q(completed=True) )).order_by('-create_date', '-create_time')
 
@@ -182,7 +182,7 @@ class PathwayContent(models.Model):
                     else:
 
                         return False
-                elif previous_content.content_type =="video":
+                elif previous_content.content_type =="Video":
                     video_sessions = VideoLectureSession.objects.filter(Q(on_video=previous_content.video)& Q(for_user=user)).order_by('-create_date', '-create_time')
                     if video_sessions.exists():
                         if video_sessions[0].status =="complete" or video_sessions[0].status =="recap":
@@ -211,7 +211,7 @@ class PathwayContent(models.Model):
 
         For benchmarks this comes in the form of pending or a % result.
         """
-        if self.content_type == "article":
+        if self.content_type == "Article":
             article_session = ArticleSession.objects.filter((Q(on_article=self.article) & Q(for_user=user))).order_by('-create_date', '-create_time')
 
             # If there are sessions there is a possibility to return true
@@ -220,7 +220,7 @@ class PathwayContent(models.Model):
             else:
                 return "pending"
 
-        if self.content_type == "benchmark":
+        if self.content_type == "Benchmark":
             benchmark_sessions = BenchmarkSession.objects.filter((Q(on_benchmark=self.benchmark) & Q(for_user=user) & Q(completed=True) )).order_by('-create_date', '-create_time')
 
             if benchmark_sessions.exists():
@@ -233,7 +233,7 @@ class PathwayContent(models.Model):
                 return "pending"
 
 
-        if self.content_type == "video":
+        if self.content_type == "Video":
             video_sessions = VideoLectureSession.objects.filter(Q(on_video=self.video) & Q(for_user=user)).order_by('-create_date', '-create_time')
             if video_sessions.exists():
                 return video_sessions[0].status

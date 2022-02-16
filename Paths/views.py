@@ -163,6 +163,7 @@ class PathwayView(View):
             is_participant = PathwayParticipant.objects.filter(on_pathway=pathway, author=request.user)
 
             if is_participant.exists():
+                print("USER IS PARTIC")
                 context['participation_status'] = True
                 pathway_content_with_status = [
                                                 (
