@@ -20,3 +20,14 @@ Library permissions
 Pathway Development
 - Edit pathway title & description
 - delete pathway button
+
+
+Videos
+- Description on create
+
+Eduflow
+- Send cover letter
+- Send cv
+
+Hunter
+-

@@ -54,7 +54,7 @@ def UserPathways_ajax_get_pathway_costs(request):
         return JsonResponse(data, safe=False)
 
 
-def submit_cotent_delete(request):
+def submit_content_delete(request):
     pathway_obj = PathwayContent.objects.get(id=request.POST.get("content_id"))
     if request.POST.get("type") == "delete":
         pathway_obj.delete()
@@ -86,14 +86,8 @@ def submit_content_setting_changes(request):
 
 def get_pathway_content_obj(request):
     pathway_obj = PathwayContent.objects.get(id=request.GET.get("content_id"))
-    res = PathwayContentSerializer(pathway_obj)
-    data_info = {
-                "pathway_obj": request.GET.get("content_id"),
-                }
-
-    json_data_info = json.dumps(data_info)
-
-    return JsonResponse(json_data_info, safe=False)
+    data = PathwayContentSerializer(pathway_obj)
+    return JsonResponse(data.data, safe=False)
 # Get json of all associated content - json must be in order
 # User edits
 def edit_dev_pathway_content(request):
