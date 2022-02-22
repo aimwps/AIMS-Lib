@@ -493,6 +493,18 @@ $(document).ready(function(){
       $("button[name='deleteBookmark']").hide()
     }
   }
+  function launchPermissionModal(persmissionData){
+    $("#libraryPermissionModal").modal("show")
+    $.ajax({
+      type: "GET",
+      url: "/ajax_get_library_permissions/",
+      data: {permission_data: permissionData},
+      datatype: "json",
+      success: function(json){
+        console.log(json)
+      }
+    })
+  }
 
   $(document).on("keyup", "#searchInput", function(){
     let searchPhrase = $(this).val();
@@ -587,6 +599,10 @@ $(document).ready(function(){
     e.preventDefault();
     let id = $(this).val()
     submitUseLibraryContent(id, "Bookmark", "delete")
+  })
+  $(document).on("click", "button[name='libraryPermissionModalLaunch']", function(e){
+    let permissionData = $(this).val()
+    launchPermissionModal(permissionData);
   })
   getUserBookmarks()
 })

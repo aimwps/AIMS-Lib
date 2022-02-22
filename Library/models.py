@@ -31,6 +31,7 @@ class LibraryContentType(models.Model):
 
 
 class Bookmark(models.Model):
+    for_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookmarks")
     content_type = models.CharField(max_length=100, choices=LIBRARY_CONTENT_TYPES)
     article = models.ForeignKey(Article, on_delete=models.CASCADE, null=True, blank=True)
     video = models.ForeignKey(VideoLecture, on_delete=models.CASCADE, null=True, blank=True)
@@ -67,7 +68,7 @@ class Bookmark(models.Model):
 
 class LibraryPermission(models.Model):
     # For what content
-    content_type = models.CharField(max_length=100, choices=LIBRARY_CONTENT_TYPES, default="Article")
+    content_type = models.CharField(max_length=100, choices=LIBRARY_CONTENT_TYPES)
     article = models.OneToOneField(Article, on_delete=models.CASCADE, null=True, blank=True, related_name="permissions")
     video = models.OneToOneField(VideoLecture, on_delete=models.CASCADE, null=True, blank=True, related_name="permissions")
     benchmark = models.OneToOneField(Benchmark, on_delete=models.CASCADE, null=True, blank=True, related_name="permissions")
@@ -81,13 +82,10 @@ class LibraryPermission(models.Model):
 
 
     # For Viewing - constraint can't be viewed unless previewewd true
-    can_be_previewed = models.BooleanField(default=False)
-    can_be_viewed = models.BooleanField(default=False)
+    can_be_viewed_in_library = models.BooleanField(default=False)
 
     # For Using -  constraint bookmarked has to be true to be able to add to external content
-    can_be_bookmarked = models.BooleanField(default=False, )
-    can_be_added_to_external_content = models.BooleanField(default=False)
+    can_be_used  = models.BooleanField(default=False)
 
     # For visibility
-    author_pathways_hidden = models.BooleanField(default=False)
-    author_development_hidden = models.BooleanField(default=True)
+    author_visibility_hidden = models.BooleanField(default=True)

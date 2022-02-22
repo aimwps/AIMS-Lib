@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Bookmark
+from .models import Bookmark, LibraryPermission
 from Paths.models import Pathway
 from Paths.pathway_serializers import PathwaySerializer
 from VideoLecture.models import VideoLecture
@@ -13,7 +13,17 @@ from Development.development_serializers import AimLibrarySerializer, StepTracke
 from Organisations.models import Organisation
 from Organisations.organisation_serializers import OrganisationSerializer
 
-
+class LibraryPermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LibraryPermission
+        fields = (  "id",
+                    "content_type",
+                    "can_be_previewed",
+                    "can_be_viewed",
+                    "can_be_bookmarked",
+                    "can_be_added_to_external_content",
+                    "author_visibility_hidden",
+                )
 class BookmarkSerializer(serializers.ModelSerializer):
     article = ArticleSerializer()
     video = VideoSerializer()

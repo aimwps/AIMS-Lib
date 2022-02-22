@@ -1,0 +1,34 @@
+<div class="modal fade" id="LibraryPermissionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="LibraryPermissionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="LibraryPermissionModalLabel">Library Permissions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="container" id="activateLibraryPermissions" style="display: none;">
+          <p>There are no permissions set. This item is not visible in the library. Submit the form below to set permissions.</p>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="id_can_be_viewed">
+              <label class="form-check-label" for="id_can_be_viewed">Content can be viewed in library</label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="id_can_be_added_to_external_content">
+              <label class="form-check-label" for="id_can_be_added_to_external_content">Content can used by external sources</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="id_author_visibility_hidden">
+              <label class="form-check-label" for="id_author_visibility_hidden">Hide the author of this content (Aims authors are always hidden)</label>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

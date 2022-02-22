@@ -42,13 +42,8 @@ class ArticleView(View):
 
         if request.user.is_authenticated:
             article_user_pathways = Pathway.objects.filter((Q(full_pathway__article=literature) & Q(participants__author=request.user)))
-            print(f"COUNT OF QUERY {article_user_pathways.count()}")
-            for a in article_user_pathways:
-                print(a)
-                print(a.participants.all())
             if article_user_pathways.exists():
                 for pathway in article_user_pathways:
-                    print(pathway, pathway.title)
                     for content in pathway.full_pathway.all():
 
                         # The user is a member and the content is available to them

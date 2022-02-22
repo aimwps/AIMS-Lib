@@ -16,7 +16,38 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
 from .models import Bookmark, LibraryContentType
-from .library_serializers import BookmarkSerializer
+from .library_serializers import BookmarkSerializer, LibraryPermissionSerializer
+
+def ajax_get_library_permissions(request):
+    if request.method == "GET":
+        content_type, content_id = request.GET.get("permission_data").split("_")
+        if content_type == "Article":
+            item = Article.objects.get(id=content_id)
+        elif content_type == "Video":
+            item = VideoLecture.objects.get(id=content_id)
+        elif content_type == "Benchmark":
+            item = Benchmark.objects.get(id=content_id)
+        elif content_type == "Pathway":
+            item = Pathway.objects.get(id=content_id)
+        elif content_type == "StepTracker":
+            item = StepTracker.objects.get(id=content_id)
+        elif content_type == "Behaviour":
+            item = Behaviour.objects.get(id=content_id)
+        elif content_type == "Aim":
+            item = Aim.objects.get(id=content_id)
+        elif content_type == "Organisation":
+            item = Organisation.objects.get(id=content_id)
+        else:
+            print("Contetn type error librayr permission")
+
+        if item:
+            if hasattr(item, 'permissions'):
+                item_data = LibraryPermissionSerializer(item.permissions)
+            else:
+                item_data = LibraryPermissionSerializer()
+
+            return JsonResponse(item_data.data, safe=False)
+
 
 def LibraryView_ajax_get_bookmark_content(request):
     if request.method=="GET":
