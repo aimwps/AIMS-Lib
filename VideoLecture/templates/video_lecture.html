@@ -36,6 +36,10 @@ This is a video lecture. Clear your mind, absorb knowledge. If you found the con
           {% if user.is_authenticated %}
             {% if user.id == vid_lec.author.id %}
             <li class="nav-item px-2">
+              <button class="btn btn-link p-1" name="libraryPermissionModalLaunch" value="{{ vid_lec.library_type }}_{{vid_lec.id}}" data-bs-toggle="tooltip" title="View and edit library permissions"><i class="fas fa-book"></i></button>
+            </li>
+
+            <li class="nav-item px-2">
               <a href='#' data-bs-toggle="tooltip" title="Generate questions from this content"><i class="fas fa-brain"></i></a>
             </li>
               <li class="nav-item px-2">
@@ -155,6 +159,8 @@ This is a video lecture. Clear your mind, absorb knowledge. If you found the con
     </div>
     {% endif %}
   </div>
+
+  {% include "edit_library_permissions_modal.html" %}
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'js/videos/viewVideo.js' %}"></script>

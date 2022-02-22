@@ -33,6 +33,9 @@ You're developing a pathway, add or change the content, set the order of complet
       {% if user.is_authenticated %}
         {% if user.id == pathway.author.id %}
         <li class="nav-item px-2">
+          <button class="btn btn-link p-1" name="libraryPermissionModalLaunch" value="{{ pathway.library_type }}_{{pathway.id}}" data-bs-toggle="tooltip" title="View and edit library permissions"><i class="fas fa-book"></i></button>
+        </li>
+        <li class="nav-item px-2">
           <a href="{% url 'pathway-content-create' pathway.id %}"> <i class="fas fa-plus"></i></a>
         </li>
         <li class="nav-item px-2">
@@ -183,7 +186,7 @@ You're developing a pathway, add or change the content, set the order of complet
        </div>
      </div>
    </div>
-
+  {% include "edit_library_permissions_modal.html" %}
 {% endblock %}
 
 {% block scripts %}

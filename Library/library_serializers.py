@@ -18,10 +18,8 @@ class LibraryPermissionSerializer(serializers.ModelSerializer):
         model = LibraryPermission
         fields = (  "id",
                     "content_type",
-                    "can_be_previewed",
-                    "can_be_viewed",
-                    "can_be_bookmarked",
-                    "can_be_added_to_external_content",
+                    "can_be_viewed_in_library",
+                    "can_be_used",
                     "author_visibility_hidden",
                 )
 class BookmarkSerializer(serializers.ModelSerializer):

@@ -15,8 +15,129 @@ from django.views.generic import View
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
-from .models import Bookmark, LibraryContentType
+from .models import Bookmark, LibraryContentType, LibraryPermission
 from .library_serializers import BookmarkSerializer, LibraryPermissionSerializer
+def ajax_edit_library_permissions(request):
+    if request.method == "POST":
+        if request.POST.get("can_be_viewed_in_library") == "true":
+            can_be_viewed_in_library = True
+        else:
+            can_be_viewed_in_library = False
+
+        if request.POST.get("can_be_used") == "true":
+            can_be_used = True
+        else:
+            can_be_used = False
+
+        if request.POST.get("author_visibility_hidden") == "true":
+            author_visibility_hidden = True
+        else:
+            author_visibility_hidden = False
+
+        if "permission_data" in request.POST:
+            content_type, content_id = request.POST.get("permission_data").split("_")
+
+            if content_type == "Article":
+
+                item = Article.objects.get(id=content_id)
+
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                article = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+
+            elif content_type == "Video":
+                item = VideoLecture.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                video = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+
+            elif content_type == "Benchmark":
+                item = Benchmark.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                benchmark = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+
+            elif content_type == "Pathway":
+                item = Pathway.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                pathway = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+
+            elif content_type == "StepTracker":
+                item = StepTracker.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                steptracker = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+            elif content_type == "Behaviour":
+                item = Behaviour.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                behaviour = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+            elif content_type == "Aim":
+                item = Aim.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                aim = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+            elif content_type == "Organisation":
+                item = Organisation.objects.get(id=content_id)
+                new_library_permission = LibraryPermission(
+                                content_type = content_type,
+                                organisation = item,
+                                can_be_viewed_in_library = can_be_viewed_in_library,
+                                can_be_used = can_be_used,
+                                author_visibility_hidden = author_visibility_hidden
+                )
+                new_library_permission.save()
+            else:
+                print("Contetn type error librayr permission")
+        elif "permission_id" in request.POST:
+            library_permission = LibraryPermission.objects.get(id=request.POST.get("permission_id"))
+            library_permission.can_be_used = can_be_used
+            library_permission.author_visibility_hidden = author_visibility_hidden
+            library_permission.can_be_viewed_in_library = can_be_viewed_in_library
+            library_permission.save()
+            return JsonResponse({"error": False, "data":"success"})
+
+        else:
+            print("We don't know why you're here")
+
+    return JsonResponse({"success": "success"}, safe=False)
+
 
 def ajax_get_library_permissions(request):
     if request.method == "GET":
