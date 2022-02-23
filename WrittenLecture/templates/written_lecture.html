@@ -61,9 +61,9 @@ This is an article; lay your thoughts still, read and learn. If you found the co
                       <input type="hidden" value="#" name="topic_id_to_vote">
                       <p>
                         {% if user.is_authenticated %}
-                          <a class="btn btn-link p-1" type="submit" class="text-primary" name="topic_vote_up" data-bs-toggle="tooltip" title="Vote up!"><i class="far fa-thumbs-up"></i></a>
+                          <button class="btn btn-link p-1" type="submit" class="text-primary" value="{{ lit_lec.library_type}}_{{lit_lec.id}}" name="submitVoteUp" data-bs-toggle="tooltip" title="Vote up!"><i class="far fa-thumbs-up"></i></button>
                           {% else %}
-                          <a class="btn btn-link p-1" type="disabled" class="text-secondary" data-bs-toggle="tooltip" title="You must be logged into vote"><i class="far fa-thumbs-up"></i></a>
+                          <button class="btn btn-link p-1" type="disabled" class="text-secondary" data-bs-toggle="tooltip" title="You must be logged into vote"><i class="far fa-thumbs-up"></i></button>
                           {% endif %}
                       </p>
                   </form>
@@ -74,9 +74,9 @@ This is an article; lay your thoughts still, read and learn. If you found the co
                       <input type="hidden" value="#" name="topic_id_to_vote">
                       <p>
                         {% if user.is_authenticated %}
-                          <a class="btn btn-link p-1" type="submit" class="text-primary" name="topic_vote_down" data-bs-toggle="tooltip" title="Vote down!"><i class="far fa-thumbs-down"></i></a>
+                          <button class="btn btn-link p-1" type="submit" value="{{ lit_lec.library_type}}_{{lit_lec.id}}" class="text-primary" name="submitVoteDown" data-bs-toggle="tooltip" title="Vote down!"><i class="far fa-thumbs-down"></i></button>
                           {% else %}
-                          <a class="btn btn-link p-1" type="disabled" class="text-secondary" data-bs-toggle="tooltip" title="You must be logged into vote"><i class="far fa-thumbs-down"></i></a>
+                          <button class="btn btn-link p-1" type="disabled" class="text-secondary" data-bs-toggle="tooltip" title="You must be logged into vote"><i class="far fa-thumbs-down"></i></button>
                           {% endif %}
                         </p>
                   </form>

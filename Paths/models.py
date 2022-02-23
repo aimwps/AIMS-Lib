@@ -20,7 +20,7 @@ PARTICIPATION_STATUS = (
 
 
 CONTENT_TYPE = (('Article', "Article"),
-                ('Video', "Video"),
+                ('VideoLecture', "Video"),
                 ('Benchmark', "Benchmark"),
                 )
 REVISE_FREQ = ( ('Never', 'Never'),

@@ -20,7 +20,7 @@ class VideoLecture(models.Model):
         return reverse('user-videos')
     @property
     def library_type(self):
-        return "Video"
+        return "VideoLecture"
 
     @property
     def library_description(self):

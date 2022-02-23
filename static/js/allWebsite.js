@@ -86,29 +86,49 @@ $(document).ready(function(){
   $("[name='modLink']").removeClass("active");
   $(linkName).addClass("active");
 }
-
-$(document).on("click", "button[name='libraryPermissionModalLaunch']", function(e){
-  let permissionData = $(this).val()
-  launchPermissionModal(permissionData);
-})
-$(document).on("click", "button[name='activateLibraryPermission']", function(e){
-  e.preventDefault()
-  let permissionData = $(this).val()
-  submitNewLibraryPermission(permissionData)
-})
-$(document).on("click", "button[id='editCurrentPermissionsLaunch']", function(e){
-  e.preventDefault()
-  console.log("hello")
-  $("#editCurrentLibraryPermissions").show()
-})
-$(document).on("click", "button[name='closeEditCurrentPermissionsLaunch']", function(e){
-  e.preventDefault()
-  $("#editCurrentLibraryPermissions").hide()
-})
-$(document).on("click", "button[name='submitEditLibraryPermission']", function(e){
-  submitEditLibraryPermission()
-})
-
-
+  function submitVote(contentData, isVoteUp){
+    $.ajax({
+      type: "POST",
+      url: "/Vote_ajax_submit/",
+      datatype: "json",
+      data: { content_data: contentData,
+              is_vote_up: isVoteUp,
+              csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            }
+    })
+  }
+  $(document).on("click", "button[name='libraryPermissionModalLaunch']", function(e){
+    let permissionData = $(this).val()
+    launchPermissionModal(permissionData);
+  })
+  $(document).on("click", "button[name='activateLibraryPermission']", function(e){
+    e.preventDefault()
+    let permissionData = $(this).val()
+    submitNewLibraryPermission(permissionData)
+  })
+  $(document).on("click", "button[id='editCurrentPermissionsLaunch']", function(e){
+    e.preventDefault()
+    console.log("hello")
+    $("#editCurrentLibraryPermissions").show()
+  })
+  $(document).on("click", "button[name='closeEditCurrentPermissionsLaunch']", function(e){
+    e.preventDefault()
+    $("#editCurrentLibraryPermissions").hide()
+  })
+  $(document).on("click", "button[name='submitEditLibraryPermission']", function(e){
+    submitEditLibraryPermission()
+  })
+  $(document).on("click", "button[name='submitVoteUp']", function(e){
+    e.preventDefault()
+    console.log("registered click")
+    let contentData = $(this).val()
+    submitVote(contentData, true)
+  })
+  $(document).on("click", "button[name='submitVoteDown']", function(e){
+      e.preventDefault()
+    console.log("registered click")
+    let contentData = $(this).val()
+    submitVote(contentData, false)
+  })
 
 })

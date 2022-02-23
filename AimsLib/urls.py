@@ -17,6 +17,7 @@ urlpatterns = [
     path('', include("Organisations.urls")),
     path('', include("WebsiteTools.urls")),
     path('', include("Library.urls")),
+    path('', include("Interactions.urls")),
     path("favicon.ico", RedirectView.as_view(url=staticfiles_storage.url("favicon.ico"))),
     path('Members/', include("django.contrib.auth.urls")),
     path('Members/', include('Members.urls')),
